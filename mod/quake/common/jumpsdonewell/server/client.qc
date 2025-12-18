@@ -108,6 +108,9 @@ Called every frame before physics are run
 .string netname_previous;
 void JDW_PlayerPreThink(entity this)
 {
+	if(!IS_PLAYER(this))
+		return;
+
 	if(this.health <= 0)
 	{
 		this.frame = 6;
