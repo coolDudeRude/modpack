@@ -23,7 +23,7 @@ void heart_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_pickup.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	toucher.max_health += 1;
 	toucher.health = toucher.max_health;
@@ -52,7 +52,7 @@ void feather_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_pickup.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	STAT(FEATHER, toucher) += 1;
 	msg_entity = toucher;
@@ -81,7 +81,7 @@ void sword_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_pickup.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	STAT(SWORDPOWER, toucher) += 1;
 	msg_entity = toucher;
