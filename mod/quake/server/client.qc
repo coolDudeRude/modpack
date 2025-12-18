@@ -349,6 +349,8 @@ string get_painsound(entity this, int chance)
 
 string get_jumpsound(entity this)
 {
+	if(IsJumpsDoneWell())
+		return "jump.wav";
 	if(this.m_champion && !STAT(SLIDE_ON, this) && !STAT(SKATING, this))
 		return this.m_champion.m_sound_jump();
 

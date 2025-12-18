@@ -37,7 +37,7 @@ void do_jump(entity this)
 #ifdef SVQC
 	STAT(JUMPS, this) -= 1;
 	this.frame = 2;
-	_sound(this, CHAN_AUTO, "jump.wav", 0.75, ATTEN_NORM);
+	_sound(this, CH_PLAYER, "jump.wav", 0.75, ATTEN_NORM);
 	pointparticles(EFFECT_WEAPON_JUMP, this.origin + '0 0 16', '0 0 40', 1);
 #endif
 }

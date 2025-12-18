@@ -120,10 +120,12 @@ void xmas_decor_think(entity this)
 bool xmas_replace(entity this)
 {
 	// TODO: proper season locking
+#if 0
 	bool nochristmas;
 	nochristmas = false;
 	if(!nochristmas)
 		return false;
+#endif
 	if(random() > 0.45)
 		return false;
 	//if(!Monsters_SeasonLocked())
