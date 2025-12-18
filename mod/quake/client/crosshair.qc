@@ -2,6 +2,7 @@
 
 #include "../common/physics.qh"
 #include "../common/viewloc.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 
 PRECACHE(Reticle)
 {
@@ -138,7 +139,7 @@ void HUD_Crosshair(entity this)
 		return;
 	}
 
-	if(!sb_showscores && !cursor_active && !camera_active && !intermission && !(STAT(HEALTH) <= 0) && (!csqcplayer.viewloc || (csqcplayer.viewloc.spawnflags & VIEWLOC_FREEAIM)) && STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL)
+	if(!sb_showscores && !cursor_active && !camera_active && !intermission && !(STAT(HEALTH) <= 0) && (!csqcplayer.viewloc || (csqcplayer.viewloc.spawnflags & VIEWLOC_FREEAIM)) && STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL && !IsJumpsDoneWell())
 	{
 		if (!autocvar_crosshair_enabled) // main toggle for crosshair rendering
 			return;

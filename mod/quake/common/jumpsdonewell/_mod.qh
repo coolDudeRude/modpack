@@ -1,0 +1,6 @@
+#include "common/_all.qh"
+#ifdef CSQC
+	#include "client/_all.qh"
+#elif defined(SVQC)
+	#include "server/_all.qh"
+#endif

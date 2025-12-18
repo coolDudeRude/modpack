@@ -10,6 +10,7 @@
 #include "weapons/csqcprojectile.qh"
 #include "weapons/weaponsystem.qh"
 #include "world.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/slide/slide.qh"
 #include "../common/dodgeball/dodgeball.qh"
 
@@ -1724,6 +1725,8 @@ void W_WeaponFrame(entity this, .entity weaponentity)
 	if(this.exptime != 0)
 		return;
 	if(world.worldtype == WORLDTYPE_DODGEBALL && (ceasefire || STAT(FROZEN, this) > time || this.died))
+		return;
+	if(IsJumpsDoneWell())
 		return;
 	if(!STAT(SKATING, this) && this.m_champion && this.m_champion.m_weaponframe)
 	{

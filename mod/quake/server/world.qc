@@ -7,6 +7,7 @@
 #include "ipban.qh"
 #include "../common/challenges.qh"
 #include "../common/dodgeball/dodgeball.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/triggers/func/button.qh"
 #include "../common/triggers/func/earthquake.qh"
 #include "../common/triggers/trigger/changelevel.qh"
@@ -1985,6 +1986,8 @@ void CreatureFrame_FallDamage(entity this)
 	if(this.viewloc)
 		jumpheight_mod *= 1.5;
 	if(cannon_land(this))
+		{ /* do nothing */ }
+	else if(IsJumpsDoneWell())
 		{ /* do nothing */ }
 	else if(STAT(SKATING, this) && this.jump_flag < -50 && IS_ONGROUND(this) && this.health > 0)
 		skate_land(this);

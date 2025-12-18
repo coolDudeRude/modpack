@@ -2,6 +2,7 @@
 
 #include "../common/ent_cs.qh"
 #include "../common/champions/_mod.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/status_effects/_mod.qh"
 
 string Sbar_PickWeapon_wepname(Weapon wpn)
@@ -1293,7 +1294,7 @@ void Sbar_Draw()
 		vector mySize = panel_size;
 
 		vector bgcolor = Sbar_BgColor();
-		if(!intermission && !sb_showscores && STAT(HEALTH) > 0)
+		if(!intermission && !sb_showscores && STAT(HEALTH) > 0 && !IsJumpsDoneWell())
 		{
 			Draw_BorderPicture(
 				pos - '1 1 0' * 2,
@@ -1355,6 +1356,8 @@ void Sbar_Draw()
 			Sbar_IntermissionOverlay();
 		else if(intermission == 2)
 			Sbar_FinaleOverlay();
+		else if(IsJumpsDoneWell())
+			{ /* do nothing */ }
 		else // Quake
 		{
 			sbar.x = (vid_conwidth - 320) * 0.5;

@@ -1,6 +1,7 @@
 #include "shownames.qh"
 
 #include "../common/ent_cs.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 
 // this.isactive = player is in range and coordinates are up to date
 // this.origin = player origin
@@ -39,7 +40,9 @@ void Draw_ShowNames(entity this)
 
 	// since quake players are smaller, subtract a bit off the offset so it looks less silly!
 	float realoffset = autocvar_hud_shownames_offset;
-	if(realoffset == 52) // xonotic default
+	if(IsJumpsDoneWell())
+		realoffset += 16;
+	else if(realoffset == 52) // xonotic default
 		realoffset -= 16;
 
 	// handle tag fading

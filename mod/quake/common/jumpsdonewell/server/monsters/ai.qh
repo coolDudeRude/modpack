@@ -1,0 +1,13 @@
+#pragma once
+
+.int ai_state;
+const int AI_STATE_STANDING = 0;
+const int AI_STATE_MOVING = 1;
+const int AI_STATE_CHASING = 2;
+const int AI_STATE_ATTACKING = 3;
+const int AI_STATE_HURTING = 4;
+
+.float last_seen_time;
+.float ai_attack_time;
+.bool ai_attacked;
+.vector home;

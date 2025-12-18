@@ -1,5 +1,6 @@
 #ifdef SVQC
 #include "../server/client.qh"
+#include "jumpsdonewell/_mod.qh"
 #include "tank/tank.qh"
 #endif
 
@@ -35,6 +36,9 @@ void Physics_UpdateStats(entity this)
 	slide_UpdateStats(this);
 
 	QCC_UpdateStats(this);
+
+	if(IsJumpsDoneWell())
+		JDW_Physics_UpdateStats(this);
 
 	if(this.clockwork && !intermission_running)
 	{
@@ -569,6 +573,13 @@ void PM_Main(entity this, float dt)
 
 	if(this.move_movetype == MOVETYPE_NONE)
 		return;
+
+	// TODO: less overrides?
+	if(IsJumpsDoneWell())
+	{
+		JDW_PM_Main(this, dt);
+		return;
+	}
 
 	if(StatusEffects_active(STATUSEFFECT_Confused, this))
 	{

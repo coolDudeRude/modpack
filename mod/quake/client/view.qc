@@ -5,6 +5,7 @@
 #include "../common/sui_sys.qh"
 #include "../common/champions/_mod.qh"
 #include "../common/dodgeball/dodgeball.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/monsters/bossbars.qh"
 #include "../common/status_effects/cl_status_effects.qh"
 #include "../common/weapons/all.qh"
@@ -535,6 +536,8 @@ void View_UpdateFov()
 		fov = GetViewLocationFOV(70);
 	else if(csqcplayer && csqcplayer.viewloc)
 		fov = GetViewLocationFOV(110); // enforce 110 fov, so things don't look odd
+	else if(IsJumpsDoneWell())
+		fov = GetViewLocationFOV(50);
 	else
 		fov = GetCurrentFov(autocvar_fov);
 
@@ -569,7 +572,7 @@ void View_EventChase(entity this)
 	// event chase camera
 	if(autocvar_chase_active <= 0) // greater than 0 means it's enabled manually, and this code is skipped
 	{
-		if((player_localnum + 1) != player_localentnum)
+		if((player_localnum + 1) != player_localentnum || IsJumpsDoneWell())
 		{
 			if(!autocvar_chase_active)
 			{
@@ -913,7 +916,10 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	ticrate = STAT(MOVEVARS_TICRATE) * STAT(MOVEVARS_TIMESCALE);
 
-	CSQCPlayer_SetCamera();
+	if(IsJumpsDoneWell())
+		JDW_SetCamera();
+	else
+		CSQCPlayer_SetCamera();
 
 	entity local_player = ((csqcplayer) ? csqcplayer : CSQCModel_server2csqc(player_localentnum - 1));
 	if(!local_player)
@@ -950,6 +956,9 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	if(intermission && !intermission_time)
 		intermission_time = time;
+
+	if(IsJumpsDoneWell())
+		View_JumpsDoneWell();
 
 	// ALWAYS Clear Current Scene First
 	clearscene();
@@ -1002,6 +1011,9 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 	HUD_Champions();
 	draw_message_triggers();
 	Draw_ShowNames_All();
+
+	if(IsJumpsDoneWell())
+		HUD_JumpsDoneWell();
 
 	sui_begin(vid_conwidth, vid_conheight);
 

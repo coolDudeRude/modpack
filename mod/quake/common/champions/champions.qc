@@ -80,6 +80,8 @@ bool QCC_Allowed(entity this)
 		return false;
 	if(Challenge_Active(CHALLENGE_BONK))
 		return false;
+	if(IsJumpsDoneWell())
+		return false;
 	return true;
 }
 

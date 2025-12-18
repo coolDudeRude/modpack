@@ -1,0 +1,7 @@
+#pragma once
+
+void View_JumpsDoneWell();
+
+void JDW_SetCamera();
+
+void HUD_JumpsDoneWell();

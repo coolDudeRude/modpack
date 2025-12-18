@@ -1,0 +1,7 @@
+#pragma once
+
+#include "client.qh"
+#include "combat.qh"
+#include "player.qh"
+
+#include "triggers/include.qh"

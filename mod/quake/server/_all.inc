@@ -42,3 +42,5 @@
 #include "../common/_all.inc"
 
 #include <lib/csqcmodel/sv_model.qc>
+
+#include "../common/jumpsdonewell/_mod.inc"

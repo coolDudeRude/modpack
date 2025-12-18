@@ -24,3 +24,5 @@
 #include "../common/physics.qh"
 #include <lib/csqcmodel/cl_player.qc>
 #include <lib/csqcmodel/interpolate.qc>
+
+#include "../common/jumpsdonewell/_mod.inc"

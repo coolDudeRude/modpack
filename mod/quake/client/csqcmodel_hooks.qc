@@ -216,6 +216,7 @@ void CSQCModel_Hook_PostUpdate(entity this, bool isnew, bool isplayer, bool islo
 									|| substring(this.model, 0, 14) == "models/player/" || substring(this.model, 0, 17) == "models/ok_player/"
 									|| this.model == "progs/eyes.mdl" || this.model == "progs/bolt2.mdl" || this.model == "progs/clockwork.mdl" || this.model == "progs/demon.mdl"
 									|| this.model == "progs/monkey.mdl" || this.model == "progs/mermaid.mdl"
+									|| this.model == "models/player.iqm"
 									|| (substring(this.model, 0, 16) == "models/monsters/" && (this.isplayermodel & BIT(1))));
 	this.isplayermodel = BITSET(this.isplayermodel, ISPLAYER_MODEL, is_playermodel);
 

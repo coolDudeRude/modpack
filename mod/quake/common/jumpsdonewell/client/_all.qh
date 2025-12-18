@@ -1,0 +1,9 @@
+#pragma once
+
+float playerx, playerz;
+float telefade_time;
+float revive_time;
+bool which_end;
+float end_time;
+
+#include "view.qh"

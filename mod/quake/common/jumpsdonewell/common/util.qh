@@ -1,0 +1,7 @@
+#pragma once
+
+#ifdef GAMEQC
+string getworldbasename();
+
+bool IsJumpsDoneWell();
+#endif

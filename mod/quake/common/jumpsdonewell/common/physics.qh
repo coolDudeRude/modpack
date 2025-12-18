@@ -1,0 +1,9 @@
+#pragma once
+
+#ifdef SVQC
+.float pain_time;
+
+void JDW_Physics_UpdateStats(entity this);
+#endif
+
+void JDW_PM_Main(entity this, float dt);

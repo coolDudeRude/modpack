@@ -137,6 +137,12 @@ If the trigger_teleport has a targetname, it will only teleport entities when it
 */
 spawnfunc(trigger_teleport)
 {
+	if(IsJumpsDoneWell())
+	{
+		JDW_trigger_teleport(this);
+		return;
+	}
+
 	InitTrigger(this);
 	trigger_teleport_setup(this);	// after inittrigger, so that size/model is set, so the telehum hums in the right place
 	if(this.spawnflags & TELEPORT_TRIGGER_FIRST)

@@ -279,6 +279,9 @@ void light_disc_frame(entity this, .entity weaponentity)
 
 void player_stand1(entity this)
 {
+	if(IsJumpsDoneWell())
+		return;
+	
 	set_anim(this, anim_player_axstnd1, player_stand1);
 
 	for(int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
@@ -381,6 +384,9 @@ void player_stand1(entity this)
 .float footstep;
 void player_run(entity this)
 {
+	if(IsJumpsDoneWell())
+		return;
+
 	set_anim(this, anim_player_rockrun1, player_run);
 
 	for(int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
@@ -1140,6 +1146,12 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 	W_Spellbook_ClearSpells(this);
+
+	if(IsJumpsDoneWell())
+	{
+		JDW_PlayerDie(this);
+		return;
+	}
 
 	if(world.worldtype == WORLDTYPE_DODGEBALL)
 		DropBall(this);

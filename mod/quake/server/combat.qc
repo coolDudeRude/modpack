@@ -6,6 +6,7 @@
 #include "monsters/ai_subs.qh"
 #include "monsters/monsters.qh"
 #include "rogue/sphere.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/triggers/func/breakable.qh"
 #include "../common/triggers/triggers.qh"
 #include "weapons/weaponsystem.qh"
@@ -467,6 +468,12 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	// TODO: needs projectile support!
 	if(ai_immunebreakable(attacker, targ))
 		return;
+
+	if(IsJumpsDoneWell())
+	{
+		if(JDW_Damage(attacker, targ, damage))
+			return;
+	}
 
 	// Yoder add, September 9 2020
 	// bosses are immune to damage while frozen (mechanic)

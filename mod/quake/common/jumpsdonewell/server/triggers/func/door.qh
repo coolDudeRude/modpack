@@ -1,0 +1,5 @@
+#pragma once
+
+#ifdef SVQC
+void JDW_func_door(entity this);
+#endif

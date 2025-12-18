@@ -194,7 +194,8 @@ Used as a positional target for spotlights, etc.
 */
 spawnfunc(info_null)
 {
-	delete(this);
+	if(!IsJumpsDoneWell())
+		delete(this);
 }
 #endif
 

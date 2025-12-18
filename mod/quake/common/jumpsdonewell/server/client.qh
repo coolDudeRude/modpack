@@ -1,0 +1,18 @@
+#pragma once
+
+.float respawn_time;
+// properties unique to jumps done well
+.entity cp;
+.entity sword;
+
+void JDW_PlayerPreThink(entity this);
+
+void revive(entity this);
+
+void player_hurt(entity this, entity attacker, float damage, int deathtype);
+
+void JDW_PlayerTouch(entity this, entity toucher);
+
+void JDW_ClientDisconnect(entity this);
+
+void JDW_PutPlayerInServer(entity this);

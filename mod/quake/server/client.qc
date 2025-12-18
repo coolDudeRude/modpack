@@ -7,6 +7,7 @@
 #include "../common/slide/slide.qh"
 #include "../common/champions/_mod.qh"
 #include "../common/editor.qh"
+#include "../common/jumpsdonewell/_mod.qh"
 #include "../common/music.qh"
 #include "../common/challenges.qh"
 #include "chat_grabber.qh"
@@ -269,6 +270,8 @@ string get_playermodel(entity this)
 {
 	if(STAT(SKATING, this))
 		return "progs/skater.mdl";
+	else if(IsJumpsDoneWell())
+		return "models/player.iqm";
 	else if(world.worldtype == WORLDTYPE_DODGEBALL)
 	{
 		if(STAT(HAS_BALL, this))
@@ -431,7 +434,7 @@ Returns the entity to view from
 */
 entity FindIntermission(entity this)
 {
-	if(world.worldtype == WORLDTYPE_SKATE)
+	if(world.worldtype == WORLDTYPE_SKATE || IsJumpsDoneWell())
 		return NULL; // stay at player view
 // look for info_intermission first
 	RandomSelection_Init();
@@ -1054,6 +1057,8 @@ Player entered the suicide command
 void ClientKill(entity this)
 {
 	if(gameover || intermission_running)
+		return;
+	if(IsJumpsDoneWell())
 		return;
 	if(world.worldtype == WORLDTYPE_DODGEBALL)
 	{
@@ -1725,6 +1730,9 @@ void PutPlayerInServer(entity this)
 
 	dodgeball_PutPlayerInServer(this);
 
+	if(IsJumpsDoneWell())
+		JDW_PutPlayerInServer(this);
+
 	GrappleReset(this.hook);
 
 // oh, this is a hack!
@@ -2148,6 +2156,12 @@ void PlayerPreThink(entity this)
 	if(this.view_ofs == '0 0 0')
 		return;		// intermission or finale
 
+	if(IsJumpsDoneWell())
+	{
+		JDW_PlayerPreThink(this);
+		return;
+	}
+
 	if(this.deadflag >= DEAD_DEAD)
 	{
 		PlayerDeathThink(this);
@@ -2335,6 +2349,8 @@ void Regenerate_Health(entity this)
 	if(world.worldtype == WORLDTYPE_DODGEBALL)
 		return;
 	if(Challenge_Active(CHALLENGE_ONEHP))
+		return;
+	if(IsJumpsDoneWell())
 		return;
 
 	float regen_rate = 1;
@@ -2740,6 +2756,9 @@ void ClientDisconnect(entity this)
 	chimes_clear(this);
 
 	W_Spellbook_ClearSpells(this);
+
+	if(IsJumpsDoneWell())
+		JDW_ClientDisconnect(this);
 
 	set_suicide_frame(this);
 

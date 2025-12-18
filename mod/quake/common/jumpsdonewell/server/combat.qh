@@ -1,0 +1,14 @@
+#pragma once
+
+.float invuln_time;
+
+.bool attack_released;
+.float attack_fired;
+
+void player_attack(entity this);
+
+void player_spin_attack(entity this);
+
+void player_weapons(entity this);
+
+bool JDW_Damage(entity attacker, entity victim, float dmg);

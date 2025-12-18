@@ -1,5 +1,7 @@
 #ifdef SVQC
 
+#include "../../jumpsdonewell/_mod.qh"
+
 /*
 
 Doors are similar to buttons, but can spawn a fat trigger field around them
@@ -706,6 +708,12 @@ Key doors are allways wait -1.
 void func_door_init(entity this, entity actor, entity trigger);
 spawnfunc(func_door)
 {
+	if(IsJumpsDoneWell())
+	{
+		JDW_func_door(this);
+		return;
+	}
+
 	if(this.movedir != '0 0 0')
 		this.have_mg_movedir = true;
 	SetMovedir(this);
