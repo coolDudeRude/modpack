@@ -15,5 +15,3 @@ REGISTER_NET_LINKED(ENT_CLIENT_BAMBOO)
 #include "physics.qh"
 
 #include "effects/all.inc"
-#include "models/all.inc"
-#include "sounds/all.inc"

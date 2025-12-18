@@ -1,7 +1,7 @@
 void player_hurt(entity this, entity attacker, float damage, int deathtype)
 {
 	// this.frame = 5;
-	sound(this, CHAN_AUTO, SND_PLAYER_HURT, 1, ATTEN_NORM);
+	_sound(this, CHAN_AUTO, "hurt.wav", 1, ATTEN_NORM);
 }
 
 void JDW_PlayerDie(entity this)

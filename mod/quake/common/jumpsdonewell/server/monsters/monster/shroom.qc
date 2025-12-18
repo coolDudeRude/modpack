@@ -2,7 +2,7 @@
 
 void shroom_die_proper(entity this)
 {
-	sound(this, CHAN_AUTO, SND_SWORD2, 0.7, ATTEN_NORM);
+	_sound(this, CHAN_AUTO, "sword2.wav", 0.7, ATTEN_NORM);
 	pointparticles(EFFECT_ENEMY_DIE, this.origin + '0 0 32', '0 0 1', 1);
 	this.solid = SOLID_NOT;
 	this.takedamage = DAMAGE_NO;
@@ -217,14 +217,16 @@ spawnfunc(monster_shroom)
 		default:
 		case VARIANT_NORMAL:
 		{
-			setmodel(this, MDL_SHROOM);
+			precache_model("models/mushroom.iqm");
+			_setmodel(this, "models/mushroom.iqm");
 			this.health = 30;
 			settouch(this, shroom_touch);
 			break;
 		}
 		case VARIANT_SPIKY:
 		{
-			setmodel(this, MDL_SHROOM2);
+			precache_model("models/mushroom2.iqm");
+			_setmodel(this, "models/mushroom2.iqm");
 			this.health = 50;
 			settouch(this, spiky_touch);
 			break;

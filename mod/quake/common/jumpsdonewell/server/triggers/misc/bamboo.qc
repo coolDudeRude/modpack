@@ -8,7 +8,7 @@ void bamboo_die_proper(entity this)
 	this.takedamage = DAMAGE_NO;
 	this.solid = SOLID_NOT;
 	setorigin(this, this.origin); // relink
-	sound(this, CHAN_AUTO, SND_SWORD2, 0.7, ATTEN_NORM);
+	_sound(this, CHAN_AUTO, "sword2.wav", 0.7, ATTEN_NORM);
 	pointparticles(EFFECT_ENEMY_DIE, this.origin + '0 0 32', '0 0 1', 1);
 	CSQCMODEL_AUTOUPDATE(this);
 }
@@ -44,9 +44,11 @@ spawnfunc(misc_bamboo)
 		delete(this);
 		return;
 	}
+
+	precache_model("models/bamboo2.iqm");
 	
 	this.solid = SOLID_BBOX;
-	setmodel(this, MDL_BAMBOO2);
+	_setmodel(this, "models/bamboo2.iqm");
 	setsize(this, '-32 -32 -100', '32 32 225');
 	this.takedamage = DAMAGE_YES;
 	this.th_die = bamboo_die;

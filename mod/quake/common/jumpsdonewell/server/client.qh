@@ -15,4 +15,6 @@ void JDW_PlayerTouch(entity this, entity toucher);
 
 void JDW_ClientDisconnect(entity this);
 
+void JDW_PutObserverInServer(entity this);
+
 void JDW_PutPlayerInServer(entity this);

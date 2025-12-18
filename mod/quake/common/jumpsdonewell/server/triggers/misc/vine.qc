@@ -3,9 +3,9 @@
 void vine_destroy(entity this)
 {
 	this.solid = SOLID_NOT;
-	setmodel(this, MDL_VINE_BROKEN);
+	_setmodel(this, "models/vine_broken.iqm");
 	pointparticles(EFFECT_ENEMY_DIE, this.origin + '0 0 32', '0 0 1', 1);
-	sound(this, CHAN_AUTO, SND_SWORD2, 0.7, ATTEN_NORM);
+	_sound(this, CHAN_AUTO, "sword2.wav", 0.7, ATTEN_NORM);
 	setthink(this, spawnfunc_misc_vine);
 	this.nextthink = time + 20;
 	CSQCMODEL_AUTOUPDATE(this);
@@ -18,9 +18,12 @@ spawnfunc(misc_vine)
 		delete(this);
 		return;
 	}
-	
+
+	precache_model("models/vine.iqm");
+	precache_model("models/vine_broken.iqm");
+
 	this.solid = SOLID_BBOX;
-	setmodel(this, MDL_VINE);
+	_setmodel(this, "models/vine.iqm");
 	this.angles_y = random() * 360;
 	setsize(this, '-32 -32 0', '32 32 128');
 	CSQCMODEL_AUTOINIT(this);

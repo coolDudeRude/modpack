@@ -19,9 +19,11 @@ bool checkpoint_customize(entity this, entity client)
 
 spawnfunc(misc_checkpoint)
 {
+	precache_model("models/checkpoint.iqm");
+
 	this.solid = SOLID_TRIGGER;
 	settouch(this, checkpoint_touch);
-	setmodel(this, MDL_CHECKPOINT);
+	_setmodel(this, "models/checkpoint.iqm");
 	setsize(this, '-32 -32 0', '32 32 48');
 	setcefc(this, checkpoint_customize);
 }

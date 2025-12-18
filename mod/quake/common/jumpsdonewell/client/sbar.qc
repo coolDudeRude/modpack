@@ -2,6 +2,9 @@
 
 PRECACHE(hud_icons)
 {
+	if(!IsJumpsDoneWell())
+		return;
+
 	precache_pic("textures/emptyheart");
 	precache_pic("textures/fullheart");
 

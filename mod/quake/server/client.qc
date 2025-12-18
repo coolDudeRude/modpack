@@ -1548,6 +1548,8 @@ void PutObserverInServer(entity this)
 	champions_RemovePlayer(this);
 	music_RemovePlayer(this);
 	dodgeball_RemovePlayer(this);
+	if(IsJumpsDoneWell())
+		JDW_PutPlayerInServer(this);
 }
 
 .bool dualwielding_prev;

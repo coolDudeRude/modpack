@@ -54,7 +54,7 @@ void end1_touch(entity this, entity toucher)
 		entity door = find(NULL, classname, "func_door");
 		if (!door) return;
 		pointparticles(EFFECT_ENEMY_DIE, (door.absmin + door.absmax) * 0.5, '0 0 1', 1);
-		sound(door, CHAN_AUTO, SND_SWORD2, 1, ATTEN_NORM);
+		_sound(door, CHAN_AUTO, "sword2.wav", 1, ATTEN_NORM);
 		delete(door);
 	}
 }

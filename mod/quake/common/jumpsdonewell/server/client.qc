@@ -11,6 +11,22 @@
 =============================================================================
 */
 
+PRECACHE(JumpsDoneWell)
+{
+	if(!IsJumpsDoneWell())
+		return;
+
+	precache_model("models/player.iqm");
+	precache_model("models/sword_equip.iqm");
+
+	precache_sound("sword1.wav");
+	precache_sound("sword2.wav");
+	precache_sound("sword_pickup.wav");
+	precache_sound("ding.wav");
+	precache_sound("hurt.wav");
+	precache_sound("jump.wav");
+}
+
 bool sword_customize(entity this, entity client)
 {
 	return (STAT(SWORDPOWER, this.owner) > 0);
@@ -45,10 +61,17 @@ void revive(entity this)
 	WriteHeader(MSG_ONE, TE_CSQC_REVIVE);
 }
 
+void JDW_PutObserverInServer(entity this)
+{
+	if(this.sword)
+		delete(this.sword);
+	this.sword = NULL;
+}
+
 void JDW_PutPlayerInServer(entity this)
 {
 	this.solid = SOLID_SLIDEBOX;
-	setmodel(this, MDL_PLAYER);
+	_setmodel(this, "models/player.iqm");
 	setsize(this, '-16 -16 0', '16 16 64');
 	set_movetype(this, MOVETYPE_WALK);
 	this.health = 3;
@@ -65,7 +88,7 @@ void JDW_PutPlayerInServer(entity this)
 	if(!this.sword)
 		this.sword = new(sword);
 	this.sword.owner = this;
-	setmodel(this.sword, MDL_SWORD_EQUIP);
+	_setmodel(this.sword, "models/sword_equip.iqm");
 	setattachment(this.sword, this, "hand.R");
 	setcefc(this.sword, sword_customize);
 	this.sword.effects = EF_LOWPRECISION;
@@ -133,4 +156,8 @@ void JDW_ClientDisconnect(entity this)
 		if(IL_CONTAINS(it.collected, this))
 			IL_REMOVE(it.collected, this);
 	});
+
+	if(this.sword)
+		delete(this.sword);
+	this.sword = NULL;
 }

@@ -23,7 +23,7 @@ void heart_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	sound(toucher, CHAN_AUTO, SND_SWORD_PICKUP, 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	toucher.max_health += 1;
 	toucher.health = toucher.max_health;
@@ -40,8 +40,9 @@ spawnfunc(item_heart)
 		delete(this);
 		return;
 	}
-	
-	setmodel(this, MDL_HEART);
+
+	precache_model("models/heart.iqm");
+	_setmodel(this, "models/heart.iqm");
 	settouch(this, heart_touch);
 	base_item(this);
 }
@@ -51,7 +52,7 @@ void feather_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	sound(toucher, CHAN_AUTO, SND_SWORD_PICKUP, 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	STAT(FEATHER, toucher) += 1;
 	msg_entity = toucher;
@@ -68,7 +69,8 @@ spawnfunc(item_feather)
 		return;
 	}
 
-	setmodel(this, MDL_FEATHER);
+	precache_model("models/feather.iqm");
+	_setmodel(this, "models/feather.iqm");
 	
 	settouch(this, feather_touch);
 	base_item(this);
@@ -79,7 +81,7 @@ void sword_touch(entity this, entity toucher)
 	if(!IS_PLAYER(toucher)) return;
 	if(IL_CONTAINS(this.collected, toucher)) return;
 	
-	sound(toucher, CHAN_AUTO, SND_SWORD_PICKUP, 1, ATTEN_NORM);
+	_sound(toucher, CHAN_AUTO, "sword_equip.wav", 1, ATTEN_NORM);
 	pointparticles(EFFECT_ITEM_PICKUP, this.origin + '0 0 24', '0 0 100', 1);
 	STAT(SWORDPOWER, toucher) += 1;
 	msg_entity = toucher;
@@ -96,7 +98,8 @@ spawnfunc(item_sword)
 		return;
 	}
 
-	setmodel(this, MDL_SWORD);
+	precache_model("models/sword.iqm");
+	_setmodel(this, "models/sword.iqm");
 	
 	settouch(this, sword_touch);
 	base_item(this);

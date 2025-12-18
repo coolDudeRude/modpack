@@ -71,7 +71,7 @@ NET_HANDLE(ENT_CLIENT_BAMBOO, bool isnew)
 {
 	this.origin = ReadVector();
 	setorigin(this, this.origin);
-	setmodel(this, MDL_BAMBOO2);
+	_setmodel(this, "models/bamboo2.iqm");
 	this.draw = bamboo_draw;
 	if(isnew) IL_PUSH(g_drawables, this);
 	this.drawmask = MASK_NORMAL;

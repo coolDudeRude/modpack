@@ -25,7 +25,7 @@ void player_attack(entity this)
 			if(IS_PLAYER(it))
 				take = 1;
 			T_Damage(it, this, this, take, DEATH_GENERIC.m_id);
-			sound(it, CHAN_AUTO, SND_SWORD2, 0.7, ATTEN_NORM);
+			_sound(it, CHAN_AUTO, "sword2.wav", 0.7, ATTEN_NORM);
 		}
 	});
 }
@@ -54,7 +54,7 @@ void player_weapons(entity this)
 	{
 		STAT(CHARGED, this) = true;
 		pointparticles(EFFECT_WEAPON_CHARGED, this.origin + '0 0 64', '0 0 100', 1);
-		sound(this, CHAN_AUTO, SND_DING, 0.7, ATTEN_NORM);
+		_sound(this, CHAN_AUTO, "ding.wav", 0.7, ATTEN_NORM);
 	}
 
 	if(PHYS_INPUT_BUTTON_ATCK(this) && STAT(SWORDPOWER, this) > 0)
@@ -69,7 +69,7 @@ void player_weapons(entity this)
 			}
 			else
 			{
-				sound(this, CHAN_AUTO, SND_SWORD1, 0.8, ATTEN_NORM);
+				_sound(this, CHAN_AUTO, "sword1.wav", 0.8, ATTEN_NORM);
 				this.frame = (this.frame == 3) ? 4 : 3;
 				STAT(ATTACK_FINISHED, this) = time + 0.35;
 				this.attack_fired = 0;
@@ -94,21 +94,21 @@ void player_weapons(entity this)
 			++this.attack_fired;
 			player_spin_attack(this);
 			pointparticles(EFFECT_WEAPON_SPIN, this.origin + '0 0 48', '0 0 1', 1);
-			sound(this, CHAN_AUTO, SND_SWORD1, 1, ATTEN_NORM);
+			_sound(this, CHAN_AUTO, "sword1.wav", 1, ATTEN_NORM);
 		}
 		if(time > STAT(ATTACK_FINISHED, this) - 0.325 && this.attack_fired < 2)
 		{
 			++this.attack_fired;
 			player_spin_attack(this);
 			pointparticles(EFFECT_WEAPON_SPIN, this.origin + '0 0 48', '0 0 1', 1);
-			sound(this, CHAN_AUTO, SND_SWORD1, 0.85, ATTEN_NORM);
+			_sound(this, CHAN_AUTO, "sword1.wav", 0.85, ATTEN_NORM);
 		}
 		if(time > STAT(ATTACK_FINISHED, this) - 0.25 && this.attack_fired < 3)
 		{
 			++this.attack_fired;
 			player_spin_attack(this);
 			pointparticles(EFFECT_WEAPON_SPIN, this.origin + '0 0 48', '0 0 1', 1);
-			sound(this, CHAN_AUTO, SND_SWORD1, 0.75, ATTEN_NORM);
+			_sound(this, CHAN_AUTO, "sword1.wav", 0.75, ATTEN_NORM);
 			
 			STAT(CHARGED, this) = false;
 		}
