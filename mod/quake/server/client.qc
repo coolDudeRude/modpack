@@ -1551,7 +1551,7 @@ void PutObserverInServer(entity this)
 	music_RemovePlayer(this);
 	dodgeball_RemovePlayer(this);
 	if(IsJumpsDoneWell())
-		JDW_PutPlayerInServer(this);
+		JDW_PutObserverInServer(this);
 }
 
 .bool dualwielding_prev;
@@ -2621,6 +2621,8 @@ string getcdtrack(int numb)
 		return hip_getcdtrack(numb);
 	if(IsRogueMap())
 		return rogue_getcdtrack(numb);
+	if(IsJumpsDoneWell())
+		return "";
 
 	switch(numb)
 	{

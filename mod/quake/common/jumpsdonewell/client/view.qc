@@ -32,10 +32,10 @@ PRECACHE(JumpsDoneWell_Init)
 
 void draw_blob()
 {
-	if(!csqcplayer || intermission)
+	entity this = csqcplayer;
+	if(!this || intermission || IS_DEAD(this))
 		return;
 
-	entity this = csqcplayer;
 	tracebox(this.origin, this.mins, this.maxs, this.origin - '0 0 4096', MOVE_NOMONSTERS, this);
 	float shadowdist = vlen(this.origin - trace_endpos);
 	float shadowval = bound(0, (400 - shadowdist) * 0.001, 0.5);
