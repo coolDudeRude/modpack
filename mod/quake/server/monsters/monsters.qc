@@ -22,13 +22,6 @@
 //		<code>
 // }
 
-bool Monsters_SeasonLocked()
-{
-	float month = stof(strftime(true, "%m"));
-	if(month == 12)
-		return false;
-	return true;
-}
 
 /*
 ================
@@ -383,7 +376,6 @@ Monster monster_randomize(entity this, Monster mon)
 	if(mon.spawnflags & MON_FLAG_HIDDEN)
 		return mon; // never replace hidden monsters
 
-	bool seasonlocked = Monsters_SeasonLocked();
 	bool floyd = (substring(world.model, 0, 9) == "maps/ffj_");
 	bool minecraft = (substring(world.model, 0, 9) == "maps/mcj_");
 
@@ -404,7 +396,7 @@ Monster monster_randomize(entity this, Monster mon)
 			continue;
 		if((mon.spawnflags & MONSTER_TYPE_FLY) && !(it.spawnflags & MONSTER_TYPE_FLY))
 			continue;
-		if((it.spawnflags & MON_FLAG_XMAS) && seasonlocked)
+		if((it.spawnflags & MON_FLAG_XMAS) && season != SEASON_XMAS)
 			continue;
 		if(!(it.spawnflags & MON_FLAG_BLOCKY) && minecraft)
 			continue;

@@ -8,6 +8,8 @@ PRECACHE(Music)
 
 #define MIDI_SUPPORT
 #ifdef MIDI_SUPPORT
+//#define MIDI_NETWORK
+
 int autocvar_sv_quake_music_note_min = 20;
 
 void midi_reset(entity this);
@@ -647,9 +649,11 @@ void midi_process(entity this, string input)
 	this.midi_tictime = time;
 }
 // NOTE: disabled until bigger files can be opened
-#if 0
+#ifdef MIDI_NETWORK
 void midi_process_url(entity this, entity fh)
 {
+	// TODO: they might not be holding an instrument by this point!
+
 	music_reset(this);
 
 	bool header_done = false;
@@ -729,6 +733,7 @@ void midi_url_onget(entity fh, entity this, int status)
 		case URL_READY_CANREAD:
 		{
 			midi_process_url(this, fh);
+			Music_Conductor_Copy(this);
 			break;
 		}
 		default:
@@ -809,7 +814,7 @@ bool sv_music_command(entity this, string cmd, float argc)
     			sprint(this, strcat("List of MIDIs:\n ", output));
 				return true;
 			}
-#if 0
+#ifdef MIDI_NETWORK
 			if(strstrofs(mymusic, "://", 0) >= 0)
 			{
 				midi_openurl(this, argv(1));

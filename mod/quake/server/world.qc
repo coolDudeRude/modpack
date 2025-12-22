@@ -1498,6 +1498,11 @@ spawnfunc(worldspawn)
 	// setting it here causes map restarts to lose position!
 	//cvar_set("_spawntarget", "");
 
+	season = SEASON_NONE;
+	float month = stof(strftime(true, "%m"));
+	if(month == 12)
+		season = SEASON_XMAS;
+
 	startingserverflags = serverflags;
 
 	server_is_dedicated = boolean(stof(cvar_defstring("is_dedicated")));

@@ -2096,7 +2096,6 @@ entity horn_spawnmonster(vector spawnpos, entity actor, Monster mon)
 {
 	if(!mon || mon == MON_Null)
 	{
-		bool seasonlocked = Monsters_SeasonLocked();
 		RandomSelection_Init();
 		FOREACH(Monsters, it != MON_Null,
 		{
@@ -2106,7 +2105,7 @@ entity horn_spawnmonster(vector spawnpos, entity actor, Monster mon)
 				continue; // no decoys please!
 			if((it.spawnflags & MONSTER_TYPE_BOSS) || (it.spawnflags & MON_FLAG_STATIONARY) || (it.spawnflags & MON_FLAG_HIDDEN) || (it.spawnflags & MONSTER_TYPE_UNDEAD))
 				continue;
-			if((it.spawnflags & MON_FLAG_XMAS) && seasonlocked)
+			if((it.spawnflags & MON_FLAG_XMAS) && season != SEASON_XMAS)
 				continue;
 			RandomSelection_AddEnt(it, 1, 1);
 		});
