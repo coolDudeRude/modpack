@@ -61,7 +61,7 @@ METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 
 		if(!foundmax)
 		{
-			entity mon = horn_spawnmonster(actor.origin, actor, MON_ROTTWEILER); // TODO: variant support
+			entity mon = horn_spawnmonster(actor.origin + '0 0 4', actor, MON_ROTTWEILER); // TODO: variant support
 			if(!mon)
 				return; // dunno how but just incase!
 			mon.flags |= FL_CLONE; // clears it on death

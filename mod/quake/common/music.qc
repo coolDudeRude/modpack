@@ -343,6 +343,7 @@ void Music_Conductor_Copy(entity this)
 
 .float midi_lastnote; // prevent spamming too many note models!
 .int midi_playtrack; // only play given track (TODO: bitflag? array?!)
+.bool midi_looping;
 
 void midi_reset(entity this)
 {
@@ -351,6 +352,7 @@ void midi_reset(entity this)
 	this.midi_tracks = 0;
 	this.midi_tictime = 0;
 	this.midi_time = 0;
+	this.midi_looping = false;
 	for(int track = 0; track < MIDI_TRACKS; ++track)
 	{
 		if(this.midi_buffersize[track] > 0)
@@ -390,6 +392,7 @@ bool midi_copy(entity this, entity from)
 	this.midi_tracks = from.midi_tracks;
 	this.midi_tictime = from.midi_tictime;
 	this.midi_time = from.midi_time;
+	this.midi_looping = from.midi_looping;
 
 	for(int track = 0; track <= from.midi_tracks; ++track)
 	{
@@ -574,8 +577,19 @@ void midi_frame(entity this)
 	// must be above since we count 0
 	if(completed > this.midi_tracks)
 	{
-		music_reset(this);
-		return;
+		if(this.midi_looping)
+		{
+			for(int track = 0; track <= this.midi_tracks; ++track)
+			{
+				this.midi_pos[track] = 0;
+				this.midi_nexttime[track] = 0;
+			}
+		}
+		else
+		{
+			music_reset(this);
+			return;
+		}
 	}
 
 	this.midi_time += 1;
@@ -786,6 +800,13 @@ bool sv_music_command(entity this, string cmd, float argc)
 #endif
 				return true;
 			}
+			if(mymusic == "loop")
+			{
+#ifdef MIDI_SUPPORT
+				this.midi_looping = stob(argv(2));
+#endif
+				return true;
+			}
 			if(strlen(mymusic) > 16384)
 			{
 				sprint(this, "Song is too long!\n");
@@ -827,6 +848,8 @@ bool sv_music_command(entity this, string cmd, float argc)
 				// if we're starting a new song, we probably don't want our old tracks set!
 				this.midi_playtrack = 0;
 				midi_process(this, midi_test);
+				if(argv(2) == "loop")
+					this.midi_looping = true;
 				Music_Conductor_Copy(this);
 				return true;
 			}

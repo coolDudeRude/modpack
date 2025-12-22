@@ -79,7 +79,7 @@ void cth_run(entity this)
 			
 		this.enemy = RandomSelection_chosen_ent;
 
-		setthink(this, boss_missile1); // return to attack state
+		setthink(this, cth_run1); // return to attack state
 	}
 	ai_run(this, 10);
 }
