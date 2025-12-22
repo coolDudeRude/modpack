@@ -60,3 +60,4 @@
 #include "speaknspell.qh"
 #include "shadowbeam.qh"
 #include "loosecannon.qh"
+#include "snowball.qh"

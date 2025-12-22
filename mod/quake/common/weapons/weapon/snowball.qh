@@ -1,0 +1,22 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(SNOWBALL_THROW, "weapons/sword_swing");
+#endif
+CLASS(Snowball, Weapon)
+/* ammotype  */ ATTRIB(Snowball, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Snowball, impulse, int, 2);
+/* spawnflags*/ ATTRIB(Snowball, spawnflags, int, WEP_FLAG_CHAMPION | WEP_FLAG_HUDFALLBACK | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Snowball, aflag, int, 0);
+/* modelname */ ATTRIB(Snowball, mdl, string, "snowball");
+/* crosshair */ ATTRIB(Snowball, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(Snowball, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Snowball, w_crosshair_color, vector, '1 1 1');
+/* wepimg    */ ATTRIB(Snowball, model2, string, "snowball");
+/* refname   */ ATTRIB(Snowball, netname, string, "snowball");
+/* wepname   */ ATTRIB(Snowball, m_name, string, _("Snowball"));
+
+ENDCLASS(Snowball)
+REGISTER_WEAPON(SNOWBALL, NEW(Snowball));
+
+//SPAWNFUNC_WEAPON(weapon_snowball, WEP_SNOWBALL)

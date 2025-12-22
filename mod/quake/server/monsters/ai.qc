@@ -1019,7 +1019,7 @@ void UpdateCharmerGoal(entity this)
 
 // addition by Mario: attempt to teleport to an empty space near the charmer
 // TODO: specially try to avoid spawning infront of the player
-void TeleportToCharmer(entity this)
+void TeleportToCharmer(entity this, bool show_effect)
 {
 #if 0
 	vector extrasize = '1 1 1' * MAX_CHARMER_DISTANCE;
@@ -1069,8 +1069,11 @@ void TeleportToCharmer(entity this)
 
 	this.velocity = oldvel;
 	setorigin(this, trace_endpos);
-	te_teleport(this.origin);
-	te_teleport(from);
+	if(show_effect)
+	{
+		te_teleport(this.origin);
+		te_teleport(from);
+	}
 	UNSET_ONGROUND(this);
 #endif
 }
@@ -1234,7 +1237,7 @@ bool FindTarget(entity this)
 		if(this.huntingcharmer > 0)
 		{
 			if(autocvar_sv_quake_pets_teleport && !horde_ent && this.health > 0 && IS_PLAYER(this.charmer) && !(this.monsterdef.spawnflags & MON_FLAG_STATIONARY) && !intermission_running && !cutscene_running && vdist(this.origin - this.charmer.origin, >, 1024))
-				TeleportToCharmer(this);
+				TeleportToCharmer(this, true);
 
 			UpdateCharmerGoal(this);
 //          this.goalentity = this.charmer;

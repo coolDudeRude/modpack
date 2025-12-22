@@ -60,3 +60,4 @@
 #include "speaknspell.qc"
 #include "shadowbeam.qc"
 #include "loosecannon.qc"
+#include "snowball.qc"

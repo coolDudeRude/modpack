@@ -1265,3 +1265,28 @@ STATIC_INIT(Effect_CURSED_FLAMEJET)
 	registercvar("cl_particle_cursed_flamejet_sparks_velocityoffset", "0 0 10");
 }
 #endif
+
+EFFECT(1, SNOWBALL_TRAIL,                "tr_rifle")
+EFFECT(0, SNOWBALL_IMPACT,               "fountain01")
+
+EFFECT(0, BELCH,               "belch")
+#ifdef CSQC
+STATIC_INIT(Effect_BELCH)
+{
+	registercvar("cl_particle_belch", "cloud");
+	registercvar("cl_particle_belch_cloud_type", "smoke");
+	registercvar("cl_particle_belch_cloud_airfriction", "0.8");
+	registercvar("cl_particle_belch_cloud_alpha", "256 256 128");
+	registercvar("cl_particle_belch_cloud_bounce", "1.500000");
+	registercvar("cl_particle_belch_cloud_color", "0x00ff00 0x7db843");
+	registercvar("cl_particle_belch_cloud_count", "16");
+	registercvar("cl_particle_belch_cloud_gravity", "-0.010000");
+	registercvar("cl_particle_belch_cloud_originjitter", "10 10 10");
+	registercvar("cl_particle_belch_cloud_rotate", "0 360 0 30");
+	registercvar("cl_particle_belch_cloud_sizeincrease", "10");
+	registercvar("cl_particle_belch_cloud_size", "4 16");
+	registercvar("cl_particle_belch_cloud_tex", "0 8");
+	registercvar("cl_particle_belch_cloud_velocityjitter", "16 16 16");
+	registercvar("cl_particle_belch_cloud_velocitymultiplier", "1");
+}
+#endif

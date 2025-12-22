@@ -21,7 +21,7 @@ METHOD(Steve, m_friction, float(Champions this, entity actor))
 #endif
 
 #ifdef SVQC
-METHOD(Steve, m_activate, void(Steve this, entity actor))
+METHOD(Steve, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);
 
@@ -142,7 +142,7 @@ void Steve_PlaceBlock(entity this)
 	IL_PUSH(g_blocks, block);
 }
 
-METHOD(Steve, m_clear, void(Steve this, entity actor))
+METHOD(Steve, m_clear, void(Champions this, entity actor))
 {
 	IL_EACH(g_blocks, it.realowner == actor && it.takedamage,
 	{
@@ -158,7 +158,7 @@ METHOD(Steve, m_clear, void(Steve this, entity actor))
 	});
 }
 
-METHOD(Steve, m_playerthink, void(Steve this, entity actor))
+METHOD(Steve, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
 	{
@@ -197,7 +197,7 @@ METHOD(Steve, m_playerthink, void(Steve this, entity actor))
 	}
 }
 
-METHOD(Steve, m_takedamage, float(Steve this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))
+METHOD(Steve, m_takedamage, float(Champions this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))
 {
 	if(targ.m_champion == this && targ.armorvalue > 0)
 		return 0.66;

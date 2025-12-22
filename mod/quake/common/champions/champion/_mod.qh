@@ -15,6 +15,7 @@
 #include "galena.qh"
 #include "goat.qh"
 #include "gordon.qh"
+#include "grinch.qh"
 #include "katria.qh"
 #include "keen.qh"
 #include "keyleth.qh"
