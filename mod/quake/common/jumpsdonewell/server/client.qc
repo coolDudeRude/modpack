@@ -52,11 +52,22 @@ void revive(entity this)
 	WriteHeader(MSG_ONE, TE_CSQC_REVIVE);
 }
 
-void JDW_PutObserverInServer(entity this)
+void JDW_RemovePlayer(entity this)
 {
+	IL_EACH(g_moveables, it.collected,
+	{
+		if(IL_CONTAINS(it.collected, this))
+			IL_REMOVE(it.collected, this);
+	});
+
 	if(this.sword)
 		delete(this.sword);
 	this.sword = NULL;
+}
+
+void JDW_PutObserverInServer(entity this)
+{
+	JDW_RemovePlayer(this);
 }
 
 void JDW_PutPlayerInServer(entity this)
@@ -145,13 +156,5 @@ called when a player disconnects from a server
 */
 void JDW_ClientDisconnect(entity this)
 {
-	IL_EACH(g_moveables, it.collected,
-	{
-		if(IL_CONTAINS(it.collected, this))
-			IL_REMOVE(it.collected, this);
-	});
-
-	if(this.sword)
-		delete(this.sword);
-	this.sword = NULL;
+	JDW_RemovePlayer(this);
 }

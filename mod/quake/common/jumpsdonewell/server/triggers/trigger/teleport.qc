@@ -21,7 +21,7 @@ void teleporter_touch(entity this, entity toucher)
 	setthink(this, teleporter_teleport);
 	
 	if(this.target == "intro")
-		stuffcmd(toucher, "cd loop track001\n");
+		stuffcmd(toucher, "cd loop jumpsdonewell\n");
 	
 	msg_entity = toucher;
 	WriteHeader(MSG_ONE, TE_CSQC_TELEFADE);

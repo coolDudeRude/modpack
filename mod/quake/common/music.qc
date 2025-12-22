@@ -898,7 +898,7 @@ bool cl_music_command(string cmd, string command)
 			localcmd(strcat("cmd music track ", argv(2), "\n"));
 			return true;
 		}
-		else if(argv(2) == "loop")
+		else if(argv(1) == "loop")
 		{
 			localcmd(strcat("cmd music loop ", argv(2), "\n"));
 			return true;
