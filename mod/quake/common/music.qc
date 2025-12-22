@@ -582,8 +582,10 @@ void midi_frame(entity this)
 			for(int track = 0; track <= this.midi_tracks; ++track)
 			{
 				this.midi_pos[track] = 0;
-				this.midi_nexttime[track] = 0;
+				//this.midi_nexttime[track] = 0;
 			}
+			this.midi_time = 0;
+			return;
 		}
 		else
 		{
@@ -804,6 +806,7 @@ bool sv_music_command(entity this, string cmd, float argc)
 			{
 #ifdef MIDI_SUPPORT
 				this.midi_looping = stob(argv(2));
+				sprint(this, strcat("Looping ", ((this.midi_looping) ? "enabled" : "disabled"), "\n"));
 #endif
 				return true;
 			}
@@ -897,8 +900,7 @@ bool cl_music_command(string cmd, string command)
 		}
 		else if(argv(2) == "loop")
 		{
-			string loopstring = (argv(2) == "") ? "1" : ftos(InterpretBoolean(argv(2)));
-			localcmd(strcat("cmd music loop ", loopstring, "\n"));
+			localcmd(strcat("cmd music loop ", argv(2), "\n"));
 			return true;
 		}
 		else if(argv(1) != "")
