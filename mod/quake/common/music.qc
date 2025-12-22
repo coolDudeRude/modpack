@@ -392,7 +392,7 @@ bool midi_copy(entity this, entity from)
 	this.midi_tracks = from.midi_tracks;
 	this.midi_tictime = from.midi_tictime;
 	this.midi_time = from.midi_time;
-	this.midi_looping = from.midi_looping;
+	//this.midi_looping = from.midi_looping;
 
 	for(int track = 0; track <= from.midi_tracks; ++track)
 	{
@@ -848,8 +848,6 @@ bool sv_music_command(entity this, string cmd, float argc)
 				// if we're starting a new song, we probably don't want our old tracks set!
 				this.midi_playtrack = 0;
 				midi_process(this, midi_test);
-				if(argv(2) == "loop")
-					this.midi_looping = true;
 				Music_Conductor_Copy(this);
 				return true;
 			}
@@ -895,6 +893,12 @@ bool cl_music_command(string cmd, string command)
 		else if(argv(1) == "track")
 		{
 			localcmd(strcat("cmd music track ", argv(2), "\n"));
+			return true;
+		}
+		else if(argv(2) == "loop")
+		{
+			string loopstring = (argv(2) == "") ? "1" : ftos(InterpretBoolean(argv(2)));
+			localcmd(strcat("cmd music loop ", loopstring, "\n"));
 			return true;
 		}
 		else if(argv(1) != "")
