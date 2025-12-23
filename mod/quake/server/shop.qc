@@ -242,16 +242,21 @@ bool shopkeep_send(entity this, entity to, int sf)
 	WriteHeader(MSG_ENTITY, ENT_CLIENT_SHOPKEEP);
 
 	WriteVector(MSG_ENTITY, this.origin);
+	WriteByte(MSG_ENTITY, this.spawnflags);
 	return true;
 }
 
 void shopkeep_spawn(entity this)
 {
+	if(season == SEASON_HALLOWEEN)
+		this.spawnflags |= 1; // damion
 	precache_sound("items/r_item2.wav");
 	precache_sound("items/armor1.wav");
 	precache_sound("weapons/pkup.wav");
-	//setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
-	setsize(this, '-16 -16 -1', '16 16 24');
+	if(this.spawnflags & 1)
+		setsize(this, '-16 -16 -1', '16 16 24');
+	else
+		setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
 	this.solid = SOLID_NOT;
 	DropToFloor_QC_DelayedInit(this);
 	set_movetype(this, MOVETYPE_NONE);

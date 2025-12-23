@@ -503,9 +503,7 @@ void horde_ammo_refresh(entity this)
 void horde_ammo_touch(entity this, entity toucher)
 {
 	// early exit touch if not a player or not alive
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.health <= 0)
+	if(!CanTouchItem(this, toucher))
 		return;
 	
 	// if player is at max ammo for ammo's type, return
@@ -613,11 +611,9 @@ void horde_ammo_touch(entity this, entity toucher)
 
 void horde_health_touch(entity this, entity toucher)
 {	
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.tank)
-		return;
 	if(toucher.m_transform)
+		return;
+	if(!CanTouchItem(this, toucher))
 		return;
 	if(toucher.m_champion && toucher.m_champion.qcc_health_nopickup && this.healtype != 2)
 		return;
@@ -643,13 +639,7 @@ void horde_armor_touch(entity this, entity toucher)
 	float type = 0.3, value = 100;
 	int bit = IT_ARMOR1;
 	
-	if(toucher.health <= 0)
-		return;
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.tank)
-		return;
-	if(toucher.m_transform)
+	if(!CanTouchItem(this, toucher))
 		return;
 
 	if(this.classname == "item_armor1")
@@ -775,9 +765,7 @@ void horde_key_spend(float key_item)
 
 void horde_key_touch(entity this, entity toucher)
 {
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.health <= 0)
+	if(!CanTouchItem(this, toucher))
 		return;
 
 	string keyname = (this.netname != "") ? this.netname : "key";
@@ -1792,7 +1780,10 @@ void Wavecheck(entity this)
 		this.nextthink = time + 20; // in case the players are slow to find the key
 		this.active = false;
 		shop_opentime = this.nextthink + 4; // give players some time to shop around too! buffer is for the countdown to the new round
-		Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_SHOP_OPEN);
+		if(season == SEASON_HALLOWEEN)
+			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_SHOP_OPEN_DAMION);
+		else
+			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_SHOP_OPEN_GREMMY);
 	}
 	else
 	{

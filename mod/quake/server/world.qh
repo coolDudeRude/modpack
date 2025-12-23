@@ -38,6 +38,7 @@ bool gameover;
 int season;
 const int SEASON_NONE = 0;
 const int SEASON_XMAS = 1;
+const int SEASON_HALLOWEEN = 2;
 
 // copper junk
 // mostly unused unless necessary for compat

@@ -991,7 +991,7 @@ void UpdateCharmerGoal(entity this)
 
 	if (this.huntingcharmer == 1)
 	{
-		entity targ = spawn();
+		entity targ = (this.trigger_field) ? this.trigger_field : spawn();
 		this.trigger_field = targ;
 		setorigin(targ,this.charmer.origin);
 		this.huntingcharmer = 2;
@@ -1065,6 +1065,7 @@ void TeleportToCharmer(entity this, bool show_effect)
 	{
 		setorigin(this, from);
 		this.velocity = oldvel;
+		return;
 	}
 
 	this.velocity = oldvel;
@@ -1107,6 +1108,7 @@ void StopHuntingCharmer(entity this)
 	this.goalentity = NULL;
 	if (this.huntingcharmer > 1 && this.trigger_field)
 		delete(this.trigger_field);
+	this.trigger_field = NULL;
 	this.huntingcharmer = 0;
 	setthink(this, this.th_stand);
 	this.nextthink = time + 0.1;
@@ -1236,7 +1238,11 @@ bool FindTarget(entity this)
 		//this.effects |= EF_DIMLIGHT;
 		if(this.huntingcharmer > 0)
 		{
-			if(autocvar_sv_quake_pets_teleport && !horde_ent && this.health > 0 && IS_PLAYER(this.charmer) && !(this.monsterdef.spawnflags & MON_FLAG_STATIONARY) && !intermission_running && !cutscene_running && vdist(this.origin - this.charmer.origin, >, 1024))
+			float tp_maxrange = 1024;
+			if(this.grinch_max) // TODO: allow customising
+				tp_maxrange = 512;
+			if(autocvar_sv_quake_pets_teleport && !horde_ent && this.health > 0 && IS_PLAYER(this.charmer) && IS_ONGROUND(this.charmer)
+				&& !(this.monsterdef.spawnflags & MON_FLAG_STATIONARY) && !intermission_running && !cutscene_running && vdist(this.origin - this.charmer.origin, >, tp_maxrange))
 				TeleportToCharmer(this, true);
 
 			UpdateCharmerGoal(this);

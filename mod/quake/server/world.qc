@@ -1502,6 +1502,8 @@ spawnfunc(worldspawn)
 	float month = stof(strftime(true, "%m"));
 	if(month == 12)
 		season = SEASON_XMAS;
+	else if(month == 10)
+		season = SEASON_HALLOWEEN;
 
 	startingserverflags = serverflags;
 

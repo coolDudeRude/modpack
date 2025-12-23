@@ -3,9 +3,12 @@
 #include "../common/shop.qh"
 #include "../common/sounds/all.qh"
 
+entity shop_shopkeep;
 STATIC_INIT_LATE(shop_init)
 {
 	registercommand("shop");
+
+	shop_shopkeep = NULL;
 }
 
 void shop_close();
@@ -194,9 +197,13 @@ void shop_buyselected()
 
 	LOG_DEBUG("Buying ", ShopItem_Name(shop_hovered_index));
 	localcmd(sprintf("cmd shop %s\n", ShopItem_Name(shop_hovered_index)));
-	if(csqcplayer) // just play it from the player so we don't have to look for the gremlin!
-		_sound(csqcplayer, CH_TRIGGER_SINGLE, "damion/purchase.wav", VOL_BASE, ATTEN_NORM);
-		//_sound(csqcplayer, CH_TRIGGER_SINGLE, "grem/sight1.wav", VOL_BASE, ATTEN_NORM);
+	if(csqcplayer)
+	{
+		if(shop_shopkeep && (shop_shopkeep.spawnflags & 1))
+			_sound(csqcplayer, CH_TRIGGER_SINGLE, "damion/purchase.wav", VOL_BASE, ATTEN_NORM);
+		else
+			_sound(csqcplayer, CH_TRIGGER_SINGLE, "grem/sight1.wav", VOL_BASE, ATTEN_NORM);
+	}
 	shop_close();
 }
 
@@ -373,10 +380,11 @@ void cl_shop_draw()
 		shop_menu_info(shop_hovered_index);
 }
 
-void shop_open()
+void shop_open(entity shopkeep)
 {
 	shop_hovered_index = -1;
 	shop_item_count = 0;
+	shop_shopkeep = shopkeep;
 	cursor_active |= GUI_OPEN_SHOP;
 	setcursormode(cursor_active);
 }
@@ -385,6 +393,7 @@ void shop_close()
 {
 	shop_hovered_index = -1;
 	shop_item_count = 0;
+	shop_shopkeep = NULL;
 	cursor_active &= ~GUI_OPEN_SHOP;
 	setcursormode(cursor_active);
 
@@ -408,7 +417,7 @@ bool cl_shop_command(string cmd)
 			localcmd(strcat("cmd shop ", argv(1), "\n"));
 			return true;
 		}
-		shop_open();
+		shop_open(NULL); // TODO: make this need a local shopkeep
 		return true;
 	}
 	return false;
@@ -502,10 +511,10 @@ bool cl_shop_input_event(float evtype, float scanx, float chary, float devid)
 	return false;
 }
 
-//const vector anim_shopkeep_closed = '0 16 0';
-//const vector anim_shopkeep_open = '44 59 0';
-const vector anim_shopkeep_closed = '0 15 0';
-const vector anim_shopkeep_open = '16 51 0';
+const vector anim_shopkeep_gremmy_closed = '0 16 0';
+const vector anim_shopkeep_gremmy_open = '44 59 0';
+const vector anim_shopkeep_damion_closed = '0 15 0';
+const vector anim_shopkeep_damion_open = '16 51 0';
 
 .float shopkeep_frametick;
 .vector colormod;
@@ -515,6 +524,8 @@ void shopkeep_draw(entity this)
 	{
 		CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
 		this.frame += 1;
+		vector anim_shopkeep_closed = (this.spawnflags & 1) ? anim_shopkeep_damion_closed : anim_shopkeep_gremmy_closed;
+		vector anim_shopkeep_open = (this.spawnflags & 1) ? anim_shopkeep_damion_open : anim_shopkeep_gremmy_open;
 		if(STAT(SHOP_OPEN) > time)
 		{
 			if(this.frame < anim_shopkeep_open.x || this.frame > anim_shopkeep_open.y)
@@ -548,23 +559,31 @@ void shopkeep_draw(entity this)
 
 	this.shopkeep_delay = 0;
 	_sound(this, CH_TRIGGER_SINGLE, "grem/idle.wav", VOL_BASE, ATTEN_NORM);
-	shop_open();
+	shop_open(this);
 }
 
 NET_HANDLE(ENT_CLIENT_SHOPKEEP, bool isnew)
 {
 	this.origin = ReadVector();
 	setorigin(this, this.origin);
+	this.spawnflags = ReadByte();
 
-	//_setmodel(this, "progs/grem.mdl");
-	_setmodel(this, "progs/gift08.mdl");
 	this.solid = SOLID_NOT;
-	//setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
-	setsize(this, '-16 -16 -1', '16 16 24');
+	if(this.spawnflags & 1)
+	{
+		_setmodel(this, "progs/gift08.mdl");
+		setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
+	}
+	else
+	{
+		_setmodel(this, "progs/grem.mdl");
+		setsize(this, '-16 -16 -1', '16 16 24');
+	}
 	set_movetype(this, MOVETYPE_NONE);
 	this.shopkeep_frametick = 0;
 	this.frame = 0;
-	//this.colormod = '0 1 0'; // make sure people know he's friendly!
+	if(!(this.spawnflags & 1))
+		this.colormod = '0 1 0'; // make sure people know he's friendly!
 	CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
 	CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
 	this.lerpfrac = 0; // reset frames

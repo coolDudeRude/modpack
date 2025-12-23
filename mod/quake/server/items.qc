@@ -21,6 +21,24 @@ void SendItemPickup(entity this, int item, float amount)
 	WriteShort(MSG_ONE, rint(amount));
 }
 
+bool CanTouchItem(entity this, entity toucher)
+{
+	if(toucher.exptime != 0)
+		return false;
+	if(!IS_PLAYER(toucher))
+		return false;
+	if(toucher.health <= 0)
+		return false;
+	if(toucher.tank && this.classname != "item_hornofconjuring" && this.classname != "item_revival")
+		return false;
+	if(toucher.clockwork)
+		return false;
+	//if(toucher.m_transform && !this.weapon)
+		//return false;
+
+	return true;
+}
+
 void W_SetCurrentAmmo(entity this);
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
@@ -313,15 +331,9 @@ spawnfunc(health_bonus)
 
 void health_touch(entity this, entity toucher)
 {
-	if(toucher.exptime != 0)
-		return;
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.tank)
-		return;
-	if(toucher.clockwork)
-		return;
 	if(toucher.m_transform)
+		return; // transformations cannot heal
+	if(!CanTouchItem(this, toucher))
 		return;
 	if(toucher.m_champion && toucher.m_champion.qcc_health_nopickup && this.healtype != 2)
 		return;
@@ -388,13 +400,7 @@ ARMOR
 .float armorid; // temporary hack to make spawned items work
 void armor_touch(entity this, entity toucher)
 {
-	if(toucher.health <= 0)
-		return;
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.tank)
-		return;
-	if(toucher.m_transform)
+	if(!CanTouchItem(this, toucher))
 		return;
 
 	bool pickedup = false;
@@ -763,9 +769,7 @@ weapon_touch
 
 void weapon_touch(entity this, entity toucher)
 {
-	if(toucher.health <= 0)
-		return;
-	if(!IS_PLAYER(toucher))
+	if(!CanTouchItem(this, toucher))
 		return;
 
 	.entity weaponentity = weaponentities[0]; // TODO?
@@ -1052,9 +1056,7 @@ AMMO
 
 void ammo_touch(entity this, entity toucher)
 {
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.health <= 0)
+	if(!CanTouchItem(this, toucher))
 		return;
 
 // if the player was using his best weapon, change up to the new one if better
@@ -2223,11 +2225,7 @@ void random_regen(entity this);
 
 void powerup_touch(entity this, entity toucher)
 {
-	if(!IS_PLAYER(toucher))
-		return;
-	if(toucher.health <= 0)
-		return;
-	if(toucher.tank && this.classname != "item_hornofconjuring" && this.classname != "item_revival")
+	if(!CanTouchItem(this, toucher))
 		return;
 
 	string pname = (this.netname != "") ? this.netname : "Powerup";

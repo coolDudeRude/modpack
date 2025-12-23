@@ -121,7 +121,8 @@ METHOD(Grinch, m_cannon_land, bool(Champions this, entity actor))
 {
 	if(!actor.grinch_cannon)
 		return false;
-	stopsound(actor, CH_TRIGGER_SINGLE);
+	// NOTE: disabled as his voice clip is short!
+	//stopsound(actor, CH_TRIGGER_SINGLE);
 	actor.grinch_cannon = false;
 	return false;
 }
