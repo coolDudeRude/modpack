@@ -357,7 +357,10 @@ void sham_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -60 || this.dmg_take > (this.max_health * 0.6))
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_shams.mdl", this.health);
+		if(season == SEASON_XMAS)
+			ThrowHead(this, inflictor, "progs/h_shams_xmas.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_shams.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
@@ -365,7 +368,9 @@ void sham_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if(this.spawnflags & MON_SHAMBLER_COOKIE)
+	if(season == SEASON_XMAS)
+		_sound(this, CH_VOICE, "shambler/sdeath_xmas.wav", 1, ATTN_NORM);
+	else if(this.spawnflags & MON_SHAMBLER_COOKIE)
 		_sound(this, CH_VOICE, "shambler/cookie_die.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "shambler/sdeath.wav", 1, ATTN_NORM);
@@ -447,7 +452,7 @@ spawnfunc(monster_shambler)
 #ifdef SVQC
 METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 {
-    TC(Shambler, this);
+	TC(Shambler, this);
 
 	precache_model("progs/s_light.mdl");
 	precache_model("progs/bolt.mdl");
@@ -464,6 +469,18 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 	if(autocvar_skill == 3 && random() <= 0.25)
 		actor.spawnflags |= MON_SHAMBLER_COOKIE;
 
+	if(season == SEASON_XMAS)
+	{
+		actor.spawnflags &= ~MON_SHAMBLER_COOKIE;
+		precache_model("progs/h_shams_xmas.mdl");
+		precache_model("progs/shambler_xmas.mdl");
+		precache_sound("shambler/ssight_xmas.wav");
+		precache_sound("shambler/sdeath_xmas.wav");
+
+		_setmodel(actor, "progs/shambler_xmas.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
+
 	if(actor.spawnflags & MON_SHAMBLER_COOKIE)
 	{
 		precache_sound("hknight/attack1.wav");
@@ -472,13 +489,14 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 		precache_sound("shambler/nomnom.wav");
 		precache_sound("shambler/cookie.wav");
 		precache_model("progs/cookie.mdl");
+
 		precache_model("progs/shambler_cookie_creature.mdl");
 		_setmodel(actor, "progs/shambler_cookie_creature.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
 
-    actor.health = 600;
-    actor.th_stand = sham_stand1;
+	actor.health = 600;
+	actor.th_stand = sham_stand1;
 	actor.th_walk = sham_walk1;
 	actor.th_run = sham_run1;
 	actor.th_die = sham_die;
@@ -490,17 +508,19 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 
 	actor.steptype = FS_TYPELARGE;
 
-    return true;
+	return true;
 }
 METHOD(Shambler, mr_sight, bool(Shambler this, entity actor))
 {
-    TC(Shambler, this);
+	TC(Shambler, this);
 
-    if(actor.spawnflags & MON_SHAMBLER_COOKIE)
+	if(season == SEASON_XMAS)
+		_sound(actor, CH_VOICE, "shambler/ssight_xmas.wav", 1, ATTN_NORM);
+	else if(actor.spawnflags & MON_SHAMBLER_COOKIE)
 		_sound(actor, CH_VOICE, "shambler/cookie.wav", 1, ATTN_NORM);
 	else
 		sound(actor, CH_VOICE, SND_MON_SHAMBLER_SIGHT, 1, ATTN_NORM);
 
-    return true;
+	return true;
 }
 #endif

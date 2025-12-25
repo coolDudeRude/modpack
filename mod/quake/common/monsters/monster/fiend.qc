@@ -41,7 +41,12 @@ void demon1_walk1(entity this)
 {
 	set_animofs(this, anim_demon_walk, 1, demon1_walk2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	{
+		if(season == SEASON_XMAS)
+			_sound(this, CH_VOICE, "demon_xmas/idle1.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	}
 	ai_walk(this, 8);
 	monster_footstep(this, false);
 }
@@ -56,7 +61,12 @@ void demon1_run1(entity this)
 {
 	set_animofs(this, anim_demon_run, 1, demon1_run2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	{
+		if(season == SEASON_XMAS)
+			_sound(this, CH_VOICE, "demon_xmas/idle1.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	}
 	ai_run(this, 20);
 }
 
@@ -148,7 +158,10 @@ void demon1_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 
 	this.pain_finished = time + 1;
-    _sound(this, CH_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
+	if(season == SEASON_XMAS)
+		_sound(this, CH_VOICE, "demon_xmas/dpain1.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
 
 	if(random()*200 > damage)
 		return;		// didn't flinch
@@ -171,7 +184,10 @@ void demon1_die2(entity this) { set_animofs(this, anim_demon_death, 2, demon1_di
 void demon1_die1(entity this)
 {
 	set_animofs(this, anim_demon_death, 1, demon1_die2);
-	_sound(this, CH_VOICE, "demon/ddeath.wav", 1, ATTN_NORM);
+	if(season == SEASON_XMAS)
+		_sound(this, CH_VOICE, "demon_xmas/ddeath.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "demon/ddeath.wav", 1, ATTN_NORM);
 	this.solid = SOLID_NOT;
 }
 
@@ -181,7 +197,10 @@ void demon_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -80)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_demon.mdl", this.health);
+		if(season == SEASON_XMAS)
+			ThrowHead(this, inflictor, "progs/h_demon_xmas.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_demon.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
@@ -257,7 +276,10 @@ bool DemonCheckAttack(entity this)
 	if(CheckDemonJump(this))
 	{
 		this.attack_state = AS_MISSILE;
-        _sound(this, CH_VOICE, "demon/djump.wav", 1, ATTN_NORM);
+		if(season == SEASON_XMAS)
+			_sound(this, CH_VOICE, "demon_xmas/djump.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "demon/djump.wav", 1, ATTN_NORM);
 		return true;
 	}
 
@@ -276,8 +298,11 @@ void Demon_Melee(entity this, float side)
 		return;
 	if(!CanDamage(this.enemy, this))
 		return;
-		
-    _sound(this, CH_WEAPON_SINGLE, "demon/dhit2.wav", 1, ATTN_NORM);
+
+	if(season == SEASON_XMAS)
+		_sound(this, CH_WEAPON_SINGLE, "demon_xmas/dhit2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_WEAPON_SINGLE, "demon/dhit2.wav", 1, ATTN_NORM);
 	float ldmg = 10 + 5*random();
 	T_Damage(this.enemy, this, this, ldmg, DEATH_MONSTER_FIEND.m_id);	
 
@@ -342,13 +367,28 @@ spawnfunc(monster_cyberdemon) { monster_start(this, true, MON_FIEND); }
 #ifdef SVQC
 METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 {
-    TC(Fiend, this);
+	TC(Fiend, this);
 
 	precache_sound("demon/ddeath.wav");
 	precache_sound("demon/dhit2.wav");
 	precache_sound("demon/djump.wav");
 	precache_sound("demon/dpain1.wav");
 	precache_sound("demon/idle1.wav");
+
+	if(season == SEASON_XMAS)
+	{
+		precache_model("progs/demon_xmas.mdl");
+		precache_model("progs/h_demon_xmas.mdl");
+		precache_sound("demon_xmas/ddeath.wav");
+		precache_sound("demon_xmas/dhit2.wav");
+		precache_sound("demon_xmas/djump.wav");
+		precache_sound("demon_xmas/dpain1.wav");
+		precache_sound("demon_xmas/idle1.wav");
+		precache_sound("demon_xmas/sight2.wav");
+
+		_setmodel(actor, "progs/demon_xmas.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 
 	actor.health = 300;
 	actor.th_stand = demon1_stand1;
@@ -362,6 +402,17 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 	actor.checkattack = DemonCheckAttack;
 
 	actor.steptype = FS_TYPESLOW;
+
+	return true;
+}
+METHOD(Fiend, mr_sight, bool(Fiend this, entity actor))
+{
+	TC(Fiend, this);
+
+	if(season == SEASON_XMAS)
+		_sound(actor, CH_VOICE, "demon_xmas/sight2.wav", 1, ATTN_NORM);
+	else
+		sound(actor, CH_VOICE, SND_MON_FIEND_SIGHT, 1, ATTN_NORM);
 
 	return true;
 }

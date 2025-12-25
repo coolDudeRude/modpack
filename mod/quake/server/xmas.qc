@@ -130,6 +130,7 @@ bool xmas_replace(entity this)
 		tree.solid = SOLID_NOT;
 		tree.scale = 0.45;
 		tree.angles = this.angles;
+		tree.candrag = true;
 		set_movetype(tree, MOVETYPE_TOSS);
 		setorigin(tree, this.origin);
 		_setmodel(tree, "progs/balxj_tree_a.mdl");
@@ -159,6 +160,7 @@ bool xmas_replace(entity this)
 	present.target4 = this.target4;
 	present.killtarget = this.killtarget;
 	present.angles = this.angles;
+	present.candrag = true;
 	set_movetype(present, MOVETYPE_TOSS);
 	present.frame = floor(random() * 10);
 	present.skin = floor(random() * 10);
