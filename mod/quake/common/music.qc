@@ -829,13 +829,13 @@ bool sv_music_command(entity this, string cmd, float argc)
 					return true;
 				string output = "";
 				int n = search_getsize(dh);
-    			for (int i = 0; i < n; ++i)
-    			{
-    				string s = search_getfilename(dh, i);
-    				s = substring(s, 6, -5); // no extension
-    				output = cons(output, strcat(s, "\n"));
-    			}
-    			sprint(this, strcat("List of MIDIs:\n ", output));
+				for (int i = 0; i < n; ++i)
+				{
+					string s = search_getfilename(dh, i);
+					s = substring(s, 6, -5); // no extension
+					output = cons(output, strcat(s, "\n"));
+				}
+				sprint(this, strcat("List of MIDIs:\n ", output));
 				return true;
 			}
 #ifdef MIDI_NETWORK
@@ -845,6 +845,32 @@ bool sv_music_command(entity this, string cmd, float argc)
 				return true;
 			}
 #endif
+			if(mymusic == "random")
+			{
+				if(time < this.last_midicheck)
+				{
+					sprint(this, "Hey you - no spamming!\n");
+					return true;
+				}
+				this.last_midicheck = time + 1;
+				int dh = search_begin("midis/*.txt", false, true);
+				if(dh < 0)
+					return true;
+				RandomSelection_Init();
+				int n = search_getsize(dh);
+				for (int i = 0; i < n; ++i)
+				{
+					string s = search_getfilename(dh, i);
+					s = substring(s, 6, -5); // no extension
+					RandomSelection_AddString(s, 1, 1);
+				}
+				sprint(this, strcat("Playing ", RandomSelection_chosen_string, "\n"));
+				this.midi_playtrack = 0;
+				midi_process(this, RandomSelection_chosen_string);
+				Music_Conductor_Copy(this);
+				return true;
+			}
+
 			string midi_test = strcat("midis/", MakeConsoleSafe(argv(1)), ".txt");
 			if(fexists(midi_test))
 			{
