@@ -861,12 +861,12 @@ bool sv_music_command(entity this, string cmd, float argc)
 				for (int i = 0; i < n; ++i)
 				{
 					string s = search_getfilename(dh, i);
-					s = substring(s, 6, -5); // no extension
 					RandomSelection_AddString(s, 1, 1);
 				}
-				sprint(this, strcat("Playing ", RandomSelection_chosen_string, "\n"));
+				string chosen = RandomSelection_chosen_string;
+				sprint(this, strcat("Playing ", substring(chosen, 6, -5), "\n"));
 				this.midi_playtrack = 0;
-				midi_process(this, RandomSelection_chosen_string);
+				midi_process(this, chosen);
 				Music_Conductor_Copy(this);
 				return true;
 			}
