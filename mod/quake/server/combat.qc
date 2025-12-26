@@ -782,6 +782,25 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 
 	if(IS_MONSTER(targ) && attacker && !(targ.monsterdef.spawnflags & MON_FLAG_NOAGGRO) && !(targ.monsterdef.spawnflags & MON_FLAG_NOTARGET) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && deathtype != DEATH_TRAP.m_id)
 	{
+		// make pets focus the target
+		FOREACH_ENTITY_ENT(charmer, attacker,
+		{
+			if(!it.charmed || it.is_frozen || it.health <= 0 || it.enemy == targ)
+				continue;
+
+			if(!it.aggro_time || (it.aggro_time + AGGRO_MIN + (random() * AGGRO_ADD) < time))
+			{
+				if(CanTeleportToTarget(it, targ, 768))
+					TeleportToTarget(it, targ, true);
+
+				if(IS_PLAYER(it.enemy))
+					it.oldenemy = it.enemy;
+				it.enemy = targ;
+				it.aggro_time = time;
+				FoundTarget(it);
+			}
+		});
+
 	// get mad unless of the same class(except for soldiers)
 		if(targ != attacker && attacker != targ.enemy && targ.charmer != attacker && !targ.charmed && !targ.is_frozen)
 		{

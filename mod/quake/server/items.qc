@@ -2094,7 +2094,8 @@ spawnfunc(misc_rune_indicator)
 
 // hacked in fallback method for spawning a monster with the horn of conjuring
 // used for horns that somehow spawn without a target
-entity horn_spawnmonster(vector spawnpos, entity actor, Monster mon)
+// NOTE: deletes the inputted entity if selection fails!
+entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster mon)
 {
 	if(!mon || mon == MON_Null)
 	{
@@ -2115,9 +2116,12 @@ entity horn_spawnmonster(vector spawnpos, entity actor, Monster mon)
 	}
 
 	if(!mon || mon == MON_Null)
+	{
+		delete(monster);
 		return NULL;
+	}
 
-	entity monster = new(monster);
+	//entity monster = new(monster);
 	monster.monsterdef = mon;
 	monster.flags |= FL_MONSTER;
 	//monster.owner = actor;
@@ -2330,7 +2334,7 @@ void powerup_touch(entity this, entity toucher)
 		if(!this.target || this.target == "")
 		{
 			// otherwise attempt to spawn in a random monster
-			horn_spawnmonster(this.origin, toucher, MON_Null);
+			horn_spawnmonster(new(monster), this.origin, toucher, MON_Null);
 		}
 	}
 

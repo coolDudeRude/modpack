@@ -77,7 +77,7 @@ void xmas_present_ammo(entity this, entity toucher)
 
 void xmas_present_monster(entity this, entity toucher)
 {
-	horn_spawnmonster(this.origin, NULL, MON_ELF);
+	horn_spawnmonster(new(monster), this.origin, NULL, MON_ELF);
 }
 
 void xmas_present_touch(entity this, entity toucher)

@@ -71,6 +71,8 @@ void target_transform_use(entity this, entity actor, entity trigger)
 	{
 		if(this.wait > 0)
 			actor.transform_limited = time + this.wait;
+		if(this.max_health > 0)
+			actor.transform_health = this.max_health;
 		actor.m_transform = targ;
 	}
 }
@@ -80,6 +82,7 @@ Transforms the player when activated, or restores their original state if toggle
 
 "message" destination transformation, can be empty to force reset any active transformations
 "wait" time the transformation will last, infinite if not set
+"max_health" transformation health, doesn't change health if not set
 
 TOGGLE	cancels the transformation if activated again
 */

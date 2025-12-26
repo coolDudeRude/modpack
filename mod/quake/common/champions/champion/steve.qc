@@ -88,7 +88,7 @@ void steve_block_die(entity this, entity inflictor, entity attacker, int deathty
 		});
 		RandomSelection_AddEnt(MON_GOATLING, 1, 1);
 
-		entity mon = horn_spawnmonster(oldorg, this.realowner, RandomSelection_chosen_ent);
+		entity mon = horn_spawnmonster(new(monster), oldorg, this.realowner, RandomSelection_chosen_ent);
 		if(!mon)
 			return; // dunno how but just incase!
 		mon.angles_y += random() * 359;

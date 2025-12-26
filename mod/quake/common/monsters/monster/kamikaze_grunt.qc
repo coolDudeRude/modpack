@@ -116,14 +116,14 @@ void kami_painb2(entity this) { set_animofs(this, anim_kamikaze_painb, 2, kami_p
 void kami_painb1(entity this) { set_animofs(this, anim_kamikaze_painb, 1, kami_painb2); this.pos1 = '4 8 32'; }
 
 void kami_painc13(entity this) { set_animofs(this, anim_kamikaze_painc, 13, kami_run1); this.pos1 = '12 2 30'; }
-void kami_painc12(entity this) { set_animofs(this, anim_kamikaze_painc, 12, kami_painc13); this.pos1 = '14 2 30';ai_painforward(this, 8); }
-void kami_painc11(entity this) { set_animofs(this, anim_kamikaze_painc, 11, kami_painc12); this.pos1 = '20 0 24';ai_painforward(this, 6); }
-void kami_painc10(entity this) { set_animofs(this, anim_kamikaze_painc, 10, kami_painc11); this.pos1 = '22 0 24';ai_painforward(this, 3); }
-void kami_painc9(entity this) { set_animofs(this, anim_kamikaze_painc, 9, kami_painc10); this.pos1 = '24 0 20';ai_painforward(this, 4); }
+void kami_painc12(entity this) { set_animofs(this, anim_kamikaze_painc, 12, kami_painc13); this.pos1 = '14 2 30'; ai_painforward(this, 8); }
+void kami_painc11(entity this) { set_animofs(this, anim_kamikaze_painc, 11, kami_painc12); this.pos1 = '20 0 24'; ai_painforward(this, 6); }
+void kami_painc10(entity this) { set_animofs(this, anim_kamikaze_painc, 10, kami_painc11); this.pos1 = '22 0 24'; ai_painforward(this, 3); }
+void kami_painc9(entity this) { set_animofs(this, anim_kamikaze_painc, 9, kami_painc10); this.pos1 = '24 0 20'; ai_painforward(this, 4); }
 void kami_painc8(entity this) { set_animofs(this, anim_kamikaze_painc, 8, kami_painc9); this.pos1 = '24 6 20'; ai_pain(this, 1); }
 void kami_painc7(entity this) { set_animofs(this, anim_kamikaze_painc, 7, kami_painc8); this.pos1 = '24 6 16'; }
-void kami_painc6(entity this) { set_animofs(this, anim_kamikaze_painc, 6, kami_painc7); this.pos1 = '22 6 20';ai_painforward(this, 1); }
-void kami_painc5(entity this) { set_animofs(this, anim_kamikaze_painc, 5, kami_painc6); this.pos1 = '22 6 16';ai_painforward(this, 1); }
+void kami_painc6(entity this) { set_animofs(this, anim_kamikaze_painc, 6, kami_painc7); this.pos1 = '22 6 20'; ai_painforward(this, 1); }
+void kami_painc5(entity this) { set_animofs(this, anim_kamikaze_painc, 5, kami_painc6); this.pos1 = '22 6 16'; ai_painforward(this, 1); }
 void kami_painc4(entity this) { set_animofs(this, anim_kamikaze_painc, 4, kami_painc5); this.pos1 = '12 2 28'; }
 void kami_painc3(entity this) { set_animofs(this, anim_kamikaze_painc, 3, kami_painc4); this.pos1 = '0 -2 34'; }
 void kami_painc2(entity this) { set_animofs(this, anim_kamikaze_painc, 2, kami_painc3); this.pos1 = '-4 -4 36'; ai_pain(this, 1); }
@@ -176,7 +176,7 @@ void kami_cdie8(entity this) { set_animofs(this, anim_kamikaze_deathc, 8, kami_c
 void kami_cdie7(entity this) { set_animofs(this, anim_kamikaze_deathc, 7, kami_cdie8); this.pos1 = '-30 0 6'; }
 void kami_cdie6(entity this) { set_animofs(this, anim_kamikaze_deathc, 6, kami_cdie7); this.pos1 = '-26 -8 14'; ai_back(this, 4); }
 void kami_cdie5(entity this) { set_animofs(this, anim_kamikaze_deathc, 5, kami_cdie6); this.pos1 = '-32 -12 16'; ai_back(this, 3); }
-void kami_cdie4(entity this) { set_animofs(this, anim_kamikaze_deathc, 4, kami_cdie5); this.pos1 = '-34 -10 18';ai_back(this, 13); }
+void kami_cdie4(entity this) { set_animofs(this, anim_kamikaze_deathc, 4, kami_cdie5); this.pos1 = '-34 -10 18'; ai_back(this, 13); }
 void kami_cdie3(entity this) { set_animofs(this, anim_kamikaze_deathc, 3, kami_cdie4); this.pos1 = '-36 -6 22'; ai_back(this, 4); }
 void kami_cdie2(entity this) { set_animofs(this, anim_kamikaze_deathc, 2, kami_cdie3); this.pos1 = '-34 -2 26'; ai_back(this, 5); }
 void kami_cdie1(entity this) { set_animofs(this, anim_kamikaze_deathc, 1, kami_cdie2); this.pos1 = '-26 -4 32'; this.solid = SOLID_NOT; }
@@ -268,7 +268,10 @@ void kamikaze_explosiveboom(entity this, entity inflictor, entity attacker, int 
 				kami_gib(this.owner, inflictor);
 			}
 			else if(this.owner.health > 0)
+			{
+				this.owner.health = -50;
 				Killed(this.owner, this, this.enemy, DEATH_CRUSH.m_id);
+			}
 		}
 	}
 

@@ -575,7 +575,7 @@ void summon_vorelings(entity this)
 		tracebox(org, chosen.m_mins, chosen.m_maxs, org + offset, MOVE_NOMONSTERS, this);
 		this.dphitcontentsmask = oldsolid;
 
-		entity mon = horn_spawnmonster(trace_endpos, this.realowner, chosen);
+		entity mon = horn_spawnmonster(new(monster), trace_endpos, this.realowner, chosen);
 		if(!mon)
 			continue; // dunno how but just incase!
 		mon.angles_y += random() * 359;
@@ -590,7 +590,7 @@ void summon_vorelings(entity this)
 	this.nextthink = time + 20;
 }
 
-entity horn_spawnmonster(vector spawnpos, entity actor, Monster mon);
+entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster mon);
 void W_Spell_Voreling(entity this, vector spot)
 {
 	entity rune = rune_summon(this, spot, MDL_RUNE_VORELING, EFFECT_RUNE_PUFF_RED, SPELL_VORELING);

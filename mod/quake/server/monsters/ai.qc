@@ -1019,7 +1019,7 @@ void UpdateCharmerGoal(entity this)
 
 // addition by Mario: attempt to teleport to an empty space near the charmer
 // TODO: specially try to avoid spawning infront of the player
-void TeleportToCharmer(entity this, bool show_effect)
+void TeleportToTarget(entity this, entity targ, bool show_effect)
 {
 #if 0
 	vector extrasize = '1 1 1' * MAX_CHARMER_DISTANCE;
@@ -1037,11 +1037,11 @@ void TeleportToCharmer(entity this, bool show_effect)
 	}
 #else
 	// do an initial trace (cheaper than tracetoss) to make sure starting spot is safe, as an early return
-	tracebox(this.charmer.origin, this.mins, this.maxs, this.charmer.origin, MOVE_NOMONSTERS, this.charmer);
+	tracebox(targ.origin, this.mins, this.maxs, targ.origin, MOVE_NOMONSTERS, targ);
 	if(trace_startsolid)
 		return;
 
-	makevectors(this.charmer.angles);
+	makevectors(targ.angles);
 
 	// randomly place the monster behind or to the side!
 	// TODO: more variation? just need to avoid putting it infront!
@@ -1057,11 +1057,11 @@ void TeleportToCharmer(entity this, bool show_effect)
 	vector from = this.origin;
 	vector oldvel = this.velocity;
 	this.velocity = dir * 600 + v_up * 220;
-	setorigin(this, this.charmer.origin);
-	tracetoss(this, this.charmer);
+	setorigin(this, targ.origin);
+	tracetoss(this, targ);
 
 	// didn't get far enough
-	if(trace_startsolid || vdist(trace_endpos - this.charmer.origin, <, 32))
+	if(trace_startsolid || vdist(trace_endpos - targ.origin, <, 32))
 	{
 		setorigin(this, from);
 		this.velocity = oldvel;
@@ -1077,6 +1077,20 @@ void TeleportToCharmer(entity this, bool show_effect)
 	}
 	UNSET_ONGROUND(this);
 #endif
+}
+
+bool CanTeleportToTarget(entity this, entity targ, float tprange)
+{
+	if(!autocvar_sv_quake_pets_teleport || horde_ent)
+		return false;
+	if(this.health <= 0)
+		return false;
+	if(!IS_ONGROUND(targ) && !(this.flags & FL_FLY))
+		return false;
+	if((this.monsterdef.spawnflags & MON_FLAG_STATIONARY) || intermission_running || cutscene_running)
+		return false;
+
+	return vdist(this.origin - targ.origin, >, tprange);
 }
 
 //============================================================================
@@ -1241,9 +1255,8 @@ bool FindTarget(entity this)
 			float tp_maxrange = 1024;
 			if(this.grinch_max) // TODO: allow customising
 				tp_maxrange = 512;
-			if(autocvar_sv_quake_pets_teleport && !horde_ent && this.health > 0 && IS_PLAYER(this.charmer) && IS_ONGROUND(this.charmer)
-				&& !(this.monsterdef.spawnflags & MON_FLAG_STATIONARY) && !intermission_running && !cutscene_running && vdist(this.origin - this.charmer.origin, >, tp_maxrange))
-				TeleportToCharmer(this, true);
+			if(IS_PLAYER(this.charmer) && CanTeleportToTarget(this, this.charmer, tp_maxrange))
+				TeleportToTarget(this, this.charmer, true);
 
 			UpdateCharmerGoal(this);
 //          this.goalentity = this.charmer;
@@ -1323,6 +1336,9 @@ bool FindTarget(entity this)
 
 	if(client == this.enemy)
 		return false;
+
+	if(client.m_champion == CHAMPION_FloydChamp)
+		return false; // TODO: champion hook here?
 
 	if(!this.charmed && (client.flags & FL_NOTARGET))
 		return false;

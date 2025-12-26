@@ -67,7 +67,7 @@ spawnfunc(trigger_hurt)
 	InitTrigger(this);
 	settouch(this, hurt_touch);
 	if(!this.dmg)
-		this.dmg = 5;
+		this.dmg = (autocvar_sv_mapformat_is_quake3) ? 10000 : 5;
 	if(!this.wait)
 		this.wait = 1;
 	if((this.spawnflags & START_OFF) && IsMGMap())

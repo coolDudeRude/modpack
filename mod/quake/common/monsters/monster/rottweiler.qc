@@ -423,12 +423,13 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 	precache_sound("dog/dpain1.wav");
 	precache_sound("dog/idle.wav");
 
-	if(random() < 0.2 && (!actor.mdl_body || actor.mdl_body == ""))
+	if(!actor.variant && random() < 0.2)
+		actor.variant = floor(random() * 12) + 1;
+
+	if(actor.variant && (!actor.mdl_body || actor.mdl_body == ""))
 	{
-		int r = floor(random() * 12) + 1;
-		actor.variant = r;
-		string dogmdl = dog_getmodel(r);
-		string headmdl = dog_headmodel(r);
+		string dogmdl = dog_getmodel(actor.variant);
+		string headmdl = dog_headmodel(actor.variant);
 
 		vector oldmin = actor.mins;
 		vector oldmax = actor.maxs;

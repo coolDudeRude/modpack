@@ -38,6 +38,7 @@ void Grinch_Belch(entity this)
 	});
 }
 
+.int variant; // TODO
 METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
@@ -61,7 +62,9 @@ METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 
 		if(!foundmax)
 		{
-			entity mon = horn_spawnmonster(actor.origin + '0 0 4', actor, MON_ROTTWEILER); // TODO: variant support
+			entity mon = new(monster);
+			mon.variant = 3; // birthday
+			mon = horn_spawnmonster(mon, actor.origin + '0 0 4', actor, MON_ROTTWEILER);
 			if(!mon)
 				return; // dunno how but just incase!
 			mon.flags |= FL_CLONE; // clears it on death
@@ -71,7 +74,7 @@ METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 			mon.max_health = mon.health;
 			mon.grinch_max = true;
 			mon.damage_mod = 2; // make him kinda strong!
-			TeleportToCharmer(mon, false); // "unstick" from owner if possible
+			TeleportToTarget(mon, mon.charmer, false); // "unstick" from owner if possible
 		}
 	}
 }

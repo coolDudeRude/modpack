@@ -6,9 +6,12 @@ bool Dusk_Reap_Monster(entity this, entity targ)
 	vector org = targ.origin + (targ.mins + targ.maxs) * 0.5;
 	te_explosion2(org, 2, 7);
 	targ.dusk_revived = true;
-	entity newmon = horn_spawnmonster(targ.origin, this, targ.monsterdef);
-	newmon.dusk_revived = true;
-	newmon.health = min(200, newmon.health);
+	entity newmon = horn_spawnmonster(new(monster), targ.origin, this, targ.monsterdef);
+	if(newmon)
+	{
+		newmon.dusk_revived = true;
+		newmon.health = min(200, newmon.health);
+	}
 	delete(targ);
 	return true;
 }

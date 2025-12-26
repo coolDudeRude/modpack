@@ -5,12 +5,12 @@
 
 void end2_touch(entity this, entity toucher)
 {
+	changelevel_touch(this, toucher);
 	if(time < toucher.end1_touch_time)
 		return;
 	toucher.end1_touch_time = time + 20;
 	msg_entity = toucher;
 	WriteHeader(MSG_ONE, TE_CSQC_END2);
-	changelevel_touch(this, toucher);
 }
 
 spawnfunc(trigger_end2)
@@ -39,18 +39,18 @@ spawnfunc(trigger_end2)
 
 void end1_touch(entity this, entity toucher)
 {
-	if(time < toucher.end2_touch_time)
-		return;
-	toucher.end2_touch_time = time + 20;
-
+	changelevel_touch(this, toucher);
 	if (toucher.max_health < 8)
 	{
+		if(time < toucher.end2_touch_time)
+			return;
+		toucher.end2_touch_time = time + 20;
 		msg_entity = toucher;
 		WriteHeader(MSG_ONE, TE_CSQC_END1);
-		changelevel_touch(this, toucher);
 	}
 	else
 	{
+		// TODO: make it just target the door?
 		entity door = find(NULL, classname, "func_door");
 		if (!door) return;
 		pointparticles(EFFECT_ENEMY_DIE, (door.absmin + door.absmax) * 0.5, '0 0 1', 1);

@@ -12,6 +12,7 @@
 #include "duke.qc"
 #include "dusk.qc"
 #include "enyo.qc"
+#include "floyd.qc"
 #include "galena.qc"
 #include "goat.qc"
 #include "gordon.qc"

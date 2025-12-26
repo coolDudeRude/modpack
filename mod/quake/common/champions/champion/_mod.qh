@@ -12,6 +12,7 @@
 #include "duke.qh"
 #include "dusk.qh"
 #include "enyo.qh"
+#include "floyd.qh"
 #include "galena.qh"
 #include "goat.qh"
 #include "gordon.qh"
