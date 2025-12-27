@@ -790,7 +790,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 
 			if(!it.aggro_time || (it.aggro_time + AGGRO_MIN + (random() * AGGRO_ADD) < time))
 			{
-				if(CanTeleportToTarget(it, targ, 768))
+				if(CanTeleportToTarget(it, targ, 512))
 					TeleportToTarget(it, targ, true);
 
 				if(IS_PLAYER(it.enemy))

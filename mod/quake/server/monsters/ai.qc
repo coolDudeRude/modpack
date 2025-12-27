@@ -210,7 +210,9 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 			return false;
 	}
 
-	if(trace_fraction == 1 && !this.charmed)
+	bool charmed_check = (autocvar_sv_quake_pets_teleport) ? false : this.charmed;
+
+	if(trace_fraction == 1 && !charmed_check)
 	{
 		// if monster had the ground pulled out, go ahead and fall
 		if(this.flags & FL_PARTIALGROUND)
@@ -233,7 +235,7 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 	entity oldtraceent = trace_ent;
 	this.origin = trace_endpos;
 
-	if(!this.charmed && !t_checkbottom(this))
+	if(!charmed_check && !t_checkbottom(this))
 	{
 		if(this.flags & FL_PARTIALGROUND)
 		{
