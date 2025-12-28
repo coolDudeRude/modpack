@@ -1,6 +1,8 @@
 #include "grinch.qh"
 
 #ifdef SVQC
+int autocvar_sv_quake_grinch_belch_time = 3;
+
 .float thaw_time;
 void belch_unfreeze(entity this)
 {
@@ -43,7 +45,7 @@ METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
 	{
-		STAT(QCC_ABILITYTIME, actor) = time + 3;
+		STAT(QCC_ABILITYTIME, actor) = time + autocvar_sv_quake_grinch_belch_time;
 		Grinch_Belch(actor);
 	}
 
