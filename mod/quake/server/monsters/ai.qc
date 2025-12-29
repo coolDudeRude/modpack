@@ -471,6 +471,27 @@ spawnfunc(path_corner)
 	setsize(this, '-8 -8 -8', '8 8 8');
 }
 
+// compatibility with eagle map
+.string path;
+void change_path_use(entity this, entity actor, entity trigger)
+{
+	FOREACH_ENTITY_STRING(targetname, this.target,
+	{
+		it.target = this.path;
+	});
+}
+
+spawnfunc(trigger_change_path)
+{
+	if(!this.path || this.path == "")
+	{
+		objerror(this, "trigger_change_path with no \"path\"");
+		return;
+	}
+
+	this.use = change_path_use;
+}
+
 // path_angry from alkaline
 // TODO: maybe doesn't work, we don't have their full followingpath logic!
 
