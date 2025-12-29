@@ -73,51 +73,254 @@ void clear_powerups(entity this)
 	this.magic_bubble = NULL;
 }
 
-bool reset_flag;
-void SetChangeParms(entity this)
+string parms_getdata(string id, string request)
 {
-	if(reset_flag)
-	{
-		setspawnparms(this);
+	return db_get(ServerProgsDB, strcat("/parms/", id, "/", request));
+}
+
+void parms_putdata(string id, string request, string data)
+{
+	db_put(ServerProgsDB, strcat("/parms/", id, "/", request), data);
+}
+
+string parms_getid(entity this)
+{
+	return itos(etof(this));
+}
+
+void parms_get(entity this)
+{
+	if(!autocvar_sv_quake_itemdatabase)
 		return;
+
+	string myid = parms_getid(this);
+
+	// weapons
+	.entity weaponentity = weaponentities[0]; // only enough space to save the first slot!
+	string weps = parms_getdata(myid, "weapons");
+	WepSet wepset = '0 0 0';
+	FOREACH_WORD(weps, true,
+	{
+		Weapon wepent = Weapon_from_name(it);
+		if(wepent == WEP_Null)
+			continue;
+		wepset |= wepent.m_wepset;
+	});
+	STAT(WEAPONS, this) = wepset;
+	QCC_ClearWeapons(this);
+
+	if(this.(weaponentity))
+	{
+		Weapon wep = Weapon_from_name(parms_getdata(myid, "weapon"));
+		if(wep != WEP_Null && (STAT(WEAPONS, this) & wep.m_wepset))
+			this.(weaponentity).m_weapon = wep;
+
+		Weapon prev = Weapon_from_name(parms_getdata(myid, "prevweapon"));
+		if(prev != WEP_Null && (STAT(WEAPONS, this) & prev.m_wepset))
+			this.(weaponentity).cnt = prev.m_id;
+
+		this.(weaponentity).hammer_skin = stoi(parms_getdata(myid, "hammer_skin"));
 	}
-	if(this.health <= 0 || deathmatch || world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL)
+
+	// resources
+	this.armorvalue = stoi(parms_getdata(myid, "armorvalue"));
+	this.armortype = stof(parms_getdata(myid, "armortype"));
+	armor_set_type(this);
+	this.ammo_shells = max(25, stoi(parms_getdata(myid, "ammo_shells"))); // TODO: unhardcode weird minimums
+	this.ammo_nails = stoi(parms_getdata(myid, "ammo_nails"));
+	this.ammo_rockets = stoi(parms_getdata(myid, "ammo_rockets"));
+	this.ammo_cells = stoi(parms_getdata(myid, "ammo_cells"));
+	this.ammo_lava_nails = stoi(parms_getdata(myid, "ammo_lava_nails"));
+	this.ammo_multi_rockets = stoi(parms_getdata(myid, "ammo_multi_rockets"));
+	this.ammo_plasma = stoi(parms_getdata(myid, "ammo_plasma"));
+	this.ammo_drills = stoi(parms_getdata(myid, "ammo_drills"));
+
+	// TODO: do this elsewhere?
+	if(Challenge_Active(CHALLENGE_BONK))
+	{
+		STAT(WEAPONS, this) = WEPSET(HAMMER);
+		if(this.(weaponentity))
+		{
+			this.(weaponentity).m_weapon = WEP_HAMMER;
+			this.(weaponentity).hammer_skin = floor(random() * SKIN_LAST) + 1;
+		}
+	}
+
+	if(deathmatch && autocvar_skill == 3)
+		this.items |= IT_GRAPPLE;
+}
+
+void parms_write(entity this)
+{
+	if(!autocvar_sv_quake_itemdatabase)
+		return; // engine handles this for us
+
+	string myid = parms_getid(this);
+
+	// weapons
+	.entity weaponentity = weaponentities[0]; 
+	string weps = "";
+	FOREACH(Weapons, it != WEP_Null && (STAT(WEAPONS, this) & it.m_wepset),
+	{
+		weps = cons(weps, it.netname);
+	});
+	parms_putdata(myid, "weapons", weps);
+
+	if(this.(weaponentity))
+	{
+		parms_putdata(myid, "weapon", this.(weaponentity).m_weapon.netname);
+		Weapon prev = REGISTRY_GET(Weapons, this.(weaponentity).cnt);
+		parms_putdata(myid, "prevweapon", prev.netname);
+		parms_putdata(myid, "hammer_skin", itos(this.(weaponentity).hammer_skin));
+	}
+	else
+	{
+		// clear them to avoid caching bad data
+		parms_putdata(myid, "weapon", "");
+		parms_putdata(myid, "prevweapon", "");
+		parms_putdata(myid, "hammer_skin", "");
+	}
+
+	// resources
+	parms_putdata(myid, "armorvalue", itos(this.armorvalue));
+	parms_putdata(myid, "armortype", ftos(this.armortype));
+	parms_putdata(myid, "ammo_shells", itos(this.ammo_shells));
+	parms_putdata(myid, "ammo_nails", itos(this.ammo_nails));
+	parms_putdata(myid, "ammo_rockets", itos(this.ammo_rockets));
+	parms_putdata(myid, "ammo_cells", itos(this.ammo_cells));
+	parms_putdata(myid, "ammo_lava_nails", itos(this.ammo_lava_nails));
+	parms_putdata(myid, "ammo_multi_rockets", itos(this.ammo_multi_rockets));
+	parms_putdata(myid, "ammo_plasma", itos(this.ammo_plasma));
+	parms_putdata(myid, "ammo_drills", itos(this.ammo_drills));
+}
+
+void SetNewParms();
+void parms_reset(entity this)
+{
+	if(!autocvar_sv_quake_itemdatabase)
 	{
 		SetNewParms();
 		return;
 	}
 
-// remove items
-	this.items &= ~(IT_KEY1 | IT_KEY2 | IT_KEY3);
-	this.items &= ~IT_TANK;
-	this.items &= ~IT_SUPERHEALTH; // rogue
-	this.gravity = 1.0;
+	// TODO: clean up this mess
+	Weapon start_weapon = WEP_AXE;
+	Weapon prev_weapon = WEP_SHOTGUN;
+	if(autocvar_horde)
+		start_weapon = WEP_CHAINSAW;
+	else if(world.worldtype == WORLDTYPE_DODGEBALL)
+		start_weapon = WEP_BALL;
+	else if(deathmatch && autocvar_skill == 3)
+	{
+		start_weapon = WEP_RAILGUN;
+		prev_weapon = WEP_KATANA;
+	}
+	WepSet wepset = (WEPSET(SHOTGUN) | start_weapon.m_wepset);
+	if(world.worldtype == WORLDTYPE_DODGEBALL)
+		wepset = start_weapon.m_wepset;
+	else if(deathmatch && autocvar_skill == 3)
+		wepset = WEPSET(RAILGUN);
 
-	this.health = this.max_health;
-	vector myweps = STAT(WEAPONS, this);
-	parm1 = myweps.x;
-	parm2 = myweps.y;
-	parm3 = myweps.z;
-	parm4 = this.armorvalue;
-	parm5 = max(25, this.ammo_shells);
-	parm6 = this.ammo_nails;
-	parm7 = this.ammo_rockets;
-	parm8 = this.ammo_cells;
-	.entity weaponentity = weaponentities[0]; // only save first slot
-	if(this.(weaponentity))
-		parm9 = this.(weaponentity).m_weapon.m_id;
-	parm10 = STAT(BREEGULL_EGGTYPE, this);
-	parm11 = this.ammo_lava_nails;
-	parm12 = this.ammo_multi_rockets;
-	parm13 = this.ammo_plasma;
-	parm14 = this.ammo_drills;
-	if(this.(weaponentity))
-		parm15 = this.(weaponentity).cnt;
-	parm16 = this.items;
+	if(Challenge_Active(CHALLENGE_BONK))
+	{
+		wepset = WEPSET(HAMMER);
+		start_weapon = WEP_HAMMER;
+		prev_weapon = WEP_HAMMER;
+	}
+
+	string myid = parms_getid(this);
+
+	// weapons
+	string weps = "";
+	FOREACH(Weapons, it != WEP_Null && (wepset & it.m_wepset),
+	{
+		weps = cons(weps, it.netname);
+	});
+	parms_putdata(myid, "weapons", weps);
+
+	parms_putdata(myid, "weapon", prev_weapon.netname);
+	parms_putdata(myid, "prevweapon", start_weapon.netname);
+	parms_putdata(myid, "hammer_skin", "0");
+
+	// resources
+	parms_putdata(myid, "armorvalue", "0");
+	parms_putdata(myid, "armortype", "0");
+	parms_putdata(myid, "ammo_shells", "25");
+	parms_putdata(myid, "ammo_nails", "0");
+	parms_putdata(myid, "ammo_rockets", "0");
+	parms_putdata(myid, "ammo_cells", ((deathmatch && autocvar_skill == 3) ? "100" : "0"));
+	parms_putdata(myid, "ammo_lava_nails", "0");
+	parms_putdata(myid, "ammo_multi_rockets", "0");
+	parms_putdata(myid, "ammo_plasma", "0");
+	parms_putdata(myid, "ammo_drills", "0");
+}
+
+void SetSpawnParms(entity this)
+{
+	// storing in a database means we always have access to every player's data
+	// therefore no restoration of parameters is needed
+	if(autocvar_sv_quake_itemdatabase)
+		return;
+	setspawnparms(this);
+}
+
+bool reset_flag;
+void SetChangeParms(entity this)
+{
+	if(reset_flag)
+	{
+		SetSpawnParms(this);
+		return;
+	}
+	if(this.health <= 0 || deathmatch || world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL)
+	{
+		parms_reset(this);
+		return;
+	}
+
+	if(!autocvar_sv_quake_itemdatabase)
+	{
+		// remove items
+		this.items &= ~(IT_KEY1 | IT_KEY2 | IT_KEY3);
+		this.items &= ~IT_TANK;
+		this.items &= ~IT_SUPERHEALTH; // rogue
+		this.gravity = 1.0;
+
+		this.health = this.max_health;
+		vector myweps = STAT(WEAPONS, this);
+		parm1 = myweps.x;
+		parm2 = myweps.y;
+		parm3 = myweps.z;
+		parm4 = this.armorvalue;
+		parm5 = max(25, this.ammo_shells);
+		parm6 = this.ammo_nails;
+		parm7 = this.ammo_rockets;
+		parm8 = this.ammo_cells;
+		.entity weaponentity = weaponentities[0]; // only save first slot
+		if(this.(weaponentity))
+			parm9 = this.(weaponentity).m_weapon.m_id;
+		parm10 = STAT(BREEGULL_EGGTYPE, this);
+		parm11 = this.ammo_lava_nails;
+		parm12 = this.ammo_multi_rockets;
+		parm13 = this.ammo_plasma;
+		parm14 = this.ammo_drills;
+		if(this.(weaponentity))
+			parm15 = this.(weaponentity).cnt;
+		parm16 = this.items;
+	}
+
+	parms_write(this);
 }
 
 void SetNewParms()
 {
+	if(autocvar_sv_quake_itemdatabase)
+	{
+		// TODO: "new" clients are supposed to have their data reset by this!
+		// engine explicitly doesn't give the client ID so we can't reset it for them
+		return;
+	}
+
 	Weapon start_weapon = WEP_AXE;
 	Weapon prev_weapon = WEP_SHOTGUN;
 	if(autocvar_horde)
@@ -166,62 +369,74 @@ void SetNewParms()
 
 void DecodeLevelParms(entity this)
 {
-	WepSet oldweps = vec3(parm1, parm2, parm3);
-	if(world.model == "maps/quake.bsp" || world.model == "maps/start.bsp" || world.model == "maps/aopstart.bsp" || world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL || (oldweps & WEPSET(BALL)))
-		SetNewParms();		// take away all stuff on starting new episode
-
-	// Yoder Oct25, reset weapons between map loads
-	if(autocvar_horde)
-		SetNewParms();
-
-	if(deathmatch)
-		SetNewParms();
-
-	if(world.model == "maps/hipstart.bsp"
-	|| world.model == "maps/hip1m1.bsp"
-	|| world.model == "maps/hip2m1.bsp"
-	|| world.model == "maps/hip3m1.bsp"
-	) SetNewParms(); // take away all stuff on starting new episode
-
-	if(world.model == "maps/rstart.bsp" || ((world.model == "maps/r2m1.bsp" || world.model == "maps/aop2m1.bsp") && !deathmatch))
-		SetNewParms(); // reset all stuff on level 8 and new episode
-
-	STAT(WEAPONS, this) = vec3(parm1, parm2, parm3);
-	QCC_ClearWeapons(this);
-	this.armorvalue = parm4;
-	this.ammo_shells = parm5;
-	this.ammo_nails = parm6;
-	this.ammo_rockets = parm7;
-	this.ammo_cells = parm8;
-	.entity weaponentity = weaponentities[0]; // only enough space to save the first slot!
-	Weapon wep = REGISTRY_GET(Weapons, parm9);
-	if(this.(weaponentity) && wep != WEP_Null && (STAT(WEAPONS, this) & wep.m_wepset))
-		this.(weaponentity).m_weapon = REGISTRY_GET(Weapons, parm9);
-	if(Challenge_Active(CHALLENGE_BONK))
+	bool need_reset = false;
+	if(!autocvar_sv_quake_itemdatabase)
 	{
-		STAT(WEAPONS, this) = WEPSET(HAMMER);
-		this.(weaponentity).m_weapon = WEP_HAMMER;
-		this.(weaponentity).hammer_skin = floor(random() * SKIN_LAST) + 1;
+		WepSet oldweps = vec3(parm1, parm2, parm3);
+		if(oldweps & WEPSET(BALL))
+			need_reset = true;
 	}
-	if(STAT(BREEGULL_EGGTYPE, this) <= 0) // allow preserving current selection over the map given one
-		STAT(BREEGULL_EGGTYPE, this) = parm10;
-	this.ammo_lava_nails = parm11;
-	this.ammo_multi_rockets = parm12;
-	this.ammo_plasma = parm13;
-	this.ammo_drills = parm14;
+	else
+	{
+		string myid = parms_getid(this);
+		string weps = parms_getdata(myid, "weapons");
+		if(weps == "" || weps == WEP_BALL.netname)
+			need_reset = true; // rough check for a "new" client
+	}
 
-	if(this.(weaponentity))
-		this.(weaponentity).skin = parm14;
-	if(this.(weaponentity))
-		this.(weaponentity).cnt = parm15;
-	this.items = parm16;
-	this.powerups = 0;
-	if(this.items & IT_ARMOR3)
-		this.armortype = 0.8;
-	else if(this.items & IT_ARMOR2)
-		this.armortype = 0.6;
-	else if(this.items & IT_ARMOR1)
-		this.armortype = 0.3;
+	// TODO: clean up this mess
+	if(world.model == "maps/quake.bsp" || world.model == "maps/start.bsp" || world.model == "maps/aopstart.bsp"
+		|| world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL || need_reset
+		|| world.model == "maps/hipstart.bsp" || world.model == "maps/hip1m1.bsp" || world.model == "maps/hip2m1.bsp" || world.model == "maps/hip3m1.bsp"
+		|| world.model == "maps/rstart.bsp" || world.model == "maps/r2m1.bsp" || world.model == "maps/aop2m1.bsp"
+		|| autocvar_horde || deathmatch)
+	{
+		// take away all stuff on starting new episode
+		// or when starting special missions
+		parms_reset(this);
+	}
+
+	if(!autocvar_sv_quake_itemdatabase)
+	{
+		STAT(WEAPONS, this) = vec3(parm1, parm2, parm3);
+		QCC_ClearWeapons(this);
+		this.armorvalue = parm4;
+		this.ammo_shells = parm5;
+		this.ammo_nails = parm6;
+		this.ammo_rockets = parm7;
+		this.ammo_cells = parm8;
+		.entity weaponentity = weaponentities[0]; // only enough space to save the first slot!
+		Weapon wep = REGISTRY_GET(Weapons, parm9);
+		if(this.(weaponentity) && wep != WEP_Null && (STAT(WEAPONS, this) & wep.m_wepset))
+			this.(weaponentity).m_weapon = wep;
+		if(Challenge_Active(CHALLENGE_BONK))
+		{
+			STAT(WEAPONS, this) = WEPSET(HAMMER);
+			this.(weaponentity).m_weapon = WEP_HAMMER;
+			this.(weaponentity).hammer_skin = floor(random() * SKIN_LAST) + 1;
+		}
+		if(STAT(BREEGULL_EGGTYPE, this) <= 0) // allow preserving current selection over the map given one
+			STAT(BREEGULL_EGGTYPE, this) = parm10;
+		this.ammo_lava_nails = parm11;
+		this.ammo_multi_rockets = parm12;
+		this.ammo_plasma = parm13;
+		this.ammo_drills = parm14;
+
+		if(this.(weaponentity))
+			this.(weaponentity).skin = parm14;
+		if(this.(weaponentity))
+			this.(weaponentity).cnt = parm15;
+		this.items = parm16;
+		this.powerups = 0;
+		if(this.items & IT_ARMOR3)
+			this.armortype = 0.8;
+		else if(this.items & IT_ARMOR2)
+			this.armortype = 0.6;
+		else if(this.items & IT_ARMOR1)
+			this.armortype = 0.3;
+	}
+
+	parms_get(this);
 
 	// no parms left! let's just count from when they join
 	this.parm_idlesince = time;
@@ -1003,7 +1218,7 @@ void respawn(entity this)
 		// make a copy of the dead body for appearances sake
 		CopyToBodyQueue(this);
 		// get the spawn parms as they were at level start
-		setspawnparms(this);
+		SetSpawnParms(this);
 		// respawn		
 		PutClientInServer(this);
 	}
@@ -1395,7 +1610,7 @@ void ObserverThink(entity this)
 				this.rejoin_delay = time + autocvar_sv_quake_rejoin_delay; // prevent fast spec-rejoin
 				dodgeball_Rejoin(this);
 				// get the spawn parms as they were at level start
-				setspawnparms(this);
+				SetSpawnParms(this);
 				PutClientInServer(this);
 				return;
 			}
@@ -2720,6 +2935,11 @@ void ClientDisconnect(entity this)
 		it.ignore_list = strzone(mylist);
 	});
 	/* from "ignore" command */
+
+	// we have no access to "new" clients so if they're actually leaving
+	// reset their data!
+	if(autocvar_sv_quake_itemdatabase)
+		parms_reset(this);
 	
 	if(gameover)
 		return;

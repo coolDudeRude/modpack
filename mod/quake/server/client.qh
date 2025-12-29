@@ -11,6 +11,8 @@ bool autocvar_sv_quake_idlekick;
 
 bool autocvar_sv_quake_globalkeys = true;
 
+bool autocvar_sv_quake_itemdatabase;
+
 const int CLIPGROUP_PLAYER = 1;
 bool autocvar_g_player_collisions;
 

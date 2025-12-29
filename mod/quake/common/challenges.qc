@@ -35,6 +35,9 @@ STATIC_INIT(Challenges)
 	if(find(NULL, classname, "horde_manager") || find(NULL, classname, "info_qonquer"))
 		return;
 
+	if(IsJumpsDoneWell())
+		return;
+
 	FOREACH_WORD(autocvar_sv_quake_challenge, true,
 	{
 		challenge |= Challenge_fromstring(it);
