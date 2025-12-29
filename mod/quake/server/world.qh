@@ -11,6 +11,8 @@ string autocvar_sv_quake_maplist = "";
 float autocvar_sv_quake_timelimit = 15;
 float autocvar_sv_quake_fraglimit = 20;
 
+bool wantrestart = false;
+
 // protocol bytes
 const int SVC_CUTSCENE = 34;
 

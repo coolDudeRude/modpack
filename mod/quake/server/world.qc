@@ -1509,7 +1509,7 @@ spawnfunc(worldspawn)
 
 	server_is_dedicated = boolean(stof(cvar_defstring("is_dedicated")));
 
-    bool wantrestart = false;
+    wantrestart = false;
 	{
 		if (!server_is_dedicated)
 		{

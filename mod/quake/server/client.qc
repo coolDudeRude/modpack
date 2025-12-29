@@ -267,6 +267,8 @@ void SetSpawnParms(entity this)
 bool reset_flag;
 void SetChangeParms(entity this)
 {
+	if(wantrestart && autocvar_sv_quake_itemdatabase)
+		return; // code update, not an actual map change!
 	if(reset_flag)
 	{
 		SetSpawnParms(this);
