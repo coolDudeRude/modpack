@@ -8,6 +8,8 @@ bool alt_held;
 bool shift_held;
 bool ctrl_held;
 
+string vote_list;
+
 int binddb;
 
 string vote_called_vote;

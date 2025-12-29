@@ -110,7 +110,10 @@ METHOD(Grinch, m_clear, void(Champions this, entity actor))
 	FOREACH_ENTITY_FLAGS(flags, FL_MONSTER,
 	{
 		if(it.charmed && it.charmer == actor && it.grinch_max && it.health > 20)
+		{
 			it.health = 20;
+			it.grinch_max = false;
+		}
 	});
 
 	STAT(WEAPONS, actor) &= ~WEP_SNOWBALL.m_wepset;

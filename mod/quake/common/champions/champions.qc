@@ -521,6 +521,8 @@ void champion_menu_open()
 	champion_hovered_index = -1;
 	cursor_active |= GUI_OPEN_CHAMPIONS;
 	setcursormode(cursor_active);
+
+	vote_menu_reset();
 }
 
 void champion_menu_close()
@@ -529,6 +531,8 @@ void champion_menu_close()
 	champion_hovered_index = -1;
 	cursor_active &= ~GUI_OPEN_CHAMPIONS;
 	setcursormode(cursor_active);
+
+	vote_menu_reset();
 }
 
 // This must be called in CSQC_ConsoleCommand

@@ -1,0 +1,28 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(GOLDY_FIRE1, "weapons/goldy_fire1");
+SOUND(GOLDY_FIRE2, "weapons/goldy_fire2");
+SOUND(GOLDY_FIRE3, "weapons/goldy_fire3");
+Sound SND_GOLDY_FIRE_RANDOM() {
+    return REGISTRY_GET(Sounds, SND_GOLDY_FIRE1.m_id + floor(prandom() * 3));
+}
+#endif
+
+CLASS(Goldy, Weapon)
+/* ammotype  */ ATTRIB(Goldy, ammo_type, int, IT_ROCKETS);
+/* impulse   */ ATTRIB(Goldy, impulse, int, 6);
+/* spawnflags*/ ATTRIB(Goldy, spawnflags, int, WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Goldy, aflag, int, 5);
+/* modelname */ ATTRIB(Goldy, mdl, string, "goldy");
+/* crosshair */ ATTRIB(Goldy, w_crosshair, string, "gfx/crosshairgrenadelauncher");
+/* crosshair */ ATTRIB(Goldy, w_crosshair_size, float, 0.6);
+/* crosshair */ ATTRIB(Goldy, w_crosshair_color, vector, '1 1 0');
+/* wepimg    */ ATTRIB(Goldy, model2, string, "goldy");
+/* refname   */ ATTRIB(Goldy, netname, string, "goldy");
+/* wepname   */ ATTRIB(Goldy, m_name, string, _("Goldy"));
+
+ENDCLASS(Goldy)
+REGISTER_WEAPON(GOLDY, NEW(Goldy));
+
+SPAWNFUNC_WEAPON(weapon_goldy, WEP_GOLDY)

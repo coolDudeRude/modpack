@@ -343,6 +343,21 @@ void GameCommand(string command)
 		return;
 	}
 
+	if(cmdname == "cointoss")
+	{
+		if (!world_initialized)
+		{
+			LOG_INFO("This command works only when the server is running.");
+			return;
+		}
+		string result1 = (argv(2) ? strcat("^7", argv(1)) : "^1HEADS");
+		string result2 = (argv(2) ? strcat("^7", argv(2)) : "^4TAILS");
+		string choice = ((random() > 0.5) ? result1 : result2);
+
+		Send_Notification(NOTIF_ALL, NULL, MSG_MULTI, MULTI_COINTOSS, choice);
+		return;
+	}
+
 	// nothing above caught the command, must be invalid
 	LOG_INFO(((command != "") ? strcat("Unknown server command \"", command, "\"") : "No command provided"), ".\n");
 }

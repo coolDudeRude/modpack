@@ -711,6 +711,7 @@ void ClientInit_misc(entity this)
 	WriteHeader(channel, ENT_CLIENT_INIT);
 
 	WriteByte(channel, this.count);
+	WriteString(channel, this.message);
 }
 
 void ClientInit_CheckUpdate(entity this)
@@ -719,6 +720,11 @@ void ClientInit_CheckUpdate(entity this)
 	if(this.count != serverflags)
 	{
 		this.count = serverflags;
+		this.SendFlags |= 1;
+	}
+	if(this.message != autocvar_sv_vote_commands)
+	{
+		strcpy(this.message, autocvar_sv_vote_commands);
 		this.SendFlags |= 1;
 	}
 }
@@ -1807,10 +1813,10 @@ string PickDMMap(bool gotohub)
 .float charmed_healthcheck;
 void monsters_StartFrame()
 {
-	IL_EACH(g_moveables, true,
+	IL_EACH(g_moveables, IS_MONSTER(it),
 	{
 		// TODO: better location for this hack
-		if(IS_MONSTER(it) && (it.charmed || it.category == CATEGORY_MONSTER) && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
+		if((it.charmed || it.category == CATEGORY_MONSTER) && !it.grinch_max && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
 		{
 			float hitamount = 1;
 			float hitdelay = 0.25;

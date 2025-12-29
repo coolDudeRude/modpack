@@ -1020,10 +1020,11 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 	cl_shop_draw();
 
 	cl_champion_draw();
+	cl_vote_draw();
 
 	sui_end();
 
-	if(cursor_active && !intermission)
+	if(cursor_active)
 		draw_drawMousePointer(_cursor_position);
 
 	HUD_Mouse(local_player);

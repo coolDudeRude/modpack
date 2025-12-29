@@ -780,6 +780,16 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 			StatusEffects_apply(STATUSEFFECT_Poisoned, targ, time + poisontime, 0);
 	}
 
+	// NOTE: using damage as a cheap valid target check, means the effect won't apply if the target is invulnerable!
+	if(((IS_MONSTER(attacker) && attacker.confusing) || inflictor.confusing) && (IS_PLAYER(targ) || IS_MONSTER(targ)) && targ != attacker && damage > 0 && !targ.tank)
+	{
+		float confusetime = floor(autocvar_skill + 3 + 2*random());
+		// only add the effect if there isn't already a longer timer running!
+		float curtime = StatusEffects_gettime(STATUSEFFECT_Confused, targ);
+		if((time + confusetime) > curtime)
+			StatusEffects_apply(STATUSEFFECT_Confused, targ, time + confusetime, 0);
+	}
+
 	if(IS_MONSTER(targ) && attacker && !(targ.monsterdef.spawnflags & MON_FLAG_NOAGGRO) && !(targ.monsterdef.spawnflags & MON_FLAG_NOTARGET) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && deathtype != DEATH_TRAP.m_id)
 	{
 		// make pets focus the target

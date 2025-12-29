@@ -354,6 +354,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(JIM_LASER)          this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(JIM_ROCKET)         this.traileffect = EFFECT_TR_ROCKET.m_id; break;
 			HANDLE(SNOWBALL)           this.traileffect = EFFECT_SNOWBALL_TRAIL.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(GOLDY)              this.traileffect = EFFECT_Null.m_id; this.avelocity = ((random() > 0.5) ? '0 -256 0' : '0 256 0'); break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -429,6 +430,10 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				break;
 			case PROJECTILE_SNOWBALL:
 				this.gravity = 0.5;
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_GOLDY:
+				this.gravity = 1;
 				this.effects |= EF_FULLBRIGHT;
 				break;
 			default:

@@ -54,3 +54,4 @@ MODEL(PROJECTILE_LASER,                     "progs/laser.mdl");
 MODEL(PROJECTILE_JIM_LASER,                 "progs/proj_laz.mdl");
 MODEL(PROJECTILE_JIM_ROCKET,                "progs/proj_rocket.mdl");
 MODEL(PROJECTILE_SNOWBALL,                  "progs/snowball.mdl");
+MODEL(PROJECTILE_GOLDY,                     "progs/goldy_bag.mdl");

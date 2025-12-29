@@ -1,3 +1,7 @@
 #pragma once
 
+void cl_vote_draw();
+
+void vote_menu_reset(); // TODO
+
 void HUD_Votes();

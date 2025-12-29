@@ -1,5 +1,81 @@
 #include "voting.qh"
 
+void champion_menu_close();
+
+float selected_vote_index;
+int vote_hovered_index = -1;
+
+vector vote_menu_scroll;
+
+void vote_menu_select()
+{
+	localcmd(sprintf("vcall %s\n", argv(selected_vote_index)));
+	champion_menu_close();
+}
+
+void vote_menu_list(string id, vector pos, vector size)
+{
+	int votecount = tokenize(vote_list);
+
+	sui_fill(pos, size, '0.2 0.2 0.2', 0.75, 0);
+	sui_list_view_begin(strcat(id, "scrl"), pos, size, vec2(size.x - 6, 16), votecount, '0 6 0');
+	sui_pos = '0 0 0';
+	//vote_hovered_index = -1;
+	for(float index = sui_list_item(); index > -1; index = sui_list_item())
+	{
+		sui_push_frame(sui_pos, vec2(size.x - 6, 16));
+		string iid = strcat(id, ftos(index));
+		sui_action_element('0 0 0', vec2(size.x -6, 16), iid);
+		if(sui_is_hovered(iid))
+		{
+			vote_hovered_index = index;
+			sui_fill('0 0 0', vec2(size.x - 6, 16), '1 1 1', 0.1, 0);
+			if(sui_is_clicked(iid))
+			{
+				selected_vote_index = index;
+				vote_menu_select();
+				break;
+			}
+		}
+		sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_CENTER));
+		//if(selected_vote_index == index)
+			//sui_fill('0 0 0', vec2(size.x - 6, 16), '1 1 1', 0.2, 0);
+		sui_drawtext('0 0 0', '8 8 0', argv(index), '1 1 1', 1, 0);
+		sui_pop_frame();
+	}
+	sui_list_view_end();	
+}
+
+void cl_vote_draw()
+{
+	if(!vote_list || vote_list == "")
+		return;
+	if(!(cursor_active & GUI_OPEN_CHAMPIONS))
+		return;
+
+	vector menu_pos = '50 50 0';
+	
+	sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_CENTER));
+	sui_drawtext(vec2(menu_pos.x * 2, menu_pos.y * -0.5), '12 12 0', "Call a vote", '0.34 0.72 1', 1, 0);
+	
+	vector ent_menu_size = '230 200 0';
+	sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_CENTER));
+	sui_push_frame(menu_pos, ent_menu_size);
+	
+	sui_fill(menu_pos, ent_menu_size, '0 0 0', 0.5, 0);
+	sui_offset = vote_menu_scroll;
+	vote_menu_list("vote_menu_list", menu_pos, ent_menu_size - '2 2 0');
+	vote_menu_scroll = sui_offset;
+	
+	sui_pop_frame();
+}
+
+void vote_menu_reset()
+{
+	selected_vote_index = 0;
+	vote_hovered_index = -1;
+}
+
 void HUD_Votes()
 {
 	string s;

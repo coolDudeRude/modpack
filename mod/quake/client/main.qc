@@ -485,6 +485,8 @@ void PostInit()
 NET_HANDLE(ENT_CLIENT_INIT, bool isnew)
 {
 	serverflags = ReadByte();
+	strfree(vote_list);
+	vote_list = strzone(ReadString());
 
 	return = true;
 

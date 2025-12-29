@@ -93,6 +93,8 @@
 
 // MSG_INFO_NOTIFICATIONS
 
+    MSG_INFO_NOTIF(COINTOSS,                                N_CHATCON,  1, 0, "s1", "",        "",                     _("^F2Throwing coin... Result: %s^F2!"), "")
+
     MSG_INFO_NOTIF(COMPETITION_START,                       N_CONSOLE,  0, 0, "",   "",        "",                     _("^BGFreestyle Competition has started!"), "")
 
     MSG_INFO_NOTIF(CONNECTING,                              N_CONSOLE,  1, 0, "s1", "",        "",                     _("^BG%s^BG is connecting..."), "")
@@ -194,6 +196,8 @@
 
 // MSG_CENTER_NOTIFICATIONS
     //MSG_CENTER_NOTIF(ALONE,                             N_ENABLE,    0, 0, "",               CPID_Null,              "0 0",  _("^F4You are now alone!"), "")
+
+    MSG_CENTER_NOTIF(COINTOSS,                          N_ENABLE,    1, 0, "s1",             CPID_Null,              "0 0",  _("^F2Throwing coin... Result: %s^F2!"), "")
 
     MSG_CENTER_NOTIF(COMPETITION_START,                 N_ENABLE,    0, 0, "",               CPID_Null,              "0 0",  BOLD(_("^BGFreestyle Competition has started!")), "")
 
@@ -306,7 +310,8 @@
 
 // MSG_MULTI_NOTIFICATIONS
     //MSG_MULTI_NOTIF(COUNTDOWN_BEGIN,                    N_ENABLE,  ANNCE_BEGIN,    NULL,                                   CENTER_COUNTDOWN_BEGIN)
-    MSG_MULTI_NOTIF(COMPETITION_START,                  N_ENABLE,  NULL,           INFO_COMPETITION_START,                CENTER_COMPETITION_START)
+    MSG_MULTI_NOTIF(MULTI_COINTOSS,                     N_ENABLE,  NULL,           INFO_COINTOSS,                          CENTER_COINTOSS)
+    MSG_MULTI_NOTIF(COMPETITION_START,                  N_ENABLE,  NULL,           INFO_COMPETITION_START,                 CENTER_COMPETITION_START)
 
     MSG_MULTI_NOTIF(DEATH_MURDER_BONETROUSLE,           N_ENABLE,  NULL,           INFO_DEATH_MURDER_BONETROUSLE,          NULL)
     MSG_MULTI_NOTIF(DEATH_MURDER_CRUSH,                 N_ENABLE,  NULL,           INFO_DEATH_MURDER_CRUSH,                NULL)

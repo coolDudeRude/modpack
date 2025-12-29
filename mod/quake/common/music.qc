@@ -805,7 +805,11 @@ bool sv_music_command(entity this, string cmd, float argc)
 			if(mymusic == "loop")
 			{
 #ifdef MIDI_SUPPORT
-				this.midi_looping = stob(argv(2));
+				string doloop = argv(2);
+				if(doloop == "")
+					this.midi_looping = (this.midi_looping) ? false : true;
+				else
+					this.midi_looping = stob(doloop);
 				sprint(this, strcat("Looping ", ((this.midi_looping) ? "enabled" : "disabled"), "\n"));
 #endif
 				return true;

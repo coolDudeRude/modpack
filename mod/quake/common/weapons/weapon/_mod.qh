@@ -61,3 +61,4 @@
 #include "shadowbeam.qh"
 #include "loosecannon.qh"
 #include "snowball.qh"
+#include "goldy.qh"

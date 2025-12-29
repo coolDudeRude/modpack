@@ -2829,6 +2829,27 @@ string rogue_getcdtrack(int numb)
 	return "rtrack02"; // because gmqcc
 }
 
+string aop_getcdtrack(int numb)
+{
+	switch(numb)
+	{
+		default:
+		//case 1: return "track001";
+		case 2: return "aop_track02";
+		case 3: return "aop_track03";
+		case 4: return "aop_track04";
+		case 5: return "aop_track05";
+		case 6: return "aop_track06";
+		case 7: return "aop_track07";
+		case 8: return "aop_track08";
+		case 9: return "aop_track09";
+		case 10: return "aop_track10";
+		case 11: return "aop_track11";
+	}
+
+	return "aop_track02"; // because gmqcc
+}
+
 .string music;
 string getcdtrack(int numb)
 {
@@ -2838,8 +2859,10 @@ string getcdtrack(int numb)
 		return hip_getcdtrack(numb);
 	if(IsRogueMap())
 		return rogue_getcdtrack(numb);
+	if(IsImpelMap())
+		return aop_getcdtrack(numb);
 	if(IsJumpsDoneWell())
-		return "";
+		return "misc/null"; // music will start with the trigger
 
 	switch(numb)
 	{
