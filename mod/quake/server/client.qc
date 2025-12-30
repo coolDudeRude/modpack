@@ -2894,9 +2894,11 @@ string getcdtrack(int numb)
 	if(IsJumpsDoneWell())
 		return "misc/null"; // music will start with the trigger
 
+	// first 11 use Quake's naming scheme
+	// most mods use trackXX so we support that natively
 	switch(numb)
 	{
-		default:
+		case 0: // fall through - track 1 doesn't normally exist
 		case 1: return "track001";
 		case 2: return "track002";
 		case 3: return "track003";
@@ -2910,7 +2912,7 @@ string getcdtrack(int numb)
 		case 11: return "track011";
 	}
 
-	return "track001"; // because gmqcc
+	return sprintf("track%02d", numb);
 }
 
 
