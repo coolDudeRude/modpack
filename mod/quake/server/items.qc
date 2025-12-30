@@ -1059,9 +1059,6 @@ void ammo_touch(entity this, entity toucher)
 	if(!CanTouchItem(this, toucher))
 		return;
 
-// if the player was using his best weapon, change up to the new one if better
-	.entity weaponentity = weaponentities[0]; // TODO
-	Weapon best = w_getbestweapon(toucher, weaponentity);
 	bool pickedup = false;
 
 	if(this.ammo_shells && toucher.ammo_shells < GetAmmoLimit(toucher, IT_SHELLS))
@@ -1125,6 +1122,10 @@ void ammo_touch(entity this, entity toucher)
 		_sound(toucher, CH_TRIGGER_SINGLE, this.noise, 1, ATTN_NORM);
 
 // change to a better weapon if appropriate
+
+	// if the player was using his best weapon, change up to the new one if better
+	.entity weaponentity = weaponentities[0]; // TODO
+	Weapon best = w_getbestweapon(toucher, weaponentity);
 
 	if(!toucher.cvar_cl_autoswitch && toucher.(weaponentity).m_weapon == best)
 		W_SwitchWeapon(toucher, w_getbestweapon(toucher, weaponentity), weaponentity);
