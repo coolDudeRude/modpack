@@ -4,19 +4,19 @@
 METHOD(Keen, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);
-	STAT(WEAPONS, actor) |= WEP_POGO.m_wepset;
+	Inventory_add(WEP_POGO, actor, ITEM_OWNED);
 
 	actor.skin = bound(0, (etof(actor) % 10) - 1, 9);
 }
 METHOD(Keen, m_clear, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) &= ~WEP_POGO.m_wepset;
+	Inventory_remove(WEP_POGO, actor, ITEM_OWNED);
 }
 METHOD(Keen, m_playerspawn, void(Champions this, entity actor))
 {
 	actor.jetpack_status = false;
 	STAT(QCC_JETPACKFUEL, actor) = 100;
-	STAT(WEAPONS, actor) |= WEP_POGO.m_wepset;
+	Inventory_add(WEP_POGO, actor, ITEM_OWNED);
 	actor.skin = bound(0, (etof(actor) % 10) - 1, 9);
 }
 #endif

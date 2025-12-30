@@ -70,10 +70,6 @@ WepSet _WepSet_FromWeapon(int a)
 	}
 #endif
 #ifdef CSQC
-	WepSet WepSet_GetFromStat()
-	{
-		return STAT(WEAPONS);
-	}
 	WepSet ReadWepSet()
 	{
 		if (REGISTRY_MAX(Weapons) > 48) return ReadInt72_t();

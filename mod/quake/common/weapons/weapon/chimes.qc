@@ -264,7 +264,7 @@ void W_DropChimes(entity this, .entity weaponentity)
 			if(this.(w_ent) && slot != weaponslot(weaponentity))
 				ATTACK_FINISHED(this, w_ent) = time + 0.5;
 		}
-		STAT(WEAPONS, this) &= ~WEP_CHIMES.m_wepset;
+		Inventory_remove(WEP_CHIMES, this, ITEM_OWNED);
 		W_SwitchWeapon(this, w_getbestweapon(this, weaponentity), weaponentity);
 	}
 

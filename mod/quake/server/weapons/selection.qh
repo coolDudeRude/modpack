@@ -5,9 +5,6 @@ bool autocvar_g_weaponswitch_debug_alternate = true;
 
 .float hasweapon_complain_spam;
 
-//.WepSet dual_weapons;
-.WepSet collected_weapons;
-
 bool client_hasweapon(entity this, Weapon wpn, .entity weaponentity, float andammo, bool complain);
 
 float W_GetCycleWeapon(entity this, string weaponorder, float dir, float imp, float complain, float skipmissing, .entity weaponentity);

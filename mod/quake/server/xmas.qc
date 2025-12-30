@@ -37,7 +37,7 @@ void xmas_present_weapon(entity this, entity toucher)
 	Weapon wep = RandomSelection_chosen_ent;
 	bool doswap = false;
 
-	if(!(STAT(WEAPONS, toucher) & wep.m_wepset))
+	if(!Inventory_have(wep, toucher, ITEM_OWNED))
 	{
 		doswap = true;
 		Send_Notification(NOTIF_ONE, toucher, MSG_INFO, INFO_ITEM_WEAPON_PICKUP);
@@ -48,10 +48,10 @@ void xmas_present_weapon(entity this, entity toucher)
 	if(toucher.m_champion && toucher.m_champion.m_pickup_weapon)
 		toucher.m_champion.m_pickup_weapon(toucher.m_champion, toucher, this);
 
-	if((STAT(WEAPONS, toucher) & wep.m_wepset) && (coop || deathmatch == 2))
-		STAT(DUAL_WEAPONS, toucher) |= wep.m_wepset;
+	if(Inventory_have(wep, toucher, ITEM_OWNED) && (coop || deathmatch == 2))
+		Inventory_add(wep, toucher, ITEM_DUALWIELD);
 	else
-		STAT(WEAPONS, toucher) |= wep.m_wepset;
+		Inventory_add(wep, toucher, ITEM_OWNED);
 
 	if(toucher.cvar_cl_autoswitch && doswap)
 	{

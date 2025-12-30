@@ -1627,18 +1627,18 @@ void GiveCheat(entity this, string input)
 		return;
 	}
 
-	if(STAT(WEAPONS, this) & wep.m_wepset)
+	if(Inventory_have(wep, this, ITEM_OWNED))
 	{
-		if(STAT(DUAL_WEAPONS, this) & wep.m_wepset)
+		if(Inventory_have(wep, this, ITEM_DUALWIELD))
 		{
 			sprint(this, "You already have that weapon\n");
 			return;
 		}
 		else
-			STAT(DUAL_WEAPONS, this) |= wep.m_wepset;
+			Inventory_add(wep, this, ITEM_DUALWIELD);
 	}
 	else
-		STAT(WEAPONS, this) |= wep.m_wepset;
+		Inventory_add(wep, this, ITEM_OWNED);
 
 	if(wep.aflag && wep.ammo_type)
 	{
@@ -1747,7 +1747,7 @@ void W_WeaponFrame(entity this, .entity weaponentity)
 		else
 		{
 			this.(weaponentity).m_weapon = wep1.m_weapon;
-			if((this.(weaponentity).m_weapon.spawnflags & WEP_FLAG_NODUAL) || (!(this.(weaponentity).m_weapon.spawnflags & WEP_FLAG_DUALWIELD) && !(STAT(DUAL_WEAPONS, this) & wep1.m_weapon.m_wepset)))
+			if((this.(weaponentity).m_weapon.spawnflags & WEP_FLAG_NODUAL) || (!(this.(weaponentity).m_weapon.spawnflags & WEP_FLAG_DUALWIELD) && !Inventory_have(wep1.m_weapon, this, ITEM_DUALWIELD)))
 			{
 				this.(weaponentity).m_weapon = WEP_Null;
 				this.(weaponentity).weaponname = "";

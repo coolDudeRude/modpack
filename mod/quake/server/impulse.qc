@@ -383,7 +383,7 @@ void GiveAllWeapons(entity this)
 			continue;
 		if(it == WEP_BALL)
 			continue; // TODO?
-		STAT(WEAPONS, this) |= it.m_wepset;
+		Inventory_add(it, this, ITEM_OWNED);
 	});
 	//this.items |= (IT_KEY1 | IT_KEY2); // breaks levels
 
@@ -422,7 +422,7 @@ void GiveDualWeapons(entity this)
 
 	FOREACH(Weapons, it != WEP_Null && !(it.spawnflags & WEP_FLAG_NODUAL),
 	{
-		STAT(DUAL_WEAPONS, this) |= it.m_wepset;
+		Inventory_add(it, this, ITEM_DUALWIELD);
 	});
 	_sound(this, CH_WEAPON_SINGLE, "weapons/pkup.wav", 1, ATTN_NORM);
 }

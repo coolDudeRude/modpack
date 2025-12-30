@@ -81,6 +81,22 @@ bool shop_buypassive(entity this, string item)
 	return true;
 }
 
+bool shop_hasweapon(Weapon wep)
+{
+	return (shop_weapons.x == wep.m_id || shop_weapons.y == wep.m_id || shop_weapons.z == wep.m_id);
+}
+
+void shop_addweapon(Weapon wep)
+{
+	// TODO: doesn't support adding extra weapons!
+	if(shop_weapons.x == 0)
+		shop_weapons.x = wep.m_id;
+	else if(shop_weapons.y == 0)
+		shop_weapons.y = wep.m_id;
+	else if(shop_weapons.z == 0)
+		shop_weapons.z = wep.m_id;
+}
+
 void shop_buyitem(entity this, string item)
 {
 	if(!IS_PLAYER(this) || this.health <= 0)
@@ -183,13 +199,13 @@ void shop_buyitem(entity this, string item)
 		return;
 
 	Weapon wep = Weapon_from_name(item);
-	if(wep == WEP_Null || (wep.spawnflags & WEP_FLAG_NOSTEAL) || !(shop_weapons & wep.m_wepset) || (wep.spawnflags & WEP_FLAG_CHAMPION))
+	if(wep == WEP_Null || (wep.spawnflags & WEP_FLAG_NOSTEAL) || !shop_hasweapon(wep) || (wep.spawnflags & WEP_FLAG_CHAMPION))
 	{
 		sprint(this, "Invalid weapon\n");
 		return;
 	}
 
-	if((STAT(WEAPONS, this) & wep.m_wepset) && (autocvar_g_weaponswitch_debug != 2 || (STAT(DUAL_WEAPONS, this) & wep.m_wepset) || (wep.spawnflags & WEP_FLAG_NODUAL) || (wep.spawnflags & WEP_FLAG_DUALWIELD)))
+	if(Inventory_have(wep, this, ITEM_OWNED) && (autocvar_g_weaponswitch_debug != 2 || Inventory_have(wep, this, ITEM_DUALWIELD) || (wep.spawnflags & WEP_FLAG_NODUAL) || (wep.spawnflags & WEP_FLAG_DUALWIELD)))
 	{
 		sprint(this, "You already have that weapon\n");
 		return;
@@ -219,10 +235,10 @@ void shop_buyitem(entity this, string item)
 	bound_other_ammo(this);
 
 	this.frags -= SHOP_COST_WEAPON;
-	if(STAT(WEAPONS, this) & wep.m_wepset)
-		STAT(DUAL_WEAPONS, this) |= wep.m_wepset;
+	if(Inventory_have(wep, this, ITEM_OWNED))
+		Inventory_add(wep, this, ITEM_DUALWIELD);
 	else
-		STAT(WEAPONS, this) |= wep.m_wepset;
+		Inventory_add(wep, this, ITEM_OWNED);
 
 	if(!this.cvar_cl_autoswitch)
 	{
@@ -267,18 +283,19 @@ void shop_setup_weapons()
 {
 	// pick a random selection of weapons for the shop
 	shop_weapons = '0 0 0'; // reset initially
+	// NOTE: only supports 3 weapons!
 	for(int j = 0; j < SHOP_WEAPON_COUNT; ++j)
 	{
 		RandomSelection_Init();
 		FOREACH(Weapons, it != WEP_Null,
 		{
-			if(shop_weapons & it.m_wepset)
+			if(shop_hasweapon(it))
 				continue;
 			if((it.spawnflags & WEP_FLAG_NOSTEAL) || (it.spawnflags & WEP_FLAG_CHAMPION))
 				continue; // exclude some weapons!
 			RandomSelection_AddEnt(it, 1, 1);
 		});
-		shop_weapons |= RandomSelection_chosen_ent.m_wepset;
+		shop_addweapon(RandomSelection_chosen_ent);
 	}
 }
 

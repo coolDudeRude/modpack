@@ -10,7 +10,7 @@ METHOD(Shantae, m_activate, void(Shantae this, entity actor))
 		player_sound(actor, CH_VOICE, strcat("start", ftos(chosen), ".wav"), ATTN_NORM);
 	}
 
-	STAT(WEAPONS, actor) |= WEP_MAGIC.m_wepset;
+	Inventory_add(WEP_MAGIC, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -21,11 +21,11 @@ METHOD(Shantae, m_activate, void(Shantae this, entity actor))
 	else if(time < actor.shantae_transformtime)
 	{
 		// just transformed back, restore weapons!
-		if(STAT(WEAPONS, actor) & actor.shantae_oldweapon.m_wepset)
+		if(Inventory_have(actor.shantae_oldweapon, actor, ITEM_OWNED))
 			W_SwitchWeapon(actor, actor.shantae_oldweapon, weaponentity);
 
 		Weapon prevwep = REGISTRY_GET(Weapons, actor.shantae_prevweapon);
-		if(STAT(WEAPONS, actor) & prevwep.m_wepset)
+		if(Inventory_have(prevwep, actor, ITEM_OWNED))
 			actor.(weaponentity).cnt = actor.shantae_prevweapon;
 	}
 
@@ -62,7 +62,7 @@ METHOD(Shantae, m_playerthink, void(Champions this, entity actor))
 
 METHOD(Shantae, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_MAGIC.m_wepset;
+	Inventory_add(WEP_MAGIC, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -74,7 +74,7 @@ METHOD(Shantae, m_playerspawn, void(Champions this, entity actor))
 
 METHOD(Shantae, m_clear, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) &= ~WEP_MAGIC.m_wepset;
+	Inventory_remove(WEP_MAGIC, actor, ITEM_OWNED);
 	if(actor.magic_bubble)
 		delete(actor.magic_bubble);
 

@@ -53,7 +53,7 @@ METHOD(Mermaid, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "mermaid_start.wav", ATTN_NORM);
 
-	STAT(WEAPONS, actor) |= WEP_MAGIC.m_wepset;
+	Inventory_add(WEP_MAGIC, actor, ITEM_OWNED);
 }
 
 METHOD(Mermaid, m_weaponframe, bool(Champions this, entity actor, .entity weaponentity))

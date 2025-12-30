@@ -11,8 +11,8 @@ METHOD(Gordon, m_activate, void(Champions this, entity actor))
 	else
 		player_sound(actor, CH_VOICE, "start3.wav", ATTN_NORM);
 
-	STAT(WEAPONS, actor) |= WEP_CROWBAR.m_wepset;
-	STAT(WEAPONS, actor) |= WEP_GRAVITY_GUN.m_wepset;
+	Inventory_add(WEP_CROWBAR, actor, ITEM_OWNED);
+	Inventory_add(WEP_GRAVITY_GUN, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -21,8 +21,8 @@ METHOD(Gordon, m_activate, void(Champions this, entity actor))
 
 METHOD(Gordon, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_CROWBAR.m_wepset;
-	STAT(WEAPONS, actor) |= WEP_GRAVITY_GUN.m_wepset;
+	Inventory_add(WEP_CROWBAR, actor, ITEM_OWNED);
+	Inventory_add(WEP_GRAVITY_GUN, actor, ITEM_OWNED);
 }
 #endif
 

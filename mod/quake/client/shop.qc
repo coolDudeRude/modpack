@@ -178,7 +178,7 @@ bool ShopItem_Owned(int index)
 		case SHOP_ITEM_WEAPON:
 		{
 			Weapon wep = REGISTRY_GET(Weapons, sdata);
-			if((STAT(WEAPONS) & wep.m_wepset) && ((STAT(DUAL_WEAPONS) & wep.m_wepset) || (wep.spawnflags & WEP_FLAG_NODUAL) || (wep.spawnflags & WEP_FLAG_DUALWIELD)))
+			if(Inventory_have(wep, g_inventory, ITEM_OWNED) && (Inventory_have(wep, g_inventory, ITEM_DUALWIELD) || (wep.spawnflags & WEP_FLAG_NODUAL) || (wep.spawnflags & WEP_FLAG_DUALWIELD)))
 				return true;
 			else
 				return false;
@@ -281,9 +281,10 @@ void entity_list(string id, vector pos, vector size)
 		shopdata[itemcount] = passive;
 		itemcount += 1;
 	}
+	vector shop_weapons = STAT(SHOP_WEAPONS);
 	FOREACH(Weapons, it != WEP_Null,
 	{
-		if(!(STAT(SHOP_WEAPONS) & it.m_wepset))
+		if(shop_weapons.x != it.m_id && shop_weapons.y != it.m_id && shop_weapons.z != it.m_id)
 			continue;
 		if((it.spawnflags & WEP_FLAG_NOSTEAL) || (it.spawnflags & WEP_FLAG_CHAMPION))
 			continue; // exclude some weapons!

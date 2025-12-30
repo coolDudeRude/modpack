@@ -129,7 +129,10 @@ void QCC_ClearTransform(entity this)
 
 void QCC_ClearWeapons(entity this)
 {
-	STAT(WEAPONS, this) &= ~(WEPSET_CHAMPIONS);
+	FOREACH(Weapons, (it.spawnflags & WEP_FLAG_CHAMPION) && Inventory_have(it, this, ITEM_OWNED),
+	{
+		Inventory_remove(it, this, ITEM_OWNED);
+	});
 	for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 	{
 		.entity weaponentity = weaponentities[slot];

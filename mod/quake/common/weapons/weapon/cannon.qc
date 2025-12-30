@@ -223,7 +223,7 @@ void W_DropCannon(entity this, .entity weaponentity)
 			if(this.(w_ent) && slot != weaponslot(weaponentity))
 				ATTACK_FINISHED(this, w_ent) = time + 0.5;
 		}
-		STAT(WEAPONS, this) &= ~WEP_CANNON.m_wepset;
+		Inventory_remove(WEP_CANNON, this, ITEM_OWNED);
 		W_SwitchWeapon(this, w_getbestweapon(this, weaponentity), weaponentity);
 	}
 

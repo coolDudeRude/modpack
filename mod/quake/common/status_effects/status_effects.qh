@@ -162,6 +162,7 @@ void StatusEffectsStorage_delete(entity e) { delete(e.statuseffects_store); e.st
 
 // called when an entity is deleted with delete() / remove()
 // or when a player disconnects
+ACCUMULATE
 void ONREMOVE(entity this)
 {
     // remove statuseffects object attached to 'this'

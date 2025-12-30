@@ -323,7 +323,10 @@ void hogreham_dieB1(entity this) { set_animofs(this, anim_hogreham_deathB, 1, ho
 void hogreham_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	if(this.spawnflags & MON_HOGRE_METAL)
-		STAT(WEAPONS, this) = WEP_HAMMER.m_wepset;
+	{
+		Inventory_new(this);
+		Inventory_add(WEP_HAMMER, this, ITEM_OWNED);
+	}
 	DropBackpack(this);
 	
 // check for gib

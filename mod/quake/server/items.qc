@@ -598,7 +598,7 @@ void Deathmatch_Weapon(entity this, Weapon newwep, .entity weaponentity)
 bool weapon_customize(entity this, entity client)
 {
 	Weapon wep = REGISTRY_GET(Weapons, this.weapon);
-	if((deathmatch == 2 || coop) && (STAT(WEAPONS, client) & wep.m_wepset))
+	if((deathmatch == 2 || coop) && Inventory_have(wep, client, ITEM_OWNED))
 	{
 		if(wep == WEP_HAMMER && this.hammer_skin)
 		{
@@ -611,9 +611,9 @@ bool weapon_customize(entity this, entity client)
 		}
 		if(this.target && this.target != "")
 			return true;
-		if((STAT(DUAL_WEAPONS, client) & wep.m_wepset) || (wep.spawnflags & WEP_FLAG_NODUAL))
+		if((wep.spawnflags & WEP_FLAG_NODUAL) || Inventory_have(wep, client, ITEM_DUALWIELD))
 			return false;
-		if(client.collected_weapons & wep.m_wepset)
+		if(Inventory_have(wep, client, ITEM_COLLECTED))
 			return false;
 	}
 	return true;
@@ -696,67 +696,63 @@ void EnableComboWeapons(entity this)
 	if(!IS_PLAYER(this))
 		return;
 	
-	if(!(STAT(WEAPONS, this) & WEPSET(LAVA_NAILGUN)))
+	if(!Inventory_have(WEP_LAVA_NAILGUN, this, ITEM_OWNED))
 	{
-		if(this.ammo_lava_nails > 0 && (STAT(WEAPONS, this) & WEPSET(NAILGUN)))
+		if(this.ammo_lava_nails > 0 && Inventory_have(WEP_NAILGUN, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "Lava Enabled\n");
-			STAT(WEAPONS, this) |= WEPSET(LAVA_NAILGUN);
+			Inventory_add(WEP_LAVA_NAILGUN, this, ITEM_OWNED);
 		}
 	}
 
-	if(!(STAT(WEAPONS, this) & WEPSET(LAVA_SUPER_NAILGUN)))
+	if(!Inventory_have(WEP_LAVA_SUPER_NAILGUN, this, ITEM_OWNED))
 	{
-		if(this.ammo_lava_nails > 0 && 
-							(STAT(WEAPONS, this) & WEPSET(SUPER_NAILGUN)))
+		if(this.ammo_lava_nails > 0 && Inventory_have(WEP_SUPER_NAILGUN, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "Super Lava Enabled\n");
-			STAT(WEAPONS, this) |= WEPSET(LAVA_SUPER_NAILGUN);		
+			Inventory_add(WEP_LAVA_SUPER_NAILGUN, this, ITEM_OWNED);
 		}
 	}
 
-	if(!(STAT(WEAPONS, this) & WEPSET(MULTI_GRENADE)))
+	if(!Inventory_have(WEP_MULTI_GRENADE, this, ITEM_OWNED))
 	{
-		if(this.ammo_multi_rockets > 0 && 
-							(STAT(WEAPONS, this) & WEPSET(GRENADE_LAUNCHER)))
+		if(this.ammo_multi_rockets > 0 && Inventory_have(WEP_GRENADE_LAUNCHER, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "Multi Grenades Enabled\n");
-			STAT(WEAPONS, this) |= WEPSET(MULTI_GRENADE);		
+			Inventory_add(WEP_MULTI_GRENADE, this, ITEM_OWNED);
 		}
 	}
 
-	if(!(STAT(WEAPONS, this) & WEPSET(MULTI_ROCKET)))
+	if(!Inventory_have(WEP_MULTI_ROCKET, this, ITEM_OWNED))
 	{
-		if(this.ammo_multi_rockets > 0 && 
-							(STAT(WEAPONS, this) & WEPSET(ROCKET_LAUNCHER)))
+		if(this.ammo_multi_rockets > 0 && Inventory_have(WEP_ROCKET_LAUNCHER, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "Multi Rockets Enabled\n");
-			STAT(WEAPONS, this) |= WEPSET(MULTI_ROCKET);		
+			Inventory_add(WEP_MULTI_ROCKET, this, ITEM_OWNED);
 		}
 	}
 
-	if(!(STAT(WEAPONS, this) & WEPSET(PLASMA_GUN)))
+	if(!Inventory_have(WEP_PLASMA_GUN, this, ITEM_OWNED))
 	{
-		if(this.ammo_plasma > 0 && (STAT(WEAPONS, this) & WEPSET(LIGHTNING)))
+		if(this.ammo_plasma > 0 && Inventory_have(WEP_LIGHTNING, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "Plasma Gun Enabled\n");
-			STAT(WEAPONS, this) |= WEPSET(PLASMA_GUN);		
+			Inventory_add(WEP_PLASMA_GUN, this, ITEM_OWNED);
 		}
 	}
 
-	if(!(STAT(WEAPONS, this) & WEPSET(DRILLER)))
+	if(!Inventory_have(WEP_DRILLER, this, ITEM_OWNED))
 	{
-		if(this.ammo_drills > 0 && 
-							(STAT(WEAPONS, this) & WEPSET(ROCKET_LAUNCHER)))
+		if(this.ammo_drills > 0 && Inventory_have(WEP_ROCKET_LAUNCHER, this, ITEM_OWNED))
 		{
 			// NOTE: disabling spammy message as you already know from the HUD that you got it!
 			//sprint (this, "This is NOT a drill!\n");
-			STAT(WEAPONS, this) |= WEPSET(DRILLER);		
+			Inventory_add(WEP_DRILLER, this, ITEM_OWNED);
 		}
 	}
 }
@@ -781,7 +777,7 @@ void weapon_touch(entity this, entity toucher)
 
 	// if we have the weapon already, try for replacements
 	Weapon newwep = REGISTRY_GET(Weapons, this.weapon);
-	if(Challenge_Active(CHALLENGE_BONK) || (leave && (STAT(WEAPONS, toucher) & newwep.m_wepset) && ((STAT(DUAL_WEAPONS, toucher) & newwep.m_wepset) || (newwep.spawnflags & WEP_FLAG_NODUAL) || (toucher.collected_weapons & newwep.m_wepset))))
+	if(Challenge_Active(CHALLENGE_BONK) || (leave && Inventory_have(newwep, toucher, ITEM_OWNED) && (Inventory_have(newwep, toucher, ITEM_DUALWIELD) || (newwep.spawnflags & WEP_FLAG_NODUAL) || Inventory_have(newwep, toucher, ITEM_COLLECTED))))
 	{
 		if(newwep == WEP_HAMMER && this.hammer_skin && this.hammer_skin != toucher.(weaponentity).hammer_skin)
 			{ /* do nothing */ }
@@ -815,7 +811,7 @@ void weapon_touch(entity this, entity toucher)
 	if(newwep == WEP_HAMMER && this.hammer_skin)
 		toucher.(weaponentity).hammer_skin = this.hammer_skin;
 
-	if(!(STAT(WEAPONS, toucher) & wep.m_wepset))
+	if(!Inventory_have(wep, toucher, ITEM_OWNED))
 	{
 		if(this.netname != "")
 			Send_Notification(NOTIF_ONE, toucher, MSG_MULTI, ITEM_WEAPON_GOT, this.netname);
@@ -834,13 +830,11 @@ void weapon_touch(entity this, entity toucher)
 		toucher.m_champion.m_pickup_weapon(toucher.m_champion, toucher, this);
 
 // change to the weapon
-	if((STAT(WEAPONS, toucher) & wep.m_wepset) && wep != WEP_HAMMER && (coop || deathmatch == 2))
-		STAT(DUAL_WEAPONS, toucher) |= wep.m_wepset;
+	if(Inventory_have(wep, toucher, ITEM_OWNED) && wep != WEP_HAMMER && (coop || deathmatch == 2))
+		Inventory_add(wep, toucher, ITEM_DUALWIELD);
 	else
-		STAT(WEAPONS, toucher) |= wep.m_wepset;
+		Inventory_add(wep, toucher, ITEM_OWNED);
 
-	//if(!(toucher.dual_weapons & wep.m_wepset))
-	//{
 	if(toucher.cvar_cl_autoswitch)
 	{
 		if(!deathmatch)
@@ -848,9 +842,8 @@ void weapon_touch(entity this, entity toucher)
 		else
 			Deathmatch_Weapon(toucher, wep, weaponentity);
 	}
-	//}
 
-	toucher.collected_weapons |= wep.m_wepset;
+	Inventory_add(wep, toucher, ITEM_COLLECTED);
 
 	// Moved up so the targets are fired even in coop, but only once.
 	SUB_UseTargets(this, toucher, NULL);
@@ -2788,7 +2781,7 @@ void BackpackTouch(entity this, entity toucher)
 	if(Challenge_Active(CHALLENGE_BONK))
 		wep = WEP_Null;
 	string wepmsg = "";
-	if(wep != WEP_Null && !(STAT(WEAPONS, toucher) & wep.m_wepset) && this.netname && this.netname != "")
+	if(wep != WEP_Null && !Inventory_have(wep, toucher, ITEM_OWNED) && this.netname && this.netname != "")
 		wepmsg = this.netname;
 
 // if the player was using his best weapon, change up to the new one if better
@@ -2834,9 +2827,15 @@ void BackpackTouch(entity this, entity toucher)
 
 	if(!Challenge_Active(CHALLENGE_BONK))
 	{
-		STAT(WEAPONS, toucher) |= STAT(WEAPONS, this);
+		if(this.inventory)
+		{
+			FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+			{
+				Inventory_add(it, toucher, ITEM_OWNED);
+			});
+		}
 		if(wep != WEP_Null)
-			STAT(WEAPONS, toucher) |= wep.m_wepset;
+			Inventory_add(wep, toucher, ITEM_OWNED);
 	}
 	bound_other_ammo(toucher);
 
@@ -2848,7 +2847,7 @@ void BackpackTouch(entity this, entity toucher)
 	EnableComboWeapons(toucher);
 
 	// hack to swap back to old champion attack (TODO: better system for champion weapons)
-	if(this.champion_weapon && this.champion_weapon != WEP_Null && (STAT(WEAPONS, toucher) & this.champion_weapon.m_wepset))
+	if(this.champion_weapon && this.champion_weapon != WEP_Null && Inventory_have(this.champion_weapon, toucher, ITEM_OWNED))
 		wep = this.champion_weapon;
 
 // change to the weapon
@@ -2881,10 +2880,17 @@ DropBackpack
 */
 void DropBackpack(entity this)
 {
-	WepSet weps = STAT(WEAPONS, this);
-	weps &= ~WEPSET_CHAMPIONS;
+	bool have_weapon = false;
+	if(this.inventory)
+	{
+		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+		{
+			have_weapon = true;
+			break;
+		});
+	}
 
-	if(weps == '0 0 0' && !(this.ammo_shells + this.ammo_nails + this.ammo_rockets + this.ammo_cells + this.ammo_lava_nails + this.ammo_multi_rockets + this.ammo_plasma + this.ammo_drills))
+	if(!have_weapon && !(this.ammo_shells + this.ammo_nails + this.ammo_rockets + this.ammo_cells + this.ammo_lava_nails + this.ammo_multi_rockets + this.ammo_plasma + this.ammo_drills))
 		return;	// nothing in it
 
 	if(STAT(SKATING, this))
@@ -2895,11 +2901,21 @@ void DropBackpack(entity this)
 	// Yoder Sept24 2021 Horde Merge
 	// don't drop backpacks in horde mode
 	if(horde_ent)
-		return; 
+		return;
 
 	entity item = spawn();
 	traceline(this.origin, this.origin - '0 0 24', MOVE_NORMAL, this);
 	setorigin(item, trace_endpos);
+
+	if(this.inventory)
+	{
+		Inventory_new(item);
+
+		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+		{
+			Inventory_add(it, item, ITEM_OWNED);
+		});
+	}
 
 	.entity weaponentity = weaponentities[0];
 	Weapon wep = this.(weaponentity).m_weapon;
@@ -2912,7 +2928,6 @@ void DropBackpack(entity this)
 		item.champion_weapon = WEP_Null;
 	item.weapon = wep.m_id;
 	item.netname = wep.m_name;
-	STAT(WEAPONS, item) = weps;
 
 	item.ammo_shells = this.ammo_shells;
 	item.ammo_nails = this.ammo_nails;
@@ -3139,26 +3154,26 @@ void armor_set_type(entity e)
 
 void target_items_takeweapon(entity player, Weapon wep)
 {
-	if(STAT(DUAL_WEAPONS, player) & wep.m_wepset)
-		STAT(DUAL_WEAPONS, player) &= ~wep.m_wepset;
+	if(Inventory_have(wep, player, ITEM_DUALWIELD))
+		Inventory_remove(wep, player, ITEM_DUALWIELD);
 	else
 	{
-		STAT(WEAPONS, player) &= ~wep.m_wepset;
+		Inventory_remove(wep, player, ITEM_OWNED);
 		.entity weaponentity = weaponentities[0];
 		if(player.(weaponentity).m_weapon == wep)
 			W_SwitchWeapon(player, w_getbestweapon(player, weaponentity), weaponentity);
 	}
 
 	// since this is a nasty ass trigger, let's be nice and let them gather a new dual weapon!
-	player.collected_weapons &= ~wep.m_wepset;
+	Inventory_remove(wep, player, ITEM_COLLECTED);
 }
 
 void target_items_giveweapon(entity player, Weapon wep)
 {
-	if(STAT(WEAPONS, player) & wep.m_wepset)
-		STAT(DUAL_WEAPONS, player) |= wep.m_wepset;
+	if(Inventory_have(wep, player, ITEM_OWNED))
+		Inventory_add(wep, player, ITEM_DUALWIELD);
 	else
-		STAT(WEAPONS, player) |= wep.m_wepset;
+		Inventory_add(wep, player, ITEM_OWNED);
 
 	if(player.cvar_cl_autoswitch)
 	{
@@ -3169,7 +3184,7 @@ void target_items_giveweapon(entity player, Weapon wep)
 			Deathmatch_Weapon(player, wep, weaponentity);
 	}
 
-	player.collected_weapons |= wep.m_wepset;
+	Inventory_add(wep, player, ITEM_COLLECTED);
 }
 
 void target_items_setweapon(entity this, entity e, int dotake)
@@ -3177,7 +3192,7 @@ void target_items_setweapon(entity this, entity e, int dotake)
 	Weapon wep = REGISTRY_GET(Weapons, this.weapon);
 	if(dotake == 2)
 	{
-		if(STAT(WEAPONS, e) & wep.m_wepset)
+		if(Inventory_have(wep, e, ITEM_OWNED))
 			target_items_takeweapon(e, wep);
 		else
 			target_items_giveweapon(e, wep);
@@ -3348,7 +3363,7 @@ bool target_items_testinv(entity this, entity e)
 	if(this.weapon)
 	{
 		Weapon wep = REGISTRY_GET(Weapons, this.weapon);
-		if(!(STAT(WEAPONS, e) & wep.m_wepset))
+		if(!Inventory_have(wep, e, ITEM_OWNED))
 			return false;
 	}
 

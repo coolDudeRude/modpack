@@ -1,0 +1,191 @@
+#pragma once
+
+#include "all.qh"
+
+#ifdef GAMEQC
+CLASS(Inventory, Object)
+	/** Stores counts of items, the id being the index */
+	ATTRIBARRAY(Inventory, inv_items, int, REGISTRY_MAX(Weapons));
+ENDCLASS(Inventory)
+
+/** Player inventory */
+.Inventory inventory;
+/** Player inventory storage (holds previous state) */
+.Inventory inventory_store;
+
+REGISTER_NET_LINKED(ENT_CLIENT_INVENTORY)
+
+const int Inventory_groups_minor = 24; // must be a multiple of 8 (one byte) to optimize bandwidth usage
+const int Inventory_groups_major = 4; // must be >= ceil(REGISTRY_COUNT(Weapons) / Inventory_groups_minor)
+#endif
+
+#ifdef GAMEQC
+const int ITEM_OWNED = BIT(0); // have the item in inventory currently
+const int ITEM_DUALWIELD = BIT(1); // have two of the item for dual wielding
+const int ITEM_COLLECTED = BIT(2); // have collected the weapon in this map
+#endif
+
+// no need to perform these checks on both server and client
+#ifdef CSQC
+STATIC_INIT(Inventory)
+{
+	if (Inventory_groups_minor / 8 != floor(Inventory_groups_minor / 8))
+		error("Inventory_groups_minor is not a multiple of 8.");
+	int min_major_value = ceil(REGISTRY_COUNT(Weapons) / Inventory_groups_minor);
+	if (Inventory_groups_major < min_major_value)
+		error(sprintf("Inventory_groups_major can not be < %d.", min_major_value));
+}
+#endif
+
+#ifdef SVQC
+#define G_MAJOR(id) (floor((id) / Inventory_groups_minor))
+#define G_MINOR(id) ((id) % Inventory_groups_minor)
+#endif
+
+#ifdef CSQC
+Inventory g_inventory;
+
+void Inventory_remove(entity this)
+{
+	if(g_inventory == this)
+		g_inventory = NULL;
+}
+
+NET_HANDLE(ENT_CLIENT_INVENTORY, bool isnew)
+{
+	make_pure(this);
+	g_inventory = this;
+	this.entremove = Inventory_remove;
+	const int majorBits = Readbits(Inventory_groups_major);
+	for (int i = 0; i < Inventory_groups_major; ++i) {
+		if (!(majorBits & BIT(i))) {
+			continue;
+		}
+		const int minorBits = Readbits(Inventory_groups_minor);
+		for (int j = 0; j < Inventory_groups_minor; ++j) {
+			if (!(minorBits & BIT(j))) {
+				continue;
+			}
+			const Weapon it = REGISTRY_GET(Weapons, Inventory_groups_minor * i + j);
+			.int fld = inv_items[it.m_id];
+			//int prev = this.(fld);
+			//int next = this.(fld) = ReadByte();
+			this.(fld) = ReadByte();
+		}
+	}
+	return true;
+}
+#endif
+
+#ifdef SVQC
+int minorBitsArr[Inventory_groups_major];
+void Inventory_Write(Inventory data, Inventory store)
+{
+	if (!data) {
+		WriteShort(MSG_ENTITY, 0);
+		return;
+	}
+	TC(Inventory, data);
+
+	for (int i = 0; i < Inventory_groups_major; ++i)
+		minorBitsArr[i] = 0;
+
+	int majorBits = 0;
+	FOREACH(Weapons, true, {
+		.int fld = inv_items[it.m_id];
+		const bool changed = store.(fld) != data.(fld);
+		store.(fld) = data.(fld);
+		if (changed) {
+			int maj = G_MAJOR(it.m_id);
+			majorBits = BITSET(majorBits, BIT(maj), true);
+			minorBitsArr[maj] = BITSET(minorBitsArr[maj], BIT(G_MINOR(it.m_id)), true);
+		}
+	});
+
+	Writebits(MSG_ENTITY, majorBits, Inventory_groups_major);
+	for (int i = 0; i < Inventory_groups_major; ++i)
+	{
+		if (!(majorBits & BIT(i)))
+			continue;
+
+		const int minorBits = minorBitsArr[i];
+		Writebits(MSG_ENTITY, minorBits, Inventory_groups_minor);
+		for (int j = 0; j < Inventory_groups_minor; ++j)
+		{
+			if (!(minorBits & BIT(j)))
+				continue;
+
+			const Weapon it = REGISTRY_GET(Weapons, Inventory_groups_minor * i + j);
+			WriteByte(MSG_ENTITY, data.inv_items[it.m_id]);
+		}
+	}
+}
+#endif
+
+#undef G_MAJOR
+#undef G_MINOR
+
+#ifdef SVQC
+bool Inventory_Send(Inventory this, entity to, int sf)
+{
+	TC(Inventory, this);
+	WriteHeader(MSG_ENTITY, ENT_CLIENT_INVENTORY);
+	Inventory_Write(this, to.inventory_store);
+	return true;
+}
+
+bool Inventory_customize(entity this, entity client)
+{
+	// sends to spectators too!
+	return (client.inventory == this);
+}
+
+void Inventory_new(entity this)
+{
+	if(this.inventory && this.inventory.owner == this)
+		return;
+	Inventory inv = NEW(Inventory);
+	this.inventory = inv;
+	inv.owner = this;
+	setcefc(inv, Inventory_customize);
+	// no need to network non-player inventories YET
+	if(IS_REAL_CLIENT(this))
+		Net_LinkEntity(inv, false, 0, Inventory_Send);
+}
+
+void Inventory_delete(entity e) { delete(e.inventory); e.inventory = NULL; }
+void Inventory_update(entity e) { e.inventory.SendFlags = 0xFFFFFF; }
+
+void Inventory_clear(entity store, int op)
+{
+	// NOTE: you will need to perform Inventory_update after this to update the storage entity
+	// (unless store is the storage entity)
+	FOREACH(Weapons, true, {
+		.int fld = inv_items[it.m_id];
+		if(op)
+			store.(fld) &= ~op;
+		else
+			store.(fld) = 0;
+	});
+}
+
+void InventoryStorage_attach(entity e) { e.inventory_store = NEW(Inventory); e.inventory_store.drawonlytoclient = e; }
+void InventoryStorage_delete(entity e) { delete(e.inventory_store); }
+
+ACCUMULATE
+void ONREMOVE(entity this)
+{
+    // remove inventory object attached to 'this'
+    if(this.inventory && this.inventory.owner == this)
+        Inventory_delete(this);
+}
+#endif
+
+#ifdef SVQC
+void Inventory_add(entity this, entity player, int op);
+void Inventory_remove(entity this, entity player, int op);
+#endif
+
+#ifdef GAMEQC
+bool Inventory_have(entity this, entity player, int op);
+#endif

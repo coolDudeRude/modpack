@@ -89,7 +89,7 @@ METHOD(Valkyrie, m_activate, void(Champions this, entity actor))
 	}
 	actor.valyrie_noflytime = time + 0.5; // hack to prevent downward movement cancelling the starting jump
 
-	STAT(WEAPONS, actor) |= WEP_SMG.m_wepset;
+	Inventory_add(WEP_SMG, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // WEAPONTODO
 	W_SwitchWeapon_Force(actor, WEP_SMG, weaponentity);
@@ -105,7 +105,7 @@ METHOD(Valkyrie, m_activate, void(Champions this, entity actor))
 
 METHOD(Valkyrie, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_SMG.m_wepset;
+	Inventory_add(WEP_SMG, actor, ITEM_OWNED);
 }
 #endif
 

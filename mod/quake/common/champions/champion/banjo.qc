@@ -5,7 +5,7 @@
 METHOD(BanjoKazooie, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);
-	STAT(WEAPONS, actor) |= WEP_BREEGULLBLASTER.m_wepset;
+	Inventory_add(WEP_BREEGULLBLASTER, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -53,14 +53,14 @@ METHOD(BanjoKazooie, m_playerspawn, void(Champions this, entity actor))
 {
 	actor.jetpack_status = false;
 	STAT(QCC_JETPACKFUEL, actor) = 100;
-	STAT(WEAPONS, actor) |= WEP_BREEGULLBLASTER.m_wepset;
+	Inventory_add(WEP_BREEGULLBLASTER, actor, ITEM_OWNED);
 }
 
 METHOD(BanjoKazooie, m_clear, void(Champions this, entity actor))
 {
 	actor.banjo_sigilsound = 0;
 	actor.jetpack_status = false;
-	STAT(WEAPONS, actor) &= ~WEP_BREEGULLBLASTER.m_wepset;
+	Inventory_remove(WEP_BREEGULLBLASTER, actor, ITEM_OWNED);
 }
 
 #endif

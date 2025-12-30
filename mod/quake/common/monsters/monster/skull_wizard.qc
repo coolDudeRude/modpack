@@ -753,7 +753,8 @@ void skullw_death1(entity this) { set_animofs(this, anim_skullwiz_death, 2, skul
 
 void skullw_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	STAT(WEAPONS, this) = WEP_SPELLBOOK.m_wepset;
+	Inventory_new(this);
+	Inventory_add(WEP_SPELLBOOK, this, ITEM_OWNED);
 	DropBackpack(this);
 
 	// Play fade away/death sound

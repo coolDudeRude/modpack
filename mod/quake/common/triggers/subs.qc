@@ -44,7 +44,14 @@ void SUB_CopyEntity(entity srcent, entity destent)
 	destent.ammo_cells = srcent.ammo_cells;
 	destent.items = srcent.items;
 	destent.powerups = srcent.powerups;
-	STAT(WEAPONS, destent) = STAT(WEAPONS, srcent);
+	if(srcent.inventory)
+	{
+		Inventory_new(destent);
+		FOREACH(Weapons, true, {
+			.int fld = inv_items[it.m_id];
+			destent.inventory.(fld) = srcent.inventory.(fld);
+		});
+	}
 	destent.takedamage = srcent.takedamage;
 	destent.chain = srcent.chain;
 	destent.deadflag = srcent.deadflag;

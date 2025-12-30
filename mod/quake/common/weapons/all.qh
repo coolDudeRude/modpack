@@ -40,7 +40,6 @@ void WriteWepSet(float dest, WepSet w);
 #endif
 
 #ifdef CSQC
-WepSet WepSet_GetFromStat();
 WepSet ReadWepSet();
 #endif
 
@@ -69,12 +68,11 @@ Weapon Weapon_from_name(string s)
 
 const int WEP_FIRST = 1;
 #define WEP_LAST (REGISTRY_COUNT(Weapons) - 1)
-WepSet WEPSET_ALL;
-WepSet WEPSET_CHAMPIONS;
 
 #include "all.inc"
 
 // TODO: invert after changes have been made to the hardcoded weapon impulses. Will require moving 'best weapon' impulses
+// NOTE: per-weapon impulses also start and end within these limits, be sure to update them when changing this!
 #define WEP_IMPULSE_BEGIN 181
 #define WEP_IMPULSE_END bound(WEP_IMPULSE_BEGIN, WEP_IMPULSE_BEGIN + (REGISTRY_COUNT(Weapons) - 1) - 1, 253)
 
@@ -85,10 +83,7 @@ STATIC_INIT(register_weapons_done)
 {
     string inaccessible = "";
     FOREACH(Weapons, true, {
-        WepSet set = it.m_wepset = _WepSet_FromWeapon(it.m_id = i);
-        WEPSET_ALL |= set;
-        if (it.spawnflags & WEP_FLAG_CHAMPION)
-            WEPSET_CHAMPIONS |= set;
+        it.m_wepset = _WepSet_FromWeapon(it.m_id = i);
         if (it == WEP_Null) continue;
         int imp = WEP_IMPULSE_BEGIN + it.m_id - 1;
         if (imp <= WEP_IMPULSE_END)

@@ -98,25 +98,23 @@ void parms_get(entity this)
 	// weapons
 	.entity weaponentity = weaponentities[0]; // only enough space to save the first slot!
 	string weps = parms_getdata(myid, "weapons");
-	WepSet wepset = '0 0 0';
 	FOREACH_WORD(weps, true,
 	{
 		Weapon wepent = Weapon_from_name(it);
 		if(wepent == WEP_Null)
 			continue;
-		wepset |= wepent.m_wepset;
+		Inventory_add(wepent, this, ITEM_OWNED);
 	});
-	STAT(WEAPONS, this) = wepset;
 	QCC_ClearWeapons(this);
 
 	if(this.(weaponentity))
 	{
 		Weapon wep = Weapon_from_name(parms_getdata(myid, "weapon"));
-		if(wep != WEP_Null && (STAT(WEAPONS, this) & wep.m_wepset))
+		if(wep != WEP_Null && Inventory_have(wep, this, ITEM_OWNED))
 			this.(weaponentity).m_weapon = wep;
 
 		Weapon prev = Weapon_from_name(parms_getdata(myid, "prevweapon"));
-		if(prev != WEP_Null && (STAT(WEAPONS, this) & prev.m_wepset))
+		if(prev != WEP_Null && Inventory_have(prev, this, ITEM_OWNED))
 			this.(weaponentity).cnt = prev.m_id;
 
 		this.(weaponentity).hammer_skin = stoi(parms_getdata(myid, "hammer_skin"));
@@ -138,7 +136,8 @@ void parms_get(entity this)
 	// TODO: do this elsewhere?
 	if(Challenge_Active(CHALLENGE_BONK))
 	{
-		STAT(WEAPONS, this) = WEPSET(HAMMER);
+		Inventory_clear(this.inventory, ITEM_OWNED);
+		Inventory_add(WEP_HAMMER, this, ITEM_OWNED);
 		if(this.(weaponentity))
 		{
 			this.(weaponentity).m_weapon = WEP_HAMMER;
@@ -160,7 +159,7 @@ void parms_write(entity this)
 	// weapons
 	.entity weaponentity = weaponentities[0]; 
 	string weps = "";
-	FOREACH(Weapons, it != WEP_Null && (STAT(WEAPONS, this) & it.m_wepset),
+	FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
 	{
 		weps = cons(weps, it.netname);
 	});
@@ -209,21 +208,17 @@ void parms_reset(entity this)
 	if(autocvar_horde)
 		start_weapon = WEP_CHAINSAW;
 	else if(world.worldtype == WORLDTYPE_DODGEBALL)
+	{
 		start_weapon = WEP_BALL;
+		prev_weapon = WEP_BALL;
+	}
 	else if(deathmatch && autocvar_skill == 3)
 	{
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
 	}
-	WepSet wepset = (WEPSET(SHOTGUN) | start_weapon.m_wepset);
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
-		wepset = start_weapon.m_wepset;
-	else if(deathmatch && autocvar_skill == 3)
-		wepset = WEPSET(RAILGUN);
-
-	if(Challenge_Active(CHALLENGE_BONK))
+	else if(Challenge_Active(CHALLENGE_BONK))
 	{
-		wepset = WEPSET(HAMMER);
 		start_weapon = WEP_HAMMER;
 		prev_weapon = WEP_HAMMER;
 	}
@@ -232,7 +227,7 @@ void parms_reset(entity this)
 
 	// weapons
 	string weps = "";
-	FOREACH(Weapons, it != WEP_Null && (wepset & it.m_wepset),
+	FOREACH(Weapons, it != WEP_Null && (it == start_weapon || it == prev_weapon),
 	{
 		weps = cons(weps, it.netname);
 	});
@@ -288,8 +283,13 @@ void SetChangeParms(entity this)
 		this.items &= ~IT_SUPERHEALTH; // rogue
 		this.gravity = 1.0;
 
+		WepSet myweps = '0 0 0';
+		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+		{
+			myweps |= it.m_wepset;
+		});
+
 		this.health = this.max_health;
-		vector myweps = STAT(WEAPONS, this);
 		parm1 = myweps.x;
 		parm2 = myweps.y;
 		parm3 = myweps.z;
@@ -400,7 +400,12 @@ void DecodeLevelParms(entity this)
 
 	if(!autocvar_sv_quake_itemdatabase)
 	{
-		STAT(WEAPONS, this) = vec3(parm1, parm2, parm3);
+		WepSet myweps = vec3(parm1, parm2, parm3);
+		FOREACH(Weapons, it != WEP_Null && (myweps & it.m_wepset),
+		{
+			Inventory_add(it, this, ITEM_OWNED);
+		});
+
 		QCC_ClearWeapons(this);
 		this.armorvalue = parm4;
 		this.ammo_shells = parm5;
@@ -409,11 +414,12 @@ void DecodeLevelParms(entity this)
 		this.ammo_cells = parm8;
 		.entity weaponentity = weaponentities[0]; // only enough space to save the first slot!
 		Weapon wep = REGISTRY_GET(Weapons, parm9);
-		if(this.(weaponentity) && wep != WEP_Null && (STAT(WEAPONS, this) & wep.m_wepset))
+		if(this.(weaponentity) && wep != WEP_Null && Inventory_have(wep, this, ITEM_OWNED))
 			this.(weaponentity).m_weapon = wep;
 		if(Challenge_Active(CHALLENGE_BONK))
 		{
-			STAT(WEAPONS, this) = WEPSET(HAMMER);
+			Inventory_clear(this.inventory, ITEM_OWNED);
+			Inventory_add(WEP_HAMMER, this, ITEM_OWNED);
 			this.(weaponentity).m_weapon = WEP_HAMMER;
 			this.(weaponentity).hammer_skin = floor(random() * SKIN_LAST) + 1;
 		}
@@ -1695,6 +1701,9 @@ void PutObserverInServer(entity this)
 		entcs_update_players(this);
 	}
 
+	Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
+	Inventory_update(this);
+
 	WaypointSprite_PlayerDead(this);
 
 	entity spot = SelectSpawnPoint(this, false);
@@ -1746,7 +1755,6 @@ void PutObserverInServer(entity this)
 	this.view_ofs = '0 0 0';
 
 	this.items = 0;
-	STAT(WEAPONS, this) = '0 0 0';
 	this.drawonlytoclient = this;
 
 	this.weaponmodel = "";
@@ -1775,6 +1783,14 @@ void PutObserverInServer(entity this)
 void PutPlayerInServer(entity this)
 {
 	entity spot = SelectSpawnPoint(this, false);
+
+	// NOTE: we don't need to create a new inventory here
+	// TODO maybe we *should* need to, and not try to preserve states?
+	// main problem is saving collected weapons
+	Inventory_new(this);
+	// might have an old inventory, let's reset it?
+	Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
+	Inventory_update(this);
 
 	this.spectating = false;
 	this.classname = STR_PLAYER;
@@ -1816,8 +1832,6 @@ void PutPlayerInServer(entity this)
 
 	this.weaponframe = 0;
 	this.weaponmodel = "";
-
-	STAT(DUAL_WEAPONS, this) = '0 0 0';
 
 	if(coop && autocvar_g_player_collisions && world.worldtype != WORLDTYPE_DODGEBALL)
 		this.clipgroup = CLIPGROUP_PLAYER;
@@ -1920,14 +1934,18 @@ void PutPlayerInServer(entity this)
 	this.angles_z = 0; // never spawn tilted even if the spot says to
 	this.fixangle = true;		// turn this way immediately
 
-	if(coop && STAT(WEAPONS, spot))
+	if(coop && spot.inventory)
 	{
-		STAT(WEAPONS, this) |= STAT(WEAPONS, spot);
-		if(STAT(WEAPONS, this) & (WEPSET(NAILGUN) | WEPSET(SUPER_NAILGUN)))
+		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, spot, ITEM_OWNED),
+		{
+			Inventory_add(it, this, ITEM_OWNED);
+		});
+
+		if(Inventory_have(WEP_NAILGUN, this, ITEM_OWNED) || Inventory_have(WEP_SUPER_NAILGUN, this, ITEM_OWNED))
 			this.ammo_shells = max(30, this.ammo_shells);
-		if(STAT(WEAPONS, this) & (WEPSET(GRENADE_LAUNCHER) | WEPSET(ROCKET_LAUNCHER)))
+		if(Inventory_have(WEP_GRENADE_LAUNCHER, this, ITEM_OWNED) || Inventory_have(WEP_ROCKET_LAUNCHER, this, ITEM_OWNED))
 			this.ammo_rockets = max(4, this.ammo_rockets);
-		if(STAT(WEAPONS, this) & WEPSET(LIGHTNING))
+		if(Inventory_have(WEP_LIGHTNING, this, ITEM_OWNED))
 			this.ammo_cells = max(12, this.ammo_cells);
 	}
 
@@ -2079,26 +2097,34 @@ spawnfunc(info_player_team2)
 
 //////////////////////////////////////////////////////////////////////////
 
+void trigger_activate_coop_getitems(entity this, entity player)
+{
+	FOREACH(Weapons, it != WEP_Null && !(it.spawnflags & WEP_FLAG_CHAMPION) && Inventory_have(it, player, ITEM_OWNED),
+	{
+		Inventory_add(it, this, ITEM_OWNED);
+	});
+}
+
 void trigger_activate_coop_spawns_use(entity this, entity actor, entity trigger)
 {
-	WepSet newitems = '0 0 0';
+	Inventory_clear(this.inventory, 0);
 	FOREACH_CLIENT(IS_PLAYER(it) && !it.maycheat,
 	{
-		newitems |= STAT(WEAPONS, it);
+		trigger_activate_coop_getitems(this, it);
 	});
-	newitems &= ~WEPSET_CHAMPIONS;
 
 	FOREACH_ENTITY_CLASS("info_player_coop", true,
 	{
 		if(it.targetname == this.target)
 		{
 			it.state = COOP_SPAWN_ACTIVE;
-			STAT(WEAPONS, it) = newitems;
+			Inventory_clear(it.inventory, 0);
+			trigger_activate_coop_getitems(it, this);
 		}
 		else
 		{
 			it.state = 0;
-			STAT(WEAPONS, it) = '0 0 0';
+			Inventory_clear(it.inventory, 0);
 		}
 	});
 }
@@ -2110,6 +2136,8 @@ spawnfunc(trigger_activate_coop_spawns)
 {
 	if(!coop) { delete(this); return; }
 	this.use = trigger_activate_coop_spawns_use;
+
+	Inventory_new(this); // used primarily for storage
 }
 
 const int COOP_SPAWN_START_ACTIVE = BIT(0);
@@ -2142,6 +2170,8 @@ spawnfunc(info_player_coop)
 	}
 	if((this.spawnflags & COOP_SPAWN_START_ACTIVE) || (!this.targetname || this.targetname == ""))
 		this.state = COOP_SPAWN_ACTIVE;
+
+	Inventory_new(this);
 
 	if(this.spawnflags & 1)
 	{
@@ -2904,6 +2934,7 @@ void ClientConnect(entity this)
 	this.playerid = ++playerid_last;
 
 	entcs_attach(this);
+	InventoryStorage_attach(this);
 
 	this.flags |= FL_CLIENT;
 
@@ -3016,6 +3047,7 @@ void ClientDisconnect(entity this)
 	strfree(this.weaponorder_byimpulse);
 	GetCvars(this, this, -1);
 	entcs_detach(this);
+	InventoryStorage_delete(this);
 
 	WaypointSprite_PlayerGone(this);
 

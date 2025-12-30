@@ -9,7 +9,7 @@ METHOD(Clippy, m_activate, void(Champions this, entity actor))
 
 	SendClippyLine(actor, bound(1, floor(random() * 3) + 1, 3));
 
-	STAT(WEAPONS, actor) |= WEP_PLANE.m_wepset;
+	Inventory_add(WEP_PLANE, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -25,12 +25,12 @@ METHOD(Clippy, m_playerspawn, void(Champions this, entity actor))
 {
 	SendClippyLine(actor, 4);
 
-	STAT(WEAPONS, actor) |= WEP_PLANE.m_wepset;
+	Inventory_add(WEP_PLANE, actor, ITEM_OWNED);
 }
 
 METHOD(Clippy, m_clear, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) &= ~WEP_PLANE.m_wepset;
+	Inventory_remove(WEP_PLANE, actor, ITEM_OWNED);
 }
 
 METHOD(Clippy, m_takedamage, float(Champions this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))

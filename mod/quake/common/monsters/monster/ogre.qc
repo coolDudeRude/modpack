@@ -384,7 +384,8 @@ void ogre_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		this.ammo_rockets = 2;
 	// TODO: make optional?
-	STAT(WEAPONS, this) = WEP_CHAINSAW.m_wepset;
+	Inventory_new(this);
+	Inventory_add(WEP_CHAINSAW, this, ITEM_OWNED);
 	DropBackpack(this);
 
 // check for gib

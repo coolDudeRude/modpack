@@ -475,7 +475,8 @@ void cook_die2(entity this)
 
 void cook_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	STAT(WEAPONS, this) = WEP_PAN.m_wepset;
+	Inventory_new(this);
+	Inventory_add(WEP_PAN, this, ITEM_OWNED);
 	DropBackpack(this);
 	
 	if(this.health < -80)

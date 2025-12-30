@@ -4,6 +4,7 @@
 #include "../common/champions/_mod.qh"
 #include "../common/jumpsdonewell/_mod.qh"
 #include "../common/status_effects/_mod.qh"
+#include "../common/weapons/inventory.qh"
 
 string Sbar_PickWeapon_wepname(Weapon wpn)
 {
@@ -945,15 +946,14 @@ void Sbar_DrawKeys()
 Sbar_DrawInventory
 ===============
 */
-WepSet oldweapons;
-float weapon_gettime[72];
+int oldweapons[REGISTRY_MAX(Weapons)];
+float weapon_gettime[REGISTRY_MAX(Weapons)];
 void Sbar_DrawInventory(vector pos, vector mySize)
 {
 	// set flash times
 	float oldfont = drawfont;
 	int myitems = STAT(ITEMS);
 	//int mypowerups = STAT(POWERUPS);
-	WepSet myweapons = STAT(WEAPONS);
 	entity thiswep = viewmodels[0]; // TODO: unhardcode
 	vector bgcolor = Sbar_BgColor();
 
@@ -971,15 +971,18 @@ void Sbar_DrawInventory(vector pos, vector mySize)
 	icon_size.x = mySize.x / rows;
 	icon_size.y = mySize.y / columns;
 
-	if(oldweapons != myweapons && time > 5) // time check to prevent initial load showing new weapons
+	if(g_inventory)
 	{
 		FOREACH(Weapons, it != WEP_Null,
 		{
-			if((myweapons & it.m_wepset) != (oldweapons & it.m_wepset))
-				weapon_gettime[it.m_id] = time;
+			if(g_inventory.inv_items[it.m_id] != oldweapons[it.m_id])
+			{
+				if(time > 5) // not while initially loading
+					weapon_gettime[it.m_id] = time;
+				oldweapons[it.m_id] = g_inventory.inv_items[it.m_id];
+			}
 		});
 	}
-	oldweapons = myweapons;
 
 	//Sbar_DrawAlphaPic('0 -24 0', "gfx/quake/ibar", autocvar_sbar_alpha_bg);
 	//drawpic(pos, "gfx/quake/scorebar", mySize, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
@@ -1004,7 +1007,7 @@ void Sbar_DrawInventory(vector pos, vector mySize)
 				FOREACH_WORD(weporder, true,
 				{
 					Weapon wepent = Weapon_from_name(it);
-					if(wepent == WEP_Null || wepent.impulse != imp || !(myweapons & wepent.m_wepset))
+					if(wepent == WEP_Null || wepent.impulse != imp || !Inventory_have(wepent, g_inventory, ITEM_OWNED))
 						continue;
 					wep = wepent;
 					// TODO: the hud has no idea if the weapon has ammo

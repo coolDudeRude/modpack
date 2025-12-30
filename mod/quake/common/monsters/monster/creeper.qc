@@ -176,7 +176,8 @@ void creeper_die(entity this, entity inflictor, entity attacker, int deathtype)
 		{
 			RandomSelection_AddEnt(it, 1, 1);
 		});
-		STAT(WEAPONS, this) = RandomSelection_chosen_ent.m_wepset;
+		Inventory_new(this);
+		Inventory_add(RandomSelection_chosen_ent, this, ITEM_OWNED);
 		DropBackpack(this);
 	}
 

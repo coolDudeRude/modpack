@@ -241,11 +241,11 @@ METHOD(Galena, m_activate, void(Champions this, entity actor))
 
 	actor.skin = bound(0, (etof(actor) % 5) - 1, 4);
 
-	STAT(WEAPONS, actor) |= WEP_SWORD.m_wepset;
+	Inventory_add(WEP_SWORD, actor, ITEM_OWNED);
 }
 
 METHOD(Galena, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_SWORD.m_wepset;
+	Inventory_add(WEP_SWORD, actor, ITEM_OWNED);
 }
 #endif

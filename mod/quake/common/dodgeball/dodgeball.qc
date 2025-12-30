@@ -395,8 +395,8 @@ void dodgeball_PutPlayerInServer(entity this)
 	this.health = 100;
 	STAT(STAMINA, this) = 30;
 	STAT(DEFLECTING, this) = 0;
-	STAT(WEAPONS, this) = WEPSET(BALL);
-	STAT(DUAL_WEAPONS, this) = '0 0 0';
+	Inventory_clear(this.inventory, 0);
+	Inventory_add(WEP_BALL, this, ITEM_OWNED);
 
 	// add a slight delay after spawning to be able to throw balls
 	for(int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)

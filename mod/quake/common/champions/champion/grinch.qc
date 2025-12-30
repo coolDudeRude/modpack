@@ -93,7 +93,7 @@ METHOD(Grinch, m_activate, void(Champions this, entity actor))
 	else
 		player_sound(actor, CH_VOICE, "start4.wav", ATTN_NORM);
 
-	STAT(WEAPONS, actor) |= WEP_SNOWBALL.m_wepset;
+	Inventory_add(WEP_SNOWBALL, actor, ITEM_OWNED);
 
 	.entity weaponentity = weaponentities[0]; // TODO?
 	if(actor.(weaponentity).m_weapon == WEP_SHOTGUN)
@@ -102,7 +102,7 @@ METHOD(Grinch, m_activate, void(Champions this, entity actor))
 
 METHOD(Grinch, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_SNOWBALL.m_wepset;
+	Inventory_add(WEP_SNOWBALL, actor, ITEM_OWNED);
 }
 
 METHOD(Grinch, m_clear, void(Champions this, entity actor))
@@ -117,7 +117,7 @@ METHOD(Grinch, m_clear, void(Champions this, entity actor))
 		}
 	});
 
-	STAT(WEAPONS, actor) &= ~WEP_SNOWBALL.m_wepset;
+	Inventory_remove(WEP_SNOWBALL, actor, ITEM_OWNED);
 }
 
 METHOD(Grinch, m_cannon_launch, void(Champions this, entity actor, entity cannon))

@@ -9,7 +9,7 @@ bool client_hasweapon(entity this, Weapon wpn, .entity weaponentity, float andam
 	if (time < this.hasweapon_complain_spam)
 		complain = 0;
 
-	if (autocvar_g_weaponswitch_debug == 2 && weaponslot(weaponentity) > 0 && !(wpn.spawnflags & WEP_FLAG_DUALWIELD) && !(STAT(DUAL_WEAPONS, this) & wpn.m_wepset))
+	if (autocvar_g_weaponswitch_debug == 2 && weaponslot(weaponentity) > 0 && !(wpn.spawnflags & WEP_FLAG_DUALWIELD) && !Inventory_have(wpn, this, ITEM_DUALWIELD))
 		return false; // no complaints needed
 
 	if (complain)
@@ -21,7 +21,7 @@ bool client_hasweapon(entity this, Weapon wpn, .entity weaponentity, float andam
 			sprint(this, "Invalid weapon\n");
 		return false;
 	}
-	if (STAT(WEAPONS, this) & WepSet_FromWeapon(wpn))
+	if (Inventory_have(wpn, this, ITEM_OWNED))
 	{
 		if (andammo)
 		{
@@ -43,7 +43,6 @@ float W_GetCycleWeapon(entity this, string weaponorder, float dir, float imp, fl
 	// We cannot tokenize in this function, as GiveItems calls this
 	// function. Thus we must use car/cdr.
 	float weaponwant, first_valid, prev_valid, switchtonext, switchtolast;
-	WepSet wepset = '0 0 0';
 	switchtonext = switchtolast = 0;
 	first_valid = prev_valid = 0;
 	float weaponcur;
@@ -61,7 +60,6 @@ float W_GetCycleWeapon(entity this, string weaponorder, float dir, float imp, fl
 	{
 		weaponwant = stof(car(rest)); rest = cdr(rest);
 		wep = REGISTRY_GET(Weapons, weaponwant);
-		wepset = wep.m_wepset;
 		if(imp >= 0)
 		if(wep.impulse != imp)
 			continue;
@@ -70,13 +68,12 @@ float W_GetCycleWeapon(entity this, string weaponorder, float dir, float imp, fl
 		FOREACH(Weapons, it != WEP_Null, {
 			if(i != weaponwant)
 			if(it.impulse == imp || imp < 0)
-			if(STAT(WEAPONS, this) & (it.m_wepset))
+			if(Inventory_have(it, this, ITEM_OWNED))
 				have_other = true;
 		});
 
 		// skip weapons we don't own that aren't normal and aren't in the map
-		if(!(STAT(WEAPONS, this) & wepset))
-		if(have_other)
+		if(have_other && !Inventory_have(wep, this, ITEM_OWNED))
 			continue;
 
 		++c;
@@ -125,12 +122,14 @@ void W_SwitchToOtherWeapon(entity this, .entity weaponentity)
 {
 	// hack to ensure it switches to an OTHER weapon (in case the other fire mode still has ammo, we want that anyway)
 	Weapon ww;
-	WepSet set = WepSet_FromWeapon(this.(weaponentity).m_weapon);
-	if (STAT(WEAPONS, this) & set)
+	//WepSet set = WepSet_FromWeapon(this.(weaponentity).m_weapon);
+	Weapon wep = this.(weaponentity).m_weapon;
+	if (Inventory_have(wep, this, ITEM_OWNED))
 	{
-		STAT(WEAPONS, this) &= ~set;
+		// do it manually since we needn't trigger an update over this
+		this.inventory.inv_items[wep.m_id] &= ~ITEM_OWNED;
 		ww = w_getbestweapon(this, weaponentity);
-		STAT(WEAPONS, this) |= set;
+		this.inventory.inv_items[wep.m_id] |= ITEM_OWNED;
 	}
 	else
 	{

@@ -19,12 +19,12 @@ METHOD(Keyleth, m_playerthink, void(Champions this, entity actor))
 METHOD(Keyleth, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);
-	STAT(WEAPONS, actor) |= WEP_MUSHROOM.m_wepset;
+	Inventory_add(WEP_MUSHROOM, actor, ITEM_OWNED);
 }
 
 METHOD(Keyleth, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_MUSHROOM.m_wepset;
+	Inventory_add(WEP_MUSHROOM, actor, ITEM_OWNED);
 }
 
 METHOD(Keyleth, m_cannon_launch, void(Champions this, entity actor, entity cannon))

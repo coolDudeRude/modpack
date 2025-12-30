@@ -66,7 +66,7 @@ bool GremlinAttemptWeaponSteal(entity this)
 		return false;
 	Weapon wep = best;
 	// take that weapon from the entity
-	STAT(WEAPONS, victim) &= ~wep.m_wepset;
+	Inventory_remove(wep, victim, ITEM_OWNED);
 	// give it to our gremlin
 	this.(weaponentity).m_weapon = best;
 	// take some ammo while we are at it

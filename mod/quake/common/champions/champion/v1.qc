@@ -34,12 +34,12 @@ METHOD(V1, m_activate, void(Champions this, entity actor))
 	else
 		player_sound(actor, CH_VOICE, "start4.wav", ATTN_NORM);
 
-	STAT(WEAPONS, actor) |= WEP_KATANA.m_wepset;
+	Inventory_add(WEP_KATANA, actor, ITEM_OWNED);
 }
 
 METHOD(V1, m_playerspawn, void(Champions this, entity actor))
 {
-	STAT(WEAPONS, actor) |= WEP_KATANA.m_wepset;
+	Inventory_add(WEP_KATANA, actor, ITEM_OWNED);
 }
 
 METHOD(V1, m_killed, void(Champions this, entity targ, entity inflictor, entity attacker, int deathtype))

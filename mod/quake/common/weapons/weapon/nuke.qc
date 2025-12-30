@@ -118,7 +118,7 @@ void W_DropNuke(entity this, .entity weaponentity)
 			if(this.(w_ent) && slot != weaponslot(weaponentity))
 				ATTACK_FINISHED(this, w_ent) = time + 0.5;
 		}
-		STAT(WEAPONS, this) &= ~WEP_NUKE.m_wepset;
+		Inventory_remove(WEP_NUKE, this, ITEM_OWNED);
 		W_SwitchWeapon(this, w_getbestweapon(this, weaponentity), weaponentity);
 	}
 
