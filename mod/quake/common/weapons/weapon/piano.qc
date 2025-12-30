@@ -289,7 +289,7 @@ METHOD(Piano, wr_think, void(entity thiswep, entity actor, .entity weaponentity,
 	Weapon oldwep = actor.(weaponentity).piano_prevwep;
 	actor.(weaponentity).piano_prevwep = actor.(weaponentity).m_weapon;
 
-	if(oldwep != WEP_PIANO) // only plays once!!
+	if(oldwep != WEP_PIANO && !music_playing(actor)) // only plays once!!
 	{
 		wep_piano_woodpiano_E1(actor.(weaponentity));
 		return;

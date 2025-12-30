@@ -13,6 +13,8 @@ bool music_copy(entity this, entity from);
 
 void music_reset(entity this);
 
+bool music_playing(entity this);
+
 void music_RemovePlayer(entity this);
 
 void CreatureFrame_Music(entity this);

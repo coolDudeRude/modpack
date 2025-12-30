@@ -371,7 +371,7 @@ METHOD(SpeakNSpell, wr_think, void(entity thiswep, entity actor, .entity weapone
 	Weapon oldwep = actor.(weaponentity).speaknspell_prevwep;
 	actor.(weaponentity).speaknspell_prevwep = actor.(weaponentity).m_weapon;
 
-	if(oldwep != WEP_SPEAKNSPELL) // only plays once!!
+	if(oldwep != WEP_SPEAKNSPELL && !music_playing(actor)) // only plays once!!
 	{
 		_sound(actor, CH_WEAPON_SINGLE, "weapons/speaknspell_startup.wav", 1, ATTN_NORM);
 		return;

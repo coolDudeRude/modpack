@@ -89,6 +89,20 @@ const int MIDI_TRACKS = 17; // must be up by 1 since MIDI isn't zero-indexed
 void midi_frame(entity this);
 #endif
 
+bool music_playing(entity this)
+{
+#ifdef MIDI_SUPPORT
+	// MIDIs always have a 0 track (TODO: safer method of checking?)
+	if(this.midi_buffersize[0] > 0)
+		return true;
+#endif
+	.entity weaponentity = weaponentities[0]; // TODO?
+	if(!this.(weaponentity))
+		return false;
+	string mymusic = this.(weaponentity).music_song;
+	return (mymusic != "");
+}
+
 void CreatureFrame_Music(entity this)
 {
 #ifdef MIDI_SUPPORT

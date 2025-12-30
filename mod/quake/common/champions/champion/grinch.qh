@@ -83,6 +83,7 @@ PRECACHE(Grinch)
 CLASS(Grinch, Champions)
     ATTRIB(Grinch, netname, string, "grinch");
     ATTRIB(Grinch, m_name, string, "The Grinch");
+    ATTRIB(Grinch, m_hidden, bool, true);
 #ifdef GAMEQC
     ATTRIB(Grinch, m_model, Model, MDL_Grinch);
     ATTRIB(Grinch, m_model_head, Model, MDL_Null);
