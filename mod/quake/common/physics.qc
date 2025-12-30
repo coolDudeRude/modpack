@@ -609,6 +609,8 @@ void PM_Main(entity this, float dt)
 
 	float maxspeed_mod = 1;
 	maxspeed_mod *= dodgeball_GetMoveSpeed(this);
+	if(STAT(PASSIVES, this) & PASSIVE_HERMESBOOTS)
+		maxspeed_mod *= 1.5;
 	if(StatusEffects_active(STATUSEFFECT_Slowness, actor))
 		maxspeed_mod *= 0.25;
 	if(this.m_champion)

@@ -11,3 +11,17 @@ const int SHOP_COST_PASSIVE = 50;
 const int SHOP_ITEM_MAX = 16;
 const int SHOP_WEAPON_COUNT = 3;
 const int SHOP_PASSIVE_COUNT = 3;
+
+#ifdef SVQC
+string Shop_Passive_Message(int itemid);
+
+int Shop_Passive_Item(string item);
+#endif
+
+#ifdef CSQC
+string Shop_Passive_PrettyName(int itemid);
+
+string Shop_Passive_Description(int itemid);
+
+string Shop_Passive_Name(int itemid);
+#endif

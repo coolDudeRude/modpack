@@ -37,8 +37,10 @@ const int PASSIVE_ELECTRIFYING      = BIT(7);
 const int PASSIVE_BUNNYBOOTS        = BIT(8);
 const int PASSIVE_ARCANA            = BIT(9);
 const int PASSIVE_SPONGE            = BIT(10);
+const int PASSIVE_HERMESBOOTS       = BIT(11);
 
-const int PASSIVE_COUNT = 11;
+// NOTE: the hard limit is currently 24 for networking
+const int PASSIVE_COUNT = 12; // last bit + 1 (thank 0 indexing)
 
 
 const int POWERUP_INVISIBILITY         = BIT(0);

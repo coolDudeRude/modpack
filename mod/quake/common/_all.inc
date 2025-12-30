@@ -37,4 +37,5 @@
 #include "music.qc"
 #include "editor.qc"
 #include "challenges.qc"
+#include "shop.qc"
 #endif
