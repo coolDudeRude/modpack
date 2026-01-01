@@ -278,8 +278,8 @@ void Hatch_Egg(entity this)
 	setsize(this, mon.m_mins, mon.m_maxs);
 	set_movetype(this, MOVETYPE_TOSS);
 	this.oldorigin = this.origin;
-	this.origin_z = this.origin_z + 8;
-	DropToFloor_QC_DelayedInit(this);
+	//this.origin_z = this.origin_z + 8;
+	//DropToFloor_QC_DelayedInit(this);
 	
 	// Can the egg hatch yet? Solid content?
 	tracebox(this.origin, this.mins, this.maxs, this.origin, MOVE_NOMONSTERS, this);
