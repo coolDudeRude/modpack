@@ -100,7 +100,7 @@ void T_SpearTouch(entity this, entity toucher)
 
 		delete(this);
 	}
-	else if(toucher && toucher.takedamage && toucher.armorvalue == 0 && (IS_PLAYER(toucher) || toucher.classname == "wall_explode" || IS_MONSTER(toucher)))
+	else if(toucher && toucher.takedamage && toucher.armorvalue <= 0 && (IS_PLAYER(toucher) || toucher.classname == "wall_explode" || IS_MONSTER(toucher)))
 	{
 		_setmodel(this, "progs/impstuck.mdl");
 		_sound(this, CH_WEAPON_SINGLE, "weapons/impaler/impale.wav", 1, ATTN_NORM);
@@ -429,7 +429,7 @@ void impale(entity this)
 
 void W_FireSpear(entity this, .entity weaponentity)
 {
-	W_TakeAmmo(this, ammo_rockets, 1);
+	W_TakeAmmo(this, IT_ROCKETS, 1);
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;
 	missile.owner = this;

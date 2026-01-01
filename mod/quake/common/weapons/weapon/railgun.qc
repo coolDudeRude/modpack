@@ -73,7 +73,7 @@ void W_FireSniperLightning(entity this)
 		this.t_width = time + 0.6;
 	}
 	this.punchangle_x = -4;
-	W_TakeAmmo(this, ammo_cells, 10);
+	W_TakeAmmo(this, IT_CELLS, 10);
 	this.effects |= EF_MUZZLEFLASH;
 
 	makevectors(this.v_angle);

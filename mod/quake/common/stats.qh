@@ -170,6 +170,8 @@ REGISTER_STAT(SERVERFLAGS, INT, serverflags)
 #endif
 REGISTER_STAT(POWERUPS, INT, this.powerups)
 
+REGISTER_STAT(ARMORTYPE, INT, this.armortype)
+
 #ifdef SVQC
 .float exptime;
 #endif

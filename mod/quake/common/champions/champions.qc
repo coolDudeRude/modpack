@@ -94,7 +94,6 @@ void QCC_ClearTransform(entity this)
 			this.health = max(1, rint(this.transform_prevhealth));
 		this.armortype = this.transform_armortype;
 		this.armorvalue = this.transform_armorvalue;
-		armor_set_type(this);
 
 		for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 		{
@@ -112,7 +111,7 @@ void QCC_ClearTransform(entity this)
 	}
 	this.transform_prevhealth = 0;
 	this.transform_limited = 0;
-	this.transform_armortype = 0;
+	this.transform_armortype = ARMOR_NONE;
 	this.transform_armorvalue = 0;
 	this.m_transform = NULL;
 
@@ -240,9 +239,8 @@ void QCC_UpdatePlayer(entity this)
 			}
 			this.transform_armortype = this.armortype;
 			this.transform_armorvalue = this.armorvalue;
-			this.armortype = 0;
+			this.armortype = ARMOR_NONE;
 			this.armorvalue = 0;
-			this.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
 
 			for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 			{
@@ -337,7 +335,7 @@ void champions_PlayerDies(entity this)
 	this.m_transform = NULL;
 	this.transform_prevhealth = 0;
 	this.transform_health = 0;
-	this.transform_armortype = 0;
+	this.transform_armortype = ARMOR_NONE;
 	this.transform_armorvalue = 0;
 
 	for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)

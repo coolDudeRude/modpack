@@ -102,6 +102,7 @@
 #include "spawn.qc"
 #include "spazmatism.qc"
 #include "spider_droid.qc"
+#include "squeak.qc"
 #include "super_chicken.qc"
 #include "tentacle.qc"
 #include "thomas.qc"

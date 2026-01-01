@@ -14,6 +14,13 @@ void HordeRecord()
 	}
 }
 
+float HordeGetDifficulty(entity this)
+{
+	float difficulty = (0.5 + autocvar_skill * ((1.2 - 0.3) / (10 / this.wave)));
+	// TODO: other modifiers? e.g. a boon that increases difficulty
+	return difficulty;
+}
+
 /*
 ============
 HORDE random map pick
@@ -307,7 +314,11 @@ void PrecacheMonsters()
 	precache_sound("items/r_item1.wav");
 	precache_model("maps/b_bh25.bsp"); // regular health
 	precache_sound("items/health1.wav");
+	precache_sound("items/armor1.wav");
+	precache_sound("items/armor_mage.wav");
 	precache_model("progs/armor.mdl"); // regular armor
+	precache_model("progs/armor_mage.mdl");
+	// TODO: cache simple items?
 	
 	// quad damage
 	precache_model("progs/quaddama.mdl");
@@ -636,44 +647,39 @@ void horde_health_touch(entity this, entity toucher)
 
 void horde_armor_touch(entity this, entity toucher)
 {
-	float type = 0.3, value = 100;
-	int bit = IT_ARMOR1;
-	
 	if(!CanTouchItem(this, toucher))
 		return;
 
-	if(this.classname == "item_armor1")
+	bool pickedup = false;
+	int type = ARMOR_GREEN;
+	float value = 100;
+
+	if(this.armorvalue)
 	{
-		type = 0.3;
-		value = 100;
-		bit = IT_ARMOR1;
+		type = this.armortype;
+		value = this.armorvalue;
+		// TODO: armor tiers?
+		if(this.armortype == ARMOR_TECH && toucher.armortype != ARMOR_TECH)
+			pickedup = true;
+		else if(toucher.armortype != ARMOR_TECH && !(armor_getstrength(toucher.armortype) * toucher.armorvalue >= armor_getstrength(type) * value))
+			pickedup = true;
 	}
-	if(this.classname == "item_armor2")
-	{
-		type = 0.6;
-		value = 150;
-		bit = IT_ARMOR2;
-	}
-	if(this.classname == "item_armorInv")
-	{
-		type = 0.8;
-		value = 200;
-		bit = IT_ARMOR3;
-	}
-	if(toucher.armortype * toucher.armorvalue >= type * value)
+
+	if(!pickedup)
 		return;
 		
 	toucher.armortype = type;
 	toucher.armorvalue = value;
-	toucher.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	toucher.items |= bit;
 
 	this.solid = SOLID_NOT;
 	this.model = string_null;
 	// NOTE: disabling spammy message as you already know from the HUD that you got it!
 	//sprint(toucher, "You got armor\n");
 // armor touch sound
-	_sound(toucher, CH_TRIGGER_SINGLE, "items/armor1.wav", 1, ATTN_NORM);
+	if(this.noise && this.noise != "")
+		_sound(toucher, CH_TRIGGER_SINGLE, this.noise, 1, ATTN_NORM);
+	else
+		_sound(toucher, CH_TRIGGER_SINGLE, "items/armor1.wav", 1, ATTN_NORM);
 	this.owner.wait = false;
 	delete(this);
 }
@@ -1052,12 +1058,10 @@ void SpawnItem(entity this)
 	}
 	else // armor
 	{
-		item.classname = "item_armor1";
+		item.classname = "item_armor";
 		settouch(item, horde_armor_touch);
-		item.armortype = 0.3;
-		item.armorvalue = 100;
-		_setmodel(item, "progs/armor.mdl");
-		item.skin = 0;
+		armor_init(item, ARMOR_GREEN);
+		_setmodel(item, item.mdl);
 		setsize(item, '-16 -16 0', '16 16 56');
 	}
 
@@ -1437,9 +1441,11 @@ bool horde_squad_allowed(entity this, entity squad, int bosswave, int spawntype,
 
 entity Horde_GetSquadEntity(entity this, int spawntype)
 {
-	// finalbosses will spawn every 3 waves on nightmare! 9 otherwise
-	int fbosswave = (autocvar_skill == 3) ? 3 : 9;
-	bool allowany = (autocvar_skill == 3 && this.wave > 9);
+	int fbosswave = 9;
+	float difficulty = HordeGetDifficulty(this);
+	if(difficulty > 4)
+		fbosswave = 3;
+	bool allowany = (difficulty > 5);
 	//bool allowany = false;
 	RandomSelection_Init();
 	IL_EACH(g_squads, true,

@@ -108,7 +108,7 @@ void drill_think(entity this)
 
 void W_FireDriller(entity this, .entity weaponentity)
 {
-	W_TakeAmmo(this, ammo_drills, 1);
+	W_TakeAmmo(this, IT_DRILLS, 1);
 	
 	_sound(this, CH_WEAPON_SINGLE, "weapons/drill_shot.wav", 1, ATTN_NORM);
 

@@ -61,6 +61,8 @@ PRECACHE(Sbar)
 	precache_pic("gfx/quake/sb_armor1");
 	precache_pic("gfx/quake/sb_armor2");
 	precache_pic("gfx/quake/sb_armor3");
+	precache_pic("gfx/quake/sb_armor_mage");
+	precache_pic("gfx/quake/sb_armor_tech");
 
 	precache_pic("gfx/quake/sb_shells");
 	precache_pic("gfx/quake/sb_nails");
@@ -1412,12 +1414,15 @@ void Sbar_Draw()
 				else if(!(STAT(ITEMS) & IT_TANK))
 				{
 					string apic = string_null;
-					if(STAT(ITEMS) & IT_ARMOR3)
-						apic = "gfx/quake/sb_armor3";
-					else if(STAT(ITEMS) & IT_ARMOR2)
-						apic = "gfx/quake/sb_armor2";
-					else if(STAT(ITEMS) & IT_ARMOR1)
-						apic = "gfx/quake/sb_armor1";
+					int atype = STAT(ARMORTYPE);
+					switch(atype)
+					{
+						case ARMOR_GREEN: apic ="gfx/quake/sb_armor1"; break;
+						case ARMOR_YELLOW: apic ="gfx/quake/sb_armor2"; break;
+						case ARMOR_RED: apic ="gfx/quake/sb_armor3"; break;
+						case ARMOR_MAGE: apic ="gfx/quake/sb_armor_mage"; break;
+						case ARMOR_TECH: apic ="gfx/quake/sb_armor_tech"; break;
+					}
 
 					if(apic)
 					{
@@ -1425,7 +1430,18 @@ void Sbar_Draw()
 						drawpic_aspect(pos, apic, icon_size, bgcolor, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 						//Sbar_DrawNum('24 0 0', itos(getstati(STAT_ARMOR)), 3, ((getstati(STAT_ARMOR) <= 25) ? '1 0 0' : '1 1 1'));
 						sbar = '0 0 0';
-						Sbar_DrawNum_lettersize(pos + vec2(icon_size.x, 0), itos(getstati(STAT_ARMOR)), 3, ((getstati(STAT_ARMOR) <= 25) ? '1 0 0' : '1 1 1'), icon_size.x, icon_size);
+						vector acolor = '1 1 1';
+						int armor = getstati(STAT_ARMOR);
+						if(atype == ARMOR_TECH)
+						{
+							if(armor <= 0)
+								acolor = '1 0 0';
+							else
+								acolor = '0 1 1';
+						}
+						else if(armor <= 25)
+							acolor = '1 0 0';
+						Sbar_DrawNum_lettersize(pos + vec2(icon_size.x, 0), itos(armor), 3, acolor, icon_size.x, icon_size);
 						sbar = oldsbar;
 					}
 					else

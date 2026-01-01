@@ -26,6 +26,6 @@ void W_ResetGunAlign(entity player, int preferred_alignment);
 
 vector W_Shotorg(entity ent, .entity weaponentity);
 
-void W_TakeAmmo(entity ent, .float ammotype, float ammoamount);
+void W_TakeAmmo(entity ent, int ammotype, float ammoamount);
 
 void W_TakeMana(entity ent, float amount);

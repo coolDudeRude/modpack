@@ -112,6 +112,8 @@ void doot_ring_think(entity this)
 
 void doot_ring(entity this, vector org, vector dir)
 {
+	int clippy = (this.clipgroup) ? this.clipgroup : WEP_DOOT.m_id;
+
 	entity newmis = spawn();
 	newmis.classname = "sonic_shriek";
 	newmis.owner = this;
@@ -121,7 +123,7 @@ void doot_ring(entity this, vector org, vector dir)
 	newmis.solid = SOLID_CORPSE;
 	newmis.pos1 = '32 32 32';
 	newmis.projectiledeathtype = WEP_DOOT.m_id;
-	newmis.clipgroup = this.clipgroup;
+	newmis.clipgroup = clippy;
 	newmis.cnt = time + 0.3;
 	newmis.scale = 0.2;
 	setsize(newmis, -newmis.pos1 * newmis.scale, newmis.pos1 * newmis.scale);
@@ -162,6 +164,8 @@ void W_FireDoot(entity this, .entity weaponentity)
 	tracebox(this.origin, '0 0 0', '0 0 0', offset, MOVE_NORMAL, this);
 	vector neworg = trace_endpos;
 
+	int clippy = (this.clipgroup) ? this.clipgroup : WEP_DOOT.m_id;
+
 	vector dir = qc_aim(this, 500);
 	float doot_count = max(1, rint(random() * 8));
 	if(dobrown)
@@ -178,7 +182,7 @@ void W_FireDoot(entity this, .entity weaponentity)
 		musicnote.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
 		musicnote.classname = "tubanote";
 		musicnote.projectiledeathtype = WEP_DOOT.m_id;
-		musicnote.clipgroup = this.clipgroup;
+		musicnote.clipgroup = clippy;
 		musicnote.effects = EF_FULLBRIGHT;
 
 		musicnote.angles = '0 1 0' * this.angles_y;

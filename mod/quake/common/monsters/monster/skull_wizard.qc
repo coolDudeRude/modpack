@@ -368,7 +368,7 @@ void skullw_fire(entity this, vector orgofs)
 	setsize(newmis, '0 0 0', '0 0 0');		
 	newmis.velocity = dir * (525 + (autocvar_skill * 75));
 	newmis.effects = EF_DIMLIGHT;
-	newmis.projectiledeathtype = DEATH_MONSTER_SKULLWIZARD.m_id;
+	newmis.projectiledeathtype = DEATH_MONSTER_SKULLWIZARD.m_id | HITTYPE_MAGIC;
 }
 
 void skullw_attack8(entity this) { set_animofs(this, anim_skullwiz_spella, 15, skullw_run1); }
@@ -427,7 +427,7 @@ void skullw_guardian(entity this, entity toucher)
 	
 	// Apply any direct damage and poison effect
 	if(toucher.takedamage)
-		T_Damage(toucher, this, this.owner, 30, DEATH_MONSTER_SKULLWIZARD.m_id);
+		T_Damage(toucher, this, this.owner, 30, this.projectiledeathtype);
 	
 	int poison_loop = 0;
 	vector poison_angles = '0 0 0';

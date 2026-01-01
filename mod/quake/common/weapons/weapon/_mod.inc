@@ -62,3 +62,4 @@
 #include "loosecannon.qc"
 #include "snowball.qc"
 #include "goldy.qc"
+#include "squeaker.qc"

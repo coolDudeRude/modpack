@@ -62,3 +62,4 @@
 #include "loosecannon.qh"
 #include "snowball.qh"
 #include "goldy.qh"
+#include "squeaker.qh"

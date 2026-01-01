@@ -104,22 +104,30 @@ void shop_buyitem(entity this, string item)
 			sprint(this, "You do not have enough points to buy this item, keep fragging!\n");
 			return;
 		}
-		float type = 0.3, value = 100;
-		int bit = IT_ARMOR1;
+		int type = ARMOR_GREEN;
+		float value = 100;
 
-		if(this.items & IT_ARMOR1)
+		if(this.armortype == ARMOR_GREEN)
 		{
-			type = 0.6;
+			type = ARMOR_YELLOW;
 			value = 150;
-			bit = IT_ARMOR2;
 		}
-		else if((this.items & IT_ARMOR2) || (this.items & IT_ARMOR3))
+		else if(this.armortype == ARMOR_YELLOW || this.armortype == ARMOR_RED)
 		{
-			type = 0.8;
+			type = ARMOR_RED;
 			value = 200;
-			bit = IT_ARMOR3;
 		}
-		if(this.armortype * this.armorvalue >= type * value)
+		else if(this.armortype == ARMOR_MAGE)
+		{
+			type = ARMOR_MAGE;
+			value = 200;
+		}
+		else if(this.armortype == ARMOR_TECH)
+		{
+			sprint(this, "Tech armor does not need upgrading\n");
+			return;
+		}
+		if(armor_getstrength(this.armortype) * this.armorvalue >= armor_getstrength(type) * value)
 		{
 			sprint(this, "Already at maximum armor\n");
 			return;
@@ -127,8 +135,6 @@ void shop_buyitem(entity this, string item)
 		this.frags -= SHOP_COST_ARMOR;
 		this.armortype = type;
 		this.armorvalue = value;
-		this.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-		this.items |= bit;
 		_sound(this, CH_TRIGGER_SINGLE, "items/armor1.wav", 1, ATTN_NORM);
 		sprint(this, "Armor upgraded\n");
 		return;
@@ -268,7 +274,7 @@ void shop_setup_passive()
 	for(int j = 0; j < SHOP_PASSIVE_COUNT; ++j)
 	{
 		RandomSelection_Init();
-		for(int k = 0; k < PASSIVE_COUNT; ++k)
+		for(int k = 0; k <= PASSIVE_LAST; ++k)
 		{
 			int passive = BIT(k);
 			if(shop_passives & passive)

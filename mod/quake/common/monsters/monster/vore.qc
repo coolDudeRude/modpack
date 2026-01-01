@@ -135,7 +135,7 @@ void ShalMissile(entity this)
 	missile.flags = FL_PROJECTILE;
 	missile.classname = "vore_ball";
 	missile.owner = this;
-	missile.projectiledeathtype = DEATH_MONSTER_VORE.m_id;
+	missile.projectiledeathtype = DEATH_MONSTER_VORE.m_id | HITTYPE_MAGIC;
 	missile.clipgroup = this.clipgroup;
 
 	missile.solid = SOLID_BBOX;

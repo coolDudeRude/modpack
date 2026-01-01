@@ -116,7 +116,7 @@ void magic_fire_launch(entity this, .entity weaponentity)
 	setthink(newmis, SUB_Remove);
 	newmis.velocity = dir * 800;
 	newmis.weaponentity_fld = weaponentity;
-	newmis.projectiledeathtype = WEP_MAGIC.m_id;
+	newmis.projectiledeathtype = WEP_MAGIC.m_id | HITTYPE_MAGIC;
 
 	newmis.noise = "weapons/magic_fire_explode.wav";
 	float r = random();
@@ -214,7 +214,7 @@ void magic_stormcloud_launch(entity this, .entity weaponentity)
 	newmis.dphitcontentsmask = DPCONTENTS_SOLID;
 	settouch(newmis, magic_stormcloud_touch);
 	newmis.wait = time + 10;
-	newmis.projectiledeathtype = WEP_MAGIC.m_id;
+	newmis.projectiledeathtype = WEP_MAGIC.m_id | HITTYPE_MAGIC;
 	newmis.alpha = 0.8;
 	newmis.velocity = dir * 50;
 	newmis.angles_x = newmis.angles_z = 0; // only rotate on y axis

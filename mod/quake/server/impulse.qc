@@ -390,10 +390,8 @@ void GiveAllWeapons(entity this)
 	// mal: also give full armor...
 	if(!this.tank)
 	{
-		this.armortype = 0.8;
+		this.armortype = ARMOR_RED;
 		this.armorvalue = 200;
-		this.items &= ~(IT_ARMOR1 | IT_ARMOR2);
-		this.items |= IT_ARMOR3;
 	}
 
 	this.ammo_lava_nails = 200;

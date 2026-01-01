@@ -102,6 +102,7 @@
 #include "spawn.qh"
 #include "spazmatism.qh"
 #include "spider_droid.qh"
+#include "squeak.qh"
 #include "super_chicken.qh"
 #include "tentacle.qh"
 #include "thomas.qh"

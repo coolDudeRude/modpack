@@ -484,12 +484,19 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		showpain = false;
 	}
 
+	Weapon awep = DEATH_WEAPONOF(deathtype);
+	if(awep.spawnflags & WEP_FLAG_MANA)
+		deathtype |= HITTYPE_MAGIC;
+
 	if(DEATH_ISWEAPON(deathtype, WEP_LOOSECANNON) && inflictor.owner == attacker)
 		forcezscale *= 4;
 
 	// major hack to keep the high push force
 	if(deathtype == DEATH_MONSTER_BREEZE.m_id)
 		damage *= 0.05;
+
+	if(attacker.armortype == ARMOR_MAGE && attacker.armorvalue > 0)
+		damage *= 1.2;
 
 	if(!Damage_ValidTarget(targ, attacker))
 		damage = 0;
@@ -580,11 +587,15 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 
 // save damage based on the target's armor level
 
-	float save = ceil(targ.armortype * damage);
+	float armor = (targ.armorvalue > 0) ? armor_getstrength(targ.armortype) : 0;
+	if((deathtype & HITTYPE_MAGIC) && targ.armortype == ARMOR_MAGE)
+		armor *= 1.5;
+	// in Quake, armor piercing rounds just cut armor strength in half rather than negating it
+	if(deathtype & HITTYPE_ARMORPIERCE)
+		armor *= 0.5;
+	float save = ceil(armor * damage);
 	// TODO: status effect deathtype flag?
 	if(DEATH_IS(deathtype, DEATH_DROWN) || DEATH_IS(deathtype, DEATH_POISONED) || DEATH_IS(deathtype, DEATH_BURNING) || DEATH_IS(deathtype, DEATH_GENERIC))
-		save = 0;
-	if(deathtype & HITTYPE_ARMORPIERCE)
 		save = 0;
 
 	float take = ceil(damage-save);
@@ -737,11 +748,13 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	targ.health -= take;
 	targ.armorvalue = max(targ.armorvalue - save, 0);
 
+	targ.armor_regen_pause = time + 5; // TODO: find a good balance for this
+
 	if(save >= targ.armorvalue)
 	{
 		save = targ.armorvalue;
-		targ.armortype = 0;	// lost all armor
-		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+		if(targ.armortype != ARMOR_TECH)
+			targ.armortype = ARMOR_NONE; // lost all armor
 	}
 
 	if(targ.tank && targ.health <= 0)

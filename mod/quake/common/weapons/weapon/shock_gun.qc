@@ -95,7 +95,7 @@ void W_FireShock(entity this, .entity weaponentity)
 		W_SwitchWeapon(this, w_getbestweapon(this, weaponentity), weaponentity);
 		return;
 	}
-	W_TakeAmmo(this, ammo_cells, 1);
+	W_TakeAmmo(this, IT_CELLS, 1);
 
 	// Taken from Doom...
 	_sound(this, CH_WEAPON_SINGLE, "weapons/dsplasma.wav", 1, ATTN_NORM);

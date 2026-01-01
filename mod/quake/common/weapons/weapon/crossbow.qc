@@ -137,7 +137,7 @@ void W_FireCrossbow(entity this, float ox, .entity weaponentity)
 	float vol = (this.silencer) ? 0.2 : 1;
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/penfire.wav", vol, ATTN_NORM);
-	W_TakeAmmo(this, ammo_nails, 1);
+	W_TakeAmmo(this, IT_NAILS, 1);
 	vector dir = qc_aim(this, 1000);
 	// NOTE: position fix by Seven and Sajt applied here
 	entity missile = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * ox + v_up * -4, dir);

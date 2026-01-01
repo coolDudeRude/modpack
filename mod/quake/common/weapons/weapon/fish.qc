@@ -168,7 +168,7 @@ void fishthink(entity this)
 
 void fishmissile(entity this, .entity weaponentity)
 {
-	W_TakeAmmo(this, ammo_rockets, 1);
+	W_TakeAmmo(this, IT_ROCKETS, 1);
 
 	entity fish = spawn();
 	fish.flags = FL_PROJECTILE;

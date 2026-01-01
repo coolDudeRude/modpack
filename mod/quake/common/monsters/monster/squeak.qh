@@ -1,0 +1,27 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_SQUEAK,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was covered in goo by a Squeak"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_SQUEAK,               1,  NULL,           INFO_DEATH_SELF_MON_SQUEAK,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_SQUEAK,           DEATH_SELF_MON_SQUEAK,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_SQUEAK, "progs/squeak.mdl");
+
+SOUND(MON_SQUEAK_SIGHT, "squeak/deploy");
+#endif
+
+CLASS(Squeak, Monster)
+    ATTRIB(Squeak, spawnflags, int, MON_FLAG_HIDDEN);
+    ATTRIB(Squeak, m_mins, vector, '-16 -16 -16');
+    ATTRIB(Squeak, m_maxs, vector, '16 16 16');
+#ifdef GAMEQC
+    ATTRIB(Squeak, m_model, Model, MDL_MON_SQUEAK);
+    ATTRIB(Squeak, m_sound, Sound, SND_MON_SQUEAK_SIGHT);
+#endif
+    ATTRIB(Squeak, netname, string, "squeak");
+    ATTRIB(Squeak, m_name, string, _("Squeak"));
+ENDCLASS(Squeak)
+
+REGISTER_MONSTER(SQUEAK, NEW(Squeak));

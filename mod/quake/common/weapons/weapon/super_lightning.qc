@@ -213,7 +213,7 @@ void W_FireSuperLightning(entity this, .entity weaponentity)
 		T_RadiusDamage(this, this, 35 * cells, DEATH_DISCHARGE.m_id, NULL);
 		return;
 	}
-	W_TakeAmmo(this, ammo_cells, 1);
+	W_TakeAmmo(this, IT_CELLS, 1);
 	this.punchangle_x = -2;
 	entity missile = new(lightme);
 	missile.flags = FL_PROJECTILE;

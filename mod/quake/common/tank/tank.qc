@@ -454,7 +454,6 @@ void Tank_Eject(entity this, bool dying)
 
 	this.armortype = mytank.tank_store_armortype;
 	this.armorvalue = mytank.tank_store_armorvalue;
-	this.items |= mytank.tank_store_items;
 
 	settouch(this, player_touch);
 	setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
@@ -535,11 +534,9 @@ void Tank_Spawn(entity this)
 	newtank.tank_store_health = this.health;
 	newtank.tank_store_armortype = this.armortype;
 	newtank.tank_store_armorvalue = this.armorvalue;
-	newtank.tank_store_items = this.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	this.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
 
 	this.health = 250;
-	this.armortype = 0;
+	this.armortype = ARMOR_NONE;
 	this.armorvalue = this.health;
 
 	newtank.tanktype = ceil(random() * 3);

@@ -277,6 +277,13 @@ void light_disc_frame(entity this, .entity weaponentity)
 		this.(weaponentity).m_frame = 0;
 }
 
+void squeaker_frame(entity this, .entity weaponentity)
+{	
+	this.(weaponentity).m_frame += 1;
+	if(this.(weaponentity).m_frame > 102)
+		this.(weaponentity).m_frame = 31;
+}
+
 void player_stand1(entity this)
 {
 	if(IsJumpsDoneWell())
@@ -288,7 +295,7 @@ void player_stand1(entity this)
 	{
 		.entity wepent = weaponentities[slot];
 		Weapon w = this.(wepent).m_weapon;
-		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
+		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
 			this.(wepent).m_frame = 0;
 	}
 
@@ -353,6 +360,8 @@ void player_stand1(entity this)
 			portalgun_frame(this, weaponentity);
 		else if(wep == WEP_LIGHT_DISC)
 			light_disc_frame(this, weaponentity);
+		else if(wep == WEP_SQUEAKER)
+			squeaker_frame(this, weaponentity);
 	}
 
 	.entity priwep = weaponentities[0];
@@ -393,7 +402,7 @@ void player_run(entity this)
 	{
 		.entity wepent = weaponentities[slot];
 		Weapon w = this.(wepent).m_weapon;
-		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
+		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
 			this.(wepent).m_frame = 0;
 	}
 	if(!this.velocity_x && !this.velocity_y)
@@ -452,6 +461,8 @@ void player_run(entity this)
 			portalgun_frame(this, weaponentity);
 		else if(wep == WEP_LIGHT_DISC)
 			light_disc_frame(this, weaponentity);
+		else if(wep == WEP_SQUEAKER)
+			squeaker_frame(this, weaponentity);
 	}
 
 	.entity priwep = weaponentities[0];

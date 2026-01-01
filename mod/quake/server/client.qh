@@ -40,6 +40,9 @@ float intermission_cycletime = 0;
 
 .vector death_origin;
 
+.float armor_regen_time;
+.float armor_regen_pause;
+
 //bool autocvar_registered = true; // to prevent being locked out of gpl levels
 
 const int COOP_ONLY = 32768; // yoder add, Jan 16 2021; Only spawn in coop. Used by items and monsters
@@ -115,6 +118,8 @@ void spawn_tfog(vector org);
 void Regenerate_Health(entity this);
 
 void Regenerate_Mana(entity this);
+
+void Regenerate_Armor(entity this);
 
 void centerprint_all(string s);
 

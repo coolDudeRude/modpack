@@ -133,7 +133,10 @@ void trap_lightning_copper_fire(entity this)
 						}
 						else
 						{
-							T_Damage(trace_ent, this, this, trace_ent.health + min(trace_ent.armorvalue, trace_ent.health / trace_ent.armortype) + 50, DEATH_TRAP.m_id);
+							float armor = (trace_ent.armorvalue > 0) ? 0 : armor_getstrength(trace_ent.armortype);
+							if(!armor)
+								armor = 0.01; // TODO: division by 0 avoidance
+							T_Damage(trace_ent, this, this, trace_ent.health + min(trace_ent.armorvalue, trace_ent.health / armor) + 50, DEATH_TRAP.m_id);
 						}
 					}
 					_sound(trace_ent, CHAN_BODY, "weapons/lhit.wav", 1, ATTN_NORM);

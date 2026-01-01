@@ -391,7 +391,7 @@ void W_FireLooseCannon(entity actor, int fuse_time, .entity weaponentity)
 		return;
 	}
 
-	W_TakeAmmo(actor, ammo_rockets, 1);
+	W_TakeAmmo(actor, IT_ROCKETS, 1);
 
 	if(IS_PLAYER(actor))
 		player_shot1(actor);

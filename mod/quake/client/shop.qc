@@ -115,7 +115,7 @@ bool ShopItem_Owned(int index)
 	{
 		// always available
 		case SHOP_ITEM_HEAL: return false;
-		case SHOP_ITEM_ARMOR: return false;
+		case SHOP_ITEM_ARMOR: return (STAT(ARMORTYPE) == ARMOR_TECH);
 		case SHOP_ITEM_AMMO: return false;
 		case SHOP_ITEM_PASSIVE: return (STAT(PASSIVES) & sdata);
 		case SHOP_ITEM_WEAPON:
@@ -215,7 +215,7 @@ void entity_list(string id, vector pos, vector size)
 	itemcount += 1;
 	shoplist[itemcount] = SHOP_ITEM_AMMO;
 	itemcount += 1;
-	for(int j = 0; j < PASSIVE_COUNT; ++j)
+	for(int j = 0; j <= PASSIVE_LAST; ++j)
 	{
 		int passive = BIT(j);
 		if(!(STAT(SHOP_PASSIVES & passive)))

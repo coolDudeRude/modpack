@@ -76,7 +76,7 @@ void NapalmTouch(entity this, entity toucher)
 
 void W_FireNapalm(entity this, .entity weaponentity)
 {
-	W_TakeAmmo(this, ammo_rockets, 1);
+	W_TakeAmmo(this, IT_ROCKETS, 1);
 	_sound(this, CH_WEAPON_SINGLE, "weapons/grenade.wav", 1, ATTN_NORM);
 	this.punchangle_x = -2;
 	entity missile = spawn();

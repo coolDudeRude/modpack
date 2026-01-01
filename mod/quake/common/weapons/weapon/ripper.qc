@@ -92,7 +92,7 @@ void W_FireRipper(entity this, .entity weaponentity)
 {
 	this.punchangle_x = -2;
 
-	W_TakeAmmo(this, ammo_shells, 2);
+	W_TakeAmmo(this, IT_SHELLS, 2);
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/bzfire.wav", 1, ATTN_NORM);
 

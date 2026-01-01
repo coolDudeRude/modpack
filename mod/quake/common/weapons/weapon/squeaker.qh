@@ -1,0 +1,28 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(SQUEAKER_FIRE1, "weapons/squeaker_fire1");
+SOUND(SQUEAKER_FIRE2, "weapons/squeaker_fire2");
+SOUND(SQUEAKER_FIRE3, "weapons/squeaker_fire3");
+Sound SND_SQUEAKER_FIRE_RANDOM() {
+    return REGISTRY_GET(Sounds, SND_SQUEAKER_FIRE1.m_id + floor(prandom() * 3));
+}
+#endif
+
+CLASS(Squeaker, Weapon)
+/* ammotype  */ ATTRIB(Squeaker, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Squeaker, impulse, int, 9);
+/* spawnflags*/ ATTRIB(Squeaker, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD);
+/* ammo */      ATTRIB(Squeaker, aflag, int, 5);
+/* modelname */ ATTRIB(Squeaker, mdl, string, "squeaker");
+/* crosshair */ ATTRIB(Squeaker, w_crosshair, string, "gfx/crosshairelectro");
+/* crosshair */ ATTRIB(Squeaker, w_crosshair_size, float, 0.6);
+/* crosshair */ ATTRIB(Squeaker, w_crosshair_color, vector, '0.2 0.8 0');
+/* wepimg    */ ATTRIB(Squeaker, model2, string, "squeaker");
+/* refname   */ ATTRIB(Squeaker, netname, string, "squeaker");
+/* wepname   */ ATTRIB(Squeaker, m_name, string, _("Squeaker"));
+
+ENDCLASS(Squeaker)
+REGISTER_WEAPON(SQUEAKER, NEW(Squeaker));
+
+SPAWNFUNC_WEAPON(weapon_squeaker, WEP_SQUEAKER)

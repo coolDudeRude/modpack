@@ -31,7 +31,7 @@ bool CanTouchItem(entity this, entity toucher)
 		return false;
 	if(toucher.tank && this.classname != "item_hornofconjuring" && this.classname != "item_revival")
 		return false;
-	if(toucher.clockwork)
+	if(toucher.clockwork && !this.weapon)
 		return false;
 	//if(toucher.m_transform && !this.weapon)
 		//return false;
@@ -397,22 +397,48 @@ ARMOR
 ===============================================================================
 */
 
-.float armorid; // temporary hack to make spawned items work
+float armor_getstrength(int armor_type)
+{
+	switch(armor_type)
+	{
+		case ARMOR_GREEN: return 0.3;
+		case ARMOR_YELLOW: return 0.5;
+		case ARMOR_RED: return 0.8;
+		case ARMOR_MAGE: return 0.6;
+		case ARMOR_TECH: return 0.7;
+	}
+	return 0;
+}
+
+int armortype_fromlegacy(float armor_type)
+{
+	if(armor_type >= 0.7)
+		return ARMOR_RED;
+	else if(armor_type >= 0.5)
+		return ARMOR_YELLOW;
+	else if(armor_type >= 0.3)
+		return ARMOR_GREEN;
+	return ARMOR_NONE;
+}
+
+.bool armor_simple; // TODO: shouldn't be needed
 void armor_touch(entity this, entity toucher)
 {
 	if(!CanTouchItem(this, toucher))
 		return;
 
 	bool pickedup = false;
-	float type = 0.3, value = 100;
-	int bit = IT_ARMOR1;
+	int type = ARMOR_GREEN;
+	float value = 100;
 
 	if(this.armorvalue)
 	{
 		type = this.armortype;
 		value = this.armorvalue;
-		bit = this.armorid;
-		if(!(toucher.armortype * toucher.armorvalue >= type * value))
+		// TODO: armor tiers?
+		if(this.armortype == ARMOR_TECH && toucher.armortype != ARMOR_TECH)
+			pickedup = true;
+		else if(toucher.armortype != ARMOR_TECH && !(armor_getstrength(toucher.armortype) * toucher.armorvalue >= armor_getstrength(type) * value))
 			pickedup = true;
 	}
 
@@ -421,8 +447,6 @@ void armor_touch(entity this, entity toucher)
 		
 	toucher.armortype = type;
 	toucher.armorvalue = value;
-	toucher.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	toucher.items |= bit;
 
 	this.solid = SOLID_NOT;
 	this.model = string_null;
@@ -438,14 +462,99 @@ void armor_touch(entity this, entity toucher)
 	// NOTE: disabling spammy message as you already know from the HUD that you got it!
 	//sprint(toucher, "You got armor\n");
 // armor touch sound
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+	if(substring(world.model, 0, 9) == "maps/mcj_" && this.armor_simple)
 		_sound(toucher, CH_TRIGGER_SINGLE, "items/equip_iron3.wav", 1, ATTN_NORM);
+	else if(this.noise && this.noise != "")
+		_sound(toucher, CH_TRIGGER_SINGLE, this.noise, 1, ATTN_NORM);
 	else
 		_sound(toucher, CH_TRIGGER_SINGLE, "items/armor1.wav", 1, ATTN_NORM);
 
 	SUB_UseTargets(this, toucher, NULL);				// fire all targets / killtargets
 }
 
+void armor_init(entity this, int armor_type)
+{
+	// TODO: cleaner randomiser logic
+	if(horde_ent || (autocvar_skill >= 3 && !deathmatch))
+		armor_type = bound(ARMOR_NONE + 1, floor(random() * ARMOR_LAST) + 1, ARMOR_LAST - 1);
+
+	this.armortype = armor_type;
+
+	switch(armor_type)
+	{
+		default:
+		case ARMOR_GREEN:
+		{
+			this.armorvalue = 100;
+			this.mdl = "progs/armor.mdl";
+			this.noise = "items/armor1.wav";
+			this.skin = 0;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/armor_simple.mdl";
+			}
+			break;
+		}
+		case ARMOR_YELLOW:
+		{
+			this.armorvalue = 150;
+			this.mdl = "progs/armor.mdl";
+			this.noise = "items/armor1.wav";
+			this.skin = 1;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/armor_simple.mdl";
+			}
+			break;
+		}
+		case ARMOR_RED:
+		{
+			this.armorvalue = 200;
+			this.mdl = "progs/armor.mdl";
+			this.noise = "items/armor1.wav";
+			this.skin = 2;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/armor_simple.mdl";
+			}
+			break;
+		}
+		case ARMOR_MAGE:
+		{
+			this.armorvalue = 200;
+			this.mdl = "progs/armor_mage.mdl";
+			this.noise = "items/armor_mage.wav";
+			this.skin = 0;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_mage_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/armor_mage_simple.mdl";
+			}
+			break;
+		}
+		case ARMOR_TECH:
+		{
+			this.armorvalue = 200;
+			this.mdl = "progs/armor_tech.mdl";
+			this.noise = "items/armor_tech.wav";
+			this.skin = 0;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_tech_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/armor_tech_simple.mdl";
+			}
+			break;
+		}
+	}
+}
 
 /*QUAKED item_armor1(0 .5 .8)(-16 -16 0)(16 16 32)
 */
@@ -459,17 +568,12 @@ spawnfunc(item_armor1)
 	}
 
 	settouch(this, armor_touch);
-	this.armortype = 0.3;
-	this.armorvalue = 100;
-	this.armorid = IT_ARMOR1;
-	this.mdl = "progs/armor.mdl";
+	
+	armor_init(this, ARMOR_GREEN);
 
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
-		this.mdl = "progs/armor_simple.mdl";
-
+	precache_sound(this.noise);
 	precache_model(this.mdl);
 	_setmodel(this, this.mdl);
-	this.skin = 0;
 	setsize(this, '-16 -16 0', '16 16 56');
 	StartItem(this);
 }
@@ -492,17 +596,12 @@ spawnfunc(item_armor2)
 	}
 	
 	settouch(this, armor_touch);
-	this.armortype = 0.6;
-	this.armorvalue = 150;
-	this.armorid = IT_ARMOR2;
-	this.mdl = "progs/armor.mdl";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
-		this.mdl = "progs/armor_simple.mdl";
+	armor_init(this, ARMOR_YELLOW);
 
+	precache_sound(this.noise);
 	precache_model(this.mdl);
 	_setmodel(this, this.mdl);
-	this.skin = 1;
 	setsize(this, '-16 -16 0', '16 16 56');
 	StartItem(this);
 }
@@ -520,17 +619,38 @@ spawnfunc(item_artifact_field_generator);
 spawnfunc(item_armorInv)
 {
 	settouch(this, armor_touch);
-	this.armortype = 0.8;
-	this.armorvalue = 200;
-	this.armorid = IT_ARMOR3;
-	this.mdl = "progs/armor.mdl";
+	
+	armor_init(this, ARMOR_RED);
 
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
-		this.mdl = "progs/armor_simple.mdl";
-
+	precache_sound(this.noise);
 	precache_model(this.mdl);
 	_setmodel(this, this.mdl);
-	this.skin = 2;
+	setsize(this, '-16 -16 0', '16 16 56');
+	StartItem(this);
+}
+
+spawnfunc(item_armor_mage)
+{
+	settouch(this, armor_touch);
+
+	armor_init(this, ARMOR_MAGE);
+
+	precache_sound(this.noise);
+	precache_model(this.mdl);
+	_setmodel(this, this.mdl);
+	setsize(this, '-16 -16 0', '16 16 56');
+	StartItem(this);
+}
+
+spawnfunc(item_armor_tech)
+{
+	settouch(this, armor_touch);
+
+	armor_init(this, ARMOR_TECH);
+
+	precache_sound(this.noise);
+	precache_model(this.mdl);
+	_setmodel(this, this.mdl);
 	setsize(this, '-16 -16 0', '16 16 56');
 	StartItem(this);
 }
@@ -975,6 +1095,12 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 				break;
 			}
 			case WEP_MEOWMERE:
+			{
+				if(random() > 0.5)
+					mytype = IT_CELLS;
+				break;
+			}
+			case WEP_SQUEAKER:
 			{
 				if(random() > 0.5)
 					mytype = IT_CELLS;
@@ -3075,10 +3201,6 @@ const int SPAWN_TGTITEMS_FLASH = 4;
 const int SPAWN_TGTITEMS_TEST = 8;
 const int SPAWN_TGTITEMS_MIN = 16;
 
-const float ARMORTYPE_GREEN = 0.3;
-const float ARMORTYPE_YELLOW = 0.5;
-const float ARMORTYPE_RED = 0.7;
-
 const int IT_INVISIBILITY			= 524288;
 const int IT_INVULNERABILITY		= 1048576;
 const int IT_SUIT					= 2097152;
@@ -3130,27 +3252,6 @@ const int IT_QUAD					= 4194304;
 	]
 ]
 */
-void armor_set_type(entity e)
-{
-	if(!IS_PLAYER(e))
-		return;
-	
-	e.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	if(!e.armorvalue)
-	{
-		e.armortype = 0;
-		return;
-	}
-	
-	if(e.armortype < ARMORTYPE_YELLOW)
-		e.items |= IT_ARMOR1;
-	else if(e.armortype < ARMORTYPE_RED)
-		e.items |= IT_ARMOR2;
-	else
-		e.items |= IT_ARMOR3;
-	
-	e.armorvalue = min(e.armorvalue, 500);
-}
 
 void target_items_takeweapon(entity player, Weapon wep)
 {
@@ -3211,17 +3312,9 @@ void target_items_giveinv_min(entity this, entity e)
 	float arm = zeroconvert(this.armorvalue);
 	if(arm > e.armorvalue)
 	{
-		int bit = IT_ARMOR1;
-		if(this.armortype >= ARMORTYPE_RED)
-			bit = IT_ARMOR3;
-		else if(this.armortype >= ARMORTYPE_YELLOW)
-			bit = IT_ARMOR2;
-		else
-			bit = IT_ARMOR1;
-		e.armortype = this.armortype;
+		int atype = (this.armortype) ? this.armortype : ARMOR_GREEN;
+		e.armortype = atype;
 		e.armorvalue = arm;
-		e.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-		e.items |= bit;
 	}
 
 	if(this.ammo_shells) e.ammo_shells =	max(e.ammo_shells,	zeroconvert(this.ammo_shells));
@@ -3246,17 +3339,9 @@ void target_items_giveinv(entity this, entity e)
 			float avalue = zeroconvert(this.armorvalue);
 			if(avalue > e.armorvalue)
 			{
-				int bit = IT_ARMOR1;
-				if(this.armortype >= ARMORTYPE_RED)
-					bit = IT_ARMOR3;
-				else if(this.armortype >= ARMORTYPE_YELLOW)
-					bit = IT_ARMOR2;
-				else
-					bit = IT_ARMOR1;
-				e.armortype = this.armortype;
+				int atype = (this.armortype) ? this.armortype : ARMOR_GREEN;
+				e.armortype = atype;
 				e.armorvalue = avalue;
-				e.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-				e.items |= bit;
 			}
 		}
 
@@ -3314,7 +3399,7 @@ bool target_items_testinv(entity this, entity e)
 {
 	if(this.health > 0 && this.health > e.health) return false;
 	if(this.armorvalue && this.armorvalue > e.armorvalue) return false;
-	if(this.armortype && this.armortype > e.armortype) return false;
+	if(this.armortype && armor_getstrength(this.armortype) > armor_getstrength(e.armortype)) return false;
 
 	if(this.svflags)
 	{
@@ -3381,7 +3466,8 @@ bool target_items_takeinv(entity this, entity e, entity actor)
 	if(this.armorvalue)
 	{
 		e.armorvalue = max(0, e.armorvalue - this.armorvalue);
-		armor_set_type(e);
+		if(e.armorvalue <= 0 && e.armortype != ARMOR_TECH)
+			e.armortype = ARMOR_NONE;
 	}
 
 	if(this.health > 0)
@@ -3465,23 +3551,21 @@ void target_items_setinv(entity this, entity e, entity actor)
 		e.armorvalue = zeroconvert(this.armorvalue);
 		if(this.armortype)
 		{
-			e.armortype = this.armortype;
+			e.armortype = armortype_fromlegacy(this.armortype);
 		}
 		else	// value but no type: assume a color from amount given
 		{
 			if(this.armorvalue > 150)
-				e.armortype = ARMORTYPE_RED;
+				e.armortype = ARMOR_RED;
 			else if(this.armorvalue > 100)
-				e.armortype = ARMORTYPE_YELLOW;
+				e.armortype = ARMOR_YELLOW;
 			else
-				e.armortype = ARMORTYPE_GREEN;
+				e.armortype = ARMOR_GREEN;
 		}
-		armor_set_type(e);
 	}
 	else if(this.armortype && e.armorvalue)	// type but not value: override color on player
 	{
 		e.armortype = this.armortype;
-		armor_set_type(e);
 	}
 
 	if(this.svflags)
@@ -3773,19 +3857,11 @@ spawnfunc(target_items)
 	if(this.items > 0)
 	{
 		// clear the item flags that are only for HUD switches so we can be sloppy with .items later
-		this.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS | 
-									 IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+		this.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	}
 	
 	// snap armor color to only allowed values
-	if(this.armortype >= ARMORTYPE_RED)
-		this.armortype = ARMORTYPE_RED;
-	else if(this.armortype >= ARMORTYPE_YELLOW)
-		this.armortype = ARMORTYPE_YELLOW;
-	else if(this.armortype >= ARMORTYPE_GREEN)
-		this.armortype = ARMORTYPE_GREEN;
-	else
-		this.armortype = 0;
+	this.armortype = armortype_fromlegacy(this.armortype);
 	
 	if(this.noise && this.noise != "")
 		precache_sound(this.noise);

@@ -100,25 +100,13 @@ void superlavaspike_touch(entity this, entity toucher)
 		// halve the effectiveness of the armor for players..
 		if(IS_PLAYER(toucher))
 		{
-			// save the old armor values...
-			float old_armortype = toucher.armortype;
-//			old_armorvalue = toucher.armorvalue;
-			toucher.armortype = toucher.armortype * 0.5;
-//			toucher.armorvalue = 0;
-			T_Damage(toucher, this, this.owner, 18, this.projectiledeathtype);
-			
-			// if the damage didn't wipe out the armor, armortype 
-			if(toucher.armortype != 0)
-			{
-				toucher.armortype = old_armortype;
-//				toucher.armorvalue = old_armorvalue;
-			}
+			T_Damage(toucher, this, this.owner, 18, this.projectiledeathtype | HITTYPE_ARMORPIERCE);
 		}
 		else // is a monster, do 50% more damage
 		{
 			if(toucher.monsterdef != MON_LAVAMAN) // special case: lava monsters don't take damage from lava weapons
 			{
-				T_Damage(toucher, this, this.owner, 30, this.projectiledeathtype);
+				T_Damage(toucher, this, this.owner, 30, this.projectiledeathtype | HITTYPE_ARMORPIERCE);
 			}
 		}
 	}

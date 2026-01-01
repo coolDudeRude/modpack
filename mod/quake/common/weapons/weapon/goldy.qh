@@ -12,7 +12,7 @@ Sound SND_GOLDY_FIRE_RANDOM() {
 CLASS(Goldy, Weapon)
 /* ammotype  */ ATTRIB(Goldy, ammo_type, int, IT_ROCKETS);
 /* impulse   */ ATTRIB(Goldy, impulse, int, 6);
-/* spawnflags*/ ATTRIB(Goldy, spawnflags, int, WEP_FLAG_NODUAL);
+/* spawnflags*/ ATTRIB(Goldy, spawnflags, int, 0);
 /* ammo */      ATTRIB(Goldy, aflag, int, 5);
 /* modelname */ ATTRIB(Goldy, mdl, string, "goldy");
 /* crosshair */ ATTRIB(Goldy, w_crosshair, string, "gfx/crosshairgrenadelauncher");

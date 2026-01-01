@@ -337,7 +337,7 @@ void boss_launch_missile(entity this, entity targ, vector offset)
 	vec = normalize(d - org);
 
 	entity newmis = launch_spike(this, org, vec);
-	newmis.projectiledeathtype = DEATH_MONSTER_CHTHON.m_id;
+	newmis.projectiledeathtype = DEATH_MONSTER_CHTHON.m_id | HITTYPE_MAGIC;
 	newmis.classname = "chthon_lavaball";
 	if(world.model == "maps/ee6.bsp")
 		_setmodel(newmis, "progs/ee_p_sphere.mdl");

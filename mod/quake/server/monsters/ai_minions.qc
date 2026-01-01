@@ -12,8 +12,9 @@
 
 PRECACHE(Minions)
 {
-	precache_model("progs/proj_wraithegg.mdl");
-	precache_model("progs/proj_shalegg.mdl");
+	//precache_model("progs/proj_wraithegg.mdl");
+	//precache_model("progs/proj_shalegg.mdl");
+	precache_model("progs/squeak_egg.mdl");
 	precache_model("progs/proj_wraithshell.mdl");
 	precache_model("progs/proj_shalshell.mdl");
 
@@ -163,7 +164,8 @@ bool find_minionspace(vector org)
 void Explode_Egg(entity this)
 {
 	// Remove egg and throw gibs up as minion grows
-	_setmodel(this, "");
+	setmodel(this, MDL_Null);
+	setsize(this, '0 0 0', '0 0 0');
 	if(random() > 0.5) // classname == "monster_wraith"
 	{
 		entity gib = ThrowGib(this, this, "progs/proj_wraithshell.mdl", rint(2+random()*4));
@@ -190,7 +192,8 @@ entity minion_spawn(entity own, vector org, entity monster, Monster mon)
 		return NULL;
 	}
 
-	update_minioncount(own, 1);
+	if(IS_MONSTER(own))
+		update_minioncount(own, 1);
 
 	//entity monster = new(monster);
 	monster.monsterdef = mon;
@@ -204,6 +207,7 @@ entity minion_spawn(entity own, vector org, entity monster, Monster mon)
 	monster.colormod = own.colormod;
 	monster.flags = FL_MONSTER | FL_CLONE | FL_MINION; // TODO: clone is temporary to prevent monster counts being affected!
 	monster.clipgroup = own.clipgroup;
+	monster.category = own.category; // count the monster in horde too
 
 	if(mon.spawnflags & MONSTER_TYPE_SWIM) { monster.flags |= FL_SWIM; }
 	if(mon.spawnflags & MONSTER_TYPE_FLY) { monster.flags |= FL_FLY; }
@@ -265,11 +269,13 @@ void Hatch_Egg(entity this)
 	set_movetype(this, MOVETYPE_NONE);
 	this.takedamage = DAMAGE_NO;
 	this.velocity = '0 0 0';
+
+	Monster mon = this.monsterdef;
 	
 	// Check if the egg can hatch? turn on collision
 	// setup new bounds and extend upwards for testing
-	setsize(this, '-24 -24 0', '24 24 40');
 	this.solid = SOLID_SLIDEBOX;
+	setsize(this, mon.m_mins, mon.m_maxs);
 	set_movetype(this, MOVETYPE_TOSS);
 	this.oldorigin = this.origin;
 	this.origin_z = this.origin_z + 8;
@@ -279,6 +285,13 @@ void Hatch_Egg(entity this)
 	tracebox(this.origin, this.mins, this.maxs, this.origin, MOVE_NOMONSTERS, this);
 	if(trace_startsolid || pointcontents(this.origin) == CONTENT_SOLID)
 	{
+		this.cnt += 1;
+		if(this.cnt > 5)
+		{
+			// failed to be safe
+			delete(this);
+			return;
+		}
 		this.origin = this.oldorigin;
 		setthink(this, Hatch_Egg);
 		this.nextthink = time + 1 + random();
@@ -287,8 +300,8 @@ void Hatch_Egg(entity this)
 	}
 
 	// Setup spawn location for minion
-	traceline(this.origin+'0 0 128', this.origin-'0 0 256', true, NULL);
-	this.oldorigin = trace_endpos + '0 0 32';
+	tracebox(this.origin + ('0 0 1' * this.maxs_z), this.mins, this.maxs, this.origin - '0 0 256', true, this);
+	this.oldorigin = trace_endpos;
 	
 	// Spawn minion inside of egg model
 	// this.owner is re-assigned to minion to avoid shell gibs interacting
@@ -302,8 +315,18 @@ void Hatch_Egg(entity this)
 	else if(this.owner.classtype == CT_MONSHAL)
 		minion_voreling(this.oldorigin, this.enemy);
 #endif
-	entity minion = minion_spawn(this.owner, this.oldorigin, new(monster), this.owner.monsterdef);
-	this.owner = minion; // TODO?
+	entity minion = minion_spawn(this.owner, this.oldorigin, new(monster), mon);
+
+	if(IS_PLAYER(this.owner))
+	{
+		minion.charmed = true;
+		minion.charmer = this.owner;
+	}
+
+	te_wizspike(this.oldorigin);
+
+	setmodel(this, MDL_Null);
+	setsize(this, '0 0 0', '0 0 0');
 
 	// Skip a couple of frames
 	setthink(this, Explode_Egg);
@@ -335,33 +358,26 @@ void Egg_Touch(entity this, entity toucher)
 
 //----------------------------------------------------------------------
 // Work out direction speed of egg and then launch it!
+// expects .mangle to be set
+// doesn't set velocity or origin!
 //----------------------------------------------------------------------
-void Create_Egg(entity this, vector eggofs)
+entity Create_Egg(entity this, Monster mon)
 {
-	if(this.health < 1) return;
-
 	// Turn towards player and drop the egg!
-	makevectors(this.angles);
-	vector org = this.origin + attack_vector(eggofs);
-	float egg_speed = 200 + (random() * 50);
-	vector dir = (v_forward * egg_speed) + (v_right * (crandom()* 50));
 	entity missile = new(egg);
 	missile.owner = this;
+	missile.realowner = this;
 	set_movetype(missile, MOVETYPE_BOUNCE);
-	setorigin(missile, org);
 	missile.solid = SOLID_BBOX;
-	missile.mangle = dir;
-	missile.velocity = missile.mangle;
 	missile.avelocity = '0 0 0';
-	missile.angles = vectoangles(missile.velocity);
 	missile.enemy = this.enemy;
+	missile.monsterdef = mon;
+	missile.clipgroup = this.clipgroup;
 	settouch(missile, Egg_Touch);
 	setthink(missile, Hatch_Egg);
 	missile.nextthink = time + 1.5;
-	if(random() > 0.5)
-		_setmodel(missile, "progs/proj_wraithegg.mdl");
-	else
-		_setmodel(missile, "progs/proj_shalegg.mdl");
+	_setmodel(missile, "progs/squeak_egg.mdl");
 	setsize(missile, '-2 -2 -2', '2 2 2');
-	this.attack_finished = time + 2 + random();
+
+	return missile;
 }

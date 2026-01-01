@@ -42,7 +42,7 @@ void W_FireSpikes(entity this, float ox, .entity weaponentity)
 	else
 		_sound(this, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	ATTACK_FINISHED(this, weaponentity) = time + 0.2;
-	W_TakeAmmo(this, ammo_nails, 1);
+	W_TakeAmmo(this, IT_NAILS, 1);
 	vector dir = qc_aim(this, 1000);
 	// NOTE: position fix by Seven and Sajt applied here
 	entity missile = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * ox, dir);

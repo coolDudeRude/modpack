@@ -101,7 +101,7 @@ void Goldy_Touch(entity this, entity toucher)
 
 entity W_FireGoldy(entity this, .entity weaponentity)
 {
-	W_TakeAmmo(this, ammo_rockets, 1);
+	W_TakeAmmo(this, IT_ROCKETS, 1);
 
 	sound(this, CH_WEAPON_SINGLE, SND_GOLDY_FIRE_RANDOM(), 1, ATTN_NORM);
 

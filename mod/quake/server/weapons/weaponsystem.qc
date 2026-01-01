@@ -156,7 +156,7 @@ vector W_Shotorg(entity ent, .entity weaponentity)
 	return w_shotorg;
 }
 
-void W_TakeAmmo(entity ent, .float ammotype, float ammoamount)
+void W_TakeAmmo(entity ent, int ammotype, float amount)
 {
 	if(StatusEffects_active(STATUSEFFECT_SharpShooter, ent))
 		return;
@@ -169,15 +169,26 @@ void W_TakeAmmo(entity ent, .float ammotype, float ammoamount)
 		if(ent.m_champion.m_takeammo(ent.m_champion, ent))
 			return;
 	}
-	ent.(ammotype) -= ammoamount;
+
+	switch(ammotype)
+	{
+		case IT_SHELLS: ent.ammo_shells -= amount; break;
+		case IT_NAILS: ent.ammo_nails -= amount; break;
+		case IT_ROCKETS: ent.ammo_rockets -= amount; break;
+		case IT_CELLS: ent.ammo_cells -= amount; break;
+		case IT_LAVA_NAILS: ent.ammo_lava_nails -= amount; break;
+		case IT_MULTI_ROCKETS: ent.ammo_multi_rockets -= amount; break;
+		case IT_PLASMA_AMMO: ent.ammo_plasma -= amount; break;
+		case IT_DRILLS: ent.ammo_drills -= amount; break;
+	}
 }
 
 void W_TakeMana(entity ent, float amount)
 {
 	if(StatusEffects_active(STATUSEFFECT_SharpShooter, ent))
 		return;
-	if(STAT(PASSIVES, ent) & PASSIVE_ARCANA)
-		amount = max(1, amount * 0.6);
+	if(ent.armortype == ARMOR_MAGE && ent.armorvalue > 0)
+		amount *= 0.5;
 	STAT(MANA, ent) -= amount;
 	ent.mana_regen_pause = time + 1.5;
 }

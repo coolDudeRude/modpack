@@ -122,8 +122,7 @@ void parms_get(entity this)
 
 	// resources
 	this.armorvalue = stoi(parms_getdata(myid, "armorvalue"));
-	this.armortype = stof(parms_getdata(myid, "armortype"));
-	armor_set_type(this);
+	this.armortype = stoi(parms_getdata(myid, "armortype"));
 	this.ammo_shells = max(25, stoi(parms_getdata(myid, "ammo_shells"))); // TODO: unhardcode weird minimums
 	this.ammo_nails = stoi(parms_getdata(myid, "ammo_nails"));
 	this.ammo_rockets = stoi(parms_getdata(myid, "ammo_rockets"));
@@ -182,7 +181,7 @@ void parms_write(entity this)
 
 	// resources
 	parms_putdata(myid, "armorvalue", itos(this.armorvalue));
-	parms_putdata(myid, "armortype", ftos(this.armortype));
+	parms_putdata(myid, "armortype", itos(this.armortype));
 	parms_putdata(myid, "ammo_shells", itos(this.ammo_shells));
 	parms_putdata(myid, "ammo_nails", itos(this.ammo_nails));
 	parms_putdata(myid, "ammo_rockets", itos(this.ammo_rockets));
@@ -308,7 +307,7 @@ void SetChangeParms(entity this)
 		parm14 = this.ammo_drills;
 		if(this.(weaponentity))
 			parm15 = this.(weaponentity).cnt;
-		parm16 = this.items;
+		parm16 = this.armortype;
 	}
 
 	parms_write(this);
@@ -434,14 +433,8 @@ void DecodeLevelParms(entity this)
 			this.(weaponentity).skin = parm14;
 		if(this.(weaponentity))
 			this.(weaponentity).cnt = parm15;
-		this.items = parm16;
+		this.armortype = parm16;
 		this.powerups = 0;
-		if(this.items & IT_ARMOR3)
-			this.armortype = 0.8;
-		else if(this.items & IT_ARMOR2)
-			this.armortype = 0.6;
-		else if(this.items & IT_ARMOR1)
-			this.armortype = 0.3;
 	}
 
 	parms_get(this);
@@ -1963,6 +1956,8 @@ void PutPlayerInServer(entity this)
 	STAT(MANA, this) = 100;
 	this.mana_regen_pause = 0;
 
+	this.armor_regen_pause = 0;
+
 	skate_spawn(this);
 
 	slide_PutPlayerInServer(this);
@@ -2640,10 +2635,27 @@ void Regenerate_Mana(entity this)
 		STAT(MANA, this) = min(STAT(MANA, this) + 3, max_mana);
 
 		float regen_rate = MANA_REGEN_RATE;
-		if(time < this.mana_regen_boost)
+		if(this.armortype == ARMOR_MAGE && this.armorvalue > 0)
 			regen_rate *= 0.5;
 	
 		this.mana_regen_time = time + regen_rate;
+	}
+}
+
+void Regenerate_Armor(entity this)
+{
+	if(this.armortype != ARMOR_TECH)
+		return;
+
+	float max_armor = 200;
+
+	if(this.armor_regen_time < time && this.armorvalue < max_armor && time > this.armor_regen_pause)
+	{
+		this.armorvalue = min(this.armorvalue + 1, max_armor);
+
+		float regen_rate = 0.03333;
+	
+		this.armor_regen_time = time + regen_rate;
 	}
 }
 
@@ -2793,6 +2805,7 @@ void PlayerPostThink(entity this)
 
 		Regenerate_Health(this);
 		Regenerate_Mana(this);
+		Regenerate_Armor(this);
 		if(STAT(BOARD_FALLING, this) && this.pausetime > time)
 		{
 			this.angles = this.mangle;
@@ -3206,6 +3219,10 @@ void Obituary(entity attacker, entity inflictor, entity targ, int deathtype)
 	// Declarations
 	targ.death_origin = targ.origin;
 	string attacker_name = attacker.netname;
+
+	// workaround for an issue with Xonotic's deathtype logic
+	// hittypes can only apply to weapon deaths
+	deathtype &= ~DEATH_HITTYPEMASK;
 
 	#ifdef NOTIFICATIONS_DEBUG
 	Debug_Notification(
