@@ -871,7 +871,8 @@ bool sv_music_command(entity this, string cmd, float argc)
 					return true;
 				}
 				this.last_midicheck = time + 1;
-				int dh = search_begin("midis/*.txt", false, true);
+				string path = ((argv(2) != "") ? strcat("midis/", argv(2), "/*.txt") : "midis/*.txt");
+				int dh = search_begin(path, false, true);
 				if(dh < 0)
 					return true;
 				RandomSelection_Init();
@@ -884,6 +885,7 @@ bool sv_music_command(entity this, string cmd, float argc)
 				string chosen = RandomSelection_chosen_string;
 				sprint(this, strcat("Playing ", substring(chosen, 6, -5), "\n"));
 				this.midi_playtrack = 0;
+				search_end(dh);
 				midi_process(this, chosen);
 				Music_Conductor_Copy(this);
 				return true;
