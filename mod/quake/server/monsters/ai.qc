@@ -860,7 +860,9 @@ bool infront(entity this, entity targ)
 	vector vec = normalize(targ.origin - this.origin);
 	float dot = vec * v_forward;
 	float dottarget = VISIONCONE_NORMAL;
-	if(IS_PLAYER(this) || (this.spawnflags & SPAWNFLAG_NEARSIGHTED))
+	if(this.monsterdef == MON_SQUEAK)
+		dottarget = 0; // target anything around
+	else if(IS_PLAYER(this) || (this.spawnflags & SPAWNFLAG_NEARSIGHTED))
 		dottarget = VISIONCONE_NEARSIGHTED;
 	
 	return (dot > dottarget);
