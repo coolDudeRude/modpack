@@ -24,6 +24,7 @@ entity W_FireSqueaker(entity this, .entity weaponentity)
 	this.punchangle_x = -2;
 
 	entity missile = Create_Egg(this, MON_SQUEAK);
+	missile.projectiledeathtype = WEP_SQUEAKER.m_id;
 
 	// set missile speed	
 

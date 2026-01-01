@@ -131,6 +131,7 @@ void ball_touch(entity this, entity toucher)
 				exp.nextthink = time;
 				setthink(exp, s_explode1);
 				_setmodel(exp, "progs/s_explod.spr");
+				setsize(exp, '0 0 0', '0 0 0');
 				setorigin(exp, this.origin);
 			}
 			bool headshot = false;

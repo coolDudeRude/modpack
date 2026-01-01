@@ -201,6 +201,23 @@ void W_BreegullBlaster_ClockworkTouch(entity this, entity toucher)
 	delete(this);
 }
 
+void W_BreegullBlaster_ClockworkExplode(entity this)
+{
+	te_tarexplosion(this.origin);
+				
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	T_RadiusDamage(this, this.owner, 50, WEP_BREEGULLBLASTER.m_id, this);
+
+	setthink(this, SUB_Remove);
+	this.nextthink = time;
+}
+
 float W_BreegullBlaster_AttackRate(entity actor, .entity weaponentity)
 {
 	int eggtype = STAT(BREEGULL_EGGTYPE, actor);
@@ -332,6 +349,7 @@ void W_BreegullBlaster_Fire(entity this, .entity weaponentity)
 			setorigin(newmis, trace_endpos);
 			set_movetype(newmis, MOVETYPE_TOSS);
 			newmis.velocity = dir * 400 + v_up * 60;
+			setthink(newmis, W_BreegullBlaster_ClockworkExplode);
 			settouch(newmis, W_BreegullBlaster_ClockworkTouch);
 			break;
 		}

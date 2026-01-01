@@ -1340,6 +1340,8 @@ bool FindTarget(entity this)
 		{
 			if(this.monsterdef != MON_SQUEAK && (it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
 				continue;
+			if(!this.th_missile && (it.flags & FL_FLY))
+				continue;
 			if(visible(this, it) && this.visible_distance < dist)
 			{
 				if(it != this && it != this.charmer && it.charmer != this.charmer)

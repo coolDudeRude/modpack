@@ -289,6 +289,16 @@ void Hatch_Egg(entity this)
 		if(this.cnt > 5)
 		{
 			// failed to be safe
+			te_tarexplosion(this.origin);
+
+			T_RadiusDamage(this, this.owner, 50, this.projectiledeathtype, this);
+
+			entity exp = spawn();
+			exp.nextthink = time;
+			setthink(exp, s_explode1);
+			_setmodel(exp, "progs/s_explod.spr");
+			setsize(exp, '0 0 0', '0 0 0');
+			setorigin(exp, this.origin);
 			delete(this);
 			return;
 		}
@@ -369,6 +379,7 @@ entity Create_Egg(entity this, Monster mon)
 	missile.realowner = this;
 	missile.flags = FL_PROJECTILE;
 	set_movetype(missile, MOVETYPE_BOUNCE);
+	missile.projectiledeathtype = DEATH_CRUSH.m_id;
 	missile.solid = SOLID_BBOX;
 	missile.avelocity = '0 0 0';
 	missile.enemy = this.enemy;
@@ -378,7 +389,7 @@ entity Create_Egg(entity this, Monster mon)
 	setthink(missile, Hatch_Egg);
 	missile.nextthink = time + 1.5;
 	_setmodel(missile, "progs/squeak_egg.mdl");
-	setsize(missile, '-2 -2 -2', '2 2 2');
+	setsize(missile, '0 0 0', '0 0 0');
 
 	return missile;
 }
