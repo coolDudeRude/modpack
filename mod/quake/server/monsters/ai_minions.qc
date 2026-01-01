@@ -367,6 +367,7 @@ entity Create_Egg(entity this, Monster mon)
 	entity missile = new(egg);
 	missile.owner = this;
 	missile.realowner = this;
+	missile.flags = FL_PROJECTILE;
 	set_movetype(missile, MOVETYPE_BOUNCE);
 	missile.solid = SOLID_BBOX;
 	missile.avelocity = '0 0 0';

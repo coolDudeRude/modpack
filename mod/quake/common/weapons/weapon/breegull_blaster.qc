@@ -174,6 +174,7 @@ void W_BreegullBlaster_ClockworkTouch(entity this, entity toucher)
 	_setmodel(dummy, player.model);
 	setsize(dummy, player.mins, player.maxs);
 	dummy.realowner = player;
+	dummy.clipgroup = player.clipgroup;
 	dummy.frame = player.frame;
 	dummy.cnt = player.scale;
 	dummy.active = true;
