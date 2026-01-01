@@ -239,10 +239,9 @@ void arf_leap6(entity this)
 	_sound(this, CH_VOICE, "arachnofloyd/leap.wav", 0.7, ATTN_NORM);
 	fixedmakevectors(this.angles);
 	UNSET_ONGROUND(this);
-	setorigin(this, this.origin + '0 0 16');
-	this.velocity = '0 0 0';
-	this.velocity = this.velocity + v_forward * 400;
-	this.velocity_z = this.velocity_z + 275;
+	//setorigin(this, this.origin + '0 0 16');
+	this.velocity = v_forward * 400;
+	this.velocity_z += 275;
 	settouch(this, arf_touch_jump);
 }
 void arf_leap5(entity this) { set_animofs(this, anim_arachnofloyd_leap, 5, arf_leap6); ai_face(this); }

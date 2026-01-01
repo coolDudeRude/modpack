@@ -16,7 +16,15 @@ void HordeRecord()
 
 float HordeGetDifficulty(entity this)
 {
-	float difficulty = (0.5 + autocvar_skill * ((1.2 - 0.3) / (10 / this.wave)));
+	int temp_wave;
+	if(autocvar_skill >= 3)
+		temp_wave = this.wave + 6;
+	else if(autocvar_skill >= 2)
+		temp_wave = this.wave + 3;
+	else
+		temp_wave = max(1, this.wave);
+
+	float difficulty = (0.5 + autocvar_skill * ((1.2 - 0.3) / (10 / temp_wave)));
 	// TODO: other modifiers? e.g. a boon that increases difficulty
 	return difficulty;
 }
@@ -1531,7 +1539,8 @@ void SpawnWave2(entity this)
 			LOG_DEBUG("wave spawn completed!");
 			this.wait = false;
 			setthink(this, Wavecheck);
-			this.nextthink = time + 30;
+			float difficulty = HordeGetDifficulty(this) * 0.5;
+			this.nextthink = time + (30 / difficulty);
 		}
 		else
 		{
@@ -1748,7 +1757,7 @@ void Wavecheck(entity this)
 	// Early exit for kill count
 	if((this.wave % 3) == 0 || this.wave < 3) // Be exact?
 	{
-		LOG_DEBUG("check monsters killed as boss wave");
+		//LOG_DEBUG("check monsters killed as boss wave");
 		if(HordeGetMonstersAlive() > 0) // testing the new way
 			return;
 		//if(monsters_killed < monsters_total) 
@@ -1756,8 +1765,12 @@ void Wavecheck(entity this)
 	}
 	else
 	{
-		LOG_DEBUG("check monsters killed as any other wave");
-		if(HordeGetMonstersAlive() > 5)
+		//LOG_DEBUG("check monsters killed as any other wave");
+		int maxalive = 5;
+		float difficulty = HordeGetDifficulty(this);
+		if(difficulty > 4)
+			maxalive = 15; // make waves go by quicker for extra challenge
+		if(HordeGetMonstersAlive() > maxalive)
 			return;
 		//if(monsters_killed < (monsters_total -5)) 
 		//	return;
