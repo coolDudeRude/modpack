@@ -802,7 +802,7 @@ int range(entity this, entity targ)
 		return RANGE_MELEE;
 
 	vector ranges = RANGES_NORMAL;
-	if(this.spawnflags & SPAWNFLAG_NEARSIGHTED)
+	if((this.spawnflags & SPAWNFLAG_NEARSIGHTED) || this.monsterdef == MON_SQUEAK)
 	{
 		if(this.enemy)
 			ranges = RANGES_NORMAL * 0.8;
@@ -1334,8 +1334,10 @@ bool FindTarget(entity this)
 	{
 		entity selected = NULL;
 		float dist = CHARMED_RADIUS;
-		FOREACH_ENTITY_RADIUS(this.origin, CHARMED_RADIUS, IS_MONSTER(it) && !(it.flags & FL_NOTARGET) && it.health > 0 && !(it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD),
+		FOREACH_ENTITY_RADIUS(this.origin, CHARMED_RADIUS, IS_MONSTER(it) && !(it.flags & FL_NOTARGET) && it.health > 0,
 		{
+			if(this.monsterdef != MON_SQUEAK && (it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
+				continue;
 			if(visible(this, it) && this.visible_distance < dist)
 			{
 				if(it != this && it != this.charmer && it.charmer != this.charmer)

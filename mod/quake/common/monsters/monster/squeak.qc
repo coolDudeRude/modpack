@@ -99,7 +99,8 @@ void s_squeakexplode1(entity this) { set_anim(this, 0, s_squeakexplode2); }
 
 void squeak_explode(entity this)
 {
-	T_RadiusDamage(this, this, 130, DEATH_MONSTER_SQUEAK.m_id, this);
+	entity attacker = (this.owner) ? this.owner : this;
+	T_RadiusDamage(this, attacker, 130, DEATH_MONSTER_SQUEAK.m_id, this);
 	_sound(this, CH_VOICE, "squeak/blast.wav", 1, ATTN_NORM);
 
 	entity newmis = spawn();
@@ -133,8 +134,6 @@ METHOD(Squeak, mr_setup, bool(Squeak this, entity actor))
 	precache_sound("squeak/hunt1.wav");
 	precache_sound("squeak/hunt2.wav");
 	precache_sound("squeak/hunt3.wav");
-
-	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED; // for close explosions
 
 	actor.health = 50;
 	actor.th_pain = squeak_pain;
