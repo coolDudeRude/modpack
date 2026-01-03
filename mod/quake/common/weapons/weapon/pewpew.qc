@@ -1,0 +1,76 @@
+#include "pewpew.qh"
+
+#ifdef SVQC
+PRECACHE(PewPew)
+{
+	precache_model("progs/v_pewpew.mdl");
+	precache_model("progs/g_pewpew.mdl");
+
+	precache_sound("weapons/pewpew1.wav");
+	precache_sound("weapons/pewpew2.wav");
+	precache_sound("weapons/pewpew3.wav");
+	precache_sound("weapons/pewpew_load.wav");
+}
+
+void wep_pewpew_shot6(entity this) { wep_set_anim(this, 13, w_ready); }
+void wep_pewpew_shot5(entity this) { wep_set_anim(this, 12, wep_pewpew_shot6); }
+void wep_pewpew_shot4(entity this) { wep_set_anim(this, 11, wep_pewpew_shot5); }
+void wep_pewpew_shot3(entity this) { wep_set_anim(this, 10, wep_pewpew_shot4); }
+void wep_pewpew_shot2(entity this) { wep_set_anim(this, 9, wep_pewpew_shot3); }
+void wep_pewpew_shot1(entity this) { wep_set_anim(this, 8, wep_pewpew_shot2); this.owner.effects |= EF_MUZZLEFLASH; }
+
+void W_FirePewPew(entity this, .entity weaponentity)
+{
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_WEAPON_SINGLE, "weapons/pewpew1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_WEAPON_SINGLE, "weapons/pewpew2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_WEAPON_SINGLE, "weapons/pewpew3.wav", 1, ATTN_NORM);
+
+	this.punchangle_x = -2;
+
+	vector dir = qc_aim(this, 1000);
+	entity missile = LaunchLaser(this, W_Shotorg(this, weaponentity) + v_right * 7, dir);
+	missile.projectiledeathtype = WEP_PEWPEW.m_id;
+	missile.dmg = 25;
+	missile.velocity = dir * 1000;
+	missile.angles = vectoangles(missile.velocity);
+}
+
+METHOD(PewPew, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))
+{
+	Weapon oldwep = actor.(weaponentity).pewpew_prevwep;
+	actor.(weaponentity).pewpew_prevwep = actor.(weaponentity).m_weapon;
+
+	if(oldwep != WEP_PEWPEW) // only plays once!!
+	{
+		_sound(actor, CH_WEAPON_SINGLE, "weapons/pewpew_load.wav", 1, ATTN_NORM);
+		return;
+	}
+
+	if(fire & 1)
+	if(!(time < ATTACK_FINISHED(actor, weaponentity)))
+	if(thiswep.wr_checkammo1(thiswep, actor, weaponentity))
+	{
+		if(IS_PLAYER(actor))
+			player_shot1(actor);
+		wep_pewpew_shot1(actor.(weaponentity));
+		W_FirePewPew(actor, weaponentity);
+		weapon_prepareattack(thiswep, actor, weaponentity, 0.7);
+	}
+}
+METHOD(PewPew, wr_checkammo1, bool(entity thiswep, entity actor, .entity weaponentity))
+{
+	return true; // doesn't use ammo
+}
+METHOD(PewPew, wr_suicidemessage, Notification(entity thiswep))
+{
+    return WEAPON_THINKING_WITH_PORTALS;
+}
+METHOD(PewPew, wr_killmessage, Notification(entity thiswep))
+{
+	return WEAPON_FRAG;
+}
+#endif

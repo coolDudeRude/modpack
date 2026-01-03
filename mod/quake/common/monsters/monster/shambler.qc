@@ -480,8 +480,7 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 		_setmodel(actor, "progs/shambler_xmas.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
-
-	if(actor.spawnflags & MON_SHAMBLER_COOKIE)
+	else if(actor.spawnflags & MON_SHAMBLER_COOKIE)
 	{
 		precache_sound("hknight/attack1.wav");
 		precache_sound("shambler/cookie_die.wav");

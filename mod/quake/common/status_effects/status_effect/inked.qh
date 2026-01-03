@@ -2,7 +2,7 @@
 
 #include "../all.qh"
 
-CLASS(Inked, StatusEffects)
+CLASS(Inked, Debuffs)
     ATTRIB(Inked, netname, string, "inked");
     ATTRIB(Inked, m_color, vector, '0.1 0.1 0.1');
     ATTRIB(Inked, m_hidden, bool, true);

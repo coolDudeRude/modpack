@@ -5,6 +5,7 @@
 launch_lava_spike
 
 Used for both the player and the ogre
+NOTE: doesn't set a model, expects to be CSQC networked!
 ===============
 */
 void lavaspike_touch(entity this, entity toucher);
@@ -23,7 +24,7 @@ entity launch_lava_spike(entity this, vector org, vector dir)
 	settouch(newmis, lavaspike_touch);
 	setthink(newmis, SUB_Remove);
 	newmis.nextthink = time + 6;
-	_setmodel(newmis, "progs/lspike.mdl");	
+	//_setmodel(newmis, "progs/lspike.mdl");	
 	setsize(newmis, '0 0 0', '0 0 0');		
 	setorigin(newmis, org);
 

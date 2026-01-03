@@ -2,7 +2,7 @@
 
 #include "../all.qh"
 
-CLASS(Poisoned, StatusEffects)
+CLASS(Poisoned, Debuffs)
     ATTRIB(Poisoned, netname, string, "poisoned");
 #if 0
     // NOTE: status effect name and icon disabled as they are not displayed

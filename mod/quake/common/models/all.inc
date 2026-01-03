@@ -29,6 +29,7 @@ MODEL(RUNE_HEALING,                         "progs/healing_rune.spr");
 MODEL(CHAT,                                 "models/misc/chatbubble.spr");
 
 // projectiles TODO
+#ifdef CSQC
 MODEL(PROJECTILE_ROCKET,                    "progs/missile.mdl");
 MODEL(PROJECTILE_MERMAID_BUBBLE,            "progs/s_bubble.spr");
 MODEL(PROJECTILE_MAGIC_FIREBALL,            "progs/lavaball.mdl");
@@ -55,3 +56,49 @@ MODEL(PROJECTILE_JIM_LASER,                 "progs/proj_laz.mdl");
 MODEL(PROJECTILE_JIM_ROCKET,                "progs/proj_rocket.mdl");
 MODEL(PROJECTILE_SNOWBALL,                  "progs/snowball.mdl");
 MODEL(PROJECTILE_GOLDY,                     "progs/goldy_bag.mdl");
+MODEL(PROJECTILE_CRUMB,                     "progs/crumb.mdl");
+MODEL(PROJECTILE_SKAARJ_BULLET,             "progs/big_bullet.mdl");
+MODEL(PROJECTILE_GUG_BILEBOMB,              "progs/bilebomb.mdl");
+MODEL(PROJECTILE_GUG_BILEFRAG,              "progs/bilefrag.mdl");
+MODEL(PROJECTILE_DROLE,                     "progs/proj_drole.mdl");
+MODEL(PROJECTILE_DROLE_POISON,              "progs/proj_drolegrn.mdl");
+MODEL(PROJECTILE_MULTI_ROCKET,              "progs/rockup_d.mdl");
+MODEL(PROJECTILE_LAVABALL,                  "progs/lavaball.mdl");
+MODEL(PROJECTILE_EE_P_SPHERE,               ((fexists("progs/ee_p_sphere.mdl") ? "progs/ee_p_sphere.mdl" : "progs/lavaball.mdl")));
+MODEL(PROJECTILE_BLAZE_FIREBALL,            "progs/lavaball.mdl");
+MODEL(PROJECTILE_LAVAMAN_FIREBALL,          "progs/lavaball.mdl");
+MODEL(PROJECTILE_PASSIVE_FIREBALL,          "progs/lavaball.mdl");
+MODEL(PROJECTILE_PASSIVE_PULSERIFLE,        "progs/pulse.mdl");
+MODEL(PROJECTILE_TANK_BIGROCKET,            "progs/brocket.mdl");
+MODEL(PROJECTILE_GHOST_SICKLE,              "progs/ghost_sickle.mdl");
+
+PRECACHE(PROJECTILE_LETTERS)
+{
+	precache_model("progs/s_sns_a.spr");
+	precache_model("progs/s_sns_b.spr");
+	precache_model("progs/s_sns_c.spr");
+	precache_model("progs/s_sns_d.spr");
+	precache_model("progs/s_sns_e.spr");
+	precache_model("progs/s_sns_f.spr");
+	precache_model("progs/s_sns_g.spr");
+	precache_model("progs/s_sns_h.spr");
+	precache_model("progs/s_sns_i.spr");
+	precache_model("progs/s_sns_j.spr");
+	precache_model("progs/s_sns_k.spr");
+	precache_model("progs/s_sns_l.spr");
+	precache_model("progs/s_sns_m.spr");
+	precache_model("progs/s_sns_n.spr");
+	precache_model("progs/s_sns_o.spr");
+	precache_model("progs/s_sns_p.spr");
+	precache_model("progs/s_sns_q.spr");
+	precache_model("progs/s_sns_r.spr");
+	precache_model("progs/s_sns_s.spr");
+	precache_model("progs/s_sns_t.spr");
+	precache_model("progs/s_sns_u.spr");
+	precache_model("progs/s_sns_v.spr");
+	precache_model("progs/s_sns_w.spr");
+	precache_model("progs/s_sns_x.spr");
+	precache_model("progs/s_sns_y.spr");
+	precache_model("progs/s_sns_z.spr");
+}
+#endif

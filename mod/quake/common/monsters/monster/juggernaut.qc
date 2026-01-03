@@ -401,10 +401,10 @@ void juggernaut_fire_chain(entity this)
 	dir = normalize(dir - org);
 	entity newmis = launch_spike(this, org, dir);
 	newmis.projectiledeathtype = DEATH_MONSTER_JUGGERNAUT.m_id;
-	_setmodel(newmis, "progs/laser.mdl");
 	settouch(newmis, juggernaut_laser_touch);
-	newmis.effects = EF_MUZZLEFLASH;
-	this.ammo_cells = this.ammo_cells - 1;
+	this.ammo_cells -= 1;
+
+	CSQCProjectile(newmis, true, PROJECTILE_LASER, true);
 }
 
 void juggernaut_firea14(entity this)
@@ -693,7 +693,6 @@ METHOD(Juggernaut, mr_setup, bool(Juggernaut this, entity actor))
 
 	precache_model("progs/a_jugg.mdl");
 	precache_model("progs/a_jugg2.mdl");
-	precache_model("progs/laser.mdl");
 	precache_sound("enforcer/enfstop.wav");
 	precache_sound("monsters/juggers/jbent.wav");
 	precache_sound("monsters/juggers/jshot.wav");

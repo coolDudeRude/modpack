@@ -521,9 +521,10 @@ void BileBombTouch(entity this, entity toucher)
 		missile.realowner = this.realowner;
 		missile.nextthink = time + 0.2 + 0.4 * random();
 		setthink(missile, BileFragThink);
-		_setmodel(missile, "progs/bilefrag.mdl");
 		setsize(missile, '0 0 0', '0 0 0');
 		setorigin(missile, this.origin);
+
+		CSQCProjectile(missile, true, PROJECTILE_GUG_BILEFRAG, true);
 
 		IL_PUSH(g_projectiles, missile);
 	}
@@ -561,11 +562,13 @@ void BileBombThink(entity this)
 		missile.velocity = vec * spd;
 		missile.avelocity = '300 300 300';
 		settouch(missile, BileBombTouch);
-		_setmodel(missile, "progs/bilebomb.mdl");
 		setsize(missile, '0 0 0', '0 0 0');
 		setorigin(missile, org);
 
 		IL_PUSH(g_projectiles, missile);
+
+		CSQCProjectile(missile, true, PROJECTILE_GUG_BILEBOMB, true);
+
 		t += 1;
 	}
 	delete(this);
@@ -602,11 +605,12 @@ void gug_bilebomb(entity this)
 	missile.nextthink = time + 0.3;
 	setthink(missile, BileBombThink);
 	missile.enemy = this.enemy;
-	_setmodel(missile, "progs/bilebomb.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, this.origin + '0 0 75');
 
 	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_GUG_BILEBOMB, true);
 }
 
 void gug_bile26(entity this) { set_anim(this, 169, gug_run1); }
@@ -825,8 +829,6 @@ METHOD(Gug, mr_setup, bool(Gug this, entity actor))
 {
     TC(Gug, this);
 
-	precache_model("progs/bilebomb.mdl");
-	precache_model("progs/bilefrag.mdl");
 	precache_model("progs/greenexp.spr");
 	precache_sound("gug/step1.wav");
 	precache_sound("gug/step2.wav");

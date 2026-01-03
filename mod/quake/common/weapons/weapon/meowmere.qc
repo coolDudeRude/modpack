@@ -147,7 +147,6 @@ void W_Cat_Fire(entity this, vector org, .entity weaponentity)
 	missile.nextthink = time;
 	setthink(missile, W_Cat_Think);
 
-	_setmodel(missile, "progs/proj_cat.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, org);
 
@@ -230,8 +229,6 @@ PRECACHE(Meowmere)
 {
 	precache_model("progs/v_meowmere.mdl");
 	precache_model("progs/g_meowmere.mdl");
-
-	precache_model("progs/proj_cat.mdl");
 
 	precache_sound("enviro/physics/trcut.wav");
 	precache_sound("enviro/physics/axemet1.wav");

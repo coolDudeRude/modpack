@@ -1,0 +1,28 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(BAGPIPES_FIRE, "weapons/bagpipes_fire");
+
+SOUND(BAGPIPES_MUSICNOTE, "weapons/bagpipes_music");
+#endif
+
+CLASS(Bagpipes, Weapon)
+/* ammotype  */ ATTRIB(Bagpipes, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Bagpipes, impulse, int, 5);
+/* spawnflags*/ ATTRIB(Bagpipes, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_MUSIC | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Bagpipes, aflag, int, 5);
+/* modelname */ ATTRIB(Bagpipes, mdl, string, "bagpipes");
+/* crosshair */ ATTRIB(Bagpipes, w_crosshair, string, "gfx/crosshairtuba");
+/* crosshair */ ATTRIB(Bagpipes, w_crosshair_size, float, 1);
+/* crosshair */ ATTRIB(Bagpipes, w_crosshair_color, vector, '0.909 0.816 0.345');
+/* wepimg    */ ATTRIB(Bagpipes, model2, string, "bagpipes");
+/* refname   */ ATTRIB(Bagpipes, netname, string, "bagpipes");
+/* wepname   */ ATTRIB(Bagpipes, m_name, string, _("Bagpipes"));
+#ifdef GAMEQC
+/* music     */ ATTRIB(Bagpipes, m_musicnote, Sound, SND_BAGPIPES_MUSICNOTE);
+#endif
+
+ENDCLASS(Bagpipes)
+REGISTER_WEAPON(BAGPIPES, NEW(Bagpipes));
+
+SPAWNFUNC_WEAPON(weapon_bagpipes, WEP_BAGPIPES)

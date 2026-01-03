@@ -172,12 +172,13 @@ void Ghast_FastFire(entity this)
 		_sound(this.owner, CH_WEAPON_SINGLE, "ghast/fireball4.wav", 1, ATTN_NORM);
 		entity newmis = launch_spike(this, this.origin, vec);
 		newmis.projectiledeathtype = DEATH_MONSTER_GHAST.m_id;
-		newmis.velocity = vec*400;
+		newmis.velocity = vec * 400;
 		newmis.owner = this.owner;
 		settouch(newmis, ghast_fireball_touch);
 		newmis.classname = "ghast_fireball";
-		_setmodel(newmis, "progs/lavaball.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');		
+
+		CSQCProjectile(newmis, true, PROJECTILE_LAVABALL, true);
 	}
 
 	delete(this);
@@ -336,8 +337,6 @@ METHOD(Ghast, mr_setup, bool(Ghast this, entity actor))
 	precache_sound("ghast/charge.wav");
 
 	precache_sound("ghast/fireball4.wav");
-
-	precache_model("progs/lavaball.mdl");
 
 	actor.skin = 0;
     actor.health = 80;

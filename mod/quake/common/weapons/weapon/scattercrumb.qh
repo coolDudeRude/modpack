@@ -1,0 +1,22 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(SCATTERCRUMB_BOUNCE, "wraith/bounce");
+#endif
+CLASS(Scattercrumb, Weapon)
+/* ammotype  */ ATTRIB(Scattercrumb, ammo_type, int, IT_SHELLS);
+/* impulse   */ ATTRIB(Scattercrumb, impulse, int, 3);
+/* spawnflags*/ ATTRIB(Scattercrumb, spawnflags, int, WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Scattercrumb, aflag, int, 10);
+/* modelname */ ATTRIB(Scattercrumb, mdl, string, "scattercrumb");
+/* crosshair */ ATTRIB(Scattercrumb, w_crosshair, string, "gfx/crosshairshotgun");
+/* crosshair */ ATTRIB(Scattercrumb, w_crosshair_size, float, 0.7);
+/* crosshair */ ATTRIB(Scattercrumb, w_crosshair_color, vector, '0.66 0.44 0.31');
+/* wepimg    */ ATTRIB(Scattercrumb, model2, string, "scattercrumb");
+/* refname   */ ATTRIB(Scattercrumb, netname, string, "scattercrumb");
+/* wepname   */ ATTRIB(Scattercrumb, m_name, string, _("Scattercrumb"));
+
+ENDCLASS(Scattercrumb)
+REGISTER_WEAPON(SCATTERCRUMB, NEW(Scattercrumb));
+
+SPAWNFUNC_WEAPON(weapon_scattercrumb, WEP_SCATTERCRUMB)

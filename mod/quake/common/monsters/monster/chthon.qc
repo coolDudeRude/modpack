@@ -339,16 +339,17 @@ void boss_launch_missile(entity this, entity targ, vector offset)
 	entity newmis = launch_spike(this, org, vec);
 	newmis.projectiledeathtype = DEATH_MONSTER_CHTHON.m_id | HITTYPE_MAGIC;
 	newmis.classname = "chthon_lavaball";
-	if(world.model == "maps/ee6.bsp")
-		_setmodel(newmis, "progs/ee_p_sphere.mdl");
-	else
-		_setmodel(newmis, "progs/lavaball.mdl");
 	newmis.owner = this;
 	newmis.dmg = 100;
 	newmis.avelocity = '200 100 300';
 	setsize(newmis, '0 0 0', '0 0 0');		
-	newmis.velocity = vec*300;
+	newmis.velocity = vec * 300;
 	settouch(newmis, T_MissileTouch); // rocket explosion
+
+	if(world.model == "maps/ee6.bsp")
+		CSQCProjectile(newmis, true, PROJECTILE_EE_P_SPHERE, true);
+	else
+		CSQCProjectile(newmis, true, PROJECTILE_LAVABALL, true);
 }
 
 void boss_missile(entity this, vector p)
@@ -407,13 +408,10 @@ METHOD(Chthon, mr_setup, bool(Chthon this, entity actor))
 	if(world.model == "maps/ee6.bsp")
 	{
 		precache_model("progs/ee-boss.mdl");
-		precache_model("progs/ee_p_sphere.mdl");
 
 		_setmodel(actor, "progs/ee-boss.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
-
-	precache_model("progs/lavaball.mdl");
 
 	precache_sound("weapons/rocket1i.wav");
 	precache_sound("boss1/out1.wav");

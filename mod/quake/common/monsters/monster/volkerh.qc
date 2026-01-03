@@ -1,5 +1,7 @@
 #include "volkerh.qh"
 
+REGISTER_NET_TEMP(volkerh_gibsplash)
+
 #ifdef SVQC
 const int anim_volkerh_hover = 0; //'0 29 0';
 const int anim_volkerh_fly = 30; //'30 49 0';
@@ -757,35 +759,15 @@ void vol_gib(entity this, entity inflictor)
 {
 	// throw tons of meat chunks
 	_sound(this, CHAN_BODY, "boss2/pop2.wav", 1, ATTN_NORM);
-	
-	vector oldo = this.origin;
 
-	float posz = 78; // was 0
-	while(posz <= 390)
-	{
-		float posx = 0; // was -62
-		while(posx <= 62)
-		{
-			float posy = 0; // was -62
-			while(posy <= 62)
-			{
-				this.origin_x = oldo.x + (posx * this.scale);
-				this.origin_y = oldo.y + (posy * this.scale);
-				this.origin_z = oldo.z + (posz * this.scale);
+	int channel = MSG_ALL;
+	WriteHeader(channel, volkerh_gibsplash);
+	WriteVector(channel, this.origin);
+	WriteFloat(channel, this.scale);
+	//WriteVector(channel, inflictor.origin);
+	WriteShort(channel, compressShortVector(normalize(this.origin - inflictor.origin)));
+	WriteShort(channel, compressShortVector(inflictor.velocity));
 
-				float r = random();
-				if(r < 0.3)				
-					ThrowGib(this, inflictor, "progs/gib1.mdl", -100);
-				else if(r < 0.6)
-					ThrowGib(this, inflictor, "progs/gib2.mdl", -100);
-				else
-					ThrowGib(this, inflictor, "progs/gib3.mdl", -100);
-				posy += 31;
-			}
-			posx += 31;
-		}
-		posz += 78;
-	}
 	delete(this);
 }
 
@@ -886,5 +868,53 @@ METHOD(Volkerh, mr_setup, bool(Volkerh this, entity actor))
 	setsize(actor, this.m_mins * actor.scale, this.m_maxs * actor.scale);
 
     return true;
+}
+#endif
+
+#ifdef CSQC
+PRECACHE(Volkerh)
+{
+	precache_model("progs/gib1.mdl");
+	precache_model("progs/gib2.mdl");
+	precache_model("progs/gib3.mdl");
+}
+
+NET_HANDLE(volkerh_gibsplash, bool isnew)
+{
+	vector oldorg = ReadVector();
+	float myscale = ReadFloat();
+	//vector targorg = ReadVector();
+	vector targnorm = decompressShortVector(ReadShort());
+	vector targvel = decompressShortVector(ReadShort());
+
+	return = true;
+
+	float posz = 78; // was 0
+	while(posz <= 390)
+	{
+		float posx = 0; // was -62
+		while(posx <= 62)
+		{
+			float posy = 0; // was -62
+			while(posy <= 62)
+			{
+				vector org;
+				org.x = oldorg.x + (posx * myscale);
+				org.y = oldorg.y + (posy * myscale);
+				org.z = oldorg.z + (posz * myscale);
+
+				float r = random();
+				if(r < 0.3)
+					TossGib ("progs/gib1.mdl", org, org, VelocityForDamage(org, targnorm, targvel, -100), '0 0 0', 0, false, false);
+				else if(r < 0.6)
+					TossGib ("progs/gib2.mdl", org, org, VelocityForDamage(org, targnorm, targvel, -100), '0 0 0', 0, false, false);
+				else
+					TossGib ("progs/gib3.mdl", org, org, VelocityForDamage(org, targnorm, targvel, -100), '0 0 0', 0, false, false);
+				posy += 31;
+			}
+			posx += 31;
+		}
+		posz += 78;
+	}
 }
 #endif

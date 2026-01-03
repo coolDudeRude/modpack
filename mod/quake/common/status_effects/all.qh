@@ -59,3 +59,7 @@ CLASS(Powerups, StatusEffects)
     ATTRIB(Powerups, m_sound_rm, Sound, SND_Null);
 #endif
 ENDCLASS(Powerups)
+
+// TODO: anything unique about them?
+CLASS(Debuffs, StatusEffects)
+ENDCLASS(Debuffs)

@@ -63,3 +63,8 @@
 #include "snowball.qc"
 #include "goldy.qc"
 #include "squeaker.qc"
+#include "bagpipes.qc"
+#include "scattercrumb.qc"
+#include "angelicstaff.qc"
+#include "sickle.qc"
+#include "pewpew.qc"

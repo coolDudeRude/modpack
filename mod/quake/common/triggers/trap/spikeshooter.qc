@@ -27,6 +27,8 @@ void spikeshooter_use(entity this, entity actor, entity trigger)
 		newmis.velocity = this.movedir * 500;
 		if(this.spawnflags & SPAWNFLAG_SUPERSPIKE)
 			settouch(newmis, superspike_touch);
+
+		CSQCProjectile(newmis, true, PROJECTILE_BULLET, true);
 	}
 	else if(((this.spawnflags & SPAWNFLAG_LAVASPIKE) || (this.spawnflags & SPAWNFLAG_SUPERLAVA)) && IsRogueMap())
 	{
@@ -38,6 +40,8 @@ void spikeshooter_use(entity this, entity actor, entity trigger)
 			settouch(newmis, superlavaspike_touch);
 		else
 			settouch(newmis, lavaspike_touch);
+
+		CSQCProjectile(newmis, true, PROJECTILE_LAVA_NAIL, true);
 	}
 	else if((this.spawnflags & SPAWNFLAG_FIREBALL) && IsRogueMap())
 	{
@@ -99,6 +103,8 @@ void spikeshooter_use(entity this, entity actor, entity trigger)
 			settouch(newmis, superlavaspike_touch);
 		else if(this.spawnflags & SPAWNFLAG_SUPERSPIKE)
 			settouch(newmis, superspike_touch);
+
+		CSQCProjectile(newmis, true, PROJECTILE_BULLET, true);
 	}
 }
 
@@ -126,8 +132,6 @@ spawnfunc(trap_spikeshooter)
 	this.killstring = " was spiked";
 	if(this.spawnflags & SPAWNFLAG_LASER)
 	{
-		precache_model("progs/laser.mdl");
-		
 		precache_sound("enforcer/enfire.wav");
 		precache_sound("enforcer/enfstop.wav");
 	}
@@ -144,19 +148,16 @@ spawnfunc(trap_spikeshooter)
 	}
 	if(this.spawnflags & SPAWNFLAG_LAVASPIKE)
 	{
-		precache_model("progs/lspike.mdl");
 		precache_sound("lavagun/snail.wav");		// lava nail gun cooldown
 		precache_sound("weapons/rocket1i.wav");
 	}
 	if(this.spawnflags & SPAWNFLAG_SUPERLAVA)
 	{
-		precache_model("progs/lspike.mdl");
 		precache_sound("lavagun/snail.wav");		// lava nail gun cooldown
 		precache_sound("weapons/spike2.wav");
 	}
 	if(this.spawnflags & SPAWNFLAG_LAVASKILL)
 	{
-		precache_model("progs/lspike.mdl");
 		precache_sound("lavagun/snail.wav");		// lava nail gun cooldown
 		precache_sound("weapons/rocket1i.wav");
 		precache_sound("weapons/spike2.wav");

@@ -1,0 +1,23 @@
+#pragma once
+
+CLASS(PewPew, Weapon)
+/* ammotype  */ ATTRIB(PewPew, ammo_type, int, 0);
+/* impulse   */ ATTRIB(PewPew, impulse, int, 2);
+/* spawnflags*/ ATTRIB(PewPew, spawnflags, int, WEP_FLAG_NOSTEAL | WEP_FLAG_NODUAL | WEP_FLAG_HITUNDEAD);
+/* ammo */      ATTRIB(PewPew, aflag, int, 0);
+/* modelname */ ATTRIB(PewPew, mdl, string, "pewpew");
+/* crosshair */ ATTRIB(PewPew, w_crosshair, string, "gfx/crosshairelectro");
+/* crosshair */ ATTRIB(PewPew, w_crosshair_size, float, 0.25);
+/* crosshair */ ATTRIB(PewPew, w_crosshair_color, vector, '1 0 0');
+/* wepimg    */ ATTRIB(PewPew, model2, string, "pewpew");
+/* refname   */ ATTRIB(PewPew, netname, string, "pewpew");
+/* wepname   */ ATTRIB(PewPew, m_name, string, _("Pew Pew"));
+
+ENDCLASS(PewPew)
+REGISTER_WEAPON(PEWPEW, NEW(PewPew));
+
+//SPAWNFUNC_WEAPON(weapon_pewpew, WEP_PEWPEW)
+
+#ifdef SVQC
+.entity pewpew_prevwep; // for starting sound
+#endif

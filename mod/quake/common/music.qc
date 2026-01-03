@@ -949,6 +949,11 @@ bool cl_music_command(string cmd, string command)
 			localcmd(strcat("cmd music loop ", argv(2), "\n"));
 			return true;
 		}
+		else if(argv(1) == "random")
+		{
+			localcmd(strcat("cmd music random ", argv(2), "\n"));
+			return true;
+		}
 		else if(argv(1) != "")
 			mymusic = substring(command, argv_start_index(1), argv_end_index(-1) - argv_start_index(1)); // TODO: processing?
 		else

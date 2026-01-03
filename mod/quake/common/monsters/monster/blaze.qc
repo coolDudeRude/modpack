@@ -59,6 +59,8 @@ void blaze_fireball_touch(entity this, entity toucher)
 void blaze_fireball_launch(entity this)
 {
 	vector offang = vectoangles(this.enemy.origin - this.origin);
+
+	_sound(this, CH_WEAPON_SINGLE, "blaze/fireball4.wav", 1, ATTN_NORM);
 	
 	makevectors(offang);
 
@@ -71,13 +73,11 @@ void blaze_fireball_launch(entity this)
 	entity newmis = launch_spike(this, org, vec);
 	newmis.projectiledeathtype = DEATH_MONSTER_BLAZE.m_id;
 	newmis.classname = "knight_spike";
-	newmis.scale = 0.7;
-	newmis.modelflags |= MF_ROCKET;
 	settouch(newmis, blaze_fireball_touch);
-	_setmodel(newmis, "progs/lavaball.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
-	newmis.velocity = vec*300;
-	_sound(this, CH_WEAPON_SINGLE, "blaze/fireball4.wav", 1, ATTN_NORM);
+	newmis.velocity = vec * 300;
+
+	CSQCProjectile(newmis, true, PROJECTILE_BLAZE_FIREBALL, true);
 }
 
 void blaze_shoot7(entity this) { set_anim(this, anim_blaze, blaze_run); ai_face(this); blaze_fireball_launch(this); this.attack_finished = time + 5; }
@@ -273,8 +273,6 @@ METHOD(Blaze, mr_setup, bool(Blaze this, entity actor))
 
 	precache_sound("blaze/death.wav");
 	precache_sound("blaze/fireball4.wav");
-
-	precache_model("progs/lavaball.mdl");
 
 	actor.yaw_speed = 180;
 

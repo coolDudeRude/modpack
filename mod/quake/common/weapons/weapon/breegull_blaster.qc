@@ -155,6 +155,7 @@ void W_BreegullBlaster_ClockworkTouch(entity this, entity toucher)
 		return;
 	}
 
+	// NOTE: we *could* exclude non-Banjo champions here, but where's the fun in that?!
 	if(!this.owner || this.owner.health <= 0 || !IS_PLAYER(this.owner) || STAT(CANNON, this.owner) || this.owner.clockwork || this.owner.tank || this.owner.m_transform || STAT(SLIDE_ON, this.owner) || STAT(SKATING, this.owner))
 	{
 		delete(this);

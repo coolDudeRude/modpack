@@ -33,8 +33,9 @@ void Laser_Touch(entity this, entity toucher)
 
 	if(toucher.health)
 	{
-		SpawnBlood(org, this.velocity*0.2, 15, toucher);
-		T_Damage(toucher, this, this.owner, 15, this.projectiledeathtype);
+		float damage = (this.dmg) ? this.dmg : 15;
+		SpawnBlood(org, this.velocity*0.2, damage, toucher);
+		T_Damage(toucher, this, this.owner, damage, this.projectiledeathtype);
 	}
 	else
 		te_gunshot(org);
@@ -57,9 +58,7 @@ entity LaunchLaser(entity this, vector org, vector vec)
 	newmis.clipgroup = this.clipgroup;
 	set_movetype(newmis, MOVETYPE_FLY);
 	newmis.solid = SOLID_BBOX;
-	newmis.effects = EF_DIMLIGHT;
 
-	//_setmodel(newmis, "progs/laser.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 
 	setorigin(newmis, org);
@@ -338,8 +337,6 @@ spawnfunc(monster_archer_lord) { monster_start(this, true, MON_ENFORCER); }
 METHOD(Enforcer, mr_setup, bool(Enforcer this, entity actor))
 {
 	TC(Enforcer, this);
-
-	precache_model("progs/laser.mdl");
 
 	precache_sound("enforcer/death1.wav");
 	precache_sound("enforcer/enfire.wav");

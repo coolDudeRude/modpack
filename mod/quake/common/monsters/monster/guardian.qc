@@ -243,9 +243,7 @@ entity LaunchGuardianLaser(entity this, vector org, vector vec)
 	newmis.clipgroup = this.clipgroup;
 	set_movetype(newmis, MOVETYPE_FLY);
 	newmis.solid = SOLID_BBOX;
-	newmis.effects = EF_DIMLIGHT;
 
-	_setmodel(newmis, "progs/laser.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
 
 	if(!this.guardian_owner)
@@ -261,6 +259,8 @@ entity LaunchGuardianLaser(entity this, vector org, vector vec)
 	settouch(newmis, GuardianLaser_Touch);
 
 	IL_PUSH(g_projectiles, newmis);
+
+	CSQCProjectile(newmis, true, PROJECTILE_LASER, true);
 
 	return newmis;
 }
@@ -574,8 +574,7 @@ METHOD(Guardian, mr_setup, bool(Guardian this, entity actor))
 	}
 	//else
 		//objerror(actor, "monster_morph: no skin selection!");
-	
-	precache_model("progs/laser.mdl");
+
 	precache_sound("enforcer/enfire.wav");
 	precache_sound("guard/death.wav");
 	precache_sound("guard/pain1.wav");

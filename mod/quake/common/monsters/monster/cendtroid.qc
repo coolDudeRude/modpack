@@ -432,7 +432,6 @@ METHOD(Centroid, mr_setup, bool(Centroid this, entity actor))
 {
     TC(Centroid, this);
 
-	precache_model("progs/laser.mdl");
 	precache_model("progs/s_light.mdl");
 	precache_model("progs/spike.mdl");
 

@@ -109,7 +109,6 @@ void magic_fire_launch(entity this, .entity weaponentity)
 
 	entity newmis = launch_spike(this, org, dir);
 	newmis.scale = 2;
-	//setmodel(newmis, MDL_LAVABALL);
 	setsize(newmis, '0 0 0', '0 0 0');
 	newmis.dmg = 25;
 	newmis.nextthink = time + 5;

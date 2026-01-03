@@ -1,0 +1,23 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(SICKLE_SWING, "weapons/sickle_fire");
+#endif
+
+CLASS(Sickle, Weapon)
+/* ammotype  */ ATTRIB(Sickle, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Sickle, impulse, int, 1);
+/* spawnflags*/ ATTRIB(Sickle, spawnflags, int, WEP_FLAG_NOAGGRO | WEP_FLAG_NODUAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_MELEE | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(Sickle, aflag, int, 0);
+/* modelname */ ATTRIB(Sickle, mdl, string, "sickle");
+/* crosshair */ ATTRIB(Sickle, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(Sickle, w_crosshair_size, float, 0.45);
+/* crosshair */ ATTRIB(Sickle, w_crosshair_color, vector, '0.1 0.1 0.1');
+/* wepimg    */ ATTRIB(Sickle, model2, string, "sickle");
+/* refname   */ ATTRIB(Sickle, netname, string, "sickle");
+/* wepname   */ ATTRIB(Sickle, m_name, string, _("Sickle"));
+
+ENDCLASS(Sickle)
+REGISTER_WEAPON(SICKLE, NEW(Sickle));
+
+SPAWNFUNC_WEAPON(weapon_sickle, WEP_SICKLE)

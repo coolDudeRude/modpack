@@ -22,6 +22,4 @@ SPAWNFUNC_WEAPON(weapon_railgun, WEP_RAILGUN)
 
 #ifdef SVQC
 vector SniperLightningDamage(entity this, vector org, vector dir);
-
-void DrawSniperLightning(entity this, vector org, vector dest, float hit);
 #endif

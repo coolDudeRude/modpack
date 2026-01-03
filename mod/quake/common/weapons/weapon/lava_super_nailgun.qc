@@ -48,7 +48,6 @@ void W_FireSuperLavaSpikes(entity this, .entity weaponentity)
 	newmis.projectiledeathtype = WEP_LAVA_SUPER_NAILGUN.m_id;
 	settouch(newmis, superlavaspike_touch);
 
-//	setmodel(newmis, "progs/lspike.mdl");	
 	setsize(newmis, '0 0 0', '0 0 0');
 
 	CSQCProjectile(newmis, true, PROJECTILE_LAVA_NAIL, true);

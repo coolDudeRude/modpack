@@ -1,0 +1,23 @@
+#pragma once
+
+CLASS(AngelicStaff, Weapon)
+/* ammotype  */ ATTRIB(AngelicStaff, ammo_type, int, 0);
+/* impulse   */ ATTRIB(AngelicStaff, impulse, int, 9);
+/* spawnflags*/ ATTRIB(AngelicStaff, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(AngelicStaff, aflag, int, 0);
+/* modelname */ ATTRIB(AngelicStaff, mdl, string, "angelicstaff");
+/* crosshair */ ATTRIB(AngelicStaff, w_crosshair, string, "gfx/crosshair20");
+/* crosshair */ ATTRIB(AngelicStaff, w_crosshair_size, float, 0.4);
+/* crosshair */ ATTRIB(AngelicStaff, w_crosshair_color, vector, '1 0.2 0.5');
+/* wepimg    */ ATTRIB(AngelicStaff, model2, string, "angelicstaff");
+/* refname   */ ATTRIB(AngelicStaff, netname, string, "angelicstaff");
+/* wepname   */ ATTRIB(AngelicStaff, m_name, string, _("Angelic Staff"));
+
+ENDCLASS(AngelicStaff)
+REGISTER_WEAPON(ANGELICSTAFF, NEW(AngelicStaff));
+
+SPAWNFUNC_WEAPON(weapon_angelicstaff, WEP_ANGELICSTAFF)
+
+#ifdef SVQC
+void W_FireAngelicStaff(entity this, .entity weaponentity);
+#endif

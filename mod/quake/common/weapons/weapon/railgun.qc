@@ -1,16 +1,21 @@
 #include "railgun.qh"
 
-#ifdef SVQC
+#ifdef GAMEQC
+REGISTER_NET_TEMP(TE_CSQC_SNIPERBEAM)
+#endif
+
+#if defined(SVQC)
+void SendCSQCSniperLightning(vector start, vector end, int hit)
+{
+	WriteHeader(MSG_BROADCAST, TE_CSQC_SNIPERBEAM);
+	WriteVector(MSG_BROADCAST, start);
+	WriteVector(MSG_BROADCAST, end);
+	//WriteByte(MSG_BROADCAST, hit);
+}
+#elif defined(CSQC)
 PRECACHE(Railgun)
 {
-	precache_model("progs/v_railgun.mdl");
-	precache_model("progs/g_railgun.mdl");
-
 	precache_model("progs/bolt2.mdl");
-
-	precache_sound("weapons/railwhirl1.wav");
-	precache_sound("weapons/railwhirl2.wav");
-	precache_sound("weapons/rail2.wav");
 }
 
 // even more smooth:
@@ -22,6 +27,72 @@ float lerpCosine(float a, float b, float mix)
 	float cmx = (1 - cos(mix * 180)) / 2;
 
 	return (b * cmx + a * (1 - cmx));
+}
+
+void SniperLightning_Draw(entity this)
+{
+	this.alpha = bound(0.0001, lerpCosine(1, 0, 1 - (this.count - time) / 0.5), 1);
+
+	if(time > this.count)
+		delete(this);
+}
+
+NET_HANDLE(TE_CSQC_SNIPERBEAM, bool isNew)
+{
+	vector org = ReadVector();
+	vector dest = ReadVector();
+	//bool hit = ReadByte();
+
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	vector ang = vectoangles(dest - org);
+
+	entity sg = NULL;
+	float ct = (len) ? floor(len / 30) : 0;
+	for(int i = 0; i < ct; i++)
+	{
+		sg = spawn();
+
+		sg.solid = SOLID_NOT;
+		_setmodel(sg, "progs/bolt2.mdl");
+		setsize(sg, '0 0 0', '0 0 0');
+		setorigin(sg, org + dir * 30 * i);
+
+		sg.draw = SniperLightning_Draw;
+		if (isNew) IL_PUSH(g_drawables, sg);
+		sg.drawmask = MASK_NORMAL;
+
+		sg.classname = "lgsegment";
+		sg.effects = EF_FULLBRIGHT;
+		sg.angles = ang;
+		sg.angles_z = random()*360;
+		sg.count = time + 0.5 + 0.005 * i;
+		sg.alpha = 0.9;
+		//sg.state = hit;
+		sg.cnt = i;
+	}
+	// add an effect to the impact site
+	if(sg)
+	{
+		pointparticles(EFFECT_RAILGUN_MUZZLEFLASH, sg.origin, dir * -1, 1);
+		//sg.effects |= EF_MUZZLEFLASH;
+	}
+
+	return true;
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Railgun)
+{
+	precache_model("progs/v_railgun.mdl");
+	precache_model("progs/g_railgun.mdl");
+
+	precache_model("progs/bolt2.mdl");
+
+	precache_sound("weapons/railwhirl1.wav");
+	precache_sound("weapons/railwhirl2.wav");
+	precache_sound("weapons/rail2.wav");
 }
 
 void wep_railgun_rail40(entity this) { wep_set_anim(this, 40, w_ready); this.weapon_nextthink = time + 0.05; }
@@ -89,7 +160,7 @@ void W_FireSniperLightning(entity this)
 		antilag_takeback_all(this, lag);
 
 	vector endpos = SniperLightningDamage(this, org, dir);
-	DrawSniperLightning(this, org, endpos, 0);
+	SendCSQCSniperLightning(org, endpos, 0);
 
 	if(lag)
 		antilag_restore_all(this);
@@ -125,51 +196,6 @@ vector SniperLightningDamage(entity this, vector org, vector dir)
 	}
 
 	return endpoint;
-}
-
-void SniperLightningSegmentThink(entity this)
-{
-	this.alpha = bound(0.0001, lerpCosine(1, 0, 1 - (this.attack_finished - time) / 0.5), 1);
-
-	if(time > this.attack_finished)
-		delete(this);
-	else
-		this.nextthink = time + 0.025;
-}
-
-void DrawSniperLightning(entity this, vector org, vector dest, float hit)
-{
-	float len = vlen(dest - org);
-	vector dir = normalize(dest - org);
-	vector ang = vectoangles(dest - org);
-
-	entity sg = NULL;
-	float ct = (len) ? floor(len / 30) : 0;
-	for(int i = 0; i < ct; i++)
-	{
-		sg = spawn();
-
-		_setmodel(sg, "progs/bolt2.mdl");
-		setsize(sg, '0 0 0', '0 0 0');
-		setorigin(sg, org + dir * 30 * i);
-
-		//sg.flags = FL_PROJECTILE;
-		sg.classname = "lgsegment";
-		sg.effects = EF_FULLBRIGHT | EF_LOWPRECISION;
-		sg.angles = ang;
-		sg.angles_z = random()*360;
-		sg.owner = this;
-		sg.realowner = this;
-		setthink(sg, SniperLightningSegmentThink);
-		sg.attack_finished = time + 0.5 + 0.005 * i;
-		sg.nextthink = time + 0.02;
-		sg.alpha = 0.9;
-		sg.state = hit;
-		sg.cnt = i;
-	}
-	// add an effect to the impact site
-	if(sg)
-		sg.effects |= EF_MUZZLEFLASH;
 }
 
 METHOD(Railgun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

@@ -27,30 +27,6 @@ void SendCSQCShadowbeam(vector org, vector dir)
 	WriteVector(MSG_BROADCAST, dir);
 }
 
-void W_Shadowbeam_Attack(entity this)
-{
-	entity actor = this.owner;
-	.entity weaponentity = this.weaponentity_fld;
-	if(!actor.button0)
-	{
-		w_ready(this);
-		return;
-	}
-
-	if(IS_PLAYER(actor))
-		player_nail1(actor);
-
-	actor.effects |= EF_MUZZLEFLASH;
-
-	this.m_frame += 1;
-	if(this.m_frame > 5)
-		this.m_frame = 1;
-	wep_set_anim(this, this.m_frame, W_Shadowbeam_Attack);
-	SuperDamageSound(actor);
-	W_FireShadowbeam(actor, weaponentity);
-	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
-}
-
 .float shadowbeamhit;
 void ShadowbeamTrace(entity this, float arange, vector org, vector dir)
 {

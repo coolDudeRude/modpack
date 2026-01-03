@@ -909,6 +909,11 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	button_zoom = PHYS_INPUT_BUTTON_ZOOM(this);
 
+	if(checkextension("DP_CSQC_MINFPS_QUALITY"))
+		view_quality = getproperty(VF_MINFPS_QUALITY);
+	else
+		view_quality = 1;
+
 	vector vf_size = getpropertyvec(VF_SIZE);
 	vector vf_min = getpropertyvec(VF_MIN);
 	vid_width = vf_size.x;

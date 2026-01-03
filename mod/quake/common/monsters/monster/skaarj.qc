@@ -617,11 +617,12 @@ void SkaarjMissile(entity this, vector org, vector dir)
 	newmis.nextthink = time + 5;
 	setthink(newmis, SUB_Remove);
 
-	_setmodel(newmis, "progs/big_bullet.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
 	setorigin(newmis, org);
 
 	IL_PUSH(g_projectiles, newmis);
+
+	CSQCProjectile(newmis, true, PROJECTILE_SKAARJ_BULLET, true);
 }
 
 void skaarj_fire(entity this, vector org1, vector org2)
@@ -705,7 +706,6 @@ METHOD(Skaarj, mr_setup, bool(Skaarj this, entity actor))
 {
     TC(Skaarj, this);
 
-	precache_model("progs/big_bullet.mdl");
 	precache_model("progs/gib1.mdl");
 	precache_model("progs/gib2.mdl");
 	precache_model("progs/gib3.mdl");

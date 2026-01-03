@@ -6,7 +6,6 @@ PRECACHE(Shock_PreCache)
 	precache_sound("enforcer/enfstop.wav");   // electric zap (for water hit)
 	precache_sound("weapons/dsfirxpl.wav");   // for plasma hit
 	precache_sound("weapons/dsplasma.wav");    // plasma firing
-	precache_model("progs/pbullet.mdl");      // Plasma bullet model
 	precache_model("progs/g_shock.mdl");     // Plasma gun item
 	precache_model("progs/v_shock.mdl");     // Plasma being used
 	precache_model("progs/s_plasma.spr");     // Plasma explosion sprite
@@ -127,7 +126,6 @@ void W_FireShock(entity this, .entity weaponentity)
 	
 	missile.effects = EF_DIMLIGHT;           // Plasma bullets emit light...
 
-	//_setmodel(missile, "progs/pbullet.mdl");   // Plasma bullet model
 	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, W_Shotorg(this, weaponentity) + v_forward * 8);
 

@@ -202,6 +202,7 @@ void parms_reset(entity this)
 	}
 
 	// TODO: clean up this mess
+	Weapon fallback_weapon = WEP_PEWPEW;
 	Weapon start_weapon = WEP_AXE;
 	Weapon prev_weapon = WEP_SHOTGUN;
 	if(autocvar_horde)
@@ -210,23 +211,26 @@ void parms_reset(entity this)
 	{
 		start_weapon = WEP_BALL;
 		prev_weapon = WEP_BALL;
+		fallback_weapon = WEP_BALL;
 	}
 	else if(deathmatch && autocvar_skill == 3)
 	{
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
+		fallback_weapon = WEP_KATANA;
 	}
 	else if(Challenge_Active(CHALLENGE_BONK))
 	{
 		start_weapon = WEP_HAMMER;
 		prev_weapon = WEP_HAMMER;
+		fallback_weapon = WEP_HAMMER;
 	}
 
 	string myid = parms_getid(this);
 
 	// weapons
 	string weps = "";
-	FOREACH(Weapons, it != WEP_Null && (it == start_weapon || it == prev_weapon),
+	FOREACH(Weapons, it != WEP_Null && (it == start_weapon || it == prev_weapon || it == fallback_weapon),
 	{
 		weps = cons(weps, it.netname);
 	});
@@ -333,7 +337,7 @@ void SetNewParms()
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
 	}
-	WepSet weps = (WEPSET(SHOTGUN) | start_weapon.m_wepset);
+	WepSet weps = (WEPSET(PEWPEW) | WEPSET(SHOTGUN) | start_weapon.m_wepset);
 	if(world.worldtype == WORLDTYPE_DODGEBALL)
 		weps = start_weapon.m_wepset;
 	else if(deathmatch && autocvar_skill == 3)

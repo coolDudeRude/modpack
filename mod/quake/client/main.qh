@@ -10,6 +10,8 @@ bool ctrl_held;
 
 string vote_list;
 
+float view_quality;
+
 int binddb;
 
 string vote_called_vote;

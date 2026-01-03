@@ -1,33 +1,8 @@
 #include "goldy.qh"
 
-#ifdef SVQC
-string Goldy_GoofyGibs(int number)
-{
-	switch(number)
-	{
-		case 0: return "progs/goofygib_balloon.mdl";
-		case 1: return "progs/goofygib_bolt.mdl";
-		case 2: return "progs/goofygib_boot.mdl";
-		case 3: return "progs/goofygib_burger.mdl";
-		case 4: return "progs/goofygib_can.mdl";
-		case 5: return "progs/goofygib_clock.mdl";
-		case 6: return "progs/goofygib_duck.mdl";
-		case 7: return "progs/goofygib_fish.mdl";
-		case 8: return "progs/goofygib_gear1.mdl";
-		case 9: return "progs/goofygib_gear2.mdl";
-		case 10: return "progs/goofygib_gear3.mdl";
-		case 11: return "progs/goofygib_gear4.mdl";
-		case 12: return "progs/goofygib_gear5.mdl";
-		case 13: return "progs/goofygib_hubcap.mdl";
-		case 14: return "progs/goofygib_licenseplate.mdl";
-		case 15: return "progs/goofygib_spring1.mdl";
-		case 16: return "progs/goofygib_spring2.mdl";
-		case 17: return "progs/goofygib_teeth.mdl";
-		case 18: return "progs/goofygib_tire.mdl";
-	}
-	return "progs/null.mdl";
-}
+REGISTER_NET_TEMP(goofy_gibsplash)
 
+#ifdef SVQC
 PRECACHE(Goldy)
 {
 	precache_model("progs/v_goldy.mdl");
@@ -36,25 +11,13 @@ PRECACHE(Goldy)
 	precache_sound("weapons/goldy_impact1.wav");
 	precache_sound("weapons/goldy_impact2.wav");
 	precache_sound("weapons/goldy_impact3.wav");
-
-	// gibs for explosion
-	for(int j = 0; j <= 18; ++j)
-	{
-		precache_model(Goldy_GoofyGibs(j));
-	}
 }
 
 void Goldy_ThrowGibs(entity this)
 {
-	int gibcount = max(4, rint(random() * 12));
-	for(int j = 0; j < gibcount; ++j)
-	{
-		int r = floor(random() * (18 + 1)); // goofy gib count + 1
-		string gibname = Goldy_GoofyGibs(r);
-		entity gib = ThrowGib(this, this, gibname, 0);
-		gib.velocity = randomvec() * 300 + '0 0 150';
-		gib.nextthink = time + 5 + random()*5;
-	}
+	int channel = MSG_ALL;
+	WriteHeader(channel, goofy_gibsplash);
+	WriteVector(channel, findbetterlocation(this.origin, 8));
 }
 
 void Goldy_Touch(entity this, entity toucher)
@@ -147,7 +110,7 @@ entity W_FireGoldy(entity this, .entity weaponentity)
 	setthink(missile, SUB_Remove);
 
 	//_setmodel(missile, "progs/missile.mdl");
-	setsize(missile, '0 0 0', '0 0 0');
+	setsize(missile, '-8 -8 -8', '8 8 8');
 	setorigin(missile, W_Shotorg(this, weaponentity));
 
 	IL_PUSH(g_projectiles, missile);
@@ -182,5 +145,59 @@ METHOD(Goldy, wr_suicidemessage, Notification(entity thiswep))
 METHOD(Goldy, wr_killmessage, Notification(entity thiswep))
 {
 	return WEAPON_FRAG;
+}
+#endif
+
+#ifdef CSQC
+string Goldy_GoofyGibs(int number)
+{
+	switch(number)
+	{
+		case 0: return "progs/goofygib_balloon.mdl";
+		case 1: return "progs/goofygib_bolt.mdl";
+		case 2: return "progs/goofygib_boot.mdl";
+		case 3: return "progs/goofygib_burger.mdl";
+		case 4: return "progs/goofygib_can.mdl";
+		case 5: return "progs/goofygib_clock.mdl";
+		case 6: return "progs/goofygib_duck.mdl";
+		case 7: return "progs/goofygib_fish.mdl";
+		case 8: return "progs/goofygib_gear1.mdl";
+		case 9: return "progs/goofygib_gear2.mdl";
+		case 10: return "progs/goofygib_gear3.mdl";
+		case 11: return "progs/goofygib_gear4.mdl";
+		case 12: return "progs/goofygib_gear5.mdl";
+		case 13: return "progs/goofygib_hubcap.mdl";
+		case 14: return "progs/goofygib_licenseplate.mdl";
+		case 15: return "progs/goofygib_spring1.mdl";
+		case 16: return "progs/goofygib_spring2.mdl";
+		case 17: return "progs/goofygib_teeth.mdl";
+		case 18: return "progs/goofygib_tire.mdl";
+	}
+	return "progs/null.mdl";
+}
+
+PRECACHE(GoofyGibs)
+{
+	// gibs for explosion
+	for(int j = 0; j <= 18; ++j)
+	{
+		precache_model(Goldy_GoofyGibs(j));
+	}
+}
+
+NET_HANDLE(goofy_gibsplash, bool isnew)
+{
+	vector org = ReadVector();
+
+	return = true;
+
+	int gibcount = max(4, rint(random() * 12));
+	for(int j = 0; j < gibcount; ++j)
+	{
+		int r = floor(random() * (18 + 1)); // goofy gib count + 1
+		string gibname = Goldy_GoofyGibs(r);
+		vector targvel = randomvec() * 300 + '0 0 150';
+		TossGib (gibname, org, org, targvel, '0 0 0', 0, false, true);
+	}
 }
 #endif

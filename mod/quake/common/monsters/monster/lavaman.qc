@@ -355,14 +355,15 @@ void lavaman_missile(entity this, int AttackNumber)
 	entity fireball = new(lavaman_ball);
 	fireball.flags = FL_PROJECTILE;
 	fireball.owner = this;
+	fireball.realowner = this;
 //	set_movetype(fireball, MOVETYPE_FLYMISSILE);
-	set_movetype(fireball, MOVETYPE_BOUNCE);
+	set_movetype(fireball, MOVETYPE_TOSS);
+	fireball.gravity = 1;
 	fireball.projectiledeathtype = DEATH_MONSTER_LAVAMAN.m_id;
 	fireball.clipgroup = this.clipgroup;
 	fireball.solid = SOLID_BBOX;
 	fireball.angles = vectoangles(vec);
 	settouch(fireball, lavaman_touch);
-	_setmodel(fireball, "progs/lavaball.mdl");
 	setsize(fireball, '0 0 0', '0 0 0');		
 	setorigin(fireball, org);
 
@@ -375,6 +376,8 @@ void lavaman_missile(entity this, int AttackNumber)
 	fireball.nextthink = time + 6;
 
 	IL_PUSH(g_projectiles, fireball);
+
+	CSQCProjectile(fireball, true, PROJECTILE_LAVAMAN_FIREBALL, true);
 
 	_sound(this, CH_WEAPON_SINGLE, "boss1/throw.wav", 1, ATTN_NORM);
 	
@@ -422,8 +425,6 @@ spawnfunc(monster_lava_man) { monster_start(this, (this.spawnflags & 2), MON_LAV
 METHOD(LavaMan, mr_setup, bool(LavaMan this, entity actor))
 {
 	TC(LavaMan, this);
-
-	precache_model("progs/lavaball.mdl");
 
 	precache_sound("weapons/rocket1i.wav");
 	precache_sound("boss1/out1.wav");

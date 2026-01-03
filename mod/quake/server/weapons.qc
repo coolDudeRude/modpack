@@ -266,7 +266,6 @@ entity HIP_LaunchLaser(entity this, vector org, vector vec, float light)
 	missile.projectiledeathtype = WEP_LASER_CANNON.m_id;
 	missile.clipgroup = this.clipgroup;
 
-	//_setmodel(missile, "progs/lasrspik.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 
 	setorigin(missile, org);
@@ -524,9 +523,9 @@ void W_FireRifle_SetupShot(entity actor, entity proj, int shotammo, string snd1,
 		_sound(actor, CH_WEAPON_B, snd2, 0.5, ATTN_NORM);
 
 	proj.owner = actor;
+	proj.realowner = actor;
 	set_movetype(proj, MOVETYPE_FLYMISSILE);
 	proj.solid = SOLID_BBOX;
-	_setmodel(proj, "progs/pulse.mdl");
 	setsize(proj, '0 0 0', '0 0 0');
 }
 
@@ -547,6 +546,8 @@ void W_FireRifleTarget(entity this, entity targ)
 	setthink(missile, SUB_Remove);
 
 	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_PASSIVE_PULSERIFLE, true);
 }
 
 void W_PulseRifle(entity this)
@@ -1529,6 +1530,8 @@ void W_SetCurrentAmmo(entity this)
 			this.(weaponentity).hammer_prevwep = wep; // for hammer hax
 		if(wep != WEP_SPEAKNSPELL)
 			this.(weaponentity).speaknspell_prevwep = wep; // for piano hax
+		if(wep != WEP_PEWPEW)
+			this.(weaponentity).pewpew_prevwep = wep; // for pewpew hax
 	}
 }
 
@@ -1682,13 +1685,12 @@ entity Launch_Fireball(entity this, vector org, vector dir, float pspeed)
 	proj.flags = FL_PROJECTILE;
 	proj.owner = this;
 	set_movetype(proj, MOVETYPE_BOUNCE);
-	proj.projectiledeathtype = WEP_NAPALM.m_id; // placeholder
+	proj.projectiledeathtype = DEATH_FIREBALL.m_id;
 	proj.clipgroup = this.clipgroup;
 	setorigin(proj, org);
 	proj.velocity = dir * pspeed;
 	proj.bouncefactor = 1;
 	settouch(proj, W_Fireball_Touch);
-	setmodel(proj, MDL_LAVABALL);
 	setsize(proj, '-4 -4 -4', '4 4 4');
 	proj.solid = SOLID_CORPSE;
 	proj.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
@@ -1700,6 +1702,8 @@ entity Launch_Fireball(entity this, vector org, vector dir, float pspeed)
 	proj.nextthink = time + 10;
 
 	IL_PUSH(g_projectiles, proj);
+
+	CSQCProjectile(proj, true, PROJECTILE_PASSIVE_FIREBALL, true);
 
 	return proj;
 }

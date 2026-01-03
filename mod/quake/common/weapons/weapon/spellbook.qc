@@ -1098,7 +1098,6 @@ void summon_meteors(entity this)
 		vector dir = normalize(this.pos1 - this.origin);
 		flame.velocity = dir * 500;
 		flame.angles = vectoangles(dir);
-		setmodel(flame, MDL_LAVABALL);
 		setsize(flame, '0 0 0', '0 0 0');
 		flame.scale = max(0.25, random());
 		flame.dmg = 15 * flame.scale;

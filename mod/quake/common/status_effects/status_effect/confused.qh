@@ -2,7 +2,7 @@
 
 #include "../all.qh"
 
-CLASS(Confused, StatusEffects)
+CLASS(Confused, Debuffs)
     ATTRIB(Confused, netname, string, "confused");
     ATTRIB(Confused, m_color, vector, '0.67 0.1 0.46');
     ATTRIB(Confused, m_hidden, bool, true);

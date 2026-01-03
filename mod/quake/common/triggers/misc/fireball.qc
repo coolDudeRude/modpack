@@ -28,13 +28,14 @@ void fire_fly(entity this)
 		fireball.velocity_y = (random() * 100) - 50;
 		fireball.velocity_z = this.speed + (random() * 200);
 	}
-	setmodel(fireball, MDL_LAVABALL);
 	setsize(fireball, '0 0 0', '0 0 0');
 	setorigin(fireball, this.origin);
 	fireball.nextthink = time + 5;
 	setthink(fireball, SUB_Remove);
 	settouch(fireball, fire_touch);
 	fireball.projectiledeathtype = DEATH_TRAP.m_id;
+
+	CSQCProjectile(fireball, true, PROJECTILE_LAVAMAN_FIREBALL, true); // TODO: unique projectile?
 
 	if(this.noise && this.noise != "")
 	{

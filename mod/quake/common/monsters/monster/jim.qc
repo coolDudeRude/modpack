@@ -373,7 +373,6 @@ void JLaunchLaser(entity this, vector org, vector vec)
 	newmis.projectiledeathtype = DEATH_MONSTER_JIM.m_id;
 	newmis.clipgroup = this.clipgroup;
 
-	//_setmodel(newmis, "progs/proj_laz.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
 
 	setorigin(newmis, org);
@@ -442,7 +441,6 @@ void jim_rocket(entity this)
 	
 	// Variable rocket speed, matching laser (very nasty)
 	entity newmis = launch_spike(this, org, vec);
-	//_setmodel(newmis, "progs/proj_rocket.mdl");
 	newmis.noise = "jim/rocket_hit.wav";
 	newmis.dmg = 25;
 	setsize(newmis, '0 0 0', '0 0 0');
@@ -805,7 +803,6 @@ METHOD(Jim, mr_setup, bool(Jim this, entity actor))
 		precache_sound("jim/rocket_load.wav");
 		precache_sound("jim/rocket_fire.wav");
 		precache_sound("jim/rocket_hit.wav");
-		precache_model("progs/proj_rocket.mdl");
 
 		actor.health = 50;
 	}
@@ -814,7 +811,6 @@ METHOD(Jim, mr_setup, bool(Jim this, entity actor))
 		precache_sound("jim/laser_load.wav");
 		precache_sound("weapons/laser_fire.wav");
 		precache_sound("weapons/laser_hit.wav");
-		precache_model("progs/proj_laz.mdl");
 
 		actor.health = 100;
 	}

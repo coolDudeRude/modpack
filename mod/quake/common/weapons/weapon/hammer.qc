@@ -1,5 +1,39 @@
 #include "hammer.qh"
 
+#ifdef CSQC
+PRECACHE(Hammer)
+{
+	precache_model("progs/v_hammer_mace.mdl");
+	precache_model("progs/v_hammer_jester_mallet.mdl");
+	precache_model("progs/v_hammer_alkaline_axe.mdl");
+	precache_model("progs/v_hammer_baseball.mdl");
+	precache_model("progs/v_hammer_blocky_axe.mdl");
+	precache_model("progs/v_hammer_default_bloody.mdl");
+	precache_model("progs/v_hammer_dwarven.mdl");
+	precache_model("progs/v_hammer_guitar.mdl");
+	precache_model("progs/v_hammer_moving_past_it.mdl");
+	precache_model("progs/v_hammer_copper_axe.mdl");
+	precache_model("progs/v_hammer_error.mdl");
+	precache_model("progs/v_hammer_mailbox.mdl");
+	precache_model("progs/v_hammer_heavy_rocket.mdl");
+	precache_model("progs/v_hammer_brown_brick.mdl");
+	precache_model("progs/v_hammer_burger.mdl");
+	precache_model("progs/v_hammer_buster_sword.mdl");
+	precache_model("progs/v_hammer_pickaxe.mdl");
+	precache_model("progs/v_hammer_sailor_sceptre.mdl");
+	precache_model("progs/v_hammer_floyd.mdl");
+	precache_model("progs/v_hammer_default_gold.mdl");
+	precache_model("progs/v_hammer_default_gold_bloody.mdl");
+	precache_model("progs/v_hammer_katana.mdl");
+	precache_model("progs/v_hammer_kebby_gears.mdl");
+	precache_model("progs/v_hammer_pirate_skull.mdl");
+	precache_model("progs/v_hammer_sblade.mdl");
+	precache_model("progs/v_hammer_sentinel.mdl");
+	precache_model("progs/v_hammer_squeaky.mdl");
+	precache_model("progs/v_hammer_stop_sign.mdl");
+}
+#endif
+
 #ifdef SVQC
 PRECACHE(Hammer)
 {
@@ -15,68 +49,16 @@ PRECACHE(Hammer)
 	
 	precache_model("progs/v_hammer_default.mdl");
 	precache_model("progs/g_hammer_default.mdl");
-	precache_model("progs/v_hammer_mace.mdl");
-	precache_model("progs/g_hammer_mace.mdl");
-	precache_model("progs/v_hammer_jester_mallet.mdl");
-	precache_model("progs/g_hammer_jester_mallet.mdl");
-	precache_model("progs/v_hammer_alkaline_axe.mdl");
-	precache_model("progs/g_hammer_alkaline_axe.mdl");
-	precache_model("progs/v_hammer_baseball.mdl");
-	precache_model("progs/g_hammer_baseball.mdl");
-	precache_model("progs/v_hammer_blocky_axe.mdl");
-	precache_model("progs/g_hammer_blocky_axe.mdl");
-	precache_model("progs/v_hammer_default_bloody.mdl");
-	precache_model("progs/g_hammer_default_bloody.mdl");
-	precache_model("progs/v_hammer_dwarven.mdl");
-	precache_model("progs/g_hammer_dwarven.mdl");
-	precache_model("progs/v_hammer_guitar.mdl");
-	precache_model("progs/g_hammer_guitar.mdl");
-	precache_model("progs/v_hammer_moving_past_it.mdl");
-	precache_model("progs/g_hammer_moving_past_it.mdl");
-	precache_model("progs/v_hammer_copper_axe.mdl");
-	precache_model("progs/g_hammer_copper_axe.mdl");
-	precache_model("progs/v_hammer_error.mdl");
-	precache_model("progs/g_hammer_error.mdl");
-	precache_model("progs/v_hammer_mailbox.mdl");
-	precache_model("progs/v_hammer_heavy_rocket.mdl");
-	precache_model("progs/v_hammer_brown_brick.mdl");
-	precache_model("progs/v_hammer_burger.mdl");
-	precache_model("progs/v_hammer_buster_sword.mdl");
-	precache_model("progs/v_hammer_pickaxe.mdl");
-	precache_model("progs/v_hammer_sailor_sceptre.mdl");
-	precache_model("progs/v_hammer_floyd.mdl");
-	precache_model("progs/v_hammer_default_gold.mdl");
-	precache_model("progs/v_hammer_default_gold_bloody.mdl");
-	precache_model("progs/g_hammer_mailbox.mdl");
-	precache_model("progs/g_hammer_heavy_rocket.mdl");
-	precache_model("progs/g_hammer_brown_brick.mdl");
-	precache_model("progs/g_hammer_burger.mdl");
-	precache_model("progs/g_hammer_buster_sword.mdl");
-	precache_model("progs/g_hammer_pickaxe.mdl");
-	precache_model("progs/g_hammer_sailor_sceptre.mdl");
-	precache_model("progs/g_hammer_floyd.mdl");
-	precache_model("progs/g_hammer_default_gold.mdl");
-	precache_model("progs/g_hammer_default_gold_bloody.mdl");
-	
-//	precache_model("progs/v_hammer_error.mdl");
-//	precache_model("progs/g_hammer_error.mdl");
-	precache_model("progs/v_hammer_katana.mdl");
+
 	precache_model("progs/g_hammer_katana.mdl");
-	precache_model("progs/v_hammer_kebby_gears.mdl");
 	precache_model("progs/g_hammer_kebby_gears.mdl");
-	precache_model("progs/v_hammer_pirate_skull.mdl");
 	precache_model("progs/g_hammer_pirate_skull.mdl");
-	precache_model("progs/v_hammer_sblade.mdl");
 	precache_model("progs/g_hammer_sblade.mdl");
-	precache_model("progs/v_hammer_sentinel.mdl");
 	precache_model("progs/g_hammer_sentinel.mdl");
-	precache_model("progs/v_hammer_squeaky.mdl");
 	precache_model("progs/g_hammer_squeaky.mdl");
-	precache_model("progs/v_hammer_stop_sign.mdl");
 	precache_model("progs/g_hammer_stop_sign.mdl");
 	precache_model("progs/kanji.mdl");
-	
-	
+
 	precache_sound("hammer/hammer_clang.wav");
 	precache_sound("hammer/hammer_clang2.wav");
 	precache_sound("hammer/frying_pan.wav");

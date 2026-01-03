@@ -1,5 +1,7 @@
 #include "eoc.qh"
 
+REGISTER_NET_TEMP(eoc_gibsplash)
+
 #ifdef SVQC
 .int eoc_summonflag;
 
@@ -146,18 +148,14 @@ void eoc_transform(entity this)
 	this.th_missile = eoc_atkd1; // no more minions!
 	this.bosswave += 1;
 
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/gib1.mdl", this.health);
-	ThrowGib(this, this, "progs/bone.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/bone2.mdl", this.health);
-	ThrowGib(this, this, "progs/gib1.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
-	ThrowGib(this, this, "progs/gib3.mdl", this.health);
+	int channel = MSG_ALL;
+	WriteHeader(channel, eoc_gibsplash);
+	WriteVector(channel, this.origin);
+	WriteFloat(channel, this.health);
+	//WriteFloat(channel, this.scale);
+	//WriteVector(channel, inflictor.origin);
+	//WriteShort(channel, compressShortVector(normalize(this.origin - inflictor.origin)));
+	//WriteShort(channel, compressShortVector(inflictor.velocity));
 }
 
 void eoc_rise32(entity this) { eoc_anim(this, eoc_run1); this.avelocity = '0 0 0'; this.angles_x = 0; }
@@ -318,18 +316,11 @@ void gib_eoc(entity this)
 	_sound(this, CH_VOICE, "eoc/death.wav", 1, ATTN_NORM);
 	settouch(this, func_null);
 
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/gib1.mdl", this.health);
-	ThrowGib(this, this, "progs/bone.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/bone2.mdl", this.health);
-	ThrowGib(this, this, "progs/gib1.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
-	ThrowGib(this, this, "progs/gib3.mdl", this.health);
+	int channel = MSG_ALL;
+	WriteHeader(channel, eoc_gibsplash);
+	WriteVector(channel, this.origin);
+	WriteFloat(channel, this.health);
+
 	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
 }
 
@@ -346,11 +337,11 @@ METHOD(EyeOfCthulhu, mr_setup, bool(EyeOfCthulhu this, entity actor))
 {
     TC(EyeOfCthulhu, this);
 
-	precache_model("progs/eoc_p2.mdl");
+    precache_model("progs/gib1.mdl");
 	precache_model("progs/xtragib.mdl");
 	precache_model("progs/bone.mdl");
-	precache_model("progs/bone2.mdl");
-	precache_model("progs/rawbone2.mdl");
+	precache_model("progs/rawbone.mdl");
+	precache_model("progs/eoc_p2.mdl");
 	precache_sound("eoc/death.wav");
 	precache_sound("eoc/pain.wav");
 	precache_sound("eoc/charge.wav"); // TODO: unused for now, need a hard mode attack!
@@ -372,5 +363,44 @@ METHOD(EyeOfCthulhu, mr_setup, bool(EyeOfCthulhu this, entity actor))
 	actor.th_die = eoc_die;
 
     return true;
+}
+#endif
+
+#ifdef CSQC
+PRECACHE(EOC)
+{
+	precache_model("progs/gib1.mdl");
+	precache_model("progs/gib2.mdl");
+	precache_model("progs/gib3.mdl");
+	precache_model("progs/xtragib.mdl");
+	precache_model("progs/bone.mdl");
+	precache_model("progs/bone2.mdl");
+	precache_model("progs/rawbone.mdl");
+}
+
+NET_HANDLE(eoc_gibsplash, bool isnew)
+{
+	vector org = ReadVector();
+	float mhealth = ReadFloat();
+	//float myscale = ReadFloat();
+	//vector targorg = ReadVector();
+	//vector targnorm = decompressShortVector(ReadShort());
+	//vector targvel = decompressShortVector(ReadShort());
+	vector targvel = '0 0 0';
+
+	return = true;
+
+	TossGib ("progs/xtragib.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/gib1.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/bone.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/gib2.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/xtragib.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/bone2.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/gib1.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/xtragib.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/gib2.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/xtragib.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/rawbone.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
+	TossGib ("progs/gib3.mdl", org, org, VelocityForDamage(org, '0 0 0', targvel, mhealth), '0 0 0', 0, false, false);
 }
 #endif

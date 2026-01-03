@@ -7,32 +7,6 @@ PRECACHE(SpeakNSpell)
 	precache_model("progs/v_speaknspell.mdl");
 
 	precache_model("progs/s6_circleburst.spr");
-	precache_model("progs/s_sns_a.spr");
-	precache_model("progs/s_sns_b.spr");
-	precache_model("progs/s_sns_c.spr");
-	precache_model("progs/s_sns_d.spr");
-	precache_model("progs/s_sns_e.spr");
-	precache_model("progs/s_sns_f.spr");
-	precache_model("progs/s_sns_g.spr");
-	precache_model("progs/s_sns_h.spr");
-	precache_model("progs/s_sns_i.spr");
-	precache_model("progs/s_sns_j.spr");
-	precache_model("progs/s_sns_k.spr");
-	precache_model("progs/s_sns_l.spr");
-	precache_model("progs/s_sns_m.spr");
-	precache_model("progs/s_sns_n.spr");
-	precache_model("progs/s_sns_o.spr");
-	precache_model("progs/s_sns_p.spr");
-	precache_model("progs/s_sns_q.spr");
-	precache_model("progs/s_sns_r.spr");
-	precache_model("progs/s_sns_s.spr");
-	precache_model("progs/s_sns_t.spr");
-	precache_model("progs/s_sns_u.spr");
-	precache_model("progs/s_sns_v.spr");
-	precache_model("progs/s_sns_w.spr");
-	precache_model("progs/s_sns_x.spr");
-	precache_model("progs/s_sns_y.spr");
-	precache_model("progs/s_sns_z.spr");
 
 	precache_sound("weapons/speaknspell_startup.wav");
 	precache_sound("weapons/speaknspell_levelup.wav");
@@ -161,13 +135,18 @@ void wep_speaknspell_end1(entity this) { wep_set_anim(this, 27, wep_speaknspell_
 */
 void BecomeSpeaknSpellExplosion(entity this)
 {
-	set_movetype(this, MOVETYPE_NONE);
-	this.velocity = '0 0 0';
-	settouch(this, func_null);
-	_setmodel(this, "progs/s6_circleburst.spr");
-	setsize(this, '0 0 0', '0 0 0');
-	this.solid = SOLID_NOT;
-	s_explode1(this);
+	entity newmis = spawn();
+	set_movetype(newmis, MOVETYPE_NONE);
+	newmis.solid = SOLID_NOT;
+	_setmodel(newmis, "progs/s6_circleburst.spr");
+	setsize(newmis, '0 0 0', '0 0 0');
+	//setorigin(newmis, findbetterlocation(this.origin, 8));
+	setorigin(newmis, this.origin); // most calls to this already adjust position
+	//newmis.angles = this.angles;
+	//newmis.colormod = this.colormod;
+	s_explode1(newmis);
+
+	delete(this);
 }
 
 void T_SpeaknSpellTouch(entity this, entity toucher)
@@ -224,8 +203,6 @@ void W_FireSpeaknSepll_AllKeys(entity actor, .entity weaponentity) // Shotgun at
 	
 	while(multi_shot < 26)
 	{
-		float r = random();	
-		
 		multi_shot += 1;
 		
 		entity letter = spawn();
@@ -253,36 +230,13 @@ void W_FireSpeaknSepll_AllKeys(entity actor, .entity weaponentity) // Shotgun at
 		letter.nextthink = time + 1.5;
 		setthink(letter, BecomeSpeaknSpellExplosion);
 		setorigin(letter, actor.origin + '0 0 12'); 
-
-		if(r < 0.03846)      { _setmodel(letter, "progs/s_sns_a.spr");}
-		else if(r < 0.07692) { _setmodel(letter, "progs/s_sns_b.spr");}
-		else if(r < 0.11538) { _setmodel(letter, "progs/s_sns_c.spr");}
-		else if(r < 0.15384) { _setmodel(letter, "progs/s_sns_d.spr");}
-		else if(r < 0.19230) { _setmodel(letter, "progs/s_sns_e.spr");}
-		else if(r < 0.23076) { _setmodel(letter, "progs/s_sns_f.spr");}
-		else if(r < 0.26923) { _setmodel(letter, "progs/s_sns_g.spr");}
-		else if(r < 0.30769) { _setmodel(letter, "progs/s_sns_h.spr");}
-		else if(r < 0.34615) { _setmodel(letter, "progs/s_sns_i.spr");}
-		else if(r < 0.38461) { _setmodel(letter, "progs/s_sns_j.spr");}
-		else if(r < 0.42307) { _setmodel(letter, "progs/s_sns_k.spr");}
-		else if(r < 0.46153) { _setmodel(letter, "progs/s_sns_l.spr");}
-		else if(r < 0.5)     { _setmodel(letter, "progs/s_sns_m.spr");}
-		else if(r < 0.53846) { _setmodel(letter, "progs/s_sns_n.spr");}
-		else if(r < 0.57692) { _setmodel(letter, "progs/s_sns_o.spr");}
-		else if(r < 0.61538) { _setmodel(letter, "progs/s_sns_p.spr");}
-		else if(r < 0.65384) { _setmodel(letter, "progs/s_sns_q.spr");}
-		else if(r < 0.69230) { _setmodel(letter, "progs/s_sns_r.spr");}
-		else if(r < 0.73076) { _setmodel(letter, "progs/s_sns_s.spr");}
-		else if(r < 0.76923) { _setmodel(letter, "progs/s_sns_t.spr");}
-		else if(r < 0.80769) { _setmodel(letter, "progs/s_sns_u.spr");}
-		else if(r < 0.84615) { _setmodel(letter, "progs/s_sns_v.spr");}
-		else if(r < 0.88461) { _setmodel(letter, "progs/s_sns_w.spr");}
-		else if(r < 0.92307) { _setmodel(letter, "progs/s_sns_x.spr");}
-		else if(r < 0.96153) { _setmodel(letter, "progs/s_sns_y.spr");}
-		else  	             { _setmodel(letter, "progs/s_sns_z.spr");}	
 		setsize(letter, '0 0 0', '0 0 0');
 
 		IL_PUSH(g_projectiles, letter);
+
+		int letterproj = bound(PROJECTILE_LETTER_START, PROJECTILE_LETTER_START + floor(random() * 26), PROJECTILE_LETTER_END);
+
+		CSQCProjectile(letter, true, letterproj, true);
 	}
 }
 
@@ -331,39 +285,13 @@ void W_FireSpeaknSpell(entity actor, float atime, string asnd, .entity weaponent
 	setthink(letter, BecomeSpeaknSpellExplosion);
 	setorigin(letter, actor.origin + '0 0 12'); 
 
-	switch(actor.(weaponentity).m_frame)
-	{
-		case 1:  _setmodel(letter, "progs/s_sns_a.spr"); break;
-		case 2:  _setmodel(letter, "progs/s_sns_b.spr"); break;
-		case 3:  _setmodel(letter, "progs/s_sns_c.spr"); break;
-		case 4:  _setmodel(letter, "progs/s_sns_d.spr"); break;
-		case 5:  _setmodel(letter, "progs/s_sns_e.spr"); break;
-		case 6:  _setmodel(letter, "progs/s_sns_f.spr"); break;
-		case 7:  _setmodel(letter, "progs/s_sns_g.spr"); break;
-		case 8:  _setmodel(letter, "progs/s_sns_h.spr"); break;
-		case 9:  _setmodel(letter, "progs/s_sns_i.spr"); break;
-		case 10: _setmodel(letter, "progs/s_sns_j.spr"); break;
-		case 11: _setmodel(letter, "progs/s_sns_k.spr"); break;
-		case 12: _setmodel(letter, "progs/s_sns_l.spr"); break;
-		case 13: _setmodel(letter, "progs/s_sns_m.spr"); break;
-		case 14: _setmodel(letter, "progs/s_sns_n.spr"); break;
-		case 15: _setmodel(letter, "progs/s_sns_o.spr"); break;
-		case 16: _setmodel(letter, "progs/s_sns_p.spr"); break;
-		case 17: _setmodel(letter, "progs/s_sns_q.spr"); break;
-		case 18: _setmodel(letter, "progs/s_sns_r.spr"); break;
-		case 19: _setmodel(letter, "progs/s_sns_s.spr"); break;
-		case 20: _setmodel(letter, "progs/s_sns_t.spr"); break;
-		case 21: _setmodel(letter, "progs/s_sns_u.spr"); break;
-		case 22: _setmodel(letter, "progs/s_sns_v.spr"); break;
-		case 23: _setmodel(letter, "progs/s_sns_w.spr"); break;
-		case 24: _setmodel(letter, "progs/s_sns_x.spr"); break;
-		case 25: _setmodel(letter, "progs/s_sns_y.spr"); break;
-		default:
-		case 26: _setmodel(letter, "progs/s_sns_z.spr"); break;
-	}
 	setsize(letter, '0 0 0', '0 0 0');
 
 	IL_PUSH(g_projectiles, letter);
+
+	int letterproj = bound(PROJECTILE_LETTER_START, PROJECTILE_LETTER_START + actor.(weaponentity).m_frame - 1, PROJECTILE_LETTER_END);
+
+	CSQCProjectile(letter, true, letterproj, true);
 }
 
 METHOD(SpeakNSpell, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

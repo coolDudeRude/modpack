@@ -68,8 +68,6 @@ PRECACHE(Hipnotic)
 	precache_model ("progs/v_prox.mdl");
 	precache_model ("progs/proxbomb.mdl");
 
-	precache_model ("progs/lasrspik.mdl");
-
 	// weapons
 	precache_sound("enforcer/enfstop.wav");   // laser cannon
 	precache_sound("knight/sword1.wav");   // laser cannon
@@ -839,10 +837,8 @@ PRECACHE(Junk)
 	precache_model("progs/bolt.mdl");		// for lightning gun
 	precache_model("progs/bolt2.mdl");		// for lightning gun
 	precache_model("progs/bolt3.mdl");		// for boss shock
-	precache_model("progs/lavaball.mdl");	// for testing
 	
 	precache_model("progs/missile.mdl");
-	precache_model("progs/grenade.mdl");
 	precache_model("progs/spike.mdl");
 	precache_model("progs/s_spike.mdl");
 

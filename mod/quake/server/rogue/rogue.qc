@@ -31,9 +31,6 @@ PRECACHE(Rogue)
 
 	// PGM addition
 	precache_model("progs/mervup.mdl");
-	precache_model("progs/rockup.mdl");
-	precache_model("progs/rockup_d.mdl");
-	precache_model("progs/lspike.mdl");
 	precache_model("progs/shield.mdl");
 	precache_model("progs/p_shield.mdl");
 

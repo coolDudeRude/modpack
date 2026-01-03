@@ -142,6 +142,9 @@ void Projectile_Draw(entity this)
 			case PROJECTILE_CROSSBOW_BOLT:
 				rot = '0 0 290'; // spinning
 				break;
+			case PROJECTILE_GHOST_SICKLE:
+				rot = '720 0 0' * bound(1, (time - this.spawntime), 3); // spinning
+				break;
 		}
 
 		if (rot)
@@ -171,10 +174,10 @@ void Projectile_Draw(entity this)
 	switch (this.csqcprojectile_type)
 	{
 		default: break;
-		//case PROJECTILE_GRENADE:
-			//makevectors(ang);
-			//trailorigin += v_right * 1 + v_forward * -10;
-			//break;
+		case PROJECTILE_GHOST_SICKLE:
+			makevectors(ang);
+			trailorigin += v_up * 8 + v_forward * 5;
+			break;
 	}
 
 	if (drawn)
@@ -326,7 +329,42 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 
 		this.scale = 1;
 		this.traileffect = 0;
-		switch (this.csqcprojectile_type)
+		if (this.csqcprojectile_type >= PROJECTILE_LETTER_START && this.csqcprojectile_type <= PROJECTILE_LETTER_END)
+		{
+			int letter = (this.csqcprojectile_type - PROJECTILE_LETTER_START) + 1;
+			switch(letter)
+			{
+				case 1:  _setmodel(this, "progs/s_sns_a.spr"); break;
+				case 2:  _setmodel(this, "progs/s_sns_b.spr"); break;
+				case 3:  _setmodel(this, "progs/s_sns_c.spr"); break;
+				case 4:  _setmodel(this, "progs/s_sns_d.spr"); break;
+				case 5:  _setmodel(this, "progs/s_sns_e.spr"); break;
+				case 6:  _setmodel(this, "progs/s_sns_f.spr"); break;
+				case 7:  _setmodel(this, "progs/s_sns_g.spr"); break;
+				case 8:  _setmodel(this, "progs/s_sns_h.spr"); break;
+				case 9:  _setmodel(this, "progs/s_sns_i.spr"); break;
+				case 10: _setmodel(this, "progs/s_sns_j.spr"); break;
+				case 11: _setmodel(this, "progs/s_sns_k.spr"); break;
+				case 12: _setmodel(this, "progs/s_sns_l.spr"); break;
+				case 13: _setmodel(this, "progs/s_sns_m.spr"); break;
+				case 14: _setmodel(this, "progs/s_sns_n.spr"); break;
+				case 15: _setmodel(this, "progs/s_sns_o.spr"); break;
+				case 16: _setmodel(this, "progs/s_sns_p.spr"); break;
+				case 17: _setmodel(this, "progs/s_sns_q.spr"); break;
+				case 18: _setmodel(this, "progs/s_sns_r.spr"); break;
+				case 19: _setmodel(this, "progs/s_sns_s.spr"); break;
+				case 20: _setmodel(this, "progs/s_sns_t.spr"); break;
+				case 21: _setmodel(this, "progs/s_sns_u.spr"); break;
+				case 22: _setmodel(this, "progs/s_sns_v.spr"); break;
+				case 23: _setmodel(this, "progs/s_sns_w.spr"); break;
+				case 24: _setmodel(this, "progs/s_sns_x.spr"); break;
+				case 25: _setmodel(this, "progs/s_sns_y.spr"); break;
+				default:
+				case 26: _setmodel(this, "progs/s_sns_z.spr"); break;
+			}
+			this.traileffect = EFFECT_Null.m_id;
+		}
+		else switch (this.csqcprojectile_type)
 		{
 #define HANDLE(id) case PROJECTILE_##id: setmodel(this, MDL_PROJECTILE_##id);
 			HANDLE(ROCKET)             this.traileffect = EFFECT_TR_ROCKET.m_id; break;
@@ -355,6 +393,21 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(JIM_ROCKET)         this.traileffect = EFFECT_TR_ROCKET.m_id; break;
 			HANDLE(SNOWBALL)           this.traileffect = EFFECT_SNOWBALL_TRAIL.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(GOLDY)              this.traileffect = EFFECT_Null.m_id; this.avelocity = ((random() > 0.5) ? '0 -256 0' : '0 256 0'); break;
+			HANDLE(CRUMB)              this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(SKAARJ_BULLET)      this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(GUG_BILEBOMB)       this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(GUG_BILEFRAG)       this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(DROLE)              this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = randomvec() * 100; break;
+			HANDLE(DROLE_POISON)       this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = randomvec() * 100; break;
+			HANDLE(MULTI_ROCKET)       this.traileffect = EFFECT_TR_ROCKET.m_id; break;
+			HANDLE(LAVABALL)           this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '200 100 300'; break;
+			HANDLE(EE_P_SPHERE)        this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '200 100 300'; break;
+			HANDLE(BLAZE_FIREBALL)     this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '200 100 300'; this.scale = 0.7; break;
+			HANDLE(LAVAMAN_FIREBALL)   this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '200 100 300'; break;
+			HANDLE(PASSIVE_FIREBALL)   this.traileffect = EFFECT_TR_ROCKET.m_id; break;
+			HANDLE(PASSIVE_PULSERIFLE) this.traileffect = EFFECT_TR_CRYLINKPLASMA.m_id; break;
+			HANDLE(TANK_BIGROCKET)     this.traileffect = EFFECT_TR_ROCKET.m_id; break;
+			HANDLE(GHOST_SICKLE)       this.traileffect = EFFECT_TR_SICKLE.m_id; this.avelocity = '720 0 0'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -368,7 +421,13 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 		set_movetype(this, MOVETYPE_TOSS);
 		this.alphamod = 1;
 
-		switch (this.csqcprojectile_type)
+		if (this.csqcprojectile_type >= PROJECTILE_LETTER_START && this.csqcprojectile_type <= PROJECTILE_LETTER_END)
+		{
+			set_movetype(this, MOVETYPE_BOUNCE);
+			this.effects |= EF_FULLBRIGHT;
+			settouch(this, func_null);
+		}
+		else switch (this.csqcprojectile_type)
 		{
 			// TODO?
 			//case PROJECTILE_ROCKET:
@@ -435,6 +494,42 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			case PROJECTILE_GOLDY:
 				this.gravity = 1;
 				this.effects |= EF_FULLBRIGHT;
+				this.mins = '-8 -8 -8';
+				this.maxs = '8 8 8';
+				break;
+			case PROJECTILE_CRUMB:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.gravity = 1;
+				this.bouncefactor = 0.5;
+				this.bouncestop = 0.125;
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_GUG_BILEFRAG:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_MULTI_ROCKET:
+				this.frame = floor(random() * 4);
+				break;
+			case PROJECTILE_LAVAMAN_FIREBALL:
+				set_movetype(this, MOVETYPE_TOSS);
+				this.gravity = 1;
+				break;
+			case PROJECTILE_PASSIVE_FIREBALL:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.mins = '-4 -4 -4';
+				this.maxs = '4 4 4';
+				this.bouncefactor = 1;
+				break;
+			case PROJECTILE_GHOST_SICKLE:
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				settouch(this, func_null);
+				this.solid = SOLID_NOT;
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_ADDITIVE;
+				this.dphitcontentsmask = DPCONTENTS_DONOTENTER;
 				break;
 			default:
 				break;

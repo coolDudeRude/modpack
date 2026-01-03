@@ -210,7 +210,7 @@ bool T_Heal(entity e, float healamount, bool ignore)
 	if((!ignore) &&(e.health >= hp_heal_max))
 		e.health = hp_heal_max;
 
-	float hp_heal_cap = 250;
+	float hp_heal_cap = max(250, hp_heal_max);
 	if(e.m_champion)
 		hp_heal_cap *= e.m_champion.qcc_health_heal_cap;
 	if(Challenge_Active(CHALLENGE_ONEHP))
@@ -406,6 +406,7 @@ float armor_getstrength(int armor_type)
 		case ARMOR_RED: return 0.8;
 		case ARMOR_MAGE: return 0.6;
 		case ARMOR_TECH: return 0.7;
+		case ARMOR_HEAVY: return 1.0;
 	}
 	return 0;
 }
@@ -436,7 +437,7 @@ void armor_touch(entity this, entity toucher)
 		type = this.armortype;
 		value = this.armorvalue;
 		// TODO: armor tiers?
-		if(this.armortype == ARMOR_TECH || this.armortype == ARMOR_RED || this.armortype == ARMOR_MAGE)
+		if(this.armortype == ARMOR_TECH || this.armortype == ARMOR_MAGE || this.armortype == ARMOR_HEAVY)
 			pickedup = (this.armortype != toucher.armortype);
 		else if(toucher.armortype != ARMOR_TECH && !(armor_getstrength(toucher.armortype) * toucher.armorvalue >= armor_getstrength(type) * value))
 			pickedup = true;
@@ -553,6 +554,20 @@ void armor_init(entity this, int armor_type)
 			}
 			break;
 		}
+		case ARMOR_HEAVY:
+		{
+			this.armorvalue = 250;
+			this.mdl = "progs/item_armor_heavy.mdl";
+			this.noise = "items/armor_heavy.wav";
+			this.skin = 0;
+
+			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/item_armor_heavy_simple.mdl"))
+			{
+				this.armor_simple = true;
+				this.mdl = "progs/item_armor_heavy_simple.mdl";
+			}
+			break;
+		}
 	}
 }
 
@@ -647,6 +662,19 @@ spawnfunc(item_armor_tech)
 	settouch(this, armor_touch);
 
 	armor_init(this, ARMOR_TECH);
+
+	precache_sound(this.noise);
+	precache_model(this.mdl);
+	_setmodel(this, this.mdl);
+	setsize(this, '-16 -16 0', '16 16 56');
+	StartItem(this);
+}
+
+spawnfunc(item_armor_heavy)
+{
+	settouch(this, armor_touch);
+
+	armor_init(this, ARMOR_HEAVY);
 
 	precache_sound(this.noise);
 	precache_model(this.mdl);
@@ -1015,6 +1043,7 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 			case WEP_KAZOO:
 			case WEP_LIGHT_DISC:
 			case WEP_SPEAKNSPELL:
+			case WEP_BAGPIPES:
 			{
 				if(random() > 0.5)
 					mytype = IT_NAILS;
@@ -1033,74 +1062,31 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 					mytype = IT_ROCKETS;
 				break;
 			}
-			case WEP_CANNON:
-			{
-				if(random() < 0.33)
-					mytype = IT_ROCKETS;
-				break;
-			}
-			case WEP_NUKE:
-			{
-				if(random() < 0.33)
-					mytype = IT_ROCKETS;
-				break;
-			}
-			case WEP_SHADOWBEAM:
-			case WEP_OTAMATONE:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
-			case WEP_MIC:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
-			case WEP_OCARINA:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
 			case WEP_BANJO:
-			{
-				if(random() > 0.33)
-					mytype = IT_SHELLS;
-				break;
-			}
 			case WEP_BONGOS:
 			{
 				if(random() > 0.33)
 					mytype = IT_SHELLS;
 				break;
 			}
+			case WEP_CANNON:
+			case WEP_NUKE:
 			case WEP_CHIMES:
 			{
 				if(random() > 0.33)
 					mytype = IT_ROCKETS;
 				break;
 			}
+			case WEP_SHADOWBEAM:
+			case WEP_OTAMATONE:
+			case WEP_MIC:
+			case WEP_OCARINA:
 			case WEP_HAMMER:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
 			case WEP_WAND:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
 			case WEP_MEOWMERE:
-			{
-				if(random() > 0.5)
-					mytype = IT_CELLS;
-				break;
-			}
 			case WEP_SQUEAKER:
+			case WEP_ANGELICSTAFF:
+			case WEP_SICKLE:
 			{
 				if(random() > 0.5)
 					mytype = IT_CELLS;

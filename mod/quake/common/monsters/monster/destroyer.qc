@@ -314,8 +314,6 @@ METHOD(Destroyer, mr_setup, bool(Destroyer this, entity actor))
 
 	precache_model("progs/destroyer_body.mdl");
 	precache_model("progs/destroyer_tail.mdl");
-
-	precache_model("progs/laser.mdl");
 	
 	precache_sound("destroyer/dig.wav");
 	precache_sound("destroyer/hit.wav");

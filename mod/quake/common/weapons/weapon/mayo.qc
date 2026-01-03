@@ -6,7 +6,6 @@ PRECACHE(Mayo)
 	precache_sound("hknight/slash1.wav");
 	precache_sound("weapons/jarsmash.wav");
 
-	precache_model("progs/grenade_mayo.mdl");
 	precache_model("progs/v_mayo.mdl");
 	precache_model("progs/g_mayo.mdl");
 	precache_model("progs/s_mayo.mdl");
@@ -166,7 +165,6 @@ void W_FireMayo(entity this, .entity weaponentity)
 	missile.nextthink = time + 2.5;
 	setthink(missile, MayoExplodeThink);
 
-	//_setmodel(missile, "progs/grenade_mayo.mdl");
 	setsize(missile, '0 0 0', '0 0 0');		
 	setorigin(missile, W_Shotorg(this, weaponentity) + v_right * 12);
 

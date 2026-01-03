@@ -63,3 +63,8 @@
 #include "snowball.qh"
 #include "goldy.qh"
 #include "squeaker.qh"
+#include "bagpipes.qh"
+#include "scattercrumb.qh"
+#include "angelicstaff.qh"
+#include "sickle.qh"
+#include "pewpew.qh"

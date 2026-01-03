@@ -43,6 +43,9 @@ void Grinch_Belch(entity this)
 .int variant; // TODO
 METHOD(Grinch, m_playerthink, void(Champions this, entity actor))
 {
+	if(!IS_PLAYER(actor))
+		return;
+
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
 	{
 		STAT(QCC_ABILITYTIME, actor) = time + autocvar_sv_quake_grinch_belch_time;
@@ -103,6 +106,8 @@ METHOD(Grinch, m_activate, void(Champions this, entity actor))
 METHOD(Grinch, m_playerspawn, void(Champions this, entity actor))
 {
 	Inventory_add(WEP_SNOWBALL, actor, ITEM_OWNED);
+
+	actor.grinch_lastmaxcheck = max(actor.grinch_lastmaxcheck, time + 1); // don't spawn him in immediately!
 }
 
 METHOD(Grinch, m_clear, void(Champions this, entity actor))

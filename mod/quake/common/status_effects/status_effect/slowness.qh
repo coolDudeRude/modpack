@@ -2,7 +2,7 @@
 
 #include "../all.qh"
 
-CLASS(Slowness, StatusEffects)
+CLASS(Slowness, Debuffs)
     ATTRIB(Slowness, netname, string, "slowness");
 #if 0
     // NOTE: status effect name and icon disabled as they are not displayed

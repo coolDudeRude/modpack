@@ -369,12 +369,6 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 {
 	TC(Fiend, this);
 
-	precache_sound("demon/ddeath.wav");
-	precache_sound("demon/dhit2.wav");
-	precache_sound("demon/djump.wav");
-	precache_sound("demon/dpain1.wav");
-	precache_sound("demon/idle1.wav");
-
 	if(season == SEASON_XMAS)
 	{
 		precache_model("progs/demon_xmas.mdl");
@@ -388,6 +382,14 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 
 		_setmodel(actor, "progs/demon_xmas.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
+	}
+	else
+	{
+		precache_sound("demon/ddeath.wav");
+		precache_sound("demon/dhit2.wav");
+		precache_sound("demon/djump.wav");
+		precache_sound("demon/dpain1.wav");
+		precache_sound("demon/idle1.wav");
 	}
 
 	actor.health = 300;

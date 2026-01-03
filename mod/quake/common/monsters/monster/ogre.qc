@@ -100,7 +100,6 @@ void OgreFireGrenade(entity this)
 		settouch(missile, OgreGrenadeTouch);
 		missile.nextthink = time + 2.5;
 		setthink(missile, OgreGrenadeExplode);
-		//_setmodel(missile, "progs/grenade.mdl");
 		setsize(missile, '0 0 0', '0 0 0');		
 		setorigin(missile, this.origin);
 
@@ -508,8 +507,6 @@ spawnfunc(monster_hogre) { monster_start(this, true, MON_OGRE); }
 METHOD(Ogre, mr_setup, bool(Ogre this, entity actor))
 {
     TC(Ogre, this);
-
-	precache_model("progs/grenade.mdl");
 
 	precache_sound("ogre/ogdrag.wav");
 	precache_sound("ogre/ogdth.wav");

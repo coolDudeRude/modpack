@@ -63,6 +63,7 @@ PRECACHE(Sbar)
 	precache_pic("gfx/quake/sb_armor3");
 	precache_pic("gfx/quake/sb_armor_mage");
 	precache_pic("gfx/quake/sb_armor_tech");
+	precache_pic("gfx/quake/sb_armor_heavy");
 
 	precache_pic("gfx/quake/sb_shells");
 	precache_pic("gfx/quake/sb_nails");
@@ -1422,6 +1423,7 @@ void Sbar_Draw()
 						case ARMOR_RED: apic ="gfx/quake/sb_armor3"; break;
 						case ARMOR_MAGE: apic ="gfx/quake/sb_armor_mage"; break;
 						case ARMOR_TECH: apic ="gfx/quake/sb_armor_tech"; break;
+						case ARMOR_HEAVY: apic ="gfx/quake/sb_armor_heavy"; break;
 					}
 
 					if(apic)

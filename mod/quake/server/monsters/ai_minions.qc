@@ -274,11 +274,11 @@ void Hatch_Egg(entity this)
 	
 	// Check if the egg can hatch? turn on collision
 	// setup new bounds and extend upwards for testing
-	this.solid = SOLID_SLIDEBOX;
-	setsize(this, mon.m_mins, mon.m_maxs);
+	//this.solid = SOLID_SLIDEBOX;
+	//setsize(this, mon.m_mins, mon.m_maxs);
 	set_movetype(this, MOVETYPE_TOSS);
 	this.oldorigin = this.origin;
-	this.origin_z = this.origin_z + 8;
+	this.origin_z += 1;
 	DropToFloor_QC_DelayedInit(this);
 	
 	// Can the egg hatch yet? Solid content?
@@ -389,7 +389,7 @@ entity Create_Egg(entity this, Monster mon)
 	setthink(missile, Hatch_Egg);
 	missile.nextthink = time + 1.5;
 	_setmodel(missile, "progs/squeak_egg.mdl");
-	setsize(missile, '0 0 0', '0 0 0');
+	setsize(missile, mon.m_mins, mon.m_maxs);
 
 	return missile;
 }

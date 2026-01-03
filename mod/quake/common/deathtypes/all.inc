@@ -7,6 +7,7 @@ REGISTER_DEATHTYPE(DROWN,                   DEATH_SELF_DROWN,               DEAT
 REGISTER_DEATHTYPE(EXPLODE,                 DEATH_SELF_EXPLODE,             DEATH_MURDER_EXPLODE,           "")
 REGISTER_DEATHTYPE(FALL,                    DEATH_SELF_FALL,                DEATH_MURDER_FALL,              "")
 REGISTER_DEATHTYPE(FIRE,                    DEATH_SELF_FIRE,                DEATH_MURDER_FIRE,              "")
+REGISTER_DEATHTYPE(FIREBALL,                DEATH_SELF_FIREBALL,            DEATH_MURDER_FIREBALL,          "")
 REGISTER_DEATHTYPE(GENERIC,                 DEATH_SELF_GENERIC,             NULL,                           "")
 REGISTER_DEATHTYPE(GRAPE,                   DEATH_SELF_GRAPE,               DEATH_MURDER_GRAPE,             "")
 REGISTER_DEATHTYPE(WRATH,                   DEATH_SELF_WRATH,               NULL,                           "")

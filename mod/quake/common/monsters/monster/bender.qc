@@ -44,6 +44,8 @@ void bend_shot(entity this, float offset)
 {
 	vector offang = vectoangles(this.enemy.origin - this.origin);
 	offang.y = offang.y + offset * 6;
+
+	_sound(this, CH_WEAPON_SINGLE, "hknight/attack1.wav", 1, ATTN_NORM);
 	
 	makevectors(offang);
 
@@ -57,10 +59,10 @@ void bend_shot(entity this, float offset)
 	newmis.classname = "knightspike";
 	settouch(newmis, Bend_Touch);
 	newmis.projectiledeathtype = DEATH_MONSTER_BENDER.m_id;
-	_setmodel(newmis, "progs/laser.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
-	newmis.velocity = vec*300;
-	_sound(this, CH_WEAPON_SINGLE, "hknight/attack1.wav", 1, ATTN_NORM);
+	newmis.velocity = vec * 300;
+
+	CSQCProjectile(newmis, true, PROJECTILE_LASER, true);
 }
 
 //==========================================================
@@ -290,8 +292,6 @@ spawnfunc(monster_bender) { monster_start(this, true, MON_BENDER); }
 METHOD(Bender, mr_setup, bool(Bender this, entity actor))
 {
 	TC(Bender, this);
-
-	precache_model("progs/laser.mdl");
 
 	precache_sound("enforcer/enfstop.wav"); 
 	precache_sound("hknight/attack1.wav");

@@ -112,7 +112,7 @@ void shop_buyitem(entity this, string item)
 			type = ARMOR_YELLOW;
 			value = 150;
 		}
-		else if(this.armortype == ARMOR_YELLOW || this.armortype == ARMOR_RED)
+		else if(this.armortype == ARMOR_YELLOW)
 		{
 			type = ARMOR_RED;
 			value = 200;
@@ -122,12 +122,26 @@ void shop_buyitem(entity this, string item)
 			type = ARMOR_MAGE;
 			value = 200;
 		}
+		else if(this.armortype == ARMOR_HEAVY || this.armortype == ARMOR_RED)
+		{
+			type = ARMOR_HEAVY;
+			value = 250;
+		}
 		else if(this.armortype == ARMOR_TECH)
 		{
 			sprint(this, "Tech armor does not need upgrading\n");
 			return;
 		}
-		if(armor_getstrength(this.armortype) * this.armorvalue >= armor_getstrength(type) * value)
+
+		if(type == ARMOR_MAGE || type == ARMOR_RED)
+		{
+			if(this.armorvalue < value)
+			{
+				sprint(this, "Already at maximum armor\n");
+				return;
+			}
+		}
+		else if(armor_getstrength(this.armortype) * this.armorvalue >= armor_getstrength(type) * value)
 		{
 			sprint(this, "Already at maximum armor\n");
 			return;

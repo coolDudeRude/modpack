@@ -21,6 +21,7 @@ EFFECT(1, TR_NEXUIZPLASMA,          "TR_NEXUIZPLASMA")
 EFFECT(1, TR_CRYLINKPLASMA,         "TR_CRYLINKPLASMA")
 EFFECT(1, TR_ROCKET,                "TR_ROCKET")
 EFFECT(1, TR_GRENADE,               "TR_GRENADE")
+EFFECT(1, TE_BLOOD,                 "TE_BLOOD")
 EFFECT(1, TR_BLOOD,                 "TR_BLOOD")
 EFFECT(1, TR_WIZSPIKE,              "TR_WIZSPIKE")
 #ifdef CSQC
@@ -1288,5 +1289,46 @@ STATIC_INIT(Effect_BELCH)
 	registercvar("cl_particle_belch_cloud_tex", "0 8");
 	registercvar("cl_particle_belch_cloud_velocityjitter", "16 16 16");
 	registercvar("cl_particle_belch_cloud_velocitymultiplier", "1");
+}
+#endif
+
+EFFECT(0, ANGELICSTAFF_HEAL,        "angelicstaff")
+#ifdef CSQC
+STATIC_INIT(Effect_ANGELICSTAFF_HEAL)
+{
+	registercvar("cl_particle_angelicstaff", "heal");
+	registercvar("cl_particle_angelicstaff_heal_type", "static");
+	registercvar("cl_particle_angelicstaff_heal_airfriction", "-0.500000");
+	registercvar("cl_particle_angelicstaff_heal_alpha", "256 256 170");
+	registercvar("cl_particle_angelicstaff_heal_bounce", "1.500000");
+	registercvar("cl_particle_angelicstaff_heal_color", "0x007bb8 0xccba78");
+	registercvar("cl_particle_angelicstaff_heal_count", "32");
+	registercvar("cl_particle_angelicstaff_heal_gravity", "-0.0600000");
+	registercvar("cl_particle_angelicstaff_heal_originjitter", "10 10 50");
+	registercvar("cl_particle_angelicstaff_heal_sizeincrease", "-0.050000");
+	registercvar("cl_particle_angelicstaff_heal_size", "1 3");
+	registercvar("cl_particle_angelicstaff_heal_tex", "46 46");
+	registercvar("cl_particle_angelicstaff_heal_velocityjitter", "20 20 0");
+}
+#endif
+
+EFFECT(0, RAILGUN_MUZZLEFLASH,       "nex_muzzleflash")
+
+EFFECT(1, TR_SICKLE,             "TR_SICKLE")
+#ifdef CSQC
+STATIC_INIT(Effect_TR_SICKLE)
+{
+	registercvar("cl_particle_TR_SICKLE", "sparks");
+
+	registercvar("cl_particle_TR_SICKLE_sparks_trailspacing", "1");
+	registercvar("cl_particle_TR_SICKLE_sparks_type", "static");
+	registercvar("cl_particle_TR_SICKLE_sparks_tex", "33 33");
+	registercvar("cl_particle_TR_SICKLE_sparks_stretchfactor", "0.25");
+	registercvar("cl_particle_TR_SICKLE_sparks_color", "0x9d00ff 0x9d00ff");
+	registercvar("cl_particle_TR_SICKLE_sparks_size", "0.5 1.0");
+	registercvar("cl_particle_TR_SICKLE_sparks_alpha", "192 256 1024");
+	registercvar("cl_particle_TR_SICKLE_sparks_gravity", "0.05");
+	registercvar("cl_particle_TR_SICKLE_sparks_originjitter", "1 1 1");
+	registercvar("cl_particle_TR_SICKLE_sparks_velocityjitter", "8 8 8");
 }
 #endif

@@ -667,7 +667,7 @@ void horde_armor_touch(entity this, entity toucher)
 		type = this.armortype;
 		value = this.armorvalue;
 		// TODO: armor tiers?
-		if(this.armortype == ARMOR_TECH || this.armortype == ARMOR_RED || this.armortype == ARMOR_MAGE)
+		if(this.armortype == ARMOR_TECH || this.armortype == ARMOR_MAGE || this.armortype == ARMOR_HEAVY)
 			pickedup = (this.armortype != toucher.armortype);
 		else if(toucher.armortype != ARMOR_TECH && !(armor_getstrength(toucher.armortype) * toucher.armorvalue >= armor_getstrength(type) * value))
 			pickedup = true;

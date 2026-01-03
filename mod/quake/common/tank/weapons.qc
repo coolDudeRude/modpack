@@ -95,19 +95,17 @@ void SE_Exp1(entity this) { set_anim(this, 4, SE_Exp2); BRDam(this, 300); }
 
 void S_Explode(entity this)
 {
-	this.solid = SOLID_NOT;
-	this.frame = 0;
-	_setmodel(this, "progs/tsphere.mdl");
-	this.scale = 0.2;
-	setsize(this, '0 0 0', '0 0 0');
-	UNSET_ONGROUND(this);
-	this.avelocity_x = crandom()*360;
-	this.avelocity_y = crandom()*360;
-	this.avelocity_z = crandom()*360;
-
-	setthink(this, SE_Exp1);
-	this.nextthink = time;
-	settouch(this, func_null);
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, SE_Exp1);
+	_setmodel(exp, "progs/tsphere.mdl");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+	exp.avelocity_x = crandom()*360;
+	exp.avelocity_y = crandom()*360;
+	exp.avelocity_z = crandom()*360;
+	exp.scale = 0.2;
+	exp.frame = 0;
 }
 
 void T_BRocketTouch(entity this, entity toucher)
@@ -137,6 +135,8 @@ void T_BRocketTouch(entity this, entity toucher)
 	this.effects |= EF_BRIGHTLIGHT;
 
 	S_Explode(this);
+
+	delete(this);
 }
 
 void W_FireBRocket(entity this)
@@ -147,6 +147,7 @@ void W_FireBRocket(entity this)
 
 	entity missile = spawn();
 	missile.owner = this;
+	missile.realowner = this;
 	set_movetype(missile, MOVETYPE_FLYMISSILE);
 	missile.solid = SOLID_BBOX;
 	missile.classname = "brocket";
@@ -162,10 +163,11 @@ void W_FireBRocket(entity this)
 	missile.nextthink = time + 5;
 	setthink(missile, SUB_Remove);
 
-	_setmodel(missile, "progs/brocket.mdl");
 	setsize(missile, '0 0 0', '0 0 0');            
 
 	setorigin(missile, this.tank.origin);
+
+	CSQCProjectile(missile, true, PROJECTILE_TANK_BIGROCKET, true);
 
 	PushBack(this, 500);
 }

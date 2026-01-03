@@ -356,12 +356,13 @@ void drole_rocket4(entity this)
 	set_anim(this, 3, SUB_Remove);
 	this.nextthink = time + 5;
 	if(autocvar_skill == 0)
-		this.velocity = this.velocity * 3.5;
+		this.velocity *= 3.5;
 	else
-		this.velocity = this.velocity * 4.5;
+		this.velocity *= 4.5;
+	UpdateCSQCProjectile(this);
 }
-void drole_rocket3(entity this) { set_anim(this, 3, drole_rocket4); this.velocity = this.velocity * 1.5; }
-void drole_rocket2(entity this) { set_anim(this, 2, drole_rocket3); this.velocity = this.velocity * 1.5; }
+void drole_rocket3(entity this) { set_anim(this, 3, drole_rocket4); this.velocity *= 1.5; UpdateCSQCProjectile(this); }
+void drole_rocket2(entity this) { set_anim(this, 2, drole_rocket3); this.velocity *= 1.5; UpdateCSQCProjectile(this); }
 void drole_rocket1(entity this) { set_anim(this, 1, drole_rocket2); this.nextthink = time + 0.2; }
 
 //----------------------------------------------------------------------
@@ -377,10 +378,6 @@ void drole_fire(entity this)
 
 	entity newmis = launch_spike(this, org, dir);
 	newmis.poisonous = this.poisonous;
-	if(newmis.poisonous)
-		_setmodel(newmis, "progs/proj_drolegrn.mdl");
-	else
-		_setmodel(newmis, "progs/proj_drole.mdl");
 	newmis.avelocity = avel;
 	newmis.dmg = 40;
 	setsize(newmis, '0 0 0', '0 0 0');
@@ -390,6 +387,11 @@ void drole_fire(entity this)
 	newmis.velocity = dir * 80;
 	settouch(newmis, T_MissileTouch); // rocket explosion
 	newmis.projectiledeathtype = DEATH_MONSTER_DROLE.m_id;
+
+	if(newmis.poisonous)
+		CSQCProjectile(newmis, true, PROJECTILE_DROLE_POISON, true);
+	else
+		CSQCProjectile(newmis, true, PROJECTILE_DROLE, true);
 }
 
 void drole_magic9(entity this) { set_animofs(this, anim_drole_magic, 9, drole_run); ai_face(this); }
@@ -614,8 +616,6 @@ METHOD(Drole, mr_setup, bool(Drole this, entity actor))
 	precache_model("progs/gib_drolearm1.mdl");
 	precache_model("progs/gib_drolearm2.mdl");
 	precache_model("progs/gib_droleleg1.mdl");
-	precache_model("progs/proj_drole.mdl");
-	precache_model("progs/proj_drolegrn.mdl");
 
 	precache_sound("drole/idle.wav");
 	precache_sound("drole/enrage.wav");

@@ -52,9 +52,7 @@ entity OrbLaunch(entity this, vector org, vector vec)
 	newmis.clipgroup = this.clipgroup;
 	set_movetype(newmis, MOVETYPE_FLY);
 	newmis.solid = SOLID_BBOX;
-	newmis.effects = EF_DIMLIGHT;
 
-	_setmodel(newmis, "progs/laser.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 
 	setorigin(newmis, org);
@@ -67,6 +65,8 @@ entity OrbLaunch(entity this, vector org, vector vec)
 	settouch(newmis, Orb_Touch);
 
 	IL_PUSH(g_projectiles, newmis);
+
+	CSQCProjectile(newmis, true, PROJECTILE_LASER, true);
 
 	return newmis;
 }
@@ -483,7 +483,6 @@ METHOD(Norb, mr_setup, bool(Norb this, entity actor))
 	TC(Norb, this);
 
 	precache_model("progs/h_orb.mdl");
-	precache_model("progs/laser.mdl");
 
 	precache_sound("orb/death1.wav");
 	precache_sound("enforcer/enfire.wav");
