@@ -133,9 +133,9 @@ void shop_buyitem(entity this, string item)
 			return;
 		}
 
-		if(type == ARMOR_MAGE || type == ARMOR_RED)
+		if(type == ARMOR_MAGE || type == ARMOR_HEAVY)
 		{
-			if(this.armorvalue < value)
+			if(this.armorvalue >= value)
 			{
 				sprint(this, "Already at maximum armor\n");
 				return;
