@@ -57,8 +57,8 @@ METHOD(PewPew, wr_think, void(entity thiswep, entity actor, .entity weaponentity
 	{
 		_sound(actor, CH_WEAPON_SINGLE, "weapons/pewpew_load.wav", 1, ATTN_NORM);
 		actor.attack2_finished = time + 0.2; // not too spammy thank you
-		crosshair_trace(actor);
-		entity wp = WaypointSprite_DeployPersonal(WP_Waypoint, actor, trace_endpos, NULL);
+		crosshair_trace_plusvisibletriggers(actor);
+		entity wp = WaypointSprite_DeployFixed(WP_Here, false, actor, trace_endpos, NULL);
 		if (wp) WaypointSprite_Ping(wp);
 	}
 }
