@@ -75,8 +75,8 @@ void W_FireAngelicStaff(entity this, .entity weaponentity)
 	{
 		if(it.monsterdef && (it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
 			continue; // no healing the dead
-		if((it.health + healamount) >= it.max_health)
-			continue; // early out, but prevents healing some champions
+		if(!IS_PLAYER(it) && (it.health + healamount) >= it.max_health)
+			continue;
 		//if(!checkpvs(this.origin, it))
 			//continue; // cheaper than tracing
 		vector targ_pos = (it.absmin + it.absmax) * 0.5;
