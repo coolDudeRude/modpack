@@ -1082,6 +1082,7 @@ void intermission_moveplayers(entity spot)
 		cannon_clear(it);
 		Clockwork_Clear(it);
 		QCC_ClearTransform(it);
+		WaypointSprite_ClearPersonal(it);
 		it.nextthink = time + 0.5;
 		it.takedamage = DAMAGE_NO;
 		it.clientcamera = it;
