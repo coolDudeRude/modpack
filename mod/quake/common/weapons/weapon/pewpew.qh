@@ -17,7 +17,3 @@ ENDCLASS(PewPew)
 REGISTER_WEAPON(PEWPEW, NEW(PewPew));
 
 //SPAWNFUNC_WEAPON(weapon_pewpew, WEP_PEWPEW)
-
-#ifdef SVQC
-.entity pewpew_prevwep; // for starting sound
-#endif

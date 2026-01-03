@@ -266,9 +266,9 @@ void Hatch_Egg(entity this)
 {
 	// Turn off touch function and any movement
 	settouch(this, func_null);
-	set_movetype(this, MOVETYPE_NONE);
+	//set_movetype(this, MOVETYPE_NONE);
 	this.takedamage = DAMAGE_NO;
-	this.velocity = '0 0 0';
+	//this.velocity = '0 0 0';
 
 	Monster mon = this.monsterdef;
 	
@@ -276,10 +276,10 @@ void Hatch_Egg(entity this)
 	// setup new bounds and extend upwards for testing
 	//this.solid = SOLID_SLIDEBOX;
 	//setsize(this, mon.m_mins, mon.m_maxs);
-	set_movetype(this, MOVETYPE_TOSS);
-	this.oldorigin = this.origin;
-	this.origin_z += 1;
-	DropToFloor_QC_DelayedInit(this);
+	//set_movetype(this, MOVETYPE_TOSS);
+	//this.oldorigin = this.origin;
+	//this.origin_z += 1;
+	//DropToFloor_QC_DelayedInit(this);
 	
 	// Can the egg hatch yet? Solid content?
 	tracebox(this.origin, this.mins, this.maxs, this.origin, MOVE_NOMONSTERS, this);
@@ -302,7 +302,6 @@ void Hatch_Egg(entity this)
 			delete(this);
 			return;
 		}
-		this.origin = this.oldorigin;
 		setthink(this, Hatch_Egg);
 		this.nextthink = time + 1 + random();
 		this.solid = SOLID_NOT;		// turn off again
@@ -310,8 +309,7 @@ void Hatch_Egg(entity this)
 	}
 
 	// Setup spawn location for minion
-	tracebox(this.origin + ('0 0 1' * this.maxs_z), this.mins, this.maxs, this.origin - '0 0 256', true, this);
-	this.oldorigin = trace_endpos;
+	tracebox(this.origin + '0 0 1', this.mins, this.maxs, this.origin - '0 0 256', true, this);
 	
 	// Spawn minion inside of egg model
 	// this.owner is re-assigned to minion to avoid shell gibs interacting
@@ -325,7 +323,7 @@ void Hatch_Egg(entity this)
 	else if(this.owner.classtype == CT_MONSHAL)
 		minion_voreling(this.oldorigin, this.enemy);
 #endif
-	entity minion = minion_spawn(this.owner, this.oldorigin, new(monster), mon);
+	entity minion = minion_spawn(this.owner, trace_endpos, new(monster), mon);
 
 	if(IS_PLAYER(this.owner))
 	{
@@ -333,7 +331,7 @@ void Hatch_Egg(entity this)
 		minion.charmer = this.owner;
 	}
 
-	te_wizspike(this.oldorigin);
+	te_wizspike(trace_endpos);
 
 	setmodel(this, MDL_Null);
 	setsize(this, '0 0 0', '0 0 0');

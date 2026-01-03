@@ -1530,8 +1530,6 @@ void W_SetCurrentAmmo(entity this)
 			this.(weaponentity).hammer_prevwep = wep; // for hammer hax
 		if(wep != WEP_SPEAKNSPELL)
 			this.(weaponentity).speaknspell_prevwep = wep; // for piano hax
-		if(wep != WEP_PEWPEW)
-			this.(weaponentity).pewpew_prevwep = wep; // for pewpew hax
 	}
 }
 

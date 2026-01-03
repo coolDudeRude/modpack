@@ -65,6 +65,8 @@ void W_FireAngelicStaff(entity this, .entity weaponentity)
 	makevectors(this.v_angle);
 
 	int healamount = 20;
+	if(StatusEffects_active(STATUSEFFECT_Quad, this))
+		healamount *= 2;
 
 	W_AngelicStaff_Heal(this, healamount);
 
