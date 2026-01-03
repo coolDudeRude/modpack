@@ -70,18 +70,15 @@ void W_FireAngelicStaff(entity this, .entity weaponentity)
 
 	// heal people!
 
-	int oldclip = this.clipgroup;
-	this.clipgroup = 0;
-
 	int healedcount = 3;
-	FOREACH_ENTITY_RADIUS(this.origin, 1000, it.takedamage && it.health > 0 && it != this && ((IS_PLAYER(it) && !deathmatch) || (IS_MONSTER(it) && it.charmer == this)),
+	FOREACH_ENTITY_RADIUS(this.origin, 1000, it.takedamage && it.health > 0 && it.exptime == 0 && it != this && ((IS_PLAYER(it) && !deathmatch) || (IS_MONSTER(it) && it.charmer == this)),
 	{
 		if(it.monsterdef && (it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
 			continue; // no healing the dead
 		if((it.health + healamount) >= it.max_health)
 			continue; // early out, but prevents healing some champions
-		if(!checkpvs(this.origin, it))
-			continue; // cheaper than tracing
+		//if(!checkpvs(this.origin, it))
+			//continue; // cheaper than tracing
 		vector targ_pos = (it.absmin + it.absmax) * 0.5;
 		vector vec = normalize(targ_pos - this.origin);
 		float dot = vec * v_forward;
@@ -91,8 +88,6 @@ void W_FireAngelicStaff(entity this, .entity weaponentity)
 		if(healedcount <= 0)
 			break;
 	});
-
-	this.clipgroup = oldclip;
 }
 
 METHOD(AngelicStaff, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))
