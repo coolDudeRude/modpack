@@ -190,6 +190,8 @@ float spritelookupblinkvalue(entity this, string s)
 
 vector spritelookupcolor(entity this, string s, vector def)
 {
+    if (s == WP_Here.netname) return ((this.wp_extra) ? colormapPaletteColor(floor(this.wp_extra / 16), false) : def);
+
     return def;
 }
 

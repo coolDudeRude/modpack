@@ -59,7 +59,15 @@ METHOD(PewPew, wr_think, void(entity thiswep, entity actor, .entity weaponentity
 		actor.attack2_finished = time + 0.2; // not too spammy thank you
 		crosshair_trace_plusvisibletriggers(actor);
 		entity wp = WaypointSprite_DeployFixed(WP_Here, false, actor, trace_endpos, NULL);
-		if (wp) WaypointSprite_Ping(wp);
+		if (wp)
+		{
+			if(autocvar_sv_quake_pewpew_colors)
+			{
+				int col = (actor.colormap >= 1024) ? actor.colormap - 1024 : actor.clientcolors;
+				wp.wp_extra = col;
+			}
+			WaypointSprite_Ping(wp);
+		}
 	}
 }
 METHOD(PewPew, wr_checkammo1, bool(entity thiswep, entity actor, .entity weaponentity))

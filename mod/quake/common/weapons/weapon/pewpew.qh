@@ -17,3 +17,7 @@ ENDCLASS(PewPew)
 REGISTER_WEAPON(PEWPEW, NEW(PewPew));
 
 //SPAWNFUNC_WEAPON(weapon_pewpew, WEP_PEWPEW)
+
+#ifdef SVQC
+bool autocvar_sv_quake_pewpew_colors = true;
+#endif
