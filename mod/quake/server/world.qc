@@ -1502,7 +1502,7 @@ spawnfunc(worldspawn)
 
 	season = SEASON_NONE;
 	float month = stof(strftime(true, "%m"));
-	if(month == 12 || substring(world.model, 0, 12) == "maps/bored2_")
+	if(month == 12 || world.model == "maps/xm01.bsp" || substring(world.model, 0, 12) == "maps/bored2_")
 		season = SEASON_XMAS;
 	else if(month == 10)
 		season = SEASON_HALLOWEEN;
