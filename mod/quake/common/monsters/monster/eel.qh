@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_EEL,             DEATH_SELF_MON_EEL,             DEAT
 #ifdef GAMEQC
 MODEL(MON_EEL, "progs/eel2.mdl");
 MODEL(MON_EEL_HEAD, "progs/eelgib.mdl");
-
-SOUND(MON_EEL_SIGHT, "eel/eelc5");
 #endif
 
 CLASS(Eel, Monster)
@@ -20,7 +18,6 @@ CLASS(Eel, Monster)
 #ifdef GAMEQC
     ATTRIB(Eel, m_model, Model, MDL_MON_EEL);
     ATTRIB(Eel, m_model_head, Model, MDL_MON_EEL_HEAD);
-    ATTRIB(Eel, m_sound, Sound, SND_MON_EEL_SIGHT);
 #endif
     ATTRIB(Eel, netname, string, "eel");
     ATTRIB(Eel, m_name, string, _("Eel"));

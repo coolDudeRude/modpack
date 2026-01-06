@@ -258,6 +258,7 @@ METHOD(KingSlime, mr_setup, bool(KingSlime this, entity actor))
 	precache_sound("king_slime/death.wav");
 	precache_sound("king_slime/hit.wav");
 	precache_sound("king_slime/land.wav");
+	precache_sound("king_slime/sight.wav");
 
 	if(!actor.clipgroup)
 		actor.clipgroup = CLIPGROUP_KING_SLIME;
@@ -277,5 +278,13 @@ METHOD(KingSlime, mr_setup, bool(KingSlime this, entity actor))
 	actor.th_pain = kslime_mitosis;
 
     return true;
+}
+METHOD(KingSlime, mr_sight, bool(KingSlime this, entity actor))
+{
+	TC(KingSlime, this);
+
+	_sound(actor, CH_VOICE, "king_slime/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

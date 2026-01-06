@@ -434,7 +434,7 @@ METHOD(Octa, mr_setup, bool(Octa this, entity actor))
 
 	precache_model("progs/madfox/wink.spr");
 	precache_sound("tronyn/mon_anglerfish_bite.wav");
-	//precache_sound("tronyn/mon_bigfish_bite.wav");
+	precache_sound("tronyn/mon_bigfish_bite.wav");
 	precache_sound("tronyn/mon_bigfish_swim1.wav");
 	precache_sound("tronyn/mon_bigfish_swim2.wav");
 	precache_sound("tronyn/mon_seahorse_swim1.wav");
@@ -454,5 +454,13 @@ METHOD(Octa, mr_setup, bool(Octa this, entity actor))
 	actor.th_die = octa_die;
 
     return true;
+}
+METHOD(Octa, mr_sight, bool(Octa this, entity actor))
+{
+	TC(Octa, this);
+
+	_sound(actor, CH_VOICE, "tronyn/mon_bigfish_bite.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

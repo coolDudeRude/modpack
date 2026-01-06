@@ -906,9 +906,7 @@ void eidolon_free1(entity this)
 	set_animofs(this, anim_eidolon_howl, 1, eidolon_free2);
 	this.takedamage = DAMAGE_AIM;		// Enable resistance effects
 	this.th_stand = this.th_walk = this.th_run = eidolon_free2;
-	Monster mon = this.monsterdef;
-	if(mon && mon.m_sound != SND_Null)
-		sound(this, CH_VOICE, mon.m_sound, 1, ATTN_NORM);
+	_sound(this, CH_VOICE, "eidolon/sight.wav", 1, ATTN_NORM);
 	this.walkframe = 0;
 }
 
@@ -1170,6 +1168,14 @@ METHOD(Eidolon, mr_setup, bool(Eidolon this, entity actor))
 	eidolon_start(actor);
 
     return true;
+}
+METHOD(Eidolon, mr_sight, bool(Eidolon this, entity actor))
+{
+	TC(Eidolon, this);
+
+	_sound(actor, CH_VOICE, "eidolon/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif
 

@@ -735,4 +735,12 @@ METHOD(BogLord, mr_setup, bool(BogLord this, entity actor))
 
     return true;
 }
+METHOD(BogLord, mr_sight, bool(BogLord this, entity actor))
+{
+	TC(BogLord, this);
+
+	_sound(actor, CH_VOICE, "boglord/sight.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

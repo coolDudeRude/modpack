@@ -530,6 +530,7 @@ METHOD(Goroth, mr_setup, bool(Goroth this, entity actor))
 	precache_sound("goroth/gorsmash.wav");
 	precache_sound("goroth/gormagic.wav");
 	precache_sound("goroth/gorrock.wav");
+	precache_sound("goroth/gorwake.wav");
 
     actor.health = 2000;
     if(horde_ent || actor.charmed)
@@ -549,6 +550,14 @@ METHOD(Goroth, mr_setup, bool(Goroth this, entity actor))
 	setsize(actor, this.m_mins * actor.scale, this.m_maxs * actor.scale);
 
     return true;
+}
+METHOD(Goroth, mr_sight, bool(Goroth this, entity actor))
+{
+	TC(Goroth, this);
+
+	_sound(actor, CH_VOICE, "goroth/gorwake.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif
 

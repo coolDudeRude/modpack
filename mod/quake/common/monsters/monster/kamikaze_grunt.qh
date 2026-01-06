@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_KAMIKAZEGRUNT,           DEATH_SELF_MON_KAMIKAZEGRUNT
 #ifdef GAMEQC
 MODEL(MON_KAMIKAZEGRUNT, "progs/kamikaze_grunt_small.mdl");
 MODEL(MON_KAMIKAZEGRUNT_HEAD, "progs/h_guard.mdl");
-
-SOUND(MON_KAMIKAZEGRUNT_SIGHT, "soldier/sight1");
 #endif
 
 CLASS(KamikazeGrunt, Monster)
@@ -20,7 +18,6 @@ CLASS(KamikazeGrunt, Monster)
 #ifdef GAMEQC
     ATTRIB(KamikazeGrunt, m_model, Model, MDL_MON_KAMIKAZEGRUNT);
     ATTRIB(KamikazeGrunt, m_model_head, Model, MDL_MON_KAMIKAZEGRUNT_HEAD);
-    ATTRIB(KamikazeGrunt, m_sound, Sound, SND_MON_KAMIKAZEGRUNT_SIGHT);
 #endif
     ATTRIB(KamikazeGrunt, netname, string, "kamikaze");
     ATTRIB(KamikazeGrunt, m_name, string, _("Kamikaze Grunt"));

@@ -19,3 +19,6 @@ REGISTER_WEAPON(SUPER_SHOTGUN, NEW(SuperShotgun));
 
 // defined elsewhere
 //SPAWNFUNC_WEAPON(weapon_supershotgun, WEP_SUPER_SHOTGUN)
+
+// qbj
+SPAWNFUNC_WEAPON(weapon_flak, WEP_SUPER_SHOTGUN)

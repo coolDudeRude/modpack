@@ -9,7 +9,6 @@ CLASS(Twins, Monster)
 #ifdef GAMEQC
     ATTRIB(Twins, m_model, Model, MDL_Null);
     ATTRIB(Twins, m_model_head, Model, MDL_Null);
-    ATTRIB(Twins, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Twins, netname, string, "twins");
     ATTRIB(Twins, m_name, string, "The Twins"); // dummy name

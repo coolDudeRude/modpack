@@ -593,6 +593,9 @@ spawnfunc(item_armor1)
 	StartItem(this);
 }
 
+// qbj3
+spawnfunc(item_armor_light) { spawnfunc_item_armor1(this); }
+
 // qdoom
 spawnfunc(armor_bonus)
 {
@@ -1022,7 +1025,10 @@ void weapon_touch(entity this, entity toucher)
 // map-specific hacks
 SPAWNFUNC_WEAPON_COND(weapon_supershotgun, (world.model == "maps/aop2m3.bsp"), WEP_GRENADE_LAUNCHER, WEP_SUPER_SHOTGUN);
 
-SPAWNFUNC_WEAPON_COND(weapon_lightning, (world.model == "maps/aop2m2.bsp"), WEP_LIGHTME, WEP_LIGHTNING);
+SPAWNFUNC_WEAPON(weapon_lightning, ((world.model == "maps/aop2m2.bsp") ? WEP_LIGHTME : ((IsQBJ3Map()) ? WEP_INVOKER : WEP_LIGHTNING)));
+SPAWNFUNC_WEAPON_COND(weapon_rocketlauncher, (IsQBJ3Map()), WEP_MMML, WEP_ROCKET_LAUNCHER);
+SPAWNFUNC_WEAPON_COND(weapon_supernailgun, (IsQBJ3Map()), WEP_REBAR_CANNON, WEP_SUPER_NAILGUN);
+SPAWNFUNC_WEAPON_COND(weapon_shotgun, (IsQBJ3Map()), WEP_PISTOL, WEP_SHOTGUN);
 
 Weapon W_RandomizeWeapon(Weapon wpn)
 {
@@ -1103,18 +1109,30 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 
 void weapon_defaultspawnfunc(entity this, Weapon wpn)
 {
-	if(autocvar_skill == 3 || deathmatch)
+	if((autocvar_skill == 3 && !IsQBJ3Map()) || deathmatch)
 		wpn = W_RandomizeWeapon(wpn);
 
 	string simplemdl = strcat("progs/g_", wpn.mdl, "_simple.mdl");
 
 	string mymdl = strcat("progs/g_", wpn.mdl, ".mdl");
 	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists(simplemdl))
+	{
+		precache_sound("items/pop.wav");
 		mymdl = simplemdl;
+	}
 	else if(wpn == WEP_HAMMER)
 	{
 		this.hammer_skin = bound(1, floor(random() * SKIN_LAST), SKIN_LAST);
 		mymdl = strcat("progs/g_", hammer_getskin(this.hammer_skin), ".mdl");
+	}
+	else if(IsQBJ3Map())
+	{
+		switch(wpn)
+		{
+			case WEP_SUPER_SHOTGUN: mymdl = "progs/g_flakshotgun.mdl"; break;
+			case WEP_NAILGUN: mymdl = "progs/g_tnailgun.mdl"; break;
+			case WEP_GRENADE_LAUNCHER: mymdl = "progs/g_grenlauncher.mdl"; break;
+		}
 	}
 	precache_model(mymdl); // TODO: model registry
 	_setmodel(this, mymdl);
@@ -1232,8 +1250,9 @@ void ammo_touch(entity this, entity toucher)
 	.entity weaponentity = weaponentities[0]; // TODO
 	Weapon best = w_getbestweapon(toucher, weaponentity);
 
+	// TODO: what the hell is even this? swapping when they have autoswitch off?!
 	if(!toucher.cvar_cl_autoswitch && toucher.(weaponentity).m_weapon == best)
-		W_SwitchWeapon(toucher, w_getbestweapon(toucher, weaponentity), weaponentity);
+		W_SwitchWeapon(toucher, best, weaponentity);
 
 // if changed current ammo, update it
 	W_SetCurrentAmmo(toucher);
@@ -1733,6 +1752,9 @@ spawnfunc(item_drills)
 	StartItem(this);
 }
 
+// qbj3 and copper maps
+// we don't support armor shards, so just fall back to shells for easy ammo access
+spawnfunc(item_armor_shard) { spawnfunc_item_shells(this); }
 
 /*QUAKED item_weapon(0 .5 .8)(0 0 0)(32 32 32) shotgun rocket spikes big
 DO NOT USE THIS!!!! IT WILL BE REMOVED!
@@ -2337,6 +2359,8 @@ void powerup_touch(entity this, entity toucher)
 {
 	if(!CanTouchItem(this, toucher))
 		return;
+	if(toucher.m_transform && this.berserk_finished)
+		return; // no go TODO
 
 	string pname = (this.netname != "") ? this.netname : "Powerup";
 	Send_Notification(NOTIF_ONE, toucher, MSG_MULTI, ITEM_POWERUP_GOT, pname);
@@ -2501,6 +2525,18 @@ void powerup_touch(entity this, entity toucher)
 	{
 		if(horde_ent)
 			RespawnAllPlayers();
+	}
+
+	if(this.vamp_finished)
+	{
+		float vamptime = this.vamp_finished; // works well enough with default cooldown in horde
+		StatusEffects_apply(STATUSEFFECT_Vampirism, toucher, time + vamptime, 0);
+	}
+
+	if(this.berserk_finished)
+	{
+		float berserktime = (horde_ent) ? 10 : 30;
+		StatusEffects_apply(STATUSEFFECT_Berserk, toucher, time + berserktime, 0);
 	}
 
 	if(toucher.m_champion && toucher.m_champion.m_pickup_powerup)
@@ -2858,6 +2894,86 @@ spawnfunc(item_artifact_trifecta)
 		spawnfunc_item_artifact_invulnerability(this);
 	else
 		spawnfunc_item_artifact_sharp_shooter(this);
+}
+
+/*QUAKED item_artifact_vampirism (0 .5 .5) (-16 -16 -24) (16 16 32) ? ? SUSPENDED
+Vampiric Blood. Causes monsters to drop health orbs on death when killed by the player.
+Health orbs heal 5 per drop, and monsters drop more orbs based on their tier.
+
+1 Globe - Zombie, Grunts, Dog
+2 Globes - Scrag, Enforcer, Knight
+3 Globes - Death Knight, Ogre
+4 Globes - Shambler, Vore, Fiend, Amalgam, Spawn
+
+Keys:
+"target/2/3/4/k" - entity to trigger when picked up
+"targetname" - will not spawn until triggered
+"wait" - will respawn after 'wait' seconds. fires targets every time.
+"count" - limit number of times to respawn
+*/
+/*FGD
+@PointClass size(-16 -16 -24, 16 16 32) color(255 0 0) base(Item) model({ "path": ":progs/item_vamp.mdl" }) = item_artifact_vampirism : 
+	"Vampiric Blood. Causes monsters to drop health orbs on death when killed by the player.
+Health orbs heal 3 per drop, and monsters drop more orbs based on their tier.
+
+1 Globe - Zombie, Grunts, Dog
+2 Globes - Scrag, Enforcer, Knight
+3 Globes - Death Knight, Ogre
+4 Globes - Shambler, Vore, Fiend, Amalgam, Spawn"[]
+*/
+spawnfunc(item_artifact_vampirism)
+{
+	settouch(this, powerup_touch);
+
+	precache_model("progs/item_vamp.mdl");
+	precache_model("progs/item_vampglobe.mdl");
+	precache_sound("items/vampstart.wav");
+	precache_sound("items/vampfade.wav");
+	precache_sound("items/vamppickup1.wav");
+	precache_sound("items/vamppickup2.wav");
+	precache_sound("items/vamppickup3.wav");
+
+	this.noise = "items/vampstart.wav";
+	_setmodel(this, "progs/item_vamp.mdl");
+	this.netname = "Vampiric Blood";
+	this.powerups = POWERUP_VAMPIRISM;
+	if(!this.vamp_finished)
+		this.vamp_finished = 60;
+	setsize(this, '-16 -16 -24', '16 16 32');
+	StartItem(this);
+}
+
+/*QUAKED item_artifact_berserk (0 .5 .5) (-16 -16 -24) (16 16 32) ? ? SUSPENDED
+Berserk. x10 melee damage and 50% damage reduction for 30 seconds.
+
+Keys:
+"target/2/3/4/k" - entity to trigger when picked up
+"targetname" - will not spawn until triggered
+"wait" - will respawn after 'wait' seconds. fires targets every time.
+"count" - limit number of times to respawn
+*/
+/*FGD
+@PointClass size(-16 -16 -24, 16 16 32) base(Item) model({ "path": ":progs/item_berserk.mdl" }) =
+	item_artifact_berserk : "Berserk. x10 melee damage and 50% damage reduction for 30 seconds." []
+*/
+spawnfunc(item_artifact_berserk)
+{
+	settouch(this, powerup_touch);
+
+	precache_model("progs/item_berserk.mdl");
+	precache_model("progs/v_berserk.mdl");
+	precache_sound("items/berserk_pickup.wav");
+	precache_sound("items/berserk_fade.wav");
+	precache_sound("items/berserk_fire.wav");	
+
+	this.noise = "items/berserk_pickup.wav";
+	_setmodel(this, "progs/item_berserk.mdl");
+	this.netname = "Berserk";
+	this.powerups = POWERUP_BERSERK;
+	if(!this.berserk_finished)
+		this.berserk_finished = 30;
+	setsize(this, '-16 -16 -24', '16 16 32');
+	StartItem(this);
 }
 
 /*

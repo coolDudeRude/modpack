@@ -29,7 +29,12 @@ void shal_walk1(entity this)
 {
 	set_animofs(this, anim_shal_walk, 2, shal_walk2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	{
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "shalrath/shalrath_idle.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	}
 	ai_walk(this, 6);
 }
 
@@ -49,7 +54,12 @@ void shal_run1(entity this)
 {
 	set_animofs(this, anim_shal_walk, 2, shal_run2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	{
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "shalrath/shalrath_idle.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	}
 	ai_run(this, 6);
 }
 
@@ -66,7 +76,10 @@ void shal_attack2(entity this) { set_animofs(this, anim_shal_attack, 2, shal_att
 void shal_attack1(entity this)
 {
 	set_animofs(this, anim_shal_attack, 1, shal_attack2);
-	_sound(this, CH_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+		_sound(this, CH_VOICE, "shalrath/shalrath_attack.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
 	ai_face(this);
 }
 
@@ -93,7 +106,10 @@ void shalrath_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	_sound(this, CH_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+		_sound(this, CH_VOICE, "shalrath/shalrath_pain.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
 	this.pain_finished = time + 3;
 	shal_pain1(this);
 }
@@ -104,14 +120,20 @@ void shalrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -90)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_shal.mdl", this.health);
+		if(IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_vore.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_shal.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 		return;
 	}
 
-	_sound(this, CH_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+		_sound(this, CH_VOICE, "shalrath/shalrath_death.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
 	shal_death1(this);
 	this.solid = SOLID_NOT;
 	// insert death sounds here
@@ -224,12 +246,31 @@ METHOD(Vore, mr_setup, bool(Vore this, entity actor))
     TC(Vore, this);
 
 	precache_model("progs/v_spike.mdl");
-	
-	precache_sound("shalrath/attack.wav");
+
 	precache_sound("shalrath/attack2.wav");
-	precache_sound("shalrath/death.wav");
-	precache_sound("shalrath/idle.wav");
-	precache_sound("shalrath/pain.wav");
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/shalrath_qbj.mdl");
+		precache_model("progs/gibs/gibhead_vore.mdl");
+
+		precache_sound("shalrath/shalrath_attack.wav");
+		precache_sound("shalrath/shalrath_death.wav");
+		precache_sound("shalrath/shalrath_idle.wav");
+		precache_sound("shalrath/shalrath_pain.wav");
+		precache_sound("shalrath/shalrath_sight.wav");
+
+		_setmodel(actor, "progs/shalrath_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
+	else
+	{
+		precache_sound("shalrath/attack.wav");
+		precache_sound("shalrath/death.wav");
+		precache_sound("shalrath/idle.wav");
+		precache_sound("shalrath/pain.wav");
+		precache_sound("shalrath/sight.wav");
+	}
 
     actor.health = 400;
     actor.th_stand = shal_stand;
@@ -242,5 +283,16 @@ METHOD(Vore, mr_setup, bool(Vore this, entity actor))
 	actor.steptype = FS_TYPELIGHT;
 
     return true;
+}
+METHOD(Vore, mr_sight, bool(Vore this, entity actor))
+{
+	TC(Vore, this);
+
+	if(IsQBJ3Map())
+		_sound(actor, CH_VOICE, "shalrath/shalrath_sight.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

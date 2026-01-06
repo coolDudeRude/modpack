@@ -432,8 +432,17 @@ METHOD(LavaMan, mr_setup, bool(LavaMan this, entity actor))
 	precache_sound("boss1/throw.wav");
 	precache_sound("boss1/pain.wav");
 	precache_sound("boss1/death.wav");
+	precache_sound("boss1/sight1.wav");
 
 	lavaman_awake(actor);
+
+	return true;
+}
+METHOD(LavaMan, mr_sight, bool(LavaMan this, entity actor))
+{
+	TC(LavaMan, this);
+
+	_sound(actor, CH_VOICE, "boss1/sight1.wav", 1, ATTN_NORM);
 
 	return true;
 }

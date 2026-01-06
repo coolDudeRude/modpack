@@ -1928,6 +1928,7 @@ METHOD(Judicator, mr_setup, bool(Judicator this, entity actor))
 	precache_sound("weapons/sword2b.wav");
 
 	precache_sound("judge/leap1.wav");
+	precache_sound("judge/sight1.wav");
 
 	precache_sound("ambience/flames1.wav");
 	precache_sound("ambience/flames2.wav");
@@ -1963,5 +1964,13 @@ METHOD(Judicator, mr_setup, bool(Judicator this, entity actor))
 	judge_awake(actor, NULL, NULL);
 
     return true;
+}
+METHOD(Judicator, mr_sight, bool(Judicator this, entity actor))
+{
+	TC(Judicator, this);
+
+	_sound(actor, CH_VOICE, "judge/sight1.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

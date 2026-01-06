@@ -577,6 +577,8 @@ spawnfunc(func_button_skill)
 
 	setthink(this, skillbutton_activate);	// assume correct position and set up any related target states
 	this.nextthink = this.ltime + 0.2;
+
+	have_setskill = true;
 }
 
 #endif

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_KNIGHT,          DEATH_SELF_MON_KNIGHT,          DEAT
 #ifdef GAMEQC
 MODEL(MON_KNIGHT, "progs/knight.mdl");
 MODEL(MON_KNIGHT_HEAD, "progs/h_knight.mdl");
-
-SOUND(MON_KNIGHT_SIGHT, "knight/ksight");
 #endif
 
 CLASS(Knight, Monster)
@@ -20,7 +18,6 @@ CLASS(Knight, Monster)
 #ifdef GAMEQC
     ATTRIB(Knight, m_model, Model, MDL_MON_KNIGHT);
     ATTRIB(Knight, m_model_head, Model, MDL_MON_KNIGHT_HEAD);
-    ATTRIB(Knight, m_sound, Sound, SND_MON_KNIGHT_SIGHT);
 #endif
     ATTRIB(Knight, netname, string, "knight");
     ATTRIB(Knight, m_name, string, _("Knight"));

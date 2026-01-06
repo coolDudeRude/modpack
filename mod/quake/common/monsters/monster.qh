@@ -38,8 +38,6 @@ CLASS(Monster, Object)
     ATTRIB(Monster, netname, string, "");
     /** model */
     ATTRIB(Monster, m_model, entity);
-    /** sightsound */
-    ATTRIB(Monster, m_sound, Sound, SND_Null);
     /** head model */
     ATTRIB(Monster, m_model_head, entity);
     /** hitbox size */
@@ -55,13 +53,7 @@ CLASS(Monster, Object)
     /* in quake, most functions are stored as entity properties */
     METHOD(Monster, mr_setup, bool(Monster this, entity actor)) { TC(Monster, this); return false; }
     /** (SERVER) called when a monster spots a target, return false to not hunt the target */
-    METHOD(Monster, mr_sight, bool(Monster this, entity actor))
-    {
-        TC(Monster, this);
-        if(this.m_sound != SND_Null)
-            sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
-        return true;
-    }
+    METHOD(Monster, mr_sight, bool(Monster this, entity actor)) { TC(Monster, this); return true; }
 
 ENDCLASS(Monster)
 

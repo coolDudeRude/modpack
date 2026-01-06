@@ -84,7 +84,7 @@ void qb_atkc1(entity this)
 		return;
 	}
 	if(random() < 0.33)
-		sound(this, CH_VOICE, SND_MON_QUEEN_BEE_SIGHT, 1, ATTN_BOSS);
+		_sound(this, CH_VOICE, "queen_bee/sight.wav", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, QueenBee_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -114,7 +114,7 @@ void qb_atkd1(entity this)
 		setthink(this, gib_qb);
 		return;
 	}
-	//sound(this, CH_VOICE, SND_MON_QUEEN_BEE_SIGHT, 1, ATTN_BOSS);
+	//_sound(this, CH_VOICE, "queen_bee/sight.wav", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, QueenBee_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -292,6 +292,7 @@ METHOD(QueenBee, mr_setup, bool(QueenBee this, entity actor))
 	precache_sound("queen_bee/death.wav");
 	precache_sound("queen_bee/pain.wav");
 	precache_sound("queen_bee/stinger_attack.wav");
+	precache_sound("queen_bee/sight.wav");
 
 	if(!actor.minion_maxcount)
 		actor.minion_maxcount = 16;
@@ -306,6 +307,14 @@ METHOD(QueenBee, mr_setup, bool(QueenBee this, entity actor))
 	actor.th_missile = qb_attack;
 	actor.th_pain = qb_pain;
 	actor.th_die = qb_die;
+
+	return true;
+}
+METHOD(QueenBee, mr_sight, bool(QueenBee this, entity actor))
+{
+	TC(QueenBee, this);
+
+	_sound(actor, CH_VOICE, "queen_bee/sight.wav", 1, ATTN_NORM);
 
 	return true;
 }

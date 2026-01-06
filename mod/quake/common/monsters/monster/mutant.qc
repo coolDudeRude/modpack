@@ -349,4 +349,12 @@ METHOD(Mutant, mr_setup, bool(Mutant this, entity actor))
 
 	return true;
 }
+METHOD(Mutant, mr_sight, bool(Mutant this, entity actor))
+{
+	TC(Mutant, this);
+
+	_sound(actor, CH_VOICE, "mutant/mutsrch1.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

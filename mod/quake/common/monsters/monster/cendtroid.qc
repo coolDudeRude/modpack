@@ -442,6 +442,7 @@ METHOD(Centroid, mr_setup, bool(Centroid this, entity actor))
 	precache_sound("scourge/walk.wav");
 	precache_sound("shambler/smack.wav");
 	precache_sound("weapons/rocket1i.wav");
+	precache_sound("scourge/sight.wav");
 
 	actor.yaw_speed = 60;
 	actor.attack_state = AS_DODGING;
@@ -459,5 +460,13 @@ METHOD(Centroid, mr_setup, bool(Centroid this, entity actor))
 	actor.checkattack = ScourgeCheckAttack;
 
     return true;
+}
+METHOD(Centroid, mr_sight, bool(Centroid this, entity actor))
+{
+	TC(Centroid, this);
+
+	_sound(actor, CH_VOICE, "scourge/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

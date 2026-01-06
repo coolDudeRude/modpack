@@ -962,6 +962,7 @@ METHOD(Minotaur, mr_setup, bool(Minotaur this, entity actor))
 	precache_sound("minotaur/idle2.wav");
 	precache_sound("minotaur/idle1com.wav");
 	precache_sound("minotaur/idle2com.wav");
+	precache_sound("minotaur/sight1.wav");
 
     actor.health = 500;
 	actor.th_stand = mino_stand1;
@@ -995,5 +996,12 @@ METHOD(Minotaur, mr_setup, bool(Minotaur this, entity actor))
 
     return true;
 }
-#endif
+METHOD(Minotaur, mr_sight, bool(Minotaur this, entity actor))
+{
+	TC(Minotaur, this);
 
+	_sound(actor, CH_VOICE, "minotaur/sight1.wav", 1, ATTN_NORM);
+
+	return true;
+}
+#endif

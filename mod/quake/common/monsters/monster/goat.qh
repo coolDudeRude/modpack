@@ -61,7 +61,6 @@ CLASS(MCGoat, Monster)
 #ifdef GAMEQC
     ATTRIB(MCGoat, m_model, Model, MDL_MON_GOAT);
     ATTRIB(MCGoat, m_model_head, Model, MDL_Null);
-    ATTRIB(MCGoat, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(MCGoat, netname, string, "goat");
     ATTRIB(MCGoat, m_name, string, _("Goat"));

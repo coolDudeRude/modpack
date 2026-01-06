@@ -2,6 +2,7 @@
 
 #include "kill.qh"
 #include "lock.qh"
+#include "multiprint.qh"
 #include "music.qh"
 #include "screenshake.qh"
 #include "sound.qh"

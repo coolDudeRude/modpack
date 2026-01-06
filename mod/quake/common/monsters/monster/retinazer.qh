@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_RETINAZER,            DEATH_SELF_MON_RETINAZER,      
 
 #ifdef GAMEQC
 MODEL(MON_RETINAZER, "progs/eoc.mdl");
-
-SOUND(MON_RETINAZER_SIGHT, "eoc/sight");
 #endif
 
 CLASS(Retinazer, Monster)
@@ -19,7 +17,6 @@ CLASS(Retinazer, Monster)
 #ifdef GAMEQC
     ATTRIB(Retinazer, m_model, Model, MDL_MON_RETINAZER);
     ATTRIB(Retinazer, m_model_head, Model, MDL_Null);
-    ATTRIB(Retinazer, m_sound, Sound, SND_MON_RETINAZER_SIGHT);
 #endif
     ATTRIB(Retinazer, netname, string, "retinazer");
     ATTRIB(Retinazer, m_name, string, _("Retinazer"));

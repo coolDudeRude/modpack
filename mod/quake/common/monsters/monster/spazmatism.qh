@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SPAZMATISM,            DEATH_SELF_MON_SPAZMATISM,    
 
 #ifdef GAMEQC
 MODEL(MON_SPAZMATISM, "progs/eoc.mdl");
-
-SOUND(MON_SPAZMATISM_SIGHT, "eoc/sight");
 #endif
 
 CLASS(Spazmatism, Monster)
@@ -19,7 +17,6 @@ CLASS(Spazmatism, Monster)
 #ifdef GAMEQC
     ATTRIB(Spazmatism, m_model, Model, MDL_MON_SPAZMATISM);
     ATTRIB(Spazmatism, m_model_head, Model, MDL_Null);
-    ATTRIB(Spazmatism, m_sound, Sound, SND_MON_SPAZMATISM_SIGHT);
 #endif
     ATTRIB(Spazmatism, netname, string, "spazmatism");
     ATTRIB(Spazmatism, m_name, string, _("Spazmatism"));

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_MUTANT,           DEATH_SELF_MON_MUTANT,           DE
 #ifdef GAMEQC
 MODEL(MON_MUTANT, "progs/mutant.mdl");
 MODEL(MON_MUTANT_HEAD, "progs/h_mutant.mdl");
-
-SOUND(MON_MUTANT_SIGHT, "mutant/mutsrch1");
 #endif
 
 CLASS(Mutant, Monster)
@@ -20,7 +18,6 @@ CLASS(Mutant, Monster)
 #ifdef GAMEQC
     ATTRIB(Mutant, m_model, Model, MDL_MON_MUTANT);
     ATTRIB(Mutant, m_model_head, Model, MDL_MON_MUTANT_HEAD);
-    ATTRIB(Mutant, m_sound, Sound, SND_MON_MUTANT_SIGHT);
 #endif
     ATTRIB(Mutant, netname, string, "mutant");
     ATTRIB(Mutant, m_name, string, _("Mutant"));

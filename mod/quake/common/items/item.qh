@@ -77,4 +77,7 @@ const int POWERUP_REVIVAL              = BIT(13);
 
 const int POWERUP_DOUBLEJUMPBOOTS      = BIT(14);
 
-//const int POWERUP_COUNT                = 14;
+const int POWERUP_VAMPIRISM            = BIT(15);
+const int POWERUP_BERSERK              = BIT(16);
+
+//const int POWERUP_COUNT                = 16;

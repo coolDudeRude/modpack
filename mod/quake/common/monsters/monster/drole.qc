@@ -626,6 +626,7 @@ METHOD(Drole, mr_setup, bool(Drole this, entity actor))
 	precache_sound("drole/strike1.wav");
 	precache_sound("drole/strike2.wav");
 	precache_sound("drole/swipe.wav");
+	precache_sound("drole/sight.wav");
 
     actor.health = 500;
     actor.th_stand = drole_standC1;
@@ -641,5 +642,13 @@ METHOD(Drole, mr_setup, bool(Drole this, entity actor))
 	actor.steptype = FS_TYPEHEAVY;
 
     return true;
+}
+METHOD(Drole, mr_sight, bool(Drole this, entity actor))
+{
+	TC(Drole, this);
+
+	_sound(actor, CH_VOICE, "drole/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

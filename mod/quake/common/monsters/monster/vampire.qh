@@ -25,7 +25,6 @@ CLASS(Vampire, Monster)
 #ifdef GAMEQC
     ATTRIB(Vampire, m_model, Model, MDL_MON_VAMPIRE);
     ATTRIB(Vampire, m_model_head, Model, MDL_Null);
-    ATTRIB(Vampire, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Vampire, netname, string, "vampire");
     ATTRIB(Vampire, m_name, string, _("Sanguine Evoker"));

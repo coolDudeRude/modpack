@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_SPIDER_DROID,    DEATH_SELF_MON_SPIDER_DROID,    DEAT
 #ifdef GAMEQC
 MODEL(MON_SPIDER_DROID, "progs/spid.mdl");
 MODEL(MON_SPIDER_DROID_HEAD, "progs/spidgib.mdl");
-
-SOUND(MON_SPIDER_DROID_SIGHT, "monsters/spider/sactiv");
 #endif
 
 CLASS(SpiderDroid, Monster)
@@ -20,7 +18,6 @@ CLASS(SpiderDroid, Monster)
 #ifdef GAMEQC
     ATTRIB(SpiderDroid, m_model, Model, MDL_MON_SPIDER_DROID);
     ATTRIB(SpiderDroid, m_model_head, Model, MDL_MON_SPIDER_DROID_HEAD);
-    ATTRIB(SpiderDroid, m_sound, Sound, SND_MON_SPIDER_DROID_SIGHT);
 #endif
     ATTRIB(SpiderDroid, netname, string, "spider_droid");
     ATTRIB(SpiderDroid, m_name, string, _("Spider Droid"));

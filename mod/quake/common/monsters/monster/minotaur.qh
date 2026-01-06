@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_MINOTAUR,        DEATH_SELF_MON_MINOTAUR,        DEAT
 #ifdef GAMEQC
 MODEL(MON_MINOTAUR, "progs/mon_minotaur.mdl");
 MODEL(MON_MINOTAUR_HEAD, "progs/h_minotaur.mdl");
-
-SOUND(MON_MINOTAUR_SIGHT, "minotaur/sight1");
 #endif
 
 CLASS(Minotaur, Monster)
@@ -20,7 +18,6 @@ CLASS(Minotaur, Monster)
 #ifdef GAMEQC
     ATTRIB(Minotaur, m_model, Model, MDL_MON_MINOTAUR);
     ATTRIB(Minotaur, m_model_head, Model, MDL_MON_MINOTAUR_HEAD);
-    ATTRIB(Minotaur, m_sound, Sound, SND_MON_MINOTAUR_SIGHT);
 #endif
     ATTRIB(Minotaur, netname, string, "minotaur");
     ATTRIB(Minotaur, m_name, string, _("Minotaur"));

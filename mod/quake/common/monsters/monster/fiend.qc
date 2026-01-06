@@ -99,7 +99,7 @@ void demon1_jump4(entity this)
 	set_animofs(this, anim_demon_leap, 4, demon1_jump5);
 	if(this.health <= 0)
 	{
-		dprint("demon1_jump4: dead\n");
+		//dprint("demon1_jump4: dead\n");
 		settouch(this, func_null);
 		setthink(this, demon1_die1);
 		return;
@@ -199,6 +199,8 @@ void demon_die(entity this, entity inflictor, entity attacker, int deathtype)
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if(season == SEASON_XMAS)
 			ThrowHead(this, inflictor, "progs/h_demon_xmas.mdl", this.health);
+		else if(IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_demon.mdl", this.health);
 		else
 			ThrowHead(this, inflictor, "progs/h_demon.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
@@ -362,6 +364,9 @@ spawnfunc(monster_pinky) { monster_start(this, true, MON_FIEND); }
 
 // drake
 spawnfunc(monster_cyberdemon) { monster_start(this, true, MON_FIEND); }
+
+// qbj
+spawnfunc(monster_fiend) { monster_start(this, true, MON_FIEND); }
 #endif // SVQC
 
 #ifdef SVQC
@@ -390,6 +395,16 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 		precache_sound("demon/djump.wav");
 		precache_sound("demon/dpain1.wav");
 		precache_sound("demon/idle1.wav");
+		precache_sound("demon/sight2.wav");
+
+		if(IsQBJ3Map())
+		{
+			precache_model("progs/demon_qbj.mdl");
+			precache_model("progs/gibs/gibhead_demon.mdl");
+
+			_setmodel(actor, "progs/demon_qbj.mdl");
+			setsize(actor, this.m_mins, this.m_maxs);
+		}
 	}
 
 	actor.health = 300;
@@ -414,7 +429,7 @@ METHOD(Fiend, mr_sight, bool(Fiend this, entity actor))
 	if(season == SEASON_XMAS)
 		_sound(actor, CH_VOICE, "demon_xmas/sight2.wav", 1, ATTN_NORM);
 	else
-		sound(actor, CH_VOICE, SND_MON_FIEND_SIGHT, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
 
 	return true;
 }

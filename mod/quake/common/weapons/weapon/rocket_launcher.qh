@@ -17,4 +17,5 @@ CLASS(RocketLauncher, Weapon)
 ENDCLASS(RocketLauncher)
 REGISTER_WEAPON(ROCKET_LAUNCHER, NEW(RocketLauncher));
 
-SPAWNFUNC_WEAPON(weapon_rocketlauncher, WEP_ROCKET_LAUNCHER)
+// defined elsewhere
+//SPAWNFUNC_WEAPON(weapon_rocketlauncher, WEP_ROCKET_LAUNCHER)

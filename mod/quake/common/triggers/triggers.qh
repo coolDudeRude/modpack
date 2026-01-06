@@ -138,6 +138,8 @@ void SUB_UseTargetsSilent(entity this, entity actor, entity trigger);
 
 void SUB_SetWorldtype(entity this);
 
+string process_string(string input);
+
 // Yoder Sept 24 2021 Horde merge
 const int COUNTER_LOOPS = 2; // so counters can loop back to the start again
 const int MONSTER_ONLY = 8; // for trigger_hurt

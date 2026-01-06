@@ -88,7 +88,6 @@ CLASS(Warden, Monster)
 #ifdef GAMEQC
     ATTRIB(Warden, m_model, Model, MDL_MON_WARDEN);
     ATTRIB(Warden, m_model_head, Model, MDL_Null);
-    ATTRIB(Warden, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Warden, netname, string, "warden");
     ATTRIB(Warden, m_name, string, _("Warden"));

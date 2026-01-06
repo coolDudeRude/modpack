@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_SANTA,           DEATH_SELF_MON_SANTA,           DEAT
 #ifdef GAMEQC
 MODEL(MON_SANTA, "progs/xmas/mon_santa.mdl");
 MODEL(MON_SANTA_HEAD, "progs/xmas/h_santa.mdl");
-
-SOUND(MON_SANTA_SIGHT, "xmas/santa/sight");
 #endif
 
 CLASS(Santa, Monster)
@@ -20,7 +18,6 @@ CLASS(Santa, Monster)
 #ifdef GAMEQC
     ATTRIB(Santa, m_model, Model, MDL_MON_SANTA);
     ATTRIB(Santa, m_model_head, Model, MDL_MON_SANTA_HEAD);
-    ATTRIB(Santa, m_sound, Sound, SND_MON_SANTA_SIGHT);
 #endif
     ATTRIB(Santa, netname, string, "santa");
     ATTRIB(Santa, m_name, string, _("Santa"));

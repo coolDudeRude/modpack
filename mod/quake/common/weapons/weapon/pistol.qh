@@ -1,0 +1,28 @@
+#pragma once
+
+CLASS(Pistol, Weapon)
+/* ammotype  */ ATTRIB(Pistol, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Pistol, impulse, int, 2);
+/* spawnflags*/ ATTRIB(Pistol, spawnflags, int, WEP_FLAG_NOSTEAL | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(Pistol, aflag, int, 0);
+/* modelname */ ATTRIB(Pistol, mdl, string, "pistol");
+/* crosshair */ ATTRIB(Pistol, w_crosshair, string, "gfx/crosshair21");
+/* crosshair */ ATTRIB(Pistol, w_crosshair_size, float, 0.25);
+/* crosshair */ ATTRIB(Pistol, w_crosshair_color, vector, '0.5 0.25 0');
+/* wepimg    */ ATTRIB(Pistol, model2, string, "pistol");
+/* refname   */ ATTRIB(Pistol, netname, string, "pistol");
+/* wepname   */ ATTRIB(Pistol, m_name, string, _("Pistol"));
+/* framerate */ ATTRIB(Pistol, m_delta, float, 0.05);
+
+ENDCLASS(Pistol)
+REGISTER_WEAPON(PISTOL, NEW(Pistol));
+
+SPAWNFUNC_WEAPON(weapon_pistol, WEP_PISTOL)
+
+#ifdef GAMEQC
+const int PISTOL_MAXSHOTS = 10;
+#endif
+
+#ifdef SVQC
+.entity pistol_prevwep; // for starting jingle
+#endif

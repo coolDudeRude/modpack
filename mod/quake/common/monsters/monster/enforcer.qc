@@ -46,7 +46,12 @@ void Laser_Touch(entity this, entity toucher)
 entity LaunchLaser(entity this, vector org, vector vec)
 {
 	if(this.monsterdef == MON_ENFORCER)
-		_sound(this, CH_WEAPON_SINGLE, "enforcer/enfire.wav", 1, ATTN_NORM);
+	{
+		if(IsQBJ3Map())
+			_sound(this, CH_WEAPON_SINGLE, "enforcer/enf_enfire.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_WEAPON_SINGLE, "enforcer/enfire.wav", 1, ATTN_NORM);
+	}
 
 	vector dir = normalize(vec);
 	
@@ -87,6 +92,38 @@ void enforcer_fire(entity this)
 	LaunchLaser(this, org, this.enemy.origin - this.origin);
 }
 
+.int lmg_rof;
+void enf_idle_sound(entity this)
+{
+	if(IsQBJ3Map())
+	{
+		this.lmg_rof += 1;
+		if(this.lmg_rof	 < 3)
+			return;
+
+		if(random() < 0.2)
+		{
+			int rs = rint((random() * 6) + 1);
+			switch(rs)
+			{
+				case 1: _sound(this, CH_VOICE, "enforcer/enf_idle_allunitsradio.wav", 1, ATTN_IDLE); break;
+				case 2: _sound(this, CH_VOICE, "enforcer/enf_idle_radiocheck.wav", 1, ATTN_IDLE); break;
+				case 3: _sound(this, CH_VOICE, "enforcer/enf_idle_standbyradio.wav", 1, ATTN_IDLE); break;
+				case 4: _sound(this, CH_VOICE, "enforcer/enf_idle_statuscheck.wav", 1, ATTN_IDLE); break;
+				case 5: _sound(this, CH_VOICE, "enforcer/enf_idle_unit7.wav", 1, ATTN_IDLE); break;
+				case 6: _sound(this, CH_VOICE, "enforcer/enf_idle_unit10.wav", 1, ATTN_IDLE); break;
+				default: _sound(this, CH_VOICE, "enforcer/enf_idle_unit12.wav", 1, ATTN_IDLE); break;
+			}
+			this.lmg_rof = 0;
+		}
+
+		return;
+	}
+
+	if(random() < 0.2)
+		_sound(this, CH_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+}
+
 //============================================================================
 
 void enf_stand1(entity this);
@@ -117,8 +154,7 @@ void enf_walk2(entity this) { set_animofs(this, anim_enf_walk, 2, enf_walk3); ai
 void enf_walk1(entity this)
 {
 	set_animofs(this, anim_enf_walk, 1, enf_walk2);
-	if(random() < 0.2)
-		_sound(this, CH_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+	enf_idle_sound(this);
 	ai_walk(this, 2);
 }
 
@@ -133,8 +169,7 @@ void enf_run2(entity this) { set_animofs(this, anim_enf_run, 2, enf_run3); ai_ru
 void enf_run1(entity this)
 {
 	set_animofs(this, anim_enf_run, 1, enf_run2);
-	if(random() < 0.2)
-		_sound(this, CH_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+	enf_idle_sound(this);
 	ai_run(this, 18);
 }
 
@@ -204,10 +239,25 @@ void enf_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	if(r < 0.5)
-		_sound(this, CH_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+	{
+		int rs = rint((random() * 5) + 1);
+		switch(rs)
+		{
+			case 1: _sound(this, CH_VOICE, "enforcer/enf_pain_1.wav", 1, ATTN_NORM); break;
+			case 2: _sound(this, CH_VOICE, "enforcer/enf_pain_2.wav", 1, ATTN_NORM); break;
+			case 3: _sound(this, CH_VOICE, "enforcer/enf_pain_3.wav", 1, ATTN_NORM); break;
+			case 4: _sound(this, CH_VOICE, "enforcer/enf_pain_4.wav", 1, ATTN_NORM); break;
+			default: _sound(this, CH_VOICE, "enforcer/enf_pain_5.wav", 1, ATTN_NORM); break;
+		}
+	}
 	else
-		_sound(this, CH_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
+	{
+		if(r < 0.5)
+			_sound(this, CH_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
+	}
 
 	if(r < 0.2)
 	{
@@ -278,7 +328,10 @@ void enf_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -35)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_mega.mdl", this.health);
+		if(IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_enforcer.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_mega.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
@@ -286,7 +339,21 @@ void enf_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	_sound(this, CH_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+	{
+		int rs = rint((random() * 5) + 1);
+		switch(rs)
+		{
+			case 1: _sound(this, CH_VOICE, "enforcer/enf_death_1.wav", 1, ATTN_NORM); break;
+			case 2: _sound(this, CH_VOICE, "enforcer/enf_death_2.wav", 1, ATTN_NORM); break;
+			case 3: _sound(this, CH_VOICE, "enforcer/enf_death_3.wav", 1, ATTN_NORM); break;
+			case 4: _sound(this, CH_VOICE, "enforcer/enf_death_4.wav", 1, ATTN_NORM); break;
+			case 5: _sound(this, CH_VOICE, "enforcer/enf_death_5.wav", 1, ATTN_NORM); break;
+			default: _sound(this, CH_VOICE, "enforcer/enf_death_6.wav", 1, ATTN_NORM); break;
+		}
+	}
+	else
+		_sound(this, CH_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
 	if(random() > 0.5)
 		enf_die1(this);
 	else
@@ -338,12 +405,54 @@ METHOD(Enforcer, mr_setup, bool(Enforcer this, entity actor))
 {
 	TC(Enforcer, this);
 
-	precache_sound("enforcer/death1.wav");
 	precache_sound("enforcer/enfire.wav");
 	precache_sound("enforcer/enfstop.wav");
-	precache_sound("enforcer/idle1.wav");
-	precache_sound("enforcer/pain1.wav");
-	precache_sound("enforcer/pain2.wav");
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/enforcer_qbj.mdl");
+		precache_model("progs/gibs/gibhead_enforcer.mdl");
+
+		//precache_sound("enforcer/enf_aggro_allunitsfireatwill.wav");
+		//precache_sound("enforcer/enf_aggro_fire.wav");
+		//precache_sound("enforcer/enf_aggro_fireatwill.wav");
+		//precache_sound("enforcer/enf_aggro_firefirefire.wav");
+		precache_sound("enforcer/enf_death_1.wav");
+		precache_sound("enforcer/enf_death_2.wav");
+		precache_sound("enforcer/enf_death_3.wav");
+		precache_sound("enforcer/enf_death_4.wav");
+		precache_sound("enforcer/enf_death_5.wav");
+		precache_sound("enforcer/enf_death_6.wav");
+		precache_sound("enforcer/enf_idle_allunitsradio.wav");
+		precache_sound("enforcer/enf_idle_radiocheck.wav");
+		precache_sound("enforcer/enf_idle_standbyradio.wav");
+		precache_sound("enforcer/enf_idle_statuscheck.wav");
+		precache_sound("enforcer/enf_idle_unit7.wav");
+		precache_sound("enforcer/enf_idle_unit10.wav");
+		precache_sound("enforcer/enf_idle_unit12.wav");
+		precache_sound("enforcer/enf_pain_1.wav");
+		precache_sound("enforcer/enf_pain_2.wav");
+		precache_sound("enforcer/enf_pain_3.wav");
+		precache_sound("enforcer/enf_pain_4.wav");
+		precache_sound("enforcer/enf_pain_5.wav");
+		precache_sound("enforcer/enf_sight_target.wav");
+		precache_sound("enforcer/enf_sight_targetsighted.wav");
+		precache_sound("enforcer/enf_sight_theresheis_1.wav");
+		precache_sound("enforcer/enf_sight_theresheis_2.wav");
+
+		// renamed to prevent overlap
+		precache_sound("enforcer/enf_enfire.wav");
+
+		_setmodel(actor, "progs/enforcer_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
+	else
+	{
+		precache_sound("enforcer/death1.wav");
+		precache_sound("enforcer/idle1.wav");
+		precache_sound("enforcer/pain1.wav");
+		precache_sound("enforcer/pain2.wav");
+	}
 
 	actor.health = 80;
 	actor.th_stand = enf_stand1;
@@ -359,10 +468,23 @@ METHOD(Enforcer, mr_setup, bool(Enforcer this, entity actor))
 }
 METHOD(Enforcer, mr_sight, bool(Enforcer this, entity actor))
 {
-    TC(Enforcer, this);
+	TC(Enforcer, this);
 
+	if(IsQBJ3Map())
+	{
+		int rs = rint((random() * 4) + 1);
+		switch(rs)
+		{
+			case 1: _sound(actor, CHAN_VOICE, "enforcer/enf_sight_target.wav", 1, ATTN_NORM); break;
+			case 2: _sound(actor, CHAN_VOICE, "enforcer/enf_sight_targetsighted.wav", 1, ATTN_NORM); break;
+			case 3: _sound(actor, CHAN_VOICE, "enforcer/enf_sight_theresheis_1.wav", 1, ATTN_NORM); break;
+			default:
+			case 4: _sound(actor, CHAN_VOICE, "enforcer/enf_sight_theresheis_2.wav", 1, ATTN_NORM); break;
+		}
+		return true;
+	}
 	sound(actor, CH_VOICE, SND_MON_ENFORCER_SIGHT_RANDOM(), 1, ATTN_NORM);
 
-    return true;
+	return true;
 }
 #endif

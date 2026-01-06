@@ -144,6 +144,26 @@ void chainsaw(entity this, float side)
 	}
 }
 
+void ogre_idle_sound(entity this)
+{
+	if(IsQBJ3Map())
+	{
+		float rs = random() * 10;
+		if(rs < 1)
+			_sound(this, CH_VOICE, "ogre/ogre_idle_allclear.wav", 1, ATTN_IDLE);
+		else if(rs < 5)
+			_sound(this, CH_VOICE, "ogre/ogre_idle_breathing_1.wav", 1, ATTN_IDLE);
+		else if(rs < 9)
+			_sound(this, CH_VOICE, "ogre/ogre_idle_breathing_2.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "ogre/ogre_idle_gettingpaid.wav", 1, ATTN_IDLE);
+
+		return;
+	}
+
+	_sound(this, CH_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE);
+}
+
 void ogre_stand1(entity this);
 void ogre_stand9(entity this) { set_animofs(this, anim_ogre_stand, 9, ogre_stand1); ai_stand(this); }
 void ogre_stand8(entity this) { set_animofs(this, anim_ogre_stand, 8, ogre_stand9); ai_stand(this); }
@@ -153,7 +173,7 @@ void ogre_stand5(entity this)
 {
 	set_animofs(this, anim_ogre_stand, 5, ogre_stand6);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE);
+		ogre_idle_sound(this);
 	ai_stand(this);
 }
 void ogre_stand4(entity this) { set_animofs(this, anim_ogre_stand, 4, ogre_stand5); ai_stand(this); }
@@ -176,7 +196,7 @@ void ogre_walk6(entity this)
 {
 	set_animofs(this, anim_ogre_walk, 6, ogre_walk7);
 	ai_walk(this, 5);
-	if(random() < 0.2)
+	if(random() < 0.2 && !IsQBJ3Map())
 		_sound(this, CH_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
 }
 void ogre_walk5(entity this) { set_animofs(this, anim_ogre_walk, 5, ogre_walk6); ai_walk(this, 2); }
@@ -186,7 +206,7 @@ void ogre_walk3(entity this)
 	set_animofs(this, anim_ogre_walk, 3, ogre_walk4);
 	ai_walk(this, 2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE);
+		ogre_idle_sound(this);
 }
 void ogre_walk2(entity this) { set_animofs(this, anim_ogre_walk, 2, ogre_walk3); ai_walk(this, 2); }
 void ogre_walk1(entity this) { set_animofs(this, anim_ogre_walk, 1, ogre_walk2); ai_walk(this, 3); monster_footstep(this, false); }
@@ -203,7 +223,7 @@ void ogre_run1(entity this)
 {
 	set_animofs(this, anim_ogre_run, 1, ogre_run2);
 	ai_run(this, 24);
-	if(random() < 0.2)
+	if(random() < 0.2 && !IsQBJ3Map())
 		_sound(this, CH_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
 }
 
@@ -224,7 +244,8 @@ void ogre_swing1(entity this)
 {
 	set_animofs(this, anim_ogre_swing, 1, ogre_swing2);
 	ai_charge(this, 11);
-	_sound(this, CH_WEAPON_SINGLE, "ogre/ogsawatk.wav", 1, ATTN_NORM);
+	if(!IsQBJ3Map())
+		_sound(this, CH_WEAPON_SINGLE, "ogre/ogsawatk.wav", 1, ATTN_NORM);
 }
 
 void ogre_smash14(entity this) { set_animofs(this, anim_ogre_smash, 14, ogre_run1); ai_charge(this, 12); }
@@ -244,7 +265,8 @@ void ogre_smash1(entity this)
 {
 	set_animofs(this, anim_ogre_smash, 1, ogre_smash2);
 	ai_charge(this, 6);
-	_sound(this, CH_WEAPON_SINGLE, "ogre/ogsawatk.wav", 1, ATTN_NORM);
+	if(!IsQBJ3Map())
+		_sound(this, CH_WEAPON_SINGLE, "ogre/ogsawatk.wav", 1, ATTN_NORM);
 }
 
 void ogre_nail7(entity this) { set_animofs(this, anim_ogre_shoot, 6, ogre_run1); ai_face(this); }
@@ -311,7 +333,18 @@ void ogre_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	_sound(this, CH_VOICE, "ogre/ogpain1.wav", 1, ATTN_NORM);		
+	if(IsQBJ3Map())
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "ogre/ogre_pain_1.wav", 1, ATTN_NORM);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "ogre/ogre_pain_1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "ogre/ogre_pain_3.wav", 1, ATTN_NORM);
+	}
+	else
+		_sound(this, CH_VOICE, "ogre/ogpain1.wav", 1, ATTN_NORM);
 
 	float r = random();
 	
@@ -384,34 +417,127 @@ void ogre_die(entity this, entity inflictor, entity attacker, int deathtype)
 		this.ammo_rockets = 2;
 	// TODO: make optional?
 	Inventory_new(this);
-	Inventory_add(WEP_CHAINSAW, this, ITEM_OWNED);
+	if(!IsQBJ3Map())
+		Inventory_add(WEP_CHAINSAW, this, ITEM_OWNED);
 	DropBackpack(this);
 
 // check for gib
 	if(this.health < -80)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_ogre.mdl", this.health);
+		if(IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_ogre.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_ogre.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 		return;
 	}
 
-	_sound(this, CH_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
-	
+	if(IsQBJ3Map())
+	{
+		if(random() > 0.5)
+			_sound(this, CH_VOICE, "ogre/ogre_death_1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "ogre/ogre_death_2.wav", 1, ATTN_NORM);
+	}
+	else
+		_sound(this, CH_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
+
 	if(random() < 0.5)
 		ogre_die1(this);
 	else
 		ogre_bdie1(this);
 }
 
+void ogre_attacking_sound(entity this)
+{
+	float rs = random() * 4;
+	if(rs < 1)
+		_sound(this, CH_VOICE, "ogre/ogre_aggro_killher.wav", 1, ATTN_NORM);
+	else if(rs < 2)
+		_sound(this, CH_VOICE, "ogre/ogre_aggro_pathetic.wav", 1, ATTN_NORM);
+	else if(rs < 3)
+		_sound(this, CH_VOICE, "ogre/ogre_attacking_submit.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "ogre/ogre_attacking_diealready.wav", 1, ATTN_NORM);
+}
+
+void taser_effect_think(entity this)
+{
+	this.angles = this.owner.angles;
+	setorigin(this, this.owner.origin);
+	
+	// taser should be removed during non attacking frames:  0-32 || 61-146
+	
+	if(!this.owner || this.owner.health <= 0 || this.owner.exptime != 0 || this.owner.frame < 32 || this.owner.frame > 61)
+	{
+		_sound(this.owner, CHAN_WEAPON, "ogre/electric_spark.wav", 1, ATTN_NORM);
+		// interupt longer _shock sound when ogre stunned/dead
+
+		delete(this);
+		return;
+	}
+	if(time >= this.attack_finished) 
+	{
+		this.frame += 1;
+		this.attack_finished = time + 0.1;
+		this.effects |= EF_MUZZLEFLASH;
+	}	
+	if(this.frame > 14)
+	{
+		delete(this);
+		return;
+	}
+	setthink(this, taser_effect_think);
+	this.nextthink = time + 0.001;
+}
+
+void taser_effect(entity this, bool taser_swing)
+{	
+	entity zap = spawn();
+	zap.owner = this;
+	zap.realowner = this;
+		
+	if(taser_swing)
+	{
+		_setmodel(zap, "progs/effect_taser_swing.mdl");
+		_sound(this, CH_WEAPON_B, "ogre/electric_zap.wav", 1, ATTN_NORM);
+	}
+	else
+	{	
+		_setmodel(zap, "progs/effect_taser_smash.mdl");
+		_sound(this, CH_WEAPON_B, "ogre/electric_buzz.wav", 1, ATTN_NORM);
+	}
+
+	setsize(zap, '0 0 0', '0 0 0');
+	setorigin(zap, this.origin);
+	zap.angles = this.angles;
+	zap.nextthink = time + 0.001;
+	setthink(zap, taser_effect_think);
+	zap.attack_finished = time + 0.05;
+	zap.alpha = 0.6;
+	
+	_sound(this, CH_WEAPON_SINGLE, "ogre/electric_shock.wav", 0.6, ATTN_NORM);	
+}
+
 void ogre_melee(entity this)
 {
+	if(random() < 0.5 && IsQBJ3Map())
+		ogre_attacking_sound(this);
 	if(random() > 0.5)
+	{
 		ogre_smash1(this);
+		if(IsQBJ3Map())
+			taser_effect(this, false);
+	}
 	else
+	{
 		ogre_swing1(this);
+		if(IsQBJ3Map())
+			taser_effect(this, true);
+	}
 }
 
 /*
@@ -483,7 +609,7 @@ spawnfunc(monster_ogre)
 		return;
 	}
 
-	if(random() < 0.2 && fexists("progs/cook.mdl"))
+	if(random() < 0.2 && !IsQBJ3Map() && fexists("progs/cook.mdl"))
 	{
 		monster_start(this, true, MON_COOK);
 		return;
@@ -514,8 +640,46 @@ METHOD(Ogre, mr_setup, bool(Ogre this, entity actor))
 	precache_sound("ogre/ogidle2.wav");
 	precache_sound("ogre/ogpain1.wav");
 	precache_sound("ogre/ogsawatk.wav");
+	precache_sound("ogre/ogwake.wav");
 
 	precache_sound("weapons/r_exp3b.wav");
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/ogre_qbj.mdl");
+		precache_model("progs/gibs/gibhead_ogre.mdl");
+		precache_model("progs/effect_taser_swing.mdl");	
+		precache_model("progs/effect_taser_smash.mdl");
+
+		//precache_sound2("ogre/ogre_aggro_dontletherescape.wav");
+		precache_sound("ogre/ogre_aggro_killher.wav");
+		precache_sound("ogre/ogre_aggro_pathetic.wav");
+		precache_sound("ogre/ogre_aggro_whohasavisual.wav");
+		precache_sound("ogre/ogre_attacking_diealready.wav");
+		precache_sound("ogre/ogre_attacking_engagingtarget.wav");
+		precache_sound("ogre/ogre_attacking_submit.wav");
+		precache_sound("ogre/ogre_death_1.wav");
+		precache_sound("ogre/ogre_death_2.wav");
+		precache_sound("ogre/ogre_idle_allclear.wav");
+		precache_sound("ogre/ogre_idle_breathing_1.wav");
+		precache_sound("ogre/ogre_idle_breathing_2.wav");
+		precache_sound("ogre/ogre_idle_gettingpaid.wav");
+		precache_sound("ogre/ogre_pain_1.wav");
+		precache_sound("ogre/ogre_pain_2.wav");
+		precache_sound("ogre/ogre_pain_3.wav");
+		precache_sound("ogre/ogre_sight_contact.wav");
+		precache_sound("ogre/ogre_sight_hey.wav");
+		precache_sound("ogre/ogre_sight_securearea.wav");
+
+		precache_sound("ogre/electric_crackle.wav");
+		precache_sound("ogre/electric_zap.wav");
+		precache_sound("ogre/electric_buzz.wav");
+		precache_sound("ogre/electric_spark.wav");
+		precache_sound("ogre/electric_shock.wav");
+
+		_setmodel(actor, "progs/ogre_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 
 	// none specified - choose random. 25% boss on normal, hard, bloodbath
 	if((actor.spawnflags <= 1) && autocvar_skill > 0 && random() <= 0.25 && IsRogueMap())
@@ -538,5 +702,25 @@ METHOD(Ogre, mr_setup, bool(Ogre this, entity actor))
 	actor.steptype = FS_TYPESLOW;
 
     return true;
+}
+METHOD(Ogre, mr_sight, bool(Ogre this, entity actor))
+{
+    TC(Ogre, this);
+
+    if(IsQBJ3Map())
+    {
+    	float r = random();
+    	if(r < 0.33)
+			_sound(actor, CH_VOICE, "ogre/ogre_sight_contact.wav", 1, ATTN_NORM);
+		else if(r < 0.66)
+			_sound(actor, CH_VOICE, "ogre/ogre_sight_hey.wav", 1, ATTN_NORM);
+		else
+			_sound(actor, CH_VOICE, "ogre/ogre_sight_securearea.wav", 1, ATTN_NORM);
+    	return true;
+    }
+
+	_sound(actor, CH_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

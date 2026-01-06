@@ -65,6 +65,8 @@ void W_FireAngelicStaff(entity this, .entity weaponentity)
 	makevectors(this.v_angle);
 
 	int healamount = 20;
+	if(this.armortype == ARMOR_MAGE && this.armorvalue > 0)
+		healamount = 30;
 	if(StatusEffects_active(STATUSEFFECT_Quad, this))
 		healamount *= 2;
 

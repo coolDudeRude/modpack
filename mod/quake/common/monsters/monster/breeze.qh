@@ -53,7 +53,6 @@ CLASS(Breeze, Monster)
 #ifdef GAMEQC
     ATTRIB(Breeze, m_model, Model, MDL_MON_BREEZE);
     ATTRIB(Breeze, m_model_head, Model, MDL_Null);
-    ATTRIB(Breeze, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Breeze, netname, string, "breeze");
     ATTRIB(Breeze, m_name, string, _("Breeze"));

@@ -12,7 +12,7 @@ PRECACHE(Otamatone)
 
 const float OTAMATONE_WEPANIMTIME = 0.015;
 
-void wep_otamatone_shot6(entity this) { wep_set_anim(this, 6, w_ready); this.weapon_nextthink = time + OTAMATONE_WEPANIMTIME; }
+void wep_otamatone_shot6(entity this) { wep_set_anim(this, 6, w_ready); this.weapon_nextthink = time + 0.25; }
 void wep_otamatone_shot5(entity this) { wep_set_anim(this, 5, wep_otamatone_shot6); this.weapon_nextthink = time + OTAMATONE_WEPANIMTIME; }
 void wep_otamatone_shot4(entity this) { wep_set_anim(this, 4, wep_otamatone_shot5); this.weapon_nextthink = time + OTAMATONE_WEPANIMTIME; }
 void wep_otamatone_shot3(entity this) { wep_set_anim(this, 3, wep_otamatone_shot4); this.weapon_nextthink = time + OTAMATONE_WEPANIMTIME; }

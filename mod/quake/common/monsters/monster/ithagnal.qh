@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_ITHAGNAL,            DEATH_SELF_MON_ITHAGNAL,        
 
 #ifdef GAMEQC
 MODEL(MON_ITHAGNAL, "progs/ithagnal.mdl");
-
-SOUND(MON_ITHAGNAL_SIGHT, "ithagnal/ithwake");
 #endif
 
 CLASS(Ithagnal, Monster)
@@ -20,7 +18,6 @@ CLASS(Ithagnal, Monster)
 #ifdef GAMEQC
     ATTRIB(Ithagnal, m_model, Model, MDL_MON_ITHAGNAL);
     ATTRIB(Ithagnal, m_model_head, Model, MDL_Null);
-    ATTRIB(Ithagnal, m_sound, Sound, SND_MON_ITHAGNAL_SIGHT);
 #endif
     ATTRIB(Ithagnal, netname, string, "ithagnal");
     ATTRIB(Ithagnal, m_name, string, _("Ithagnal"));

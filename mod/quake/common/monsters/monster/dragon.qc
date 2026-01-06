@@ -713,6 +713,14 @@ METHOD(Dragon, mr_setup, bool(Dragon this, entity actor))
 
 	return true;
 }
+METHOD(Dragon, mr_sight, bool(Dragon this, entity actor))
+{
+	TC(Dragon, this);
+
+	_sound(actor, CH_VOICE, "dragon/see.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif
 
 #ifdef SVQC

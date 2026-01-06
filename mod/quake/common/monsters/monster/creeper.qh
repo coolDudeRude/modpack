@@ -32,7 +32,6 @@ CLASS(Creeper, Monster)
 #ifdef GAMEQC
     ATTRIB(Creeper, m_model, Model, MDL_MON_CREEPER);
     ATTRIB(Creeper, m_model_head, Model, MDL_Null);
-    ATTRIB(Creeper, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Creeper, netname, string, "creeper");
     ATTRIB(Creeper, m_name, string, _("Creeper"));

@@ -8,13 +8,13 @@
 
 #ifdef GAMEQC
 // TODO: cleaner way to list these?
-noref string autocvar_cl_quake_weaponpriority = "smg breegull plane snowball magic shield gravgun mushroom pogo rocketlauncher multirocketlauncher driller impaler nuke cannon lightning plasma shadowbeam shock lightme railgun otamatone laser_gun squeaker mic grenadelauncher multigrenade proximitygun napalm loosecannon goldy tuba fish chimes mayo spellbook hammer portalgun ocarina supernailgun lavasupernailgun minishark crossbow angelicstaff bagpipes piano sshotgun ripper scattercrumb doot nailgun lavanailgun biogun light_disc speaknspell kazoo shotgun banjo ball katana sword crowbar meowmere sickle wand chainsaw pewpew pan axe bongos";
+noref string autocvar_cl_quake_weaponpriority = "smg berserk invoker breegull plane snowball magic shield gravgun mushroom pogo rocketlauncher multirocketlauncher mmml driller impaler nuke cannon lightning plasma shadowbeam shock lightme railgun otamatone laser_gun squeaker mic grenadelauncher multigrenade proximitygun napalm loosecannon goldy tuba fish chimes mayo spellbook hammer portalgun ocarina supernailgun lavasupernailgun rebar minishark crossbow angelicstaff bagpipes piano sshotgun ripper scattercrumb doot nailgun lavanailgun biogun light_disc speaknspell kazoo shotgun pistol banjo ball katana sword crowbar meowmere sickle wand chainsaw pewpew wrench pan axe bongos";
 noref bool autocvar_cl_quake_weaponpriority_useforcycling = false;
-noref string autocvar_cl_quake_weaponpriority0 = "rocketlauncher nuke cannon multirocketlauncher driller impaler grenadelauncher multigrenade proximitygun napalm loosecannon goldy biogun tuba fish mayo"; // explosives
+noref string autocvar_cl_quake_weaponpriority0 = "rocketlauncher mmml nuke cannon multirocketlauncher driller impaler grenadelauncher multigrenade proximitygun napalm loosecannon goldy biogun tuba fish mayo"; // explosives
 noref string autocvar_cl_quake_weaponpriority1 = "lightning plasma shock lightme railgun"; // energy
 noref string autocvar_cl_quake_weaponpriority2 = "lightning portalgun"; // hitscan exact
-noref string autocvar_cl_quake_weaponpriority3 = "lightning shadowbeam sshotgun shotgun"; // hitscan all
-noref string autocvar_cl_quake_weaponpriority4 = "smg snowball laser_gun shock grenadelauncher multigrenade napalm fish mayo ocarina supernailgun minishark biogun tuba lavasupernailgun crossbow bagpipes piano doot nailgun lavanailgun light_disc bongos speaknspell kazoo chainsaw"; // spam weapons
+noref string autocvar_cl_quake_weaponpriority3 = "lightning shadowbeam sshotgun shotgun pistol"; // hitscan all
+noref string autocvar_cl_quake_weaponpriority4 = "smg snowball laser_gun shock grenadelauncher multigrenade napalm fish mayo ocarina supernailgun minishark biogun tuba lavasupernailgun rebar crossbow bagpipes piano doot nailgun lavanailgun light_disc bongos speaknspell kazoo chainsaw"; // spam weapons
 noref string autocvar_cl_quake_weaponpriority5 = "nuke cannon impaler portalgun"; // movement weapons
 noref string autocvar_cl_quake_weaponpriority6 = "mushroom tuba mic ocarina otamatone banjo bongos chimes mayo bagpipes piano kazoo doot"; // musical instruments
 noref string autocvar_cl_quake_weaponpriority7 = "";
@@ -45,7 +45,7 @@ WepSet ReadWepSet();
 
 #include "../util.qh"
 
-REGISTRY(Weapons, 72) // Increase as needed. Can be up to 72.
+REGISTRY(Weapons, 96) // Increase as needed. Be sure to add new numbers to both weapon_byid_ lists
 REGISTER_REGISTRY(Weapons)
 
 .WepSet m_wepset;
@@ -73,7 +73,7 @@ const int WEP_FIRST = 1;
 
 // TODO: invert after changes have been made to the hardcoded weapon impulses. Will require moving 'best weapon' impulses
 // NOTE: per-weapon impulses also start and end within these limits, be sure to update them when changing this!
-#define WEP_IMPULSE_BEGIN 181
+#define WEP_IMPULSE_BEGIN 105
 #define WEP_IMPULSE_END bound(WEP_IMPULSE_BEGIN, WEP_IMPULSE_BEGIN + (REGISTRY_COUNT(Weapons) - 1) - 1, 253)
 
 REGISTRY_SORT(Weapons, WEP_HARDCODED_IMPULSES + 1)
@@ -81,6 +81,13 @@ REGISTRY_CHECK(Weapons)
 
 STATIC_INIT(register_weapons_done)
 {
+    // too early for this!
+    //IsQBJ3Map()
+    bool nodual = false;
+    string wname = substring(world.model, 0, 10);
+    if(wname == "maps/qbj3_" || wname == "maps/qbjr_")
+        nodual = true;
+
     string inaccessible = "";
     FOREACH(Weapons, true, {
         it.m_wepset = _WepSet_FromWeapon(it.m_id = i);
@@ -90,11 +97,16 @@ STATIC_INIT(register_weapons_done)
         {
             localcmd(sprintf("alias weapon_%s \"impulse %d\"\n", it.netname, imp));
             // hack for xonotic compat!
-            if(it.m_deprecated_netname && it.m_deprecated_netname != "")
+            if(it.m_deprecated_netname && it.m_deprecated_netname != "" && it.netname != it.m_deprecated_netname)
                 localcmd(sprintf("alias weapon_%s \"impulse %d\"\n", it.m_deprecated_netname, imp));
         }
         else
             inaccessible = strcat(inaccessible, "\n", it.netname);
+
+        // hack to work around the limitations of this pack
+        // TODO: challenge/option to do this in a standard way?
+        if(nodual)
+            it.spawnflags |= WEP_FLAG_NODUAL;
     });
     if (inaccessible != "" && autocvar_developer > 0) LOG_TRACEF("Impulse limit exceeded, weapon(s) will not be directly accessible: %s", inaccessible);
     weaponorder_byid = "";

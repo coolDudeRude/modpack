@@ -10,8 +10,6 @@ REGISTER_DEATHTYPE(MONSTER_COOK,            DEATH_SELF_MON_COOK,            DEAT
 MODEL(MON_COOK, "progs/cook.mdl");
 MODEL(MON_COOK_HEAD, "progs/h_ogre.mdl");
 
-SOUND(MON_COOK_SIGHT, "ogre/ogwake");
-
 SOUND(MON_COOK_WIN1, "cook/daddy");
 SOUND(MON_COOK_WIN2, "cook/cannot");
 SOUND(MON_COOK_WIN3, "cook/mademe");
@@ -28,7 +26,6 @@ CLASS(Cook, Monster)
 #ifdef GAMEQC
     ATTRIB(Cook, m_model, Model, MDL_MON_COOK);
     ATTRIB(Cook, m_model_head, Model, MDL_MON_COOK_HEAD);
-    ATTRIB(Cook, m_sound, Sound, SND_MON_COOK_SIGHT);
 #endif
     ATTRIB(Cook, netname, string, "cook");
     ATTRIB(Cook, m_name, string, _("Cook"));

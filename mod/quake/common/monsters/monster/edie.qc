@@ -714,6 +714,7 @@ METHOD(Edie, mr_setup, bool(Edie this, entity actor))
 	
 	precache_sound("edie/stfire.wav");
 	precache_sound("edie/sawstart.wav");
+	precache_sound("edie/sight.wav");
 
 	actor.th_stand = edie_stand1;
 	actor.th_walk = edie_walk1;
@@ -740,5 +741,13 @@ METHOD(Edie, mr_setup, bool(Edie this, entity actor))
 	actor.steptype = FS_TYPECUSTOM;
 
     return true;
+}
+METHOD(Edie, mr_sight, bool(Edie this, entity actor))
+{
+	TC(Edie, this);
+
+	_sound(actor, CH_VOICE, "edie/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

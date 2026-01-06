@@ -719,6 +719,7 @@ METHOD(Skaarj, mr_setup, bool(Skaarj this, entity actor))
 	precache_sound("skaarj/lunge1sk.wav");
 	precache_sound("skaarj/skrjshot.wav");
 	precache_sound("skaarj/skrjimp.wav");
+	precache_sound("skaarj/syl13sk.wav");
 
 	precache_sound("player/udeath.wav");		// gib death
 
@@ -734,5 +735,13 @@ METHOD(Skaarj, mr_setup, bool(Skaarj this, entity actor))
 	actor.th_die = skaarj_die;
 
     return true;
+}
+METHOD(Skaarj, mr_sight, bool(Skaarj this, entity actor))
+{
+	TC(Skaarj, this);
+
+	_sound(actor, CH_VOICE, "skaarj/syl13sk.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

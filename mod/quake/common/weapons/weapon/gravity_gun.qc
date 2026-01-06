@@ -69,7 +69,10 @@ float Drag(entity this, float force_allow_pick, float ischeat)
 			}
 			else if(Drag_CanDrag(this) && PHYS_INPUT_BUTTON_ATCK(this))
 			{
+				int oldclip = this.clipgroup;
+				this.clipgroup = 0;
 				crosshair_trace_plusvisibletriggers(this);
+				this.clipgroup = oldclip;
 				entity e = trace_ent;
 				float pick = force_allow_pick;
 				if (e && !pick && vdist(this.origin - e.origin, <=, autocvar_sv_quake_gravitygun_range))

@@ -1211,6 +1211,12 @@ void FoundTarget(entity this)
 		this.target4 = "";
 	}
 
+	if(IS_PLAYER(this.enemy) && !this.is_frozen && this.target && this.target != "" && IsQBJ3Map())
+	{
+		SUB_UseTargets_Ex(this, this.enemy, this.enemy, BIT(2) | BIT(3) | BIT(4), false);
+		this.target = string_null;
+	}
+
 	// initial jump when angry - from Copper
 	if(this.move_movetype == MOVETYPE_STEP && this.movedir != '0 0 0')
 	{

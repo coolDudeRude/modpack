@@ -160,7 +160,7 @@ void ret_transform(entity this)
 	_setmodel(this, "progs/retinazer.mdl");
 	setsize(this, oldmin, oldmax);
 
-	sound(this, CH_VOICE, SND_MON_RETINAZER_SIGHT, 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
 
 	this.th_missile = ret_atkd1; // speedy attacks!
 	this.bosswave += 1;
@@ -345,6 +345,7 @@ METHOD(Retinazer, mr_setup, bool(Retinazer this, entity actor))
 	precache_sound("twins/explode.wav");
 	precache_sound("twins/laser_fire.wav");
 	precache_sound("twins/hit.wav");
+	precache_sound("eoc/sight.wav");
 
 	actor.bosswave = 0;
 	actor.skin = 1;
@@ -361,5 +362,13 @@ METHOD(Retinazer, mr_setup, bool(Retinazer this, entity actor))
 	actor.checkattack = RetinazerCheckAttack;
 
     return true;
+}
+METHOD(Retinazer, mr_sight, bool(Retinazer this, entity actor))
+{
+	TC(Retinazer, this);
+
+	_sound(actor, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

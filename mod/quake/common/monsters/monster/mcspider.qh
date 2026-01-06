@@ -32,7 +32,6 @@ CLASS(MCSpider, Monster)
 #ifdef GAMEQC
     ATTRIB(MCSpider, m_model, Model, MDL_MON_MCSPIDER);
     ATTRIB(MCSpider, m_model_head, Model, MDL_Null);
-    ATTRIB(MCSpider, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(MCSpider, netname, string, "mcspider");
     ATTRIB(MCSpider, m_name, string, _("Spider"));

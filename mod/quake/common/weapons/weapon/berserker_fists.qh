@@ -1,0 +1,26 @@
+#pragma once
+
+CLASS(BerserkerFists, Weapon)
+/* ammotype  */ ATTRIB(BerserkerFists, ammo_type, int, 0);
+/* impulse   */ ATTRIB(BerserkerFists, impulse, int, 1);
+/* spawnflags*/ ATTRIB(BerserkerFists, spawnflags, int, WEP_FLAG_MELEE | WEP_FLAG_NOAGGRO | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(BerserkerFists, aflag, int, 0);
+/* modelname */ ATTRIB(BerserkerFists, mdl, string, "berserk");
+/* crosshair */ ATTRIB(BerserkerFists, w_crosshair, string, "gfx/crosshair20");
+/* crosshair */ ATTRIB(BerserkerFists, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(BerserkerFists, w_crosshair_color, vector, '1 0 0');
+/* wepimg    */ ATTRIB(BerserkerFists, model2, string, "berserk");
+/* refname   */ ATTRIB(BerserkerFists, netname, string, "berserk");
+/* wepname   */ ATTRIB(BerserkerFists, m_name, string, _("BerserkerFists"));
+/* framerate */ ATTRIB(BerserkerFists, m_delta, float, 0.05);
+
+ENDCLASS(BerserkerFists)
+REGISTER_WEAPON(BERSERKER_FISTS, NEW(BerserkerFists));
+
+//SPAWNFUNC_WEAPON(weapon_berserk, WEP_BERSERKER_FISTS)
+
+#ifdef SVQC
+.float berserk_sound;
+
+void W_FireBerserkerFists(entity this, .entity weaponentity);
+#endif

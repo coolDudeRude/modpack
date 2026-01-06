@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_BLUD,            DEATH_SELF_MON_BLUD,            DEAT
 #ifdef GAMEQC
 MODEL(MON_BLUD, "progs/blud.mdl");
 MODEL(MON_BLUD_HEAD, "progs/rawbone.mdl");
-
-SOUND(MON_BLUD_SIGHT, "monsters/blud/blsight");
 #endif
 
 CLASS(Blud, Monster)
@@ -20,7 +18,6 @@ CLASS(Blud, Monster)
 #ifdef GAMEQC
     ATTRIB(Blud, m_model, Model, MDL_MON_BLUD);
     ATTRIB(Blud, m_model_head, Model, MDL_MON_BLUD_HEAD);
-    ATTRIB(Blud, m_sound, Sound, SND_MON_BLUD_SIGHT);
 #endif
     ATTRIB(Blud, netname, string, "blud");
     ATTRIB(Blud, m_name, string, _("Blud"));

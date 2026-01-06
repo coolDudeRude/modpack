@@ -1513,6 +1513,7 @@ METHOD(Justice, mr_setup, bool(Justice this, entity actor))
 	precache_sound("weapons/sword2b.wav");
 
 	precache_sound("justice/leap1.wav");
+	precache_sound("justice/sight1.wav");
 
 	precache_sound("ambience/flames1.wav");
 	precache_sound("ambience/flames2.wav");
@@ -1536,5 +1537,13 @@ METHOD(Justice, mr_setup, bool(Justice this, entity actor))
 	actor.steptype = FS_TYPELARGE;
 
     return true;
+}
+METHOD(Justice, mr_sight, bool(Justice this, entity actor))
+{
+	TC(Justice, this);
+
+	_sound(actor, CH_VOICE, "justice/sight1.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

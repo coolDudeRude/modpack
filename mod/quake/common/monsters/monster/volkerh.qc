@@ -869,6 +869,14 @@ METHOD(Volkerh, mr_setup, bool(Volkerh this, entity actor))
 
     return true;
 }
+METHOD(Volkerh, mr_sight, bool(Volkerh this, entity actor))
+{
+	TC(Volkerh, this);
+
+	_sound(actor, CH_VOICE, "volkerh/volwake.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif
 
 #ifdef CSQC

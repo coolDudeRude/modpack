@@ -69,12 +69,9 @@ bool GremlinAttemptWeaponSteal(entity this)
 	Inventory_remove(wep, victim, ITEM_OWNED);
 	// give it to our gremlin
 	this.(weaponentity).m_weapon = best;
-	// take some ammo while we are at it
-	this.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS | IT_PLASMA_AMMO | IT_LAVA_NAILS | IT_MULTI_ROCKETS | IT_DRILLS);
 	if(best != WEP_Null)
 		Send_Notification(NOTIF_ONE, victim, MSG_MULTI, ITEM_WEAPON_STOLE, best.m_name);
 
-	this.items |= best.ammo_type;
 	switch(best.ammo_type)
 	{
 		case IT_SHELLS:
@@ -840,8 +837,6 @@ void GremlinDropBackpack(entity this)
 	entity item = spawn();
 	item.origin = this.origin - '0 0 24';
 
-	this.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS | IT_PLASMA_AMMO | IT_LAVA_NAILS | IT_MULTI_ROCKETS | IT_DRILLS);
-	item.items = this.items;
 	item.powerups = this.powerups;
 
 	.entity weaponentity = weaponentities[0];
@@ -1109,7 +1104,7 @@ void Gremlin_FireShotgun(entity this)
 	dir = dir + crandom()* 0.1 *v_right + crandom()* 0.1 *v_up;
 	dir = normalize(dir);
 	this.v_angle = vectoangles(dir);
-	FireBullets(this, 6, this.origin, dir, '0.04 0.04 0', WEP_SHOTGUN.m_id);
+	FireBullets(this, 6, 4, this.origin, dir, '0.04 0.04 0', WEP_SHOTGUN.m_id);
 }
 
 /*
@@ -1131,7 +1126,7 @@ void Gremlin_FireSuperShotgun(entity this)
 	dir = dir + crandom() * 0.3 * v_right + crandom() * 0.3 *v_up;
 	dir = normalize(dir);
 	this.v_angle = vectoangles(dir);
-	FireBullets(this, 14, this.origin, dir, '0.14 0.08 0', WEP_SUPER_SHOTGUN.m_id);
+	FireBullets(this, 14, 4, this.origin, dir, '0.14 0.08 0', WEP_SUPER_SHOTGUN.m_id);
 }
 
 /*
@@ -1473,7 +1468,6 @@ void Gremlin_Split(entity this)
 //   grem.max_health = 101;
 //   grem.gorging = false;
 	grem.stoleweapon = false;
-	grem.items = 0;
 	grem.powerups = 0;
 	monsters_total += 1;
 	setorigin(grem, pos);
@@ -1574,6 +1568,7 @@ METHOD(Gremlin, mr_setup, bool(Gremlin this, entity actor))
 	precache_sound("grem/pain2.wav");
 	precache_sound("grem/pain3.wav");
 	precache_sound("grem/idle.wav");
+	precache_sound("grem/sight1.wav");
 
 	NumGremlins += 1;
 
@@ -1609,7 +1604,7 @@ METHOD(Gremlin, mr_sight, bool(Gremlin this, entity actor))
 	if(actor.stoleweapon)
 		return true; // don't play a sound if we have a weapon?
 
-	sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
+	_sound(actor, CH_VOICE, "grem/sight1.wav", 1, ATTN_NORM);
 
     return true;
 }

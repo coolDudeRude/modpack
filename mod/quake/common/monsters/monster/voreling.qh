@@ -16,7 +16,6 @@ CLASS(Voreling, Monster)
     ATTRIB(Voreling, m_maxs, vector, '16 16 24');
 #ifdef GAMEQC
     ATTRIB(Voreling, m_model, Model, MDL_MON_VORELING);
-    ATTRIB(Voreling, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Voreling, netname, string, "voreling");
     ATTRIB(Voreling, m_name, string, _("Voreling"));

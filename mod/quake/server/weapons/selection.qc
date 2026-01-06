@@ -112,6 +112,7 @@ void W_SwitchWeapon_Force(entity this, Weapon wep, .entity weaponentity)
 	entity w_ent = this.(weaponentity);
 	w_ent.cnt = w_ent.m_weapon.m_id;
 	w_ent.m_weapon = wep;
+	w_ent.m_frame = 0;
 	this.parry_time = 0; // TODO: allow weapons to tell when they've been swapped away from
 	W_SetCurrentAmmo(this);
 	w_ready(w_ent);
@@ -147,6 +148,8 @@ bool W_SwitchWeapon(entity this, Weapon w, .entity weaponentity)
 		return false;
 	if(this.m_transform && this.m_transform.qcc_noselect)
 		return false; // TODO
+	if(StatusEffects_active(STATUSEFFECT_Berserk, this))
+		return false; // fisticuffs
 	if(this.(weaponentity).m_weapon != w)
 	{
 		if(client_hasweapon(this, w, weaponentity, true, true))

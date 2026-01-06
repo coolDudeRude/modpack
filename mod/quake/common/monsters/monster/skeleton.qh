@@ -91,7 +91,6 @@ CLASS(Skeleton, Monster)
 #ifdef GAMEQC
     ATTRIB(Skeleton, m_model, Model, MDL_MON_SKELETON);
     ATTRIB(Skeleton, m_model_head, Model, MDL_Null);
-    ATTRIB(Skeleton, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Skeleton, netname, string, "skeleton");
     ATTRIB(Skeleton, m_name, string, _("Skeleton"));

@@ -449,7 +449,7 @@ void W_FireBGun(entity this)
 
 	TankAim(this);
 
-	FireBullets(this, 25, this.origin, v_forward, '0.03 0.03 0', DEATH_CRUSH.m_id);
+	FireBullets(this, 25, 4, this.origin, v_forward, '0.03 0.03 0', DEATH_CRUSH.m_id);
 
 	TankAim(this);
 	traceline(this.tank.origin, this.tank.origin + v_forward * 50, false, NULL);
@@ -516,7 +516,7 @@ void W_FireACannon2(entity this)
 		v_forward.z = v_forward.z + crandom()*0.13;
 	}
 
-	FireBullets(this, 4, this.origin, v_forward, '0.01 0.01 0', DEATH_CRUSH.m_id);
+	FireBullets(this, 4, 4, this.origin, v_forward, '0.01 0.01 0', DEATH_CRUSH.m_id);
 
 	PushBack(this, 18);
 }

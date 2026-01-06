@@ -322,6 +322,7 @@ METHOD(Boil, mr_setup, bool(Boil this, entity actor))
 	precache_sound("zombie/boil_squirt.wav");
 	precache_sound("zombie/boil_windup.wav");
 	precache_sound("zombie/boil_explode.wav");
+	precache_sound("zombie/boil_sight.wav");
 
 	actor.skin = floor(random() * 5);
 	actor.brkvelbase = '200 50 150';
@@ -395,5 +396,13 @@ METHOD(Boil, mr_setup, bool(Boil this, entity actor))
 	}
 
     return true;
+}
+METHOD(Boil, mr_sight, bool(Boil this, entity actor))
+{
+	TC(Boil, this);
+
+	_sound(actor, CH_VOICE, "zombie/boil_sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

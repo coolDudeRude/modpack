@@ -45,7 +45,6 @@ CLASS(Ghast, Monster)
 #ifdef GAMEQC
     ATTRIB(Ghast, m_model, Model, MDL_MON_GHAST);
     ATTRIB(Ghast, m_model_head, Model, MDL_Null);
-    ATTRIB(Ghast, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Ghast, netname, string, "ghast");
     ATTRIB(Ghast, m_name, string, _("Ghast"));

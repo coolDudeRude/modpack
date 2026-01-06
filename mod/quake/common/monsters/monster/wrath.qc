@@ -301,6 +301,7 @@ METHOD(Wrath, mr_setup, bool(Wrath this, entity actor))
 	precache_sound("wrath/watt.wav");
 	precache_sound("wrath/wpain.wav");
 	precache_sound("wrath/wdthc.wav");
+	precache_sound("wrath/wsee.wav");
 
     actor.health = 400;
 	actor.yaw_speed = 35;
@@ -313,5 +314,13 @@ METHOD(Wrath, mr_setup, bool(Wrath this, entity actor))
 	actor.th_die = wrath_die02;
 
     return true;
+}
+METHOD(Wrath, mr_sight, bool(Wrath this, entity actor))
+{
+	TC(Wrath, this);
+
+	_sound(actor, CH_VOICE, "wrath/wsee.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

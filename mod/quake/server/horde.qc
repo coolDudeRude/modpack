@@ -391,6 +391,22 @@ void PrecacheMonsters()
 	precache_model("progs/revival.mdl");
 	precache_sound("items/revival.wav");
 
+	// vampirism
+	precache_model("progs/item_vamp.mdl");
+	precache_model("progs/item_vampglobe.mdl");
+	precache_sound("items/vampstart.wav");
+	precache_sound("items/vampfade.wav");
+	precache_sound("items/vamppickup1.wav");
+	precache_sound("items/vamppickup2.wav");
+	precache_sound("items/vamppickup3.wav");
+
+	// berserk
+	precache_model("progs/item_berserk.mdl");
+	precache_model("progs/v_berserk.mdl");
+	precache_sound("items/berserk_pickup.wav");
+	precache_sound("items/berserk_fade.wav");
+	precache_sound("items/berserk_fire.wav");	
+
 	// tank
 	precache_model("progs/g_tank.mdl");
 
@@ -531,49 +547,49 @@ void horde_ammo_touch(entity this, entity toucher)
 	if(this.ammo_shells && toucher.ammo_shells < GetAmmoLimit(toucher, IT_SHELLS))
 	{
 		toucher.ammo_shells += this.ammo_shells;
-		SendItemPickup(toucher, this.items, this.ammo_shells);
+		SendItemPickup(toucher, IT_SHELLS, this.ammo_shells);
 		pickedup = true;
 	}
 	if(this.ammo_nails && toucher.ammo_nails < GetAmmoLimit(toucher, IT_NAILS))
 	{
 		toucher.ammo_nails += this.ammo_nails;
-		SendItemPickup(toucher, this.items, this.ammo_nails);
+		SendItemPickup(toucher, IT_NAILS, this.ammo_nails);
 		pickedup = true;
 	}
 	if(this.ammo_rockets && toucher.ammo_rockets < GetAmmoLimit(toucher, IT_ROCKETS))
 	{
 		toucher.ammo_rockets += this.ammo_rockets;
-		SendItemPickup(toucher, this.items, this.ammo_rockets);
+		SendItemPickup(toucher, IT_ROCKETS, this.ammo_rockets);
 		pickedup = true;
 	}
 	if(this.ammo_cells && toucher.ammo_cells < GetAmmoLimit(toucher, IT_CELLS))
 	{
 		toucher.ammo_cells += this.ammo_cells;
-		SendItemPickup(toucher, this.items, this.ammo_cells);
+		SendItemPickup(toucher, IT_CELLS, this.ammo_cells);
 		pickedup = true;
 	}
 	if(this.ammo_lava_nails && toucher.ammo_lava_nails < GetAmmoLimit(toucher, IT_LAVA_NAILS))
 	{
 		toucher.ammo_lava_nails += this.ammo_lava_nails;
-		SendItemPickup(toucher, this.items, this.ammo_lava_nails);
+		SendItemPickup(toucher, IT_LAVA_NAILS, this.ammo_lava_nails);
 		pickedup = true;
 	}
 	if(this.ammo_multi_rockets && toucher.ammo_multi_rockets < GetAmmoLimit(toucher, IT_MULTI_ROCKETS))
 	{
 		toucher.ammo_multi_rockets += this.ammo_multi_rockets;
-		SendItemPickup(toucher, this.items, this.ammo_multi_rockets);
+		SendItemPickup(toucher, IT_MULTI_ROCKETS, this.ammo_multi_rockets);
 		pickedup = true;
 	}
 	if(this.ammo_plasma && toucher.ammo_plasma < GetAmmoLimit(toucher, IT_PLASMA_AMMO))
 	{
 		toucher.ammo_plasma += this.ammo_plasma;
-		SendItemPickup(toucher, this.items, this.ammo_plasma);
+		SendItemPickup(toucher, IT_PLASMA_AMMO, this.ammo_plasma);
 		pickedup = true;
 	}
 	if(this.ammo_drills && toucher.ammo_drills < GetAmmoLimit(toucher, IT_DRILLS))
 	{
 		toucher.ammo_drills += this.ammo_drills;
-		SendItemPickup(toucher, this.items, this.ammo_drills);
+		SendItemPickup(toucher, IT_DRILLS, this.ammo_drills);
 		pickedup = true;
 	}
 
@@ -1870,6 +1886,8 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 sword");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 lenforcer");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 cook");
+		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 boil");
+		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 blister");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 floyd");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 edie");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 bender");
@@ -1877,7 +1895,6 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 dalek");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 arachnofloyd");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 norb");
-		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 boil");
 		if(season == SEASON_XMAS)
 		{
 			Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "2 elf 1 santa");
@@ -1909,10 +1926,11 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_EASY, HORDE_SQUAD_TYPE_FLYING, "1 gargoyle");
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_EASY, HORDE_SQUAD_TYPE_FLYING, "1 octa");
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_EASY, HORDE_SQUAD_TYPE_FLYING, "1 gaunt");
+		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_EASY, HORDE_SQUAD_TYPE_FLYING, "2 demon_eye");
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_HARD, HORDE_SQUAD_TYPE_NORMAL, "2 knight 1 dknight");
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_HARD, HORDE_SQUAD_TYPE_NORMAL, "2 knight 1 justice");
 		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_HARD, HORDE_SQUAD_TYPE_FLYING, "2 grenling");
-		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_EASY, HORDE_SQUAD_TYPE_FLYING, "2 demon_eye");
+		Horde_SpawnSquadEntity(HORDE_ELITE | HORDE_HARD, HORDE_SQUAD_TYPE_FLYING, "2 cacodemon");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "2 hknight");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "2 dfury");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "2 knight 1 hknight");
@@ -1921,6 +1939,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 hogremac");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 ogre");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "3 wizard");
+		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "1 cacodemon");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "2 demon_eye");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "2 gargoyle");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "2 gaunt");
@@ -1947,6 +1966,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_BOSS | HORDE_HARD, HORDE_SQUAD_TYPE_NORMAL, "2 minotaur");
 		Horde_SpawnSquadEntity(HORDE_BOSS | HORDE_HARD, HORDE_SQUAD_TYPE_BOSS, "1 juggernaut");
 		Horde_SpawnSquadEntity(HORDE_BOSS | HORDE_HARD, HORDE_SQUAD_TYPE_BOSS, "1 gug");
+		Horde_SpawnSquadEntity(HORDE_BOSS | HORDE_HARD, HORDE_SQUAD_TYPE_FLYING, "1 amalgam");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_BOSS, "1 shambler");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_BOSS, "1 minotaur");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_NORMAL, "1 tortoise");
@@ -2245,6 +2265,26 @@ void horde_setup_powerup(entity this, int powerup)
 			this.classname = "item_revival";
 			break;
 		}
+		case POWERUP_VAMPIRISM:
+		{
+			this.noise = "items/vampstart.wav";
+			_setmodel(this, "progs/item_vamp.mdl");
+			this.netname = "Vampiric Blood";
+			this.powerups = POWERUP_VAMPIRISM;
+			this.vamp_finished = 30;
+			this.classname = "item_artifact_vampirism";
+			break;
+		}
+		case POWERUP_BERSERK:
+		{
+			this.noise = "items/berserk_pickup.wav";
+			_setmodel(this, "progs/item_berserk.mdl");
+			this.netname = "Berserk";
+			this.powerups = POWERUP_BERSERK;
+			this.vamp_finished = 10;
+			this.classname = "item_artifact_berserk";
+			break;
+		}
 	}
 }
 
@@ -2294,6 +2334,8 @@ void horde_spawn_powerup(entity this, entity attacker)
 		RandomSelection_AddFloat(POWERUP_EMPATHY_SHIELDS, 0.5, 1);
 		RandomSelection_AddFloat(POWERUP_JUMPBOOTS, 0.5, 1);
 		RandomSelection_AddFloat(POWERUP_SHARPSHOOTER, 0.5, 1);
+		RandomSelection_AddFloat(POWERUP_VAMPIRISM, 0.5, 1);
+		RandomSelection_AddFloat(POWERUP_BERSERK, 0.5, 1);
 		int ndead = 0;
 		FOREACH_CLIENT(IS_PLAYER(it) && it.deadflag != DEAD_NO,
 		{

@@ -313,7 +313,6 @@ METHOD(Grenling, mr_setup, bool(Grenling this, entity actor))
     TC(Grenling, this);
 
 	precache_model("progs/grenbone.mdl");
-	precache_model("progs/w_spike.mdl");
 	precache_sound("monsters/grenling/grswipe.wav");
 	precache_sound("monsters/grenling/grcut.wav");
 	precache_sound("monsters/grenling/grtalk1.wav");

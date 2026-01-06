@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_LOSTSOUL,           DEATH_SELF_MON_LOSTSOUL,         
 
 #ifdef GAMEQC
 MODEL(MON_LOSTSOUL, "progs/mon_lostsoul.mdl");
-
-//SOUND(MON_LOSTSOUL_SIGHT, "lostsoul/sight1");
 #endif
 
 CLASS(LostSoul, Monster)
@@ -18,7 +16,6 @@ CLASS(LostSoul, Monster)
     ATTRIB(LostSoul, m_maxs, vector, '16 16 16');
 #ifdef GAMEQC
     ATTRIB(LostSoul, m_model, Model, MDL_MON_LOSTSOUL);
-    ATTRIB(LostSoul, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(LostSoul, netname, string, "lostsoul");
     ATTRIB(LostSoul, m_name, string, _("Lost Soul"));

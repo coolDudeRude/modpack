@@ -66,7 +66,6 @@ void bmodel_lightstyle(entity b, float opacity);
 // impel stuff
 bool angry_monsters;
 bool corpse_removal;
-.entity other2;
 
 bool world_already_spawned;
 int world_initialized;

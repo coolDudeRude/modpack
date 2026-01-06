@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_GAUNT,        DEATH_SELF_MON_GAUNT,        DEATH_MURD
 #ifdef GAMEQC
 MODEL(MON_GAUNT, "progs/mon_gaunt.mdl");
 MODEL(MON_GAUNT_HEAD, "progs/h_gaunt.mdl");
-
-SOUND(MON_GAUNT_SIGHT, "gaunt/sight");
 #endif
 
 CLASS(Gaunt, Monster)
@@ -20,7 +18,6 @@ CLASS(Gaunt, Monster)
 #ifdef GAMEQC
     ATTRIB(Gaunt, m_model, Model, MDL_MON_GAUNT);
     ATTRIB(Gaunt, m_model_head, Model, MDL_MON_GAUNT_HEAD);
-    ATTRIB(Gaunt, m_sound, Sound, SND_MON_GAUNT_SIGHT);
 #endif
     ATTRIB(Gaunt, netname, string, "gaunt");
     ATTRIB(Gaunt, m_name, string, _("Gaunt"));

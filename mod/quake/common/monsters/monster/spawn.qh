@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SPAWN,           DEATH_SELF_MON_SPAWN,           DEAT
 
 #ifdef GAMEQC
 MODEL(MON_SPAWN, "progs/tarbaby.mdl");
-
-SOUND(MON_SPAWN_SIGHT, "blob/sight1");
 #endif
 
 CLASS(Spawn, Monster)
@@ -18,7 +16,6 @@ CLASS(Spawn, Monster)
     ATTRIB(Spawn, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Spawn, m_model, Model, MDL_MON_SPAWN);
-    ATTRIB(Spawn, m_sound, Sound, SND_MON_SPAWN_SIGHT);
 #endif
     ATTRIB(Spawn, netname, string, "spawn");
     ATTRIB(Spawn, m_name, string, _("Spawn"));

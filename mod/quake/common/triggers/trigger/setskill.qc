@@ -25,6 +25,8 @@ spawnfunc(trigger_setskill)
 	InitTrigger(this);
 	settouch(this, trigger_skill_touch);
 	this.use = trigger_skill_use;
+
+	have_setskill = true;
 }
 
 
@@ -64,6 +66,8 @@ Keys:
 spawnfunc(target_setskill)
 {
 	this.use = target_setskill_use;
+
+	have_setskill = true;
 }
 
 #endif

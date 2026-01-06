@@ -426,11 +426,12 @@ METHOD(Arachnofloyd, mr_setup, bool(Arachnofloyd this, entity actor))
 	precache_sound("arachnofloyd/step1.wav");
 	precache_sound("arachnofloyd/leap.wav");
 	precache_sound("arachnofloyd/death1.wav");
-	precache_sound("arachnofloyd/death2.wav");	
+	precache_sound("arachnofloyd/death2.wav");
 	precache_sound("arachnofloyd/idle1.wav");
-	precache_sound("arachnofloyd/idle2.wav");	
+	precache_sound("arachnofloyd/idle2.wav");
 	precache_sound("arachnofloyd/pain1.wav");
-	precache_sound("arachnofloyd/pain2.wav");	
+	precache_sound("arachnofloyd/pain2.wav");
+	precache_sound("arachnofloyd/sight.wav");
 
     actor.health = 600;
     actor.th_stand = arf_stand1;
@@ -444,5 +445,13 @@ METHOD(Arachnofloyd, mr_setup, bool(Arachnofloyd this, entity actor))
 	actor.checkattack = arfCheckAttack;
 
     return true;
+}
+METHOD(Arachnofloyd, mr_sight, bool(Arachnofloyd this, entity actor))
+{
+	TC(Arachnofloyd, this);
+
+	_sound(actor, CH_VOICE, "arachnofloyd/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

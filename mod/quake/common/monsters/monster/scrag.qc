@@ -181,7 +181,6 @@ void Wiz_FastFire(entity this)
 		newmis.velocity = vec * 600;
 		newmis.owner = this.owner;
 		newmis.classname = "wizard_spike";
-		//_setmodel(newmis, "progs/w_spike.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');
 		CSQCProjectile(newmis, true, PROJECTILE_SCRAG_SPIKE, true);
 	}
@@ -322,7 +321,10 @@ void wiz_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -40)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, MDL_MON_SCRAG_HEAD.model_str(), this.health);
+		if(IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_scrag.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, MDL_MON_SCRAG_HEAD.model_str(), this.health);
 		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
 		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
@@ -387,7 +389,6 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 {
     TC(Scrag, this);
 
-	precache_model("progs/w_spike.mdl");
 	precache_model("progs/grenbone.mdl");
 	precache_sound("wizard/hit.wav");		// used by c code
 	precache_sound("wizard/wattack.wav");
@@ -395,6 +396,18 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 	precache_sound("wizard/widle1.wav");
 	precache_sound("wizard/widle2.wav");
 	precache_sound("wizard/wpain.wav");
+	precache_sound("wizard/wsight.wav");
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/wizard_qbj.mdl");
+		precache_model("progs/gibs/gibhead_scrag.mdl");
+		//precache_model("progs/proj_wizard.mdl");
+		//precache_model("progs/proj_wizard2.mdl");
+
+		_setmodel(actor, "progs/wizard_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 
     actor.health = 80;
     actor.th_stand = wiz_stand1;
@@ -407,5 +420,13 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 	actor.checkattack = WizardCheckAttack;
 
     return true;
+}
+METHOD(Scrag, mr_sight, bool(Scrag this, entity actor))
+{
+	TC(Scrag, this);
+
+	_sound(actor, CH_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

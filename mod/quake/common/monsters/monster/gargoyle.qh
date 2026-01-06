@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_GARGOYLE,        DEATH_SELF_MON_GARGOYLE,        DEAT
 #ifdef GAMEQC
 MODEL(MON_GARGOYLE, "progs/mon_gargoyle.mdl");
 MODEL(MON_GARGOYLE_HEAD, "progs/h_gargoyle.mdl");
-
-SOUND(MON_GARGOYLE_SIGHT, "gargoyle/sight1");
 #endif
 
 CLASS(Gargoyle, Monster)
@@ -20,7 +18,6 @@ CLASS(Gargoyle, Monster)
 #ifdef GAMEQC
     ATTRIB(Gargoyle, m_model, Model, MDL_MON_GARGOYLE);
     ATTRIB(Gargoyle, m_model_head, Model, MDL_MON_GARGOYLE_HEAD);
-    ATTRIB(Gargoyle, m_sound, Sound, SND_MON_GARGOYLE_SIGHT);
 #endif
     ATTRIB(Gargoyle, netname, string, "gargoyle");
     ATTRIB(Gargoyle, m_name, string, _("Gargoyle"));

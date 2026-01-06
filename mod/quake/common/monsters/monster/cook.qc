@@ -721,4 +721,12 @@ METHOD(Cook, mr_setup, bool(Cook this, entity actor))
 
     return true;
 }
+METHOD(Cook, mr_sight, bool(Cook this, entity actor))
+{
+	TC(Cook, this);
+
+	_sound(actor, CH_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

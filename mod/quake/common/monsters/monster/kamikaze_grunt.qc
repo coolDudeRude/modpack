@@ -357,4 +357,12 @@ METHOD(KamikazeGrunt, mr_setup, bool(KamikazeGrunt this, entity actor))
 
     return true;
 }
+METHOD(KamikazeGrunt, mr_sight, bool(KamikazeGrunt this, entity actor))
+{
+	TC(KamikazeGrunt, this);
+
+	_sound(actor, CH_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

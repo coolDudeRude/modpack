@@ -58,7 +58,6 @@ CLASS(MCZombie, Monster)
 #ifdef GAMEQC
     ATTRIB(MCZombie, m_model, Model, MDL_MON_MCZOMBIE);
     ATTRIB(MCZombie, m_model_head, Model, MDL_MON_MCZOMBIE_HEAD);
-    ATTRIB(MCZombie, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(MCZombie, netname, string, "mczombie");
     ATTRIB(MCZombie, m_name, string, _("Zombie"));

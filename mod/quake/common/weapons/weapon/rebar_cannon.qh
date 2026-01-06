@@ -1,0 +1,24 @@
+#pragma once
+
+#ifdef GAMEQC
+EFFECT(0, REBAR_CANNON_BOUNCE,                 "TE_SPARK")
+#endif
+
+CLASS(RebarCannon, Weapon)
+/* ammotype  */ ATTRIB(RebarCannon, ammo_type, int, IT_NAILS);
+/* impulse   */ ATTRIB(RebarCannon, impulse, int, 5);
+/* spawnflags*/ ATTRIB(RebarCannon, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(RebarCannon, aflag, int, 30);
+/* modelname */ ATTRIB(RebarCannon, mdl, string, "rebar");
+/* crosshair */ ATTRIB(RebarCannon, w_crosshair, string, "gfx/crosshair15");
+/* crosshair */ ATTRIB(RebarCannon, w_crosshair_size, float, 0.4);
+/* crosshair */ ATTRIB(RebarCannon, w_crosshair_color, vector, '0.71 0.25 0.05');
+/* wepimg    */ ATTRIB(RebarCannon, model2, string, "rebar");
+/* refname   */ ATTRIB(RebarCannon, netname, string, "rebar");
+/* wepname   */ ATTRIB(RebarCannon, m_name, string, _("Rebar Cannon"));
+/* framerate */ ATTRIB(RebarCannon, m_delta, float, 0.05);
+
+ENDCLASS(RebarCannon)
+REGISTER_WEAPON(REBAR_CANNON, NEW(RebarCannon));
+
+SPAWNFUNC_WEAPON(weapon_rebar, WEP_REBAR_CANNON)

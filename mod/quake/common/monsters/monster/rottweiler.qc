@@ -112,7 +112,12 @@ void dog_walk1(entity this)
 {
 	set_animofs(this, anim_dog_walk, 1, dog_walk2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+	{
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "dog/dog_idle.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+	}
 	ai_walk(this, 8);
 }
 
@@ -132,7 +137,12 @@ void dog_run1(entity this)
 {
 	set_animofs(this, anim_dog_run, 1, dog_run2);
 	if(random() < 0.2)
-		_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+	{
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "dog/dog_idle.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+	}
 	ai_run(this, 16);
 }
 
@@ -171,7 +181,7 @@ void dog_leap1(entity this)
 	set_animofs(this, anim_dog_leap, 1, dog_leap2);
 	if(this.health <= 0)
 	{
-		LOG_DEBUG("dog_leap2: dead");
+		//LOG_DEBUG("dog_leap2: dead");
 		settouch(this, func_null);
 		setthink(this, dog_die1);
 		return;
@@ -214,7 +224,10 @@ void dog_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	_sound(this, CH_VOICE, "dog/dpain1.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+		_sound(this, CH_VOICE, "dog/dog_dpain1.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "dog/dpain1.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1;
 
@@ -320,7 +333,10 @@ void dog_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	_sound(this, CH_VOICE, "dog/ddeath.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+		_sound(this, CH_VOICE, "dog/dog_ddeath.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "dog/ddeath.wav", 1, ATTN_NORM);
 	this.solid = SOLID_NOT;
 
 	if(random() > 0.5)
@@ -422,6 +438,20 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 	precache_sound("dog/ddeath.wav");
 	precache_sound("dog/dpain1.wav");
 	precache_sound("dog/idle.wav");
+	precache_sound("dog/dsight.wav");
+
+	if(IsQBJ3Map())
+	{
+		// renamed overlapping sounds
+		precache_sound("dog/dog_dattack1.wav");
+		precache_sound("dog/dog_ddeath.wav");
+		precache_sound("dog/dog_dpain1.wav");
+		precache_sound("dog/dog_idle.wav");
+		precache_sound("dog/dog_dsight.wav");
+
+		actor.mdl_head = "progs/gibs/gibhead_dog.mdl";
+		actor.mdl_body = "progs/dog_qbj.mdl";
+	}
 
 	if(!actor.variant && random() < 0.2)
 		actor.variant = floor(random() * 12) + 1;
@@ -464,6 +494,17 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 	actor.checkattack = DogCheckAttack;
 
 	actor.steptype = FS_TYPESLOW;
+
+	return true;
+}
+METHOD(Rottweiler, mr_sight, bool(Rottweiler this, entity actor))
+{
+	TC(Rottweiler, this);
+
+	if(IsQBJ3Map())
+		_sound(actor, CH_VOICE, "dog/dog_dsight.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
 
 	return true;
 }

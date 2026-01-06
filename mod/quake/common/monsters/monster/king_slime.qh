@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_KING_SLIME,           DEATH_SELF_MON_KING_SLIME,     
 
 #ifdef GAMEQC
 MODEL(MON_KING_SLIME, "progs/king_slime.mdl");
-
-SOUND(MON_KING_SLIME_SIGHT, "king_slime/sight");
 #endif
 
 CLASS(KingSlime, Monster)
@@ -18,7 +16,6 @@ CLASS(KingSlime, Monster)
     ATTRIB(KingSlime, m_maxs, vector, '116 116 48');
 #ifdef GAMEQC
     ATTRIB(KingSlime, m_model, Model, MDL_MON_KING_SLIME);
-    ATTRIB(KingSlime, m_sound, Sound, SND_MON_KING_SLIME_SIGHT);
 #endif
     ATTRIB(KingSlime, netname, string, "king_slime");
     ATTRIB(KingSlime, m_name, string, _("King Slime"));

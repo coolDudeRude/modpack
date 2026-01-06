@@ -7,6 +7,8 @@ REGISTER_NET_TEMP(CLIENT_WEPENT)
 
 .int hammer_skin;
 
+.int pistol_shots;
+
 #ifdef SVQC
 
 	bool wepent_send(entity this, entity to, int sf);

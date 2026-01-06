@@ -65,7 +65,6 @@ CLASS(Piglin, Monster)
 #ifdef GAMEQC
     ATTRIB(Piglin, m_model, Model, MDL_MON_PIGLIN);
     ATTRIB(Piglin, m_model_head, Model, MDL_Null);
-    ATTRIB(Piglin, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Piglin, netname, string, "piglin");
     ATTRIB(Piglin, m_name, string, _("Piglin"));

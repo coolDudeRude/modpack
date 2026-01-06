@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_MOURNING_WOOD,            DEATH_SELF_MON_MOURNING_WOO
 
 #ifdef GAMEQC
 MODEL(MON_MOURNING_WOOD, "progs/mourning_wood.mdl");
-
-SOUND(MON_MOURNING_WOOD_SIGHT, "mourning_wood/death");
 #endif
 
 CLASS(MourningWood, Monster)
@@ -19,7 +17,6 @@ CLASS(MourningWood, Monster)
 #ifdef GAMEQC
     ATTRIB(MourningWood, m_model, Model, MDL_MON_MOURNING_WOOD);
     ATTRIB(MourningWood, m_model_head, Model, MDL_Null);
-    ATTRIB(MourningWood, m_sound, Sound, SND_MON_MOURNING_WOOD_SIGHT);
 #endif
     ATTRIB(MourningWood, netname, string, "mourning_wood");
     ATTRIB(MourningWood, m_name, string, _("Mourning Wood"));

@@ -135,7 +135,8 @@ void QCC_ClearWeapons(entity this)
 	for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 	{
 		.entity weaponentity = weaponentities[slot];
-		if(this.(weaponentity).m_weapon.spawnflags & WEP_FLAG_CHAMPION)
+		Weapon wep = this.(weaponentity).m_weapon;
+		if((wep.spawnflags & WEP_FLAG_CHAMPION) || !client_hasweapon(this, wep, weaponentity, true, false))
 			W_SwitchWeapon(this, w_getbestweapon(this, weaponentity), weaponentity);
 	}
 }

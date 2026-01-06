@@ -217,6 +217,7 @@ METHOD(Eel, mr_setup, bool(Eel this, entity actor))
 	precache_sound("eel/epain3.wav");
 	precache_sound("eel/eactive1.wav");
 	precache_sound("eel/eatt1.wav");
+	precache_sound("eel/eelc5.wav");
 
 	actor.delay = time + random() * 6;
 	actor.weapon = 0;
@@ -230,5 +231,13 @@ METHOD(Eel, mr_setup, bool(Eel this, entity actor))
 	actor.th_melee = eel_attack1;
 
     return true;
+}
+METHOD(Eel, mr_sight, bool(Eel this, entity actor))
+{
+	TC(Eel, this);
+
+	_sound(actor, CH_VOICE, "eel/eelc5.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

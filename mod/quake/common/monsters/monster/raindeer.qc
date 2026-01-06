@@ -301,6 +301,7 @@ METHOD(Raindeer, mr_setup, bool(Raindeer this, entity actor))
 	precache_model("progs/xmas/gib_rdrockpack.mdl");
 
 	precache_model("progs/xmas/proj_rdrocket.mdl");
+	precache_model("progs/xmas/gib_snowball.mdl");
 
 	precache_sound("xmas/raindeer/idle.wav");
 
@@ -309,8 +310,7 @@ METHOD(Raindeer, mr_setup, bool(Raindeer this, entity actor))
 
 	precache_sound("xmas/raindeer/hit.wav");
 	precache_sound("xmas/raindeer/death.wav");
-
-	precache_model("progs/xmas/gib_snowball.mdl");
+	precache_sound("xmas/raindeer/sight.wav");
 
 	// NOTE: not included is the MON_RAINDEER_DEAD scene!
 
@@ -327,5 +327,13 @@ METHOD(Raindeer, mr_setup, bool(Raindeer this, entity actor))
 	actor.steptype = FS_TYPESLOW;
 
     return true;
+}
+METHOD(Raindeer, mr_sight, bool(Raindeer this, entity actor))
+{
+	TC(Raindeer, this);
+
+	_sound(actor, CH_VOICE, "xmas/raindeer/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

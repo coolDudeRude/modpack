@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_VOLKERH,        DEATH_SELF_MON_VOLKERH,        DEATH_
 
 #ifdef GAMEQC
 MODEL(MON_VOLKERH, "progs/volkerh.mdl");
-
-SOUND(MON_VOLKERH_SIGHT, "volkerh/volwake");
 #endif
 
 CLASS(Volkerh, Monster)
@@ -18,7 +16,6 @@ CLASS(Volkerh, Monster)
     ATTRIB(Volkerh, m_maxs, vector, '83 94 582');
 #ifdef GAMEQC
     ATTRIB(Volkerh, m_model, Model, MDL_MON_VOLKERH);
-    ATTRIB(Volkerh, m_sound, Sound, SND_MON_VOLKERH_SIGHT);
 #endif
     ATTRIB(Volkerh, netname, string, "volkerh");
     ATTRIB(Volkerh, m_name, string, _("Volkerh"));

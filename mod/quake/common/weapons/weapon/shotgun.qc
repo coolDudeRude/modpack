@@ -9,7 +9,7 @@ void W_FireShotgun(entity this, .entity weaponentity)
 
 	W_TakeAmmo(this, IT_SHELLS, 1);
 	vector dir = qc_aim(this, 100000);
-	FireBullets(this, 6, W_Shotorg(this, weaponentity), dir, '0.04 0.04 0', WEP_SHOTGUN.m_id);
+	FireBullets(this, 6, 4, W_Shotorg(this, weaponentity), dir, '0.04 0.04 0', WEP_SHOTGUN.m_id);
 }
 
 METHOD(Shotgun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

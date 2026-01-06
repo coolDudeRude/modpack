@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_CHTHON,          DEATH_SELF_MON_CHTHON,          DEAT
 
 #ifdef GAMEQC
 MODEL(MON_CHTHON, "progs/boss.mdl");
-
-SOUND(MON_CHTHON_SIGHT, "boss1/sight1");
 #endif
 
 CLASS(Chthon, Monster)
@@ -18,7 +16,6 @@ CLASS(Chthon, Monster)
     ATTRIB(Chthon, m_maxs, vector, '128 128 256');
 #ifdef GAMEQC
     ATTRIB(Chthon, m_model, Model, MDL_MON_CHTHON);
-    ATTRIB(Chthon, m_sound, Sound, SND_MON_CHTHON_SIGHT);
 #endif
     ATTRIB(Chthon, netname, string, "chthon");
     ATTRIB(Chthon, m_name, string, _("Chthon"));

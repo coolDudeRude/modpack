@@ -137,8 +137,20 @@ void hknight_pain2(entity this) { set_animofs(this, anim_hknight_pain, 2, hknigh
 void hknight_pain1(entity this)
 {
 	set_animofs(this, anim_hknight_pain, 1, hknight_pain2);
-	if((this.spawnflags & 2)) // statue
+	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
+	else if(IsQBJ3Map())
+	{
+		float r = random() * 4;
+		if(r < 1)
+			_sound(this, CH_VOICE, "hknight/hknight_pain_1.wav", 1, ATTN_NORM);
+		else if(r < 2)
+			_sound(this, CH_VOICE, "hknight/hknight_pain_2.wav", 1, ATTN_NORM);
+		else if(r < 3)
+			_sound(this, CH_VOICE, "hknight/hknight_pain_3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "hknight/hknight_pain_4.wav", 1, ATTN_NORM);
+	}
 	else
 		_sound(this, CH_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
 }
@@ -182,7 +194,10 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -40)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_hellkn.mdl", this.health);
+		if(!(this.spawnflags & 2) && IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_hellknight.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_hellkn.mdl", this.health);
 		if((this.spawnflags & 2)) // statue
 		{
 			ThrowGib(this, inflictor, "progs/statgib1.mdl", this.health);
@@ -200,8 +215,20 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if((this.spawnflags & 2)) // statue
+	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/death.wav", 1, ATTN_NORM);
+	else if(IsQBJ3Map())
+	{
+		float r = random() * 4;
+		if(r < 1)
+			_sound(this, CH_VOICE, "hknight/hknight_death_1.wav", 1, ATTN_NORM);
+		else if(r < 2)
+			_sound(this, CH_VOICE, "hknight/hknight_death_2.wav", 1, ATTN_NORM);
+		else if(r < 3)
+			_sound(this, CH_VOICE, "hknight/hknight_death_3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "hknight/hknight_death_4.wav", 1, ATTN_NORM);
+	}
 	else
 		_sound(this, CH_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
 	if(random() > 0.5)
@@ -254,7 +281,13 @@ void hknight_magicc7(entity this) { set_animofs(this, anim_hknight_magicc, 7, hk
 void hknight_magicc6(entity this) { set_animofs(this, anim_hknight_magicc, 6, hknight_magicc7); hknight_shot(this, -2); }
 void hknight_magicc5(entity this) { set_animofs(this, anim_hknight_magicc, 5, hknight_magicc6); ai_face(this); }
 void hknight_magicc4(entity this) { set_animofs(this, anim_hknight_magicc, 4, hknight_magicc5); ai_face(this); }
-void hknight_magicc3(entity this) { set_animofs(this, anim_hknight_magicc, 3, hknight_magicc4); ai_face(this); }
+void hknight_magicc3(entity this)
+{
+	set_animofs(this, anim_hknight_magicc, 3, hknight_magicc4);
+	ai_face(this);
+	if(!(this.spawnflags & 2) && IsQBJ3Map())
+		_sound(this, CH_WEAPON_SINGLE, "hknight/sword_ignite.wav", 0.5, ATTN_NORM);
+}
 void hknight_magicc2(entity this) { set_animofs(this, anim_hknight_magicc, 2, hknight_magicc3); ai_face(this); }
 void hknight_magicc1(entity this) { set_animofs(this, anim_hknight_magicc, 1, hknight_magicc2); ai_face(this); }
 
@@ -346,9 +379,21 @@ void hk_idle_sound(entity this)
 	if(random() < 0.2)
 	{
 		if((this.spawnflags & 2)) // statue
-			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_NORM);
+			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
+		else if(IsQBJ3Map())
+		{
+			float r = random() * 4;
+			if(r < 1)
+				_sound(this, CH_VOICE, "hknight/hknight_idle_1.wav", 1, ATTN_IDLE);
+			else if(r < 2)
+				_sound(this, CH_VOICE, "hknight/hknight_idle_2.wav", 1, ATTN_IDLE);
+			else if(r < 3)
+				_sound(this, CH_VOICE, "hknight/hknight_idle_3.wav", 1, ATTN_IDLE);
+			else
+				_sound(this, CH_VOICE, "hknight/hknight_idle_4.wav", 1, ATTN_IDLE);
+		}
 		else
-			_sound(this, CH_VOICE, "hknight/idle.wav", 1, ATTN_NORM);
+			_sound(this, CH_VOICE, "hknight/idle.wav", 1, ATTN_IDLE);
 	}
 }
 
@@ -360,8 +405,20 @@ void hknight_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	if((this.spawnflags & 2)) // statue
+	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
+	else if(IsQBJ3Map())
+	{
+		float r = random() * 4;
+		if(r < 1)
+			_sound(this, CH_VOICE, "hknight/sword_woosh1.wav", 1, ATTN_NORM);
+		else if(r < 2)
+			_sound(this, CH_VOICE, "hknight/sword_woosh2.wav", 1, ATTN_NORM);
+		else if(r < 3)
+			_sound(this, CH_VOICE, "hknight/sword_woosh3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "hknight/sword_woosh4.wav", 1, ATTN_NORM);
+	}
 	else
 		_sound(this, CH_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
 
@@ -382,7 +439,20 @@ void hknight_melee(entity this)
 {
 	this.hknight_type = this.hknight_type + 1;
 
-	_sound(this, CH_WEAPON_SINGLE, "hknight/slash1.wav", 1, ATTN_NORM);
+	if(!(this.spawnflags & 2) && IsQBJ3Map())
+	{
+		float r = random() * 4;
+		if(r < 1)
+			_sound(this, CH_WEAPON_SINGLE, "hknight/sword_woosh1.wav", 1, ATTN_NORM);
+		else if(r < 2)
+			_sound(this, CH_WEAPON_SINGLE, "hknight/sword_woosh2.wav", 1, ATTN_NORM);
+		else if(r < 3)
+			_sound(this, CH_WEAPON_SINGLE, "hknight/sword_woosh3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_WEAPON_SINGLE, "hknight/sword_woosh4.wav", 1, ATTN_NORM);
+	}
+	else
+		_sound(this, CH_WEAPON_SINGLE, "hknight/slash1.wav", 1, ATTN_NORM);
 	if(this.hknight_type == 1)
 		hknight_slice1(this);
 	else if(this.hknight_type == 2)
@@ -462,9 +532,12 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
     TC(HellKnight, this);
 
     if((actor.spawnflags & 2) && !IsRogueMap())
+    {
+    	actor.skin = 0;
     	actor.spawnflags &= ~2; // TODO: why would mg be setting this?
+    }
 
-	if((actor.spawnflags & 2)) // statue
+	if(actor.spawnflags & 2) // statue
 	{
 		precache_model("progs/statgib1.mdl");
 		precache_model("progs/statgib2.mdl");
@@ -473,6 +546,37 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 		precache_sound("statue/idle.wav");
 		precache_sound("statue/pain.wav");
 		precache_sound("statue/death.wav");
+	}
+	else if(IsQBJ3Map())
+	{
+		precache_model("progs/hknight_qbj.mdl");
+		precache_model("progs/gibs/gibhead_hellknight.mdl");
+
+		precache_sound("hknight/hknight_pain_1.wav");
+		precache_sound("hknight/hknight_pain_2.wav");
+		precache_sound("hknight/hknight_pain_3.wav");
+		precache_sound("hknight/hknight_pain_4.wav");
+		precache_sound("hknight/hknight_death_1.wav");
+		precache_sound("hknight/hknight_death_2.wav");
+		precache_sound("hknight/hknight_death_3.wav");
+		precache_sound("hknight/hknight_death_4.wav");
+		precache_sound("hknight/hknight_idle_1.wav");
+		precache_sound("hknight/hknight_idle_2.wav");
+		precache_sound("hknight/hknight_idle_3.wav");
+		precache_sound("hknight/hknight_idle_4.wav");
+		precache_sound("hknight/hknight_sight_1.wav");
+		precache_sound("hknight/hknight_sight_2.wav");
+		precache_sound("hknight/hknight_sight_3.wav");
+		precache_sound("hknight/hknight_sight_4.wav");
+
+		precache_sound("hknight/sword_ignite.wav");
+		precache_sound("hknight/sword_woosh1.wav");
+		precache_sound("hknight/sword_woosh2.wav");
+		precache_sound("hknight/sword_woosh3.wav");
+		precache_sound("hknight/sword_woosh4.wav");
+
+		_setmodel(actor, "progs/hknight_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
 	}
 	else
 	{
@@ -485,12 +589,13 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 	precache_sound("hknight/hit.wav");		// used by C code, so don't sound2
 	precache_sound("hknight/slash1.wav");
 	precache_sound("hknight/grunt.wav");
+	precache_sound("hknight/sight1.wav");
 
 	precache_sound("knight/sword1.wav");
 	precache_sound("knight/sword2.wav");
 
 	actor.health = 250;
-    if((actor.spawnflags & 2)) // statue
+    if(actor.spawnflags & 2) // statue
 	{
 		if(actor.frame == 0)
 			actor.frame = 73;
@@ -530,7 +635,22 @@ METHOD(HellKnight, mr_sight, bool(HellKnight this, entity actor))
 	}
 
 	if(!actor.skin)
-		sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
+	{
+		if(IsQBJ3Map())
+		{
+			float r = random() * 4;
+			if(r < 1)
+				_sound(actor, CH_VOICE, "hknight/hknight_sight_1.wav", 1, ATTN_NORM);
+			else if(r < 2)
+				_sound(actor, CH_VOICE, "hknight/hknight_sight_2.wav", 1, ATTN_NORM);
+			else if(r < 3)
+				_sound(actor, CH_VOICE, "hknight/hknight_sight_3.wav", 1, ATTN_NORM);
+			else
+				_sound(actor, CH_VOICE, "hknight/hknight_sight_4.wav", 1, ATTN_NORM);
+		}
+		else
+			_sound(actor, CH_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	}
 
     return true;
 }

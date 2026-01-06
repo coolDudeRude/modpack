@@ -286,6 +286,21 @@ void des_part_explode(entity this)
 
 void des_death(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	// instead of blowing up, get invoked
+	if(DEATH_ISWEAPON(deathtype, WEP_INVOKER))
+	{
+		for(entity ent = this; ent; ent = ent.des_next)
+		{
+			FX_Invoked(ent.model, ent.frame, ent.origin, ent.angles, ent.mins, ent.maxs, attacker.origin);
+			setthink(ent, SUB_Remove);
+			ent.nextthink = time;
+			ent.solid = SOLID_NOT;
+			ent.takedamage = DAMAGE_NO;
+			ent.velocity = '0 0 0';
+		}
+		return;
+	}
+
 	int segments = 1;
 	for(entity ent = this.des_next; ent; ent = ent.des_next)
 	{

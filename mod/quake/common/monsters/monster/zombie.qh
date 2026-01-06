@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_ZOMBIE,          DEATH_SELF_MON_ZOMBIE,          DEAT
 #ifdef GAMEQC
 MODEL(MON_ZOMBIE, "progs/zombie.mdl");
 MODEL(MON_ZOMBIE_HEAD, "progs/h_zombie.mdl");
-
-SOUND(MON_ZOMBIE_SIGHT, "zombie/z_idle");
 #endif
 
 CLASS(Zombie, Monster)
@@ -20,7 +18,6 @@ CLASS(Zombie, Monster)
 #ifdef GAMEQC
     ATTRIB(Zombie, m_model, Model, MDL_MON_ZOMBIE);
     ATTRIB(Zombie, m_model_head, Model, MDL_MON_ZOMBIE_HEAD);
-    ATTRIB(Zombie, m_sound, Sound, SND_MON_ZOMBIE_SIGHT);
 #endif
     ATTRIB(Zombie, netname, string, "zombie");
     ATTRIB(Zombie, m_name, string, _("Zombie"));

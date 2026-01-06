@@ -26,7 +26,6 @@ CLASS(Pumpking, Monster)
 #ifdef GAMEQC
     ATTRIB(Pumpking, m_model, Model, MDL_MON_PUMPKING);
     ATTRIB(Pumpking, m_model_head, Model, MDL_Null);
-    ATTRIB(Pumpking, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Pumpking, netname, string, "pumpking");
     ATTRIB(Pumpking, m_name, string, _("Pumpking"));

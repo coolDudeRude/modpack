@@ -26,7 +26,6 @@ CLASS(Plantera, Monster)
 #ifdef GAMEQC
     ATTRIB(Plantera, m_model, Model, MDL_MON_PLANTERA);
     ATTRIB(Plantera, m_model_head, Model, MDL_Null);
-    ATTRIB(Plantera, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Plantera, netname, string, "plantera");
     ATTRIB(Plantera, m_name, string, _("Plantera"));

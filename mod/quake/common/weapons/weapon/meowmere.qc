@@ -10,7 +10,8 @@ void player_meowmerea3(entity this) { set_animofs(this, anim_player_axattd1, 3, 
 void player_meowmerea2(entity this) { set_animofs(this, anim_player_axattd1, 2, player_meowmerea3); }
 void player_meowmerea1(entity this) { set_animofs(this, anim_player_axattd1, 1, player_meowmerea2); }
 
-void wep_meowmere_sworda3(entity this) { wep_set_anim(this, 3, w_ready); W_FireMeowmere(this.owner, this.weaponentity_fld); }
+void wep_meowmere_sworda4(entity this) { wep_set_anim(this, 3, w_ready); }
+void wep_meowmere_sworda3(entity this) { wep_set_anim(this, 3, wep_meowmere_sworda4); W_FireMeowmere(this.owner, this.weaponentity_fld); }
 void wep_meowmere_sworda2(entity this) { wep_set_anim(this, 2, wep_meowmere_sworda3); }
 void wep_meowmere_sworda1(entity this) { wep_set_anim(this, 1, wep_meowmere_sworda2); W_Parry_Trigger(this.owner, 0); }
 

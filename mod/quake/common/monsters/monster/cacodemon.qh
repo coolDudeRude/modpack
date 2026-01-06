@@ -1,0 +1,26 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_CACODEMON,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was ripped and torn by a Cacodemon"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_CACODEMON,               1,  NULL,           INFO_DEATH_SELF_MON_CACODEMON,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_CACODEMON,           DEATH_SELF_MON_CACODEMON,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_CACODEMON, "progs/cacodemon.mdl");
+MODEL(MON_CACODEMON_HEAD, "progs/h_cacodemon.mdl");
+#endif
+
+CLASS(Cacodemon, Monster)
+    ATTRIB(Cacodemon, spawnflags, int, MONSTER_TYPE_FLY);
+    ATTRIB(Cacodemon, m_mins, vector, '-16 -16 -24');
+    ATTRIB(Cacodemon, m_maxs, vector, '16 16 40');
+#ifdef GAMEQC
+    ATTRIB(Cacodemon, m_model, Model, MDL_MON_CACODEMON);
+    ATTRIB(Cacodemon, m_model_head, Model, MDL_MON_CACODEMON_HEAD);
+#endif
+    ATTRIB(Cacodemon, netname, string, "cacodemon");
+    ATTRIB(Cacodemon, m_name, string, _("Cacodemon"));
+ENDCLASS(Cacodemon)
+
+REGISTER_MONSTER(CACODEMON, NEW(Cacodemon));

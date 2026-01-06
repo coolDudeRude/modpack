@@ -32,7 +32,6 @@ CLASS(Vindicator, Monster)
 #ifdef GAMEQC
     ATTRIB(Vindicator, m_model, Model, MDL_MON_VINDICATOR);
     ATTRIB(Vindicator, m_model_head, Model, MDL_MON_VINDICATOR_HEAD);
-    ATTRIB(Vindicator, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Vindicator, netname, string, "vindicator");
     ATTRIB(Vindicator, m_name, string, _("Vindicator"));

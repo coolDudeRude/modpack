@@ -534,6 +534,7 @@ METHOD(Gargoyle, mr_setup, bool(Gargoyle this, entity actor))
 	precache_sound("gargoyle/pain100.wav");
 	precache_sound("gargoyle/death1.wav");
 	precache_sound("weapons/r_exp3b.wav");
+	precache_sound("gargoyle/sight1.wav");
 
 	// Fix double spawnflags problem - default to statue
 	if((actor.spawnflags & MON_GARGOYLE_STATUE) && (actor.spawnflags & MON_GARGOYLE_PERCH))
@@ -592,5 +593,13 @@ METHOD(Gargoyle, mr_setup, bool(Gargoyle this, entity actor))
 	actor.checkattack = GargoyleCheckAttack;
 
     return true;
+}
+METHOD(Gargoyle, mr_sight, bool(Gargoyle this, entity actor))
+{
+	TC(Gargoyle, this);
+
+	_sound(actor, CH_VOICE, "gargoyle/sight1.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

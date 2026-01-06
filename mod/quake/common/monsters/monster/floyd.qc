@@ -536,7 +536,7 @@ METHOD(Floyd, mr_sight, bool(Floyd this, entity actor))
     TC(Floyd, this);
 
     if(!(actor.spawnflags & FLOYD_ASLEEP) || (actor.spawnflags & FLOYD_ROLLING))
-		sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "floyd/sight.wav", 1, ATTN_NORM);
 
     return true;
 }

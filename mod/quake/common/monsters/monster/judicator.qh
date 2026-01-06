@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_JUDICATOR,           DEATH_SELF_MON_JUDICATOR,       
 #ifdef GAMEQC
 MODEL(MON_JUDICATOR, "progs/mon_judge.mdl");
 MODEL(MON_JUDICATOR_HEAD, "progs/h_judge.mdl");
-
-SOUND(MON_JUDICATOR_SIGHT, "judge/sight1");
 #endif
 
 CLASS(Judicator, Monster)
@@ -20,7 +18,6 @@ CLASS(Judicator, Monster)
 #ifdef GAMEQC
     ATTRIB(Judicator, m_model, Model, MDL_MON_JUDICATOR);
     ATTRIB(Judicator, m_model_head, Model, MDL_MON_JUDICATOR_HEAD);
-    ATTRIB(Judicator, m_sound, Sound, SND_MON_JUDICATOR_SIGHT);
 #endif
     ATTRIB(Judicator, netname, string, "judicator");
     ATTRIB(Judicator, m_name, string, _("Judicator"));

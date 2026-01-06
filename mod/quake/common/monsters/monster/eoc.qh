@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_EOC,            DEATH_SELF_MON_EOC,            DEATH_
 
 #ifdef GAMEQC
 MODEL(MON_EOC, "progs/eoc.mdl");
-
-SOUND(MON_EOC_SIGHT, "eoc/sight");
 #endif
 
 CLASS(EyeOfCthulhu, Monster)
@@ -19,7 +17,6 @@ CLASS(EyeOfCthulhu, Monster)
 #ifdef GAMEQC
     ATTRIB(EyeOfCthulhu, m_model, Model, MDL_MON_EOC);
     ATTRIB(EyeOfCthulhu, m_model_head, Model, MDL_Null);
-    ATTRIB(EyeOfCthulhu, m_sound, Sound, SND_MON_EOC_SIGHT);
 #endif
     ATTRIB(EyeOfCthulhu, netname, string, "eoc");
     ATTRIB(EyeOfCthulhu, m_name, string, _("Eye Of Cthulhu"));

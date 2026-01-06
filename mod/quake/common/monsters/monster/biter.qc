@@ -342,6 +342,7 @@ METHOD(Biter, mr_setup, bool(Biter this, entity actor))
 	precache_sound("biter/land.wav");
 	precache_sound("biter/pain1.wav");
 	precache_sound("biter/pain2.wav");
+	precache_sound("biter/sight.wav");
 
 	precache_sound("demon/dhit2.wav");
 
@@ -370,6 +371,14 @@ METHOD(Biter, mr_setup, bool(Biter this, entity actor))
 	precache_sound(actor.stepc4);
 	precache_sound(actor.stepc5);
 	actor.steptype = FS_TYPECUSTOM;
+
+	return true;
+}
+METHOD(Biter, mr_sight, bool(Biter this, entity actor))
+{
+	TC(Biter, this);
+
+	_sound(actor, CH_VOICE, "biter/sight.wav", 1, ATTN_NORM);
 
 	return true;
 }

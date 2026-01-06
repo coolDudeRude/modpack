@@ -2200,7 +2200,7 @@ void DropToFloor_QC(entity this)
 		end.z -= 256; // Quake, QuakeWorld
 
 	// NOTE: SV_NudgeOutOfSolid is used in the engine here
-	if(autocvar_sv_gameplayfix_droptofloorstartsolid_nudgetocorrect || world.model == "maps/dm4jam_bloodshot.bsp") // hack needed due to wonkiness
+	if(autocvar_sv_gameplayfix_droptofloorstartsolid_nudgetocorrect || this.classname == "egg" || world.model == "maps/dm4jam_bloodshot.bsp") // hack needed due to wonkiness
 	{
 		move_out_of_solid(this);
 		if(_Movetype_UnstickEntity(this) == UNSTICK_STUCK)
@@ -2228,7 +2228,7 @@ void DropToFloor_QC(entity this)
 		{
 			LOG_DEBUGF("DropToFloor_Handler: %v fixed badly placed entity", this.origin);
 			setorigin(this, trace_endpos);
-			if(autocvar_sv_gameplayfix_droptofloorstartsolid_nudgetocorrect || world.model == "maps/dm4jam_bloodshot.bsp")
+			if(autocvar_sv_gameplayfix_droptofloorstartsolid_nudgetocorrect || this.classname == "egg" || world.model == "maps/dm4jam_bloodshot.bsp")
 			{
 				move_out_of_solid(this);
 				if(_Movetype_UnstickEntity(this) == UNSTICK_STUCK)

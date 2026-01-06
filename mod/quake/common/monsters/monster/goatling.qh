@@ -16,7 +16,6 @@ CLASS(Goatling, Monster)
     ATTRIB(Goatling, m_maxs, vector, '16 16 12');
 #ifdef GAMEQC
     ATTRIB(Goatling, m_model, Model, MDL_MON_GOATLING);
-    ATTRIB(Goatling, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Goatling, netname, string, "goatling");
     ATTRIB(Goatling, m_name, string, _("Goatling"));

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_MACE_OGRE,            DEATH_SELF_MON_MACE_OGRE,      
 #ifdef GAMEQC
 MODEL(MON_MACE_OGRE, "progs/mon_hogremac.mdl");
 MODEL(MON_MACE_OGRE_HEAD, "progs/h_hogre.mdl");
-
-SOUND(MON_MACE_OGRE_SIGHT, "ogre/ogwake");
 #endif
 
 CLASS(MaceOgre, Monster)
@@ -20,7 +18,6 @@ CLASS(MaceOgre, Monster)
 #ifdef GAMEQC
     ATTRIB(MaceOgre, m_model, Model, MDL_MON_MACE_OGRE);
     ATTRIB(MaceOgre, m_model_head, Model, MDL_MON_MACE_OGRE_HEAD);
-    ATTRIB(MaceOgre, m_sound, Sound, SND_MON_MACE_OGRE_SIGHT);
 #endif
     ATTRIB(MaceOgre, netname, string, "hogremac");
     ATTRIB(MaceOgre, m_name, string, _("Mace Ogre"));

@@ -300,6 +300,7 @@ void boss_death1(entity this)
 {
 	set_animofs(this, anim_boss_death, 1, boss_death2);
 	_sound(this, CH_VOICE, "boss1/death.wav", 1, ATTN_NORM);
+	this.solid = SOLID_NOT;
 }
 
 void boss_die(entity this, entity inflictor, entity attacker, int deathtype)
@@ -419,8 +420,17 @@ METHOD(Chthon, mr_setup, bool(Chthon this, entity actor))
 	precache_sound("boss1/throw.wav");
 	precache_sound("boss1/pain.wav");
 	precache_sound("boss1/death.wav");
+	precache_sound("boss1/sight1.wav");
 
 	boss_awake(actor);
+
+	return true;
+}
+METHOD(Chthon, mr_sight, bool(Chthon this, entity actor))
+{
+	TC(Chthon, this);
+
+	_sound(actor, CH_VOICE, "boss1/sight1.wav", 1, ATTN_NORM);
 
 	return true;
 }

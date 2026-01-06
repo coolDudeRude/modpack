@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_BAMBLER,        DEATH_SELF_MON_BAMBLER,        DEATH_
 #ifdef GAMEQC
 MODEL(MON_BAMBLER, "progs/bambler.mdl");
 MODEL(MON_BAMBLER_HEAD, "progs/h_bams.mdl");
-
-SOUND(MON_BAMBLER_SIGHT, "bambler/ssight");
 #endif
 
 CLASS(Bambler, Monster)
@@ -20,7 +18,6 @@ CLASS(Bambler, Monster)
 #ifdef GAMEQC
     ATTRIB(Bambler, m_model, Model, MDL_MON_BAMBLER);
     ATTRIB(Bambler, m_model_head, Model, MDL_MON_BAMBLER_HEAD);
-    ATTRIB(Bambler, m_sound, Sound, SND_MON_BAMBLER_SIGHT);
 #endif
     ATTRIB(Bambler, netname, string, "bambler");
     ATTRIB(Bambler, m_name, string, _("Bambler"));

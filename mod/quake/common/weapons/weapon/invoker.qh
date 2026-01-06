@@ -1,0 +1,23 @@
+#pragma once
+
+CLASS(Invoker, Weapon)
+/* ammotype  */ ATTRIB(Invoker, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Invoker, impulse, int, 8);
+/* spawnflags*/ ATTRIB(Invoker, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(Invoker, aflag, int, 0);
+/* modelname */ ATTRIB(Invoker, mdl, string, "invoker");
+/* crosshair */ ATTRIB(Invoker, w_crosshair, string, "gfx/crosshaircrylink");
+/* crosshair */ ATTRIB(Invoker, w_crosshair_size, float, 1);
+/* crosshair */ ATTRIB(Invoker, w_crosshair_color, vector, '1 0 0');
+/* wepimg    */ ATTRIB(Invoker, model2, string, "invoker");
+/* refname   */ ATTRIB(Invoker, netname, string, "invoker");
+/* wepname   */ ATTRIB(Invoker, m_name, string, _("Invoker"));
+
+ENDCLASS(Invoker)
+REGISTER_WEAPON(INVOKER, NEW(Invoker));
+
+SPAWNFUNC_WEAPON(weapon_invoker, WEP_INVOKER)
+
+#ifdef SVQC
+void W_FireInvoker(entity this, .entity weaponentity);
+#endif

@@ -373,7 +373,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(CROSSBOW_BOLT)      this.traileffect = EFFECT_TR_GRENADE.m_id; break;
 			HANDLE(VORE_SPIKE)         this.traileffect = EFFECT_TR_VORESPIKE.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(SCRAG_SPIKE)        this.traileffect = EFFECT_TR_WIZSPIKE.m_id; break;
-			HANDLE(KNIGHT_SPIKE)       this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; break;
+			HANDLE(KNIGHT_SPIKE)       this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; this.avelocity = '0 0 1' * ((random() * 500) + 150); break;
 			HANDLE(SPELLBOOK_METEOR)   this.traileffect = EFFECT_TR_METEOR.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(CAT)                this.traileffect = EFFECT_MEOWMERE_TRAIL.m_id; break;
 			HANDLE(BANJO_MUSIC)        this.traileffect = EFFECT_Null.m_id; this.avelocity = '0 90 90'; break;
@@ -408,6 +408,8 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(PASSIVE_PULSERIFLE) this.traileffect = EFFECT_TR_CRYLINKPLASMA.m_id; break;
 			HANDLE(TANK_BIGROCKET)     this.traileffect = EFFECT_TR_ROCKET.m_id; break;
 			HANDLE(GHOST_SICKLE)       this.traileffect = EFFECT_TR_SICKLE.m_id; this.avelocity = '720 0 0'; break;
+			HANDLE(CACODEMON_FIREBALL) this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; break;
+			HANDLE(MISSILE)            this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '0 0 -540'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");

@@ -71,6 +71,8 @@ MODEL(PROJECTILE_PASSIVE_FIREBALL,          "progs/lavaball.mdl");
 MODEL(PROJECTILE_PASSIVE_PULSERIFLE,        "progs/pulse.mdl");
 MODEL(PROJECTILE_TANK_BIGROCKET,            "progs/brocket.mdl");
 MODEL(PROJECTILE_GHOST_SICKLE,              "progs/ghost_sickle.mdl");
+MODEL(PROJECTILE_CACODEMON_FIREBALL,        "progs/cacodemon_fireball.mdl");
+MODEL(PROJECTILE_MISSILE,                   "progs/proj_missile.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

@@ -1259,8 +1259,17 @@ METHOD(IceGolem, mr_setup, bool(IceGolem this, entity actor))
 	precache_sound("golem/pain1.wav");
 	precache_sound("golem/pain2.wav");
 	precache_sound("golem/death.wav");
+	precache_sound("golem/sight.wav");
 
 	iceg_setup(actor);
+
+	return true;
+}
+METHOD(IceGolem, mr_sight, bool(IceGolem this, entity actor))
+{
+	TC(IceGolem, this);
+
+	_sound(actor, CH_VOICE, "golem/sight.wav", 1, ATTN_NORM);
 
 	return true;
 }

@@ -16,7 +16,6 @@ CLASS(Tentacle, Monster)
     ATTRIB(Tentacle, m_maxs, vector, '12 12 60');
 #ifdef GAMEQC
     ATTRIB(Tentacle, m_model, Model, MDL_MON_TENTACLE);
-    ATTRIB(Tentacle, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Tentacle, netname, string, "tentacle");
     ATTRIB(Tentacle, m_name, string, _("Tentacle"));

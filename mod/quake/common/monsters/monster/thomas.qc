@@ -255,6 +255,7 @@ METHOD(Thomas, mr_setup, bool(Thomas this, entity actor))
 	precache_sound("thomas/death2.wav");
 	precache_sound("thomas/charge.wav");
 	precache_sound("thomas/idle.wav");
+	precache_sound("thomas/whistle.wav");
 
 	actor.health = 2000;
 	actor.scale = 3;
@@ -269,6 +270,14 @@ METHOD(Thomas, mr_setup, bool(Thomas this, entity actor))
 	settouch(actor, thomas_touch);
 
 	actor.checkattack = ThomasCheckAttack;
+
+	return true;
+}
+METHOD(Thomas, mr_sight, bool(Thomas this, entity actor))
+{
+	TC(Thomas, this);
+
+	_sound(actor, CH_VOICE, "thomas/whistle.wav", 1, ATTN_NORM);
 
 	return true;
 }

@@ -318,4 +318,12 @@ METHOD(Bender, mr_setup, bool(Bender this, entity actor))
 
 	return true;
 }
+METHOD(Bender, mr_sight, bool(Bender this, entity actor))
+{
+	TC(Bender, this);
+
+	_sound(actor, CH_VOICE, "bend/idle2.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

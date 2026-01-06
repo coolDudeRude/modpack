@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SQUEAK,           DEATH_SELF_MON_SQUEAK,           DE
 
 #ifdef GAMEQC
 MODEL(MON_SQUEAK, "progs/squeak.mdl");
-
-SOUND(MON_SQUEAK_SIGHT, "squeak/deploy");
 #endif
 
 CLASS(Squeak, Monster)
@@ -18,7 +16,6 @@ CLASS(Squeak, Monster)
     ATTRIB(Squeak, m_maxs, vector, '12 12 12');
 #ifdef GAMEQC
     ATTRIB(Squeak, m_model, Model, MDL_MON_SQUEAK);
-    ATTRIB(Squeak, m_sound, Sound, SND_MON_SQUEAK_SIGHT);
 #endif
     ATTRIB(Squeak, netname, string, "squeak");
     ATTRIB(Squeak, m_name, string, _("Squeak"));

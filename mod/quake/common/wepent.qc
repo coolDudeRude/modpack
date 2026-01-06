@@ -53,6 +53,10 @@ MACRO_END
 	{ WriteByte(chan, this.hammer_skin); }, \
 	{ (viewmodels[this.m_wepent_slot]).hammer_skin = ReadByte(); }) \
     \
+    PROP(false, pistol_shots, WEPENT_SET_NORMAL, \
+	{ WriteByte(chan, this.pistol_shots); }, \
+	{ (viewmodels[this.m_wepent_slot]).pistol_shots = ReadByte(); }) \
+    \
 	/**/
 
 #ifdef SVQC

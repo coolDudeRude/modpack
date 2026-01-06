@@ -304,7 +304,7 @@ vector wall_velocity(entity this)
 	return vel;
 }
 
-void FireBullets(entity this, int shotcount, vector org, vector dir, vector spread, int deathtype)
+void FireBullets(entity this, int shotcount, float damage, vector org, vector dir, vector spread, int deathtype)
 {
 	float bullet_speed;
 	if(IS_PLAYER(this))
@@ -332,6 +332,7 @@ void FireBullets(entity this, int shotcount, vector org, vector dir, vector spre
 		missile.classname = "bullet"; // hack
 		missile.velocity = spread_dir * var_speed;
 		missile.projectiledeathtype = deathtype;
+		missile.dmg = damage;
 
 		CSQCProjectile(missile, true, PROJECTILE_BULLET, true);
 	}
@@ -1429,7 +1430,8 @@ void spike_touch(entity this, entity toucher)
 		float damg = ((this.dmg) ? this.dmg : 9);
 		if(this.classname == "bullet")
 		{
-			damg = 4;
+			if(!this.dmg)
+				damg = 4;
 			if(toucher.resist_shells != 0)
 				damg = Resist_Damage(toucher, IT_SHELLS, damg);
 			Resist_Shells(toucher, this.origin, this.velocity, damg);
@@ -1511,25 +1513,24 @@ void W_SetCurrentAmmo(entity this)
 {
 	if(this.exptime != 0)
 		return;
-	if(!this.clockwork && this.health > 0)
-		player_run(this);		// get out of any weapon firing states
-
-	this.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
-	this.items &= ~(IT_LAVA_NAILS | IT_PLASMA_AMMO | IT_MULTI_ROCKETS | IT_DRILLS);
+	// we don't need to do this anymore because we don't set weapon here
+	//if(!this.clockwork && this.health > 0)
+		//player_run(this);		// get out of any weapon firing states
 
 	for (int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 	{
 		.entity weaponentity = weaponentities[slot];
 		Weapon wep = this.(weaponentity).m_weapon;
-		this.(weaponentity).m_frame = 0;
-		if(wep != WEP_Null)
-			this.items |= wep.ammo_type;
+		// no cycling frames thank you very much
+		//this.(weaponentity).m_frame = 0;
 		if(wep != WEP_PIANO)
-			this.(weaponentity).piano_prevwep = wep; // for piano hax
+			this.(weaponentity).piano_prevwep = wep; // for hax
 		if(wep != WEP_HAMMER)
-			this.(weaponentity).hammer_prevwep = wep; // for hammer hax
+			this.(weaponentity).hammer_prevwep = wep; // for hax
 		if(wep != WEP_SPEAKNSPELL)
-			this.(weaponentity).speaknspell_prevwep = wep; // for piano hax
+			this.(weaponentity).speaknspell_prevwep = wep; // for hax
+		if(wep != WEP_PISTOL)
+			this.(weaponentity).pistol_prevwep = wep; // for hax
 	}
 }
 

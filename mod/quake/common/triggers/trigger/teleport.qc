@@ -149,6 +149,30 @@ spawnfunc(trigger_teleport)
 		this.use = teleport_reactivate;
 }
 
+// qbj3
+spawnfunc(info_teleport_target);
+spawnfunc(trigger_instateleport) { spawnfunc_trigger_teleport(this); }
+spawnfunc(trigger_instateleport_destination)
+{
+	if(!this.targetname || this.targetname == "")
+	{
+		objerror(this, "no targetname");
+		return;
+	}
+
+	this.solid = SOLID_TRIGGER;
+	_setmodel(this, this.model); // set size and link into world
+	set_movetype(this, MOVETYPE_NONE);
+	this.modelindex = 0;
+	this.model = "";
+
+	if(this.mangle == '0 0 0' && this.angles != '0 0 0')
+		this.mangle = this.angles;
+
+	// flips the stealth flag
+	//this.spawnflags ^= TELEDEST_STEALTH;
+}
+
 // alkaline version
 void SetAngles(entity this)
 {
@@ -211,6 +235,10 @@ void teleport(entity traveler, entity dst, bool tfog, bool nofwd)
 {
 	vector vdir = '0 0 0';
 	float flash = 3;	// 1 = @org, 2 = @dest, 3 = both
+
+	vector targ_org = dst.origin;
+	if(dst.classname == "trigger_instateleport_destination")
+		targ_org = (dst.absmin + dst.absmax) * 0.5;
 	
 	if(dst.classname == "misc_teleporttrain")
 	{
@@ -242,22 +270,22 @@ void teleport(entity traveler, entity dst, bool tfog, bool nofwd)
 		
 		if(flash & 2)
 		{
-			vector torg = dst.origin;
+			vector torg = targ_org;
 			
 			// teleport controller's origin is desired teleport flash location on arrival
 			if(IS_PLAYER(traveler))
 			{
 				makevectors(vdir);
-				torg = dst.origin + v_forward * 16;
+				torg = targ_org + v_forward * 16;
 			}
 
 			spawn_tfog(torg);
 		}
 	}
 	
-	spawn_tdeath(dst.origin, traveler);
+	spawn_tdeath(targ_org, traveler);
 
-	setorigin(traveler, dst.origin);
+	setorigin(traveler, targ_org);
 	traveler.angles = vdir;
 	if(IS_MONSTER(traveler))
 		traveler.ideal_yaw = traveler.angles_y;

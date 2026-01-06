@@ -1,0 +1,16 @@
+#pragma once
+
+CLASS(Vampirism, Powerups)
+    ATTRIB(Vampirism, netname, string, "vampirism");
+    ATTRIB(Vampirism, m_name, string, _("Vampirism"));
+    ATTRIB(Vampirism, m_color, vector, '0.95 0.2 0');
+    ATTRIB(Vampirism, m_icon, string, "sb_vamp");
+ENDCLASS(Vampirism)
+REGISTER_STATUSEFFECT(Vampirism, NEW(Vampirism));
+
+#ifdef SVQC
+.float vampirism_sound;
+.bool vampirism_warning;
+
+void vampglobe_Killed(entity targ, entity attacker);
+#endif

@@ -37,7 +37,6 @@ CLASS(Cthulhu, Monster)
     ATTRIB(Cthulhu, m_maxs, vector, '128 128 424');
 #ifdef GAMEQC
     ATTRIB(Cthulhu, m_model, Model, MDL_MON_CTHULHU);
-    ATTRIB(Cthulhu, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Cthulhu, netname, string, "cthulhu");
     ATTRIB(Cthulhu, m_name, string, _("Cthulhu"));

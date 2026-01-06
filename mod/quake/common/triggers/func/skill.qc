@@ -281,6 +281,8 @@ spawnfunc(func_skill)
 		setthink(this, func_skill_off);
 	else
 		setthink(this, func_skill_on);
+
+	have_setskill = true;
 }
 
 #endif

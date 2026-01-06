@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_FLOYD,        DEATH_SELF_MON_FLOYD,        DEATH_MURD
 #ifdef GAMEQC
 MODEL(MON_FLOYD, "progs/floyd.mdl");
 MODEL(MON_FLOYD_HEAD, "progs/h_floyd.mdl");
-
-SOUND(MON_FLOYD_SIGHT, "floyd/sight");
 #endif
 
 CLASS(Floyd, Monster)
@@ -20,7 +18,6 @@ CLASS(Floyd, Monster)
 #ifdef GAMEQC
     ATTRIB(Floyd, m_model, Model, MDL_MON_FLOYD);
     ATTRIB(Floyd, m_model_head, Model, MDL_MON_FLOYD_HEAD);
-    ATTRIB(Floyd, m_sound, Sound, SND_MON_FLOYD_SIGHT);
 #endif
     ATTRIB(Floyd, netname, string, "floyd");
     ATTRIB(Floyd, m_name, string, _("Floyd"));

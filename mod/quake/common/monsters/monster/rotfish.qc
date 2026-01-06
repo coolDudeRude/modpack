@@ -198,6 +198,13 @@ METHOD(Rotfish, mr_setup, bool(Rotfish this, entity actor))
 		precache_sound("dopefish/idle.wav");
 		precache_model("progs/dopefish.mdl");
 		_setmodel(actor, "progs/dopefish.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
+	else if(IsQBJ3Map())
+	{
+		precache_model("progs/fish_qbj.mdl");
+		_setmodel(actor, "progs/fish_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
 	}
 
     actor.health = 25;

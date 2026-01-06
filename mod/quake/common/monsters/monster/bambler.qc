@@ -295,6 +295,7 @@ METHOD(Bambler, mr_setup, bool(Bambler this, entity actor))
 	precache_sound("bambler/melee1.wav");
 	precache_sound("bambler/melee2.wav");
 	precache_sound("bambler/smack.wav");
+	precache_sound("bambler/ssight.wav");
 
 	if(autocvar_skill == 3 && random() <= 0.25)
 		actor.spawnflags |= MON_BAMBLER_ELMO;
@@ -328,7 +329,7 @@ METHOD(Bambler, mr_sight, bool(Bambler this, entity actor))
     if(actor.spawnflags & MON_BAMBLER_ELMO)
 		_sound(actor, CH_VOICE, "bambler/elmo_sight.wav", 1, ATTN_NORM);
 	else
-		sound(actor, CH_VOICE, SND_MON_BAMBLER_SIGHT, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "bambler/ssight.wav", 1, ATTN_NORM);
 
     return true;
 }

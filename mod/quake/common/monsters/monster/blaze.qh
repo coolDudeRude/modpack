@@ -34,7 +34,6 @@ CLASS(Blaze, Monster)
 #ifdef GAMEQC
     ATTRIB(Blaze, m_model, Model, MDL_MON_BLAZE);
     ATTRIB(Blaze, m_model_head, Model, MDL_MON_BLAZE_HEAD);
-    ATTRIB(Blaze, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Blaze, netname, string, "blaze");
     ATTRIB(Blaze, m_name, string, _("Blaze"));

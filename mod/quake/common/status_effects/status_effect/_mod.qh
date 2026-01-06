@@ -1,5 +1,6 @@
 // generated file; do not modify
 #include "antigrav.qh"
+#include "berserk.qh"
 #include "biosuit.qh"
 #include "burning.qh"
 #include "confused.qh"
@@ -17,5 +18,6 @@
 #include "sharp_shooter.qh"
 #include "shield.qh"
 #include "slowness.qh"
+#include "vampirism.qh"
 #include "wetsuit.qh"
 #include "withering.qh"

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_JIM,           DEATH_SELF_MON_JIM,           DEATH_MU
 #ifdef GAMEQC
 MODEL(MON_JIM, "progs/mon_jim.mdl");
 MODEL(MON_JIM2, "progs/mon_jimrock.mdl");
-
-SOUND(MON_JIM_SIGHT, "jim/sight1");
 #endif
 
 CLASS(Jim, Monster)
@@ -19,7 +17,6 @@ CLASS(Jim, Monster)
     ATTRIB(Jim, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Jim, m_model, Model, MDL_MON_JIM);
-    ATTRIB(Jim, m_sound, Sound, SND_MON_JIM_SIGHT);
 #endif
     ATTRIB(Jim, netname, string, "jim");
     ATTRIB(Jim, m_name, string, _("Jim"));

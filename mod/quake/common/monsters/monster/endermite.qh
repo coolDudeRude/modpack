@@ -38,7 +38,6 @@ CLASS(Endermite, Monster)
 #ifdef GAMEQC
     ATTRIB(Endermite, m_model, Model, MDL_MON_ENDERMITE);
     ATTRIB(Endermite, m_model_head, Model, MDL_Null);
-    ATTRIB(Endermite, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Endermite, netname, string, "endermite");
     ATTRIB(Endermite, m_name, string, _("Endermite"));

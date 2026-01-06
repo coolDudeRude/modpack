@@ -334,6 +334,7 @@ METHOD(CheddarGoblin, mr_setup, bool(CheddarGoblin this, entity actor))
 	precache_sound("cheddar_goblin/idle2.wav");
 	precache_sound("cheddar_goblin/spit.wav");
 	precache_sound("blob/land1.wav");
+	precache_sound("cheddar_goblin/sight.wav");
 
 	actor.health = 110;
 	actor.th_stand = cheddar_stand1;
@@ -342,6 +343,14 @@ METHOD(CheddarGoblin, mr_setup, bool(CheddarGoblin this, entity actor))
 	actor.th_melee = cheddar_attack;
 	actor.th_pain = cheddar_pain;
 	actor.th_die = cheddar_die;
+
+	return true;
+}
+METHOD(CheddarGoblin, mr_sight, bool(CheddarGoblin this, entity actor))
+{
+	TC(CheddarGoblin, this);
+
+	_sound(actor, CH_VOICE, "cheddar_goblin/sight.wav", 1, ATTN_NORM);
 
 	return true;
 }

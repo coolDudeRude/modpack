@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef GAMEQC
-SOUND(SCATTERCRUMB_BOUNCE, "wraith/bounce");
+//SOUND(SCATTERCRUMB_BOUNCE, "wraith/bounce");
 #endif
 CLASS(Scattercrumb, Weapon)
 /* ammotype  */ ATTRIB(Scattercrumb, ammo_type, int, IT_SHELLS);

@@ -829,4 +829,12 @@ METHOD(Jim, mr_setup, bool(Jim this, entity actor))
 
     return true;
 }
+METHOD(Jim, mr_sight, bool(Jim this, entity actor))
+{
+	TC(Jim, this);
+
+	_sound(actor, CH_VOICE, "jim/sight1.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

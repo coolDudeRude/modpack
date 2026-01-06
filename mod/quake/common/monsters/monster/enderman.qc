@@ -194,7 +194,7 @@ METHOD(Enderman, mr_sight, bool(Enderman this, entity actor))
     TC(Enderman, this);
 
     if(random() < 0.25)
-		sound(actor, CH_VOICE, SND_MON_ENDERMAN_SIGHT, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "enderman/stare.wav", 1, ATTN_NORM);
 
     return true;
 }

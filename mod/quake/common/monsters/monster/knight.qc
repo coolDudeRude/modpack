@@ -19,9 +19,38 @@ void kn_idle_sound(entity this)
 	{
 		if((this.spawnflags & 2)) // statue)
 			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
+		else if(IsQBJ3Map())
+		{
+			float r = random();
+			if(r < 0.33)
+				_sound(this, CH_VOICE, "knight/knight_idle_conditionreportblue.wav", 1, ATTN_IDLE);
+			else if(r < 0.66)
+				_sound(this, CH_VOICE, "knight/knight_idle_confirmingposition.wav", 1, ATTN_IDLE);
+			else
+				_sound(this, CH_VOICE, "knight/knight_idle_yeahgoodhere.wav", 1, ATTN_IDLE);
+		}
 		else
 			_sound(this, CH_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
 	}
+}
+
+void kn_aggro_sound(entity this)
+{
+	if(random() > 0.2)
+		return;
+
+	if(IsQBJ3Map())
+	{
+		if(random() > 0.5)
+			return; // less dying for this ass
+		if(random() > 0.5)
+			_sound(this, CH_VOICE, "knight/knight_aggro_dieasshole.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "knight/knight_aggro_standdown.wav", 1, ATTN_IDLE);
+		return;
+	}
+
+	_sound(this, CH_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
 }
 
 void knight_stand1(entity this);
@@ -69,7 +98,7 @@ void knight_run2(entity this) { set_animofs(this, anim_knight_runb, 2, knight_ru
 void knight_run1(entity this)
 {
 	set_animofs(this, anim_knight_runb, 1, knight_run2);
-	kn_idle_sound(this);
+	kn_aggro_sound(this);
 	ai_run(this, 16);
 }
 
@@ -144,6 +173,16 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 	
 	if((this.spawnflags & 2)) // statue)
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
+	else if(IsQBJ3Map())
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "knight/knight_pain_1.wav", 1, ATTN_NORM);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "knight/knight_pain_2.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "knight/knight_pain_3.wav", 1, ATTN_NORM);
+	}
 	else
 		_sound(this, CH_VOICE, "knight/khurt.wav", 1, ATTN_NORM);
 	if(r < 0.85)
@@ -210,7 +249,10 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.health < -40)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_knight.mdl", this.health);
+		if(!(this.spawnflags & 2) && IsQBJ3Map())
+			ThrowHead(this, inflictor, "progs/gibs/gibhead_knight.mdl", this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_knight.mdl", this.health);
 		if((this.spawnflags & 2)) // statue)
 		{
 			ThrowGib(this, inflictor, "progs/statgib1.mdl", this.health);
@@ -229,6 +271,13 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 // regular death
 	if((this.spawnflags & 2)) // statue
 		_sound(this, CH_VOICE, "statue/death.wav", 1, ATTN_NORM);
+	else if(IsQBJ3Map())
+	{
+		if(random() > 0.5)
+			_sound(this, CH_VOICE, "knight/knight_death_1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "knight/knight_death_2.wav", 1, ATTN_NORM);
+	}
 	else
 		_sound(this, CH_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
 	if(random() < 0.5)
@@ -295,9 +344,12 @@ METHOD(Knight, mr_setup, bool(Knight this, entity actor))
     TC(Knight, this);
 
     if((actor.spawnflags & 2) && !IsRogueMap())
+    {
+    	actor.skin = 0;
     	actor.spawnflags &= ~2; // TODO: why would mg be setting this?
+    }
 
-	if((actor.spawnflags & 2)) // statue
+	if(actor.spawnflags & 2) // statue
 	{
 		precache_model("progs/statgib1.mdl");
 		precache_model("progs/statgib2.mdl");
@@ -307,11 +359,37 @@ METHOD(Knight, mr_setup, bool(Knight this, entity actor))
 		precache_sound("statue/pain.wav");
 		precache_sound("statue/death.wav");
 	}
+	else if(IsQBJ3Map())
+	{
+		precache_model("progs/knight_qbj.mdl");
+		precache_model("progs/gibs/gibhead_knight.mdl");
+
+		precache_sound("knight/knight_pain_1.wav");
+		precache_sound("knight/knight_pain_2.wav");
+		precache_sound("knight/knight_pain_3.wav");
+		precache_sound("knight/knight_death_1.wav");
+		precache_sound("knight/knight_death_2.wav");
+
+		precache_sound("knight/knight_idle_conditionreportblue.wav");
+		precache_sound("knight/knight_idle_confirmingposition.wav");
+		precache_sound("knight/knight_idle_yeahgoodhere.wav");
+
+		precache_sound("knight/knight_sight_enemysighted.wav");
+		precache_sound("knight/knight_sight_ivegother.wav");
+		precache_sound("knight/knight_sight_youregoingdown.wav");
+
+		precache_sound("knight/knight_aggro_dieasshole.wav");
+		precache_sound("knight/knight_aggro_standdown.wav");
+
+		_setmodel(actor, "progs/knight_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 	else
 	{
 		precache_sound("knight/kdeath.wav");
 		precache_sound("knight/khurt.wav");
 		precache_sound("knight/idle.wav");
+		precache_sound("knight/ksight.wav");
 	}
 	precache_sound("knight/sword1.wav");
 	precache_sound("knight/sword2.wav");
@@ -359,7 +437,21 @@ METHOD(Knight, mr_sight, bool(Knight this, entity actor))
 	}
 
 	if(!actor.skin)
-		sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
+	{
+		if(IsQBJ3Map())
+		{
+			float r = random();
+			if(r < 0.33)
+				_sound(actor, CH_VOICE, "knight/knight_sight_enemysighted.wav", 1, ATTN_NORM);
+			else if(r < 0.66)
+				_sound(actor, CH_VOICE, "knight/knight_sight_ivegother.wav", 1, ATTN_NORM);
+			else
+				_sound(actor, CH_VOICE, "knight/knight_sight_youregoingdown.wav", 1, ATTN_NORM);
+
+			return true;
+		}
+		_sound(actor, CH_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	}
 
     return true;
 }

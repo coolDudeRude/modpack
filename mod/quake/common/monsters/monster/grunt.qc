@@ -12,11 +12,50 @@ const int anim_army_run = 73; //'73 80 0'
 const int anim_army_shoot = 81; //'81 191 0'
 const int anim_army_prowl = 90; //'90 113 0'
 
-/*
-==============================================================================
-SOLDIER CODE
-==============================================================================
-*/
+.string mdl_body;
+.string mdl_head;
+
+.int variant;
+const int GRUNT_SHOTGUN = 0; // default state
+const int GRUNT_PISTOL = 1;
+const int GRUNT_ROCKET = 2;
+
+void army_idlesound(entity this)
+{
+	if(IsQBJ3Map())
+	{
+		if(random() < 0.08)
+		{
+			float rs = (random() * 5);
+			if(rs < 1)		_sound(this, CH_VOICE, "grunt/soldier_idle_inposition.wav", 1, ATTN_IDLE);
+			else if(rs < 2)	_sound(this, CH_VOICE, "grunt/soldier_idle_standingby.wav", 1, ATTN_IDLE);
+			else if(rs < 3)	_sound(this, CH_VOICE, "grunt/soldier_idle_ten2.wav", 1, ATTN_IDLE);
+			else if(rs < 4)	_sound(this, CH_VOICE, "grunt/soldier_idle_ten4.wav", 1, ATTN_IDLE);
+			else			_sound(this, CH_VOICE, "grunt/soldier_idle_unithasnocontact.wav", 1, ATTN_IDLE);
+		}
+	}
+	else if(random() < 0.2)
+		_sound(this, CH_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+}
+
+void army_aggrosound(entity this)
+{
+	if(IsQBJ3Map())
+	{
+		if(random() < 0.05 && time > this.show_hostile)
+		{
+			float rs = (random() * 6);
+			if(rs < 1)		_sound(this, CH_VOICE, "grunt/soldier_aggro_breakcover.wav", 1, ATTN_NORM);
+			else if(rs < 2)	_sound(this, CH_VOICE, "grunt/soldier_aggro_converging.wav", 1, ATTN_NORM);
+			else if(rs < 3)	_sound(this, CH_VOICE, "grunt/soldier_aggro_mobile.wav", 1, ATTN_NORM);
+			else if(rs < 4)	_sound(this, CH_VOICE, "grunt/soldier_aggro_movingin.wav", 1, ATTN_NORM);
+			else if(rs < 5)	_sound(this, CH_VOICE, "grunt/soldier_aggro_outbreak.wav", 1, ATTN_NORM);
+			else			_sound(this, CH_VOICE, "grunt/soldier_aggro_stopresisting.wav", 1, ATTN_NORM);
+		}
+	}
+	else if(random() < 0.2)
+		_sound(this, CH_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+}
 
 void army_stand1(entity this);
 void army_stand8(entity this) { set_animofs(this, anim_army_stand, 8, army_stand1); ai_stand(this); }
@@ -55,8 +94,7 @@ void army_walk2(entity this) { set_animofs(this, anim_army_prowl, 2, army_walk3)
 void army_walk1(entity this)
 {
 	set_animofs(this, anim_army_prowl, 1, army_walk2);
-	if(random() < 0.2)
-		_sound(this, CH_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+	army_idlesound(this);
 	ai_walk(this, 1);
 	monster_footstep(this, false);
 }
@@ -72,8 +110,7 @@ void army_run2(entity this) { set_animofs(this, anim_army_run, 2, army_run3); ai
 void army_run1(entity this)
 {
 	set_animofs(this, anim_army_run, 1, army_run2);
-	if(random() < 0.2)
-		_sound(this, CH_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+	army_aggrosound(this);
 	ai_run(this, 11);
 }
 
@@ -147,38 +184,104 @@ void army_pain(entity this, entity attacker, float damage, int deathtype)
 	{
 		this.pain_finished = time + 0.6;
 		army_pain1(this);
-		_sound(this, CH_VOICE, "soldier/pain1.wav", 1, ATTN_NORM);
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "grunt/soldier_pain1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "soldier/pain1.wav", 1, ATTN_NORM);
 	}
 	else if(r < 0.6)
 	{
 		this.pain_finished = time + 1.1;
 		army_painb1(this);
-		_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "grunt/soldier_pain2.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
 	}
 	else
 	{
 		this.pain_finished = time + 1.1;
 		army_painc1(this);
-		_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		if(IsQBJ3Map())
+			_sound(this, CH_VOICE, "grunt/soldier_pain3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
 	}
 }
-
 
 void army_fire(entity this)
 {
 	ai_face(this);
-	
-	_sound(this, CH_WEAPON_SINGLE, "soldier/sattck1.wav", 1, ATTN_NORM);	
 
 // fire somewhat behind the player, so a dodging player is harder to hit
 	entity en = this.enemy;
+	vector org = this.origin;
+
+	if(this.variant == GRUNT_ROCKET && !IS_PLAYER(this))
+		org.z = this.absmin_z + this.size_z * 0.7;
 	
 	vector dir = (en.absmin + en.absmax) * 0.5;
 	if(en.velocity != '0 0 0')
 		dir -= en.velocity * 0.2;
-	dir = normalize(dir - this.origin);
-	
-	FireBullets(this, 4, this.origin, dir, '0.1 0.1 0', DEATH_MONSTER_GRUNT.m_id);
+	dir = normalize(dir - org);
+
+	switch(this.variant)
+	{
+		default:
+		case GRUNT_SHOTGUN:
+		{
+			if(IsQBJ3Map())
+				_sound(this, CH_WEAPON_SINGLE, "weapons/shotgn2.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_WEAPON_SINGLE, "soldier/sattck1.wav", 1, ATTN_NORM);
+			FireBullets(this, 4, 4, org, dir, '0.1 0.1 0', DEATH_MONSTER_GRUNT.m_id);
+			break;
+		}
+		case GRUNT_ROCKET:
+		{
+			_sound(this, CH_WEAPON_SINGLE, "weapons/sgun1.wav", 1, ATTN_NORM);
+
+			entity newmis = launch_spike(this, org, dir);
+			newmis.noise = "weapons/r_exp3.wav";
+			newmis.dmg = 40;
+			setsize(newmis, '0 0 0', '0 0 0');
+			newmis.velocity = dir * 900;
+			settouch(newmis, T_MissileTouch); // rocket explosion
+			newmis.projectiledeathtype = DEATH_MONSTER_GRUNT.m_id;
+
+			CSQCProjectile(newmis, true, PROJECTILE_ROCKET, true);
+			break;
+		}
+		case GRUNT_PISTOL:
+		{
+			_sound(this, CH_WEAPON_SINGLE, "pistol/pistol_fire.wav", 1, ATTN_NORM);
+
+			float bullet_speed = 800 + (autocvar_skill * 150);
+			makevectors(this.angles);
+			vector src_origin = org;
+			if(!IS_PLAYER(this))
+				src_origin.z = this.absmin_z + this.size_z * 0.7;
+
+			traceline(src_origin, src_origin + v_forward, MOVE_NORMAL, this);
+			src_origin = trace_endpos;
+
+			int shotcount = 1;
+			vector spread = '0.05 0.05 0';
+			for(int j = 0; j < shotcount; ++j)
+			{
+				float var_speed = crandom() * 10 + bullet_speed;
+				vector spread_dir = dir + (crandom() * spread.x) * v_right + (crandom() * spread.y) * v_up;
+				entity missile = launch_spike(this, src_origin, spread_dir);
+				missile.classname = "bullet"; // hack
+				missile.velocity = spread_dir * var_speed;
+				missile.projectiledeathtype = DEATH_MONSTER_GRUNT.m_id;
+				missile.dmg = 12;
+
+				CSQCProjectile(missile, true, PROJECTILE_BULLET, true);
+			}
+			break;
+		}
+	}
 }
 
 
@@ -219,22 +322,55 @@ void army_cdie1(entity this) { set_animofs(this, anim_army_deathc, 1, army_cdie2
 
 void army_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	this.ammo_shells = 5;
+	switch(this.variant)
+	{
+		default:
+		case GRUNT_SHOTGUN: this.ammo_shells = 5; break;
+		case GRUNT_ROCKET: this.ammo_rockets = 1; break;
+		case GRUNT_PISTOL: this.ammo_shells = 4; break;
+	}
 	DropBackpack(this);
 	
 // check for gib
 	if(this.health < -35)
 	{
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_guard.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+		if(this.mdl_head != "")
+			ThrowHead(this, inflictor, this.mdl_head, this.health);
+		else
+			ThrowHead(this, inflictor, "progs/h_guard.mdl", this.health);
+		if(IsQBJ3Map())
+		{
+			ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_3.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_4.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_5.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_6.mdl", this.health);
+		}
+		else
+		{
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+		}
 		return;
 	}
 
 // regular death
-	_sound(this, CH_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
+	if(IsQBJ3Map())
+	{
+		if(random() < 0.5)
+			_sound(this, CH_VOICE, "grunt/soldier_death1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "grunt/soldier_death2.wav", 1, ATTN_NORM);
+	}
+	else
+		_sound(this, CH_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
 	if(random() < 0.5)
 		army_die1(this);
 	else
@@ -312,6 +448,18 @@ spawnfunc(monster_nailgrunt) { monster_start(this, true, MON_GRUNT); }
 
 // drake
 spawnfunc(monster_ranger) { monster_start(this, true, MON_GRUNT); }
+
+// qbj3
+spawnfunc(monster_army_rocket)
+{
+	this.variant = GRUNT_ROCKET;
+	monster_start(this, true, MON_GRUNT);
+}
+spawnfunc(monster_army_pistol)
+{
+	this.variant = GRUNT_PISTOL;
+	monster_start(this, true, MON_GRUNT);
+}
 #endif // SVQC
 
 #ifdef SVQC
@@ -319,17 +467,81 @@ METHOD(Grunt, mr_setup, bool(Grunt this, entity actor))
 {
     TC(Grunt, this);
 
-	precache_model("progs/gib1.mdl");
-	precache_model("progs/gib2.mdl");
-	precache_model("progs/gib3.mdl");
-
-	precache_sound("soldier/death1.wav");
-	precache_sound("soldier/idle.wav");
-	precache_sound("soldier/pain1.wav");
-	precache_sound("soldier/pain2.wav");
 	precache_sound("soldier/sattck1.wav");
 
 	precache_sound("player/udeath.wav");		// gib death
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/gibs/gib_gen_1.mdl");
+		precache_model("progs/gibs/gib_gen_2.mdl");
+		precache_model("progs/gibs/gib_gen_3.mdl");
+		precache_model("progs/gibs/gib_gen_4.mdl");
+		precache_model("progs/gibs/gib_gen_5.mdl");
+		precache_model("progs/gibs/gib_gen_6.mdl");
+
+		precache_sound("grunt/soldier_aggro_breakcover.wav");
+		precache_sound("grunt/soldier_aggro_converging.wav");
+		precache_sound("grunt/soldier_aggro_mobile.wav");
+		precache_sound("grunt/soldier_aggro_movingin.wav");
+		precache_sound("grunt/soldier_aggro_outbreak.wav");
+		precache_sound("grunt/soldier_aggro_stopresisting.wav");
+		precache_sound("grunt/soldier_death1.wav");
+		precache_sound("grunt/soldier_death2.wav");
+		precache_sound("grunt/soldier_fireinthehole.wav");
+		precache_sound("grunt/soldier_firing.wav");
+		precache_sound("grunt/soldier_idle_inposition.wav");
+		precache_sound("grunt/soldier_idle_standingby.wav");
+		precache_sound("grunt/soldier_idle_ten2.wav");
+		precache_sound("grunt/soldier_idle_ten4.wav");
+		precache_sound("grunt/soldier_idle_unithasnocontact.wav");
+		precache_sound("grunt/soldier_pain1.wav");
+		precache_sound("grunt/soldier_pain2.wav");
+		precache_sound("grunt/soldier_pain3.wav");
+		precache_sound("grunt/soldier_pain4.wav");
+		precache_sound("grunt/soldier_sight_contact.wav");
+		precache_sound("grunt/soldier_sight_hostile.wav");
+		precache_sound("grunt/soldier_sight_target.wav");
+
+		precache_sound("weapons/sgun1.wav");
+		precache_sound("weapons/shotgn2.wav");
+		precache_sound("weapons/r_exp3.wav");
+		precache_sound("pistol/pistol_fire.wav");
+
+		switch(actor.variant)
+		{
+			default:
+			case GRUNT_SHOTGUN: actor.mdl_body = "progs/soldier_shotgun_qbj.mdl"; actor.mdl_head = "progs/gibs/gibhead_grunt_s.mdl"; break;
+			case GRUNT_ROCKET: actor.mdl_body = "progs/soldier_rocket_qbj.mdl"; actor.mdl_head = "progs/gibs/gibhead_grunt_r.mdl"; break;
+			case GRUNT_PISTOL: actor.mdl_body = "progs/soldier_pistol_qbj.mdl"; actor.mdl_head = "progs/gibs/gibhead_grunt_p.mdl"; break;
+		}
+	}
+	else
+	{
+		actor.variant = GRUNT_SHOTGUN; // we don't have the assets for other types otherwise!
+
+		precache_model("progs/gib1.mdl");
+		precache_model("progs/gib2.mdl");
+		precache_model("progs/gib3.mdl");
+
+		precache_sound("soldier/death1.wav");
+		precache_sound("soldier/idle.wav");
+		precache_sound("soldier/pain1.wav");
+		precache_sound("soldier/pain2.wav");
+		precache_sound("soldier/sight1.wav");
+	}
+
+	if(actor.mdl_head != "")
+		precache_model(actor.mdl_head);
+
+	if(actor.mdl_body != "")
+	{
+		vector oldmin = actor.mins;
+		vector oldmax = actor.maxs;
+		precache_model(actor.mdl_body);
+		_setmodel(actor, actor.mdl_body);
+		setsize(actor, oldmin, oldmax);
+	}
 
     actor.health = 30;
     actor.th_stand = army_stand1;
@@ -344,5 +556,26 @@ METHOD(Grunt, mr_setup, bool(Grunt this, entity actor))
 	actor.steptype = FS_TYPEMEDIUM;
 
     return true;
+}
+METHOD(Grunt, mr_sight, bool(Grunt this, entity actor))
+{
+	TC(Grunt, this);
+
+	if(IsQBJ3Map())
+	{
+		float rs = (random() * 3);
+
+		if(rs < 1)
+			_sound(actor, CH_VOICE, "grunt/soldier_sight_contact.wav", 1, ATTN_NORM);
+		else if(rs < 2)
+			_sound(actor, CH_VOICE, "grunt/soldier_sight_hostile.wav", 1, ATTN_NORM);
+		else
+			_sound(actor, CH_VOICE, "grunt/soldier_sight_target.wav", 1, ATTN_NORM);
+
+		return true;
+	}
+	_sound(actor, CH_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

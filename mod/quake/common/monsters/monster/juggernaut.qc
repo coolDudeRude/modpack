@@ -716,6 +716,7 @@ METHOD(Juggernaut, mr_setup, bool(Juggernaut this, entity actor))
 	precache_sound("monsters/juggers/jswipe2.wav");
 	precache_sound("monsters/juggers/jswipe3.wav");
 	precache_sound("monsters/juggers/jgib.wav");
+	precache_sound("monsters/juggers/jlocked.wav");
 
 	float r = random();
 	if(r <= 0.5)
@@ -737,5 +738,13 @@ METHOD(Juggernaut, mr_setup, bool(Juggernaut this, entity actor))
 	actor.ammo_cells = 30;
 
     return true;
+}
+METHOD(Juggernaut, mr_sight, bool(Juggernaut this, entity actor))
+{
+	TC(Juggernaut, this);
+
+	_sound(actor, CH_VOICE, "monsters/juggers/jlocked.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

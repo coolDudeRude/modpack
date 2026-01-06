@@ -4,4 +4,6 @@
 string getworldbasename();
 
 bool IsJumpsDoneWell();
+
+bool IsQBJ3Map();
 #endif

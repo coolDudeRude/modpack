@@ -168,6 +168,7 @@
     MSG_INFO_NOTIF(ITEM_WEAPON_PICKUP,                      N_DISABLE,  0, 0, "", "",                                    "",     _("^BGYou picked up a weapon"), "")
 
     MSG_INFO_NOTIF(POWERDOWN_ANTIGRAV,                      N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Antigrav failing..."), "")
+    MSG_INFO_NOTIF(POWERDOWN_BERSERK,                       N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Your rage subsides..."), "")
     MSG_INFO_NOTIF(POWERDOWN_BIOSUIT,                       N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Air supply in Biosuit expiring"), "")
     MSG_INFO_NOTIF(POWERDOWN_DOUBLEJUMPBOOTS,               N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Double Jump Boots losing charge..."), "")
     MSG_INFO_NOTIF(POWERDOWN_EMPATHY,                       N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Empathy Shields are running out"), "")
@@ -177,6 +178,7 @@
     MSG_INFO_NOTIF(POWERDOWN_SHARPSHOOTER,                  N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Sharp Shooter ammo supply depleting"), "")
     MSG_INFO_NOTIF(POWERDOWN_SHIELD,                        N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Shield failing..."), "")
     MSG_INFO_NOTIF(POWERDOWN_QUAD_DAMAGE,                   N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Quad Damage is wearing off"), "")
+    MSG_INFO_NOTIF(POWERDOWN_VAMPIRISM,                     N_DISABLE,  0, 0, "", "",                                    "",     _("^K2You feel sated..."), "")
     MSG_INFO_NOTIF(POWERDOWN_WETSUIT,                       N_DISABLE,  0, 0, "", "",                                    "",     _("^K2Air supply in Wetsuit is running out"), "")
 
     MSG_INFO_NOTIF(QUIT_DISCONNECT,                         N_CHATCON,  1, 1, "s1 f1", "",      "",             _("^BG%s^F3 left the game with %s frag(s)"), "")
@@ -288,6 +290,7 @@
     MSG_CENTER_NOTIF(PLAYER_WIN,                        N_ENABLE,     1, 0, "s1",                       CPID_ROUND, "5.5 0", _("^BG%s^BG wins!"), "")
 
     MSG_CENTER_NOTIF(POWERDOWN_ANTIGRAV,                N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Antigrav failing..."), "")
+    MSG_CENTER_NOTIF(POWERDOWN_BERSERK,                 N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Your rage subsides..."), "")
     MSG_CENTER_NOTIF(POWERDOWN_BIOSUIT,                 N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Air supply in Biosuit expiring"), "")
     MSG_CENTER_NOTIF(POWERDOWN_DOUBLEJUMPBOOTS,         N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Double Jump Boots losing charge..."), "")
     MSG_CENTER_NOTIF(POWERDOWN_EMPATHY,                 N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Empathy Shields are running out"), "")
@@ -297,6 +300,7 @@
     MSG_CENTER_NOTIF(POWERDOWN_SHARPSHOOTER,            N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Sharp Shooter ammo supply depleting"), "")
     MSG_CENTER_NOTIF(POWERDOWN_SHIELD,                  N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Shield failing..."), "")
     MSG_CENTER_NOTIF(POWERDOWN_QUAD_DAMAGE,             N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Quad Damage is wearing off"), "")
+    MSG_CENTER_NOTIF(POWERDOWN_VAMPIRISM,               N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2You feel sated..."), "")
     MSG_CENTER_NOTIF(POWERDOWN_WETSUIT,                 N_ENABLE,     0, 0, "",                         CPID_POWER,"0 0", _("^K2Air supply in Wetsuit is running out"), "")
 
     MSG_CENTER_NOTIF(SEQUENCE_COMPLETED,                N_ENABLE,    0, 0, "",                          CPID_COUNT,"0 0", _("^BGSequence completed!"), "")
@@ -382,6 +386,7 @@
     MSG_MULTI_NOTIF(ITEM_WEAPON_STOLE,                  N_ENABLE,  NULL,           INFO_ITEM_WEAPON_STOLE,                 CENTER_ITEM_WEAPON_STOLE)
 
     MSG_MULTI_NOTIF(POWERDOWN_ANTIGRAV,                 N_ENABLE,  NULL,           INFO_POWERDOWN_ANTIGRAV,                CENTER_POWERDOWN_ANTIGRAV)
+    MSG_MULTI_NOTIF(POWERDOWN_BERSERK,                  N_ENABLE,  NULL,           INFO_POWERDOWN_BERSERK,                 CENTER_POWERDOWN_BERSERK)
     MSG_MULTI_NOTIF(POWERDOWN_BIOSUIT,                  N_ENABLE,  NULL,           INFO_POWERDOWN_BIOSUIT,                 CENTER_POWERDOWN_BIOSUIT)
     MSG_MULTI_NOTIF(POWERDOWN_DOUBLEJUMPBOOTS,          N_ENABLE,  NULL,           INFO_POWERDOWN_DOUBLEJUMPBOOTS,         CENTER_POWERDOWN_DOUBLEJUMPBOOTS)
     MSG_MULTI_NOTIF(POWERDOWN_EMPATHY,                  N_ENABLE,  NULL,           INFO_POWERDOWN_EMPATHY,                 CENTER_POWERDOWN_EMPATHY)
@@ -391,6 +396,7 @@
     MSG_MULTI_NOTIF(POWERDOWN_SHARPSHOOTER,             N_ENABLE,  NULL,           INFO_POWERDOWN_SHARPSHOOTER,            CENTER_POWERDOWN_SHARPSHOOTER)
     MSG_MULTI_NOTIF(POWERDOWN_SHIELD,                   N_ENABLE,  NULL,           INFO_POWERDOWN_SHIELD,                  CENTER_POWERDOWN_SHIELD)
     MSG_MULTI_NOTIF(POWERDOWN_QUAD_DAMAGE,              N_ENABLE,  NULL,           INFO_POWERDOWN_QUAD_DAMAGE,             CENTER_POWERDOWN_QUAD_DAMAGE)
+    MSG_MULTI_NOTIF(POWERDOWN_VAMPIRISM,                N_ENABLE,  NULL,           INFO_POWERDOWN_VAMPIRISM,               CENTER_POWERDOWN_VAMPIRISM)
     MSG_MULTI_NOTIF(POWERDOWN_WETSUIT,                  N_ENABLE,  NULL,           INFO_POWERDOWN_WETSUIT,                 CENTER_POWERDOWN_WETSUIT)
 
     MSG_MULTI_NOTIF(WEAPON_FRAG,                        N_ENABLE,  NULL,           INFO_WEAPON_FRAG,                       NULL)

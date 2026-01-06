@@ -134,6 +134,7 @@ METHOD(Squeak, mr_setup, bool(Squeak this, entity actor))
 	precache_sound("squeak/hunt1.wav");
 	precache_sound("squeak/hunt2.wav");
 	precache_sound("squeak/hunt3.wav");
+	precache_sound("squeak/deploy.wav");
 
 	actor.health = 50;
 	actor.th_pain = squeak_pain;
@@ -144,6 +145,14 @@ METHOD(Squeak, mr_setup, bool(Squeak this, entity actor))
 	actor.th_walk = squeak_walk1;
 	actor.th_run = squeak_run1;
 	actor.th_melee = squeak_explode;
+
+	return true;
+}
+METHOD(Squeak, mr_sight, bool(Squeak this, entity actor))
+{
+	TC(Squeak, this);
+
+	_sound(actor, CH_VOICE, "squeak/deploy.wav", 1, ATTN_NORM);
 
 	return true;
 }

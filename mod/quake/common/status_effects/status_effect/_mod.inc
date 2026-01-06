@@ -1,5 +1,6 @@
 // generated file; do not modify
 #include "antigrav.qc"
+#include "berserk.qc"
 #include "biosuit.qc"
 #include "burning.qc"
 #include "confused.qc"
@@ -17,5 +18,6 @@
 #include "sharp_shooter.qc"
 #include "shield.qc"
 #include "slowness.qc"
+#include "vampirism.qc"
 #include "wetsuit.qc"
 #include "withering.qc"

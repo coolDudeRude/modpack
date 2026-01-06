@@ -83,12 +83,17 @@ void parms_putdata(string id, string request, string data)
 	db_put(ServerProgsDB, strcat("/parms/", id, "/", request), data);
 }
 
+void parms_cleardata(string id, string request)
+{
+	db_remove(ServerProgsDB, strcat("/parms/", id, "/", request));
+}
+
 string parms_getid(entity this)
 {
 	return itos(etof(this));
 }
 
-void parms_get(entity this)
+void parms_read(entity this)
 {
 	if(!autocvar_sv_quake_itemdatabase)
 		return;
@@ -225,6 +230,11 @@ void parms_reset(entity this)
 		prev_weapon = WEP_HAMMER;
 		fallback_weapon = WEP_HAMMER;
 	}
+	else if(IsQBJ3Map())
+	{
+		start_weapon = WEP_WRENCH;
+		prev_weapon = WEP_PISTOL;
+	}
 
 	string myid = parms_getid(this);
 
@@ -253,6 +263,21 @@ void parms_reset(entity this)
 	parms_putdata(myid, "ammo_drills", "0");
 }
 
+void parms_clear(entity this)
+{
+	if(!autocvar_sv_quake_itemdatabase)
+	{
+		SetNewParms();
+		return;
+	}
+
+	string myid = parms_getid(this);
+
+	// TRICK: since the read operation checks if weapons are empty
+	// it's the only field we need to to clear to guarantee a reset!
+	parms_putdata(myid, "weapons", "");
+}
+
 void SetSpawnParms(entity this)
 {
 	// storing in a database means we always have access to every player's data
@@ -274,7 +299,7 @@ void SetChangeParms(entity this)
 	}
 	if(this.health <= 0 || deathmatch || world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL)
 	{
-		parms_reset(this);
+		parms_clear(this);
 		return;
 	}
 
@@ -337,7 +362,12 @@ void SetNewParms()
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
 	}
-	WepSet weps = (WEPSET(PEWPEW) | WEPSET(SHOTGUN) | start_weapon.m_wepset);
+	else if(IsQBJ3Map())
+	{
+		start_weapon = WEP_WRENCH;
+		prev_weapon = WEP_PISTOL;
+	}
+	WepSet weps = (WEPSET(PEWPEW) | prev_weapon.m_wepset | start_weapon.m_wepset);
 	if(world.worldtype == WORLDTYPE_DODGEBALL)
 		weps = start_weapon.m_wepset;
 	else if(deathmatch && autocvar_skill == 3)
@@ -441,7 +471,7 @@ void DecodeLevelParms(entity this)
 		this.powerups = 0;
 	}
 
-	parms_get(this);
+	parms_read(this);
 
 	// no parms left! let's just count from when they join
 	this.parm_idlesince = time;
@@ -2156,6 +2186,8 @@ void coop_enable(entity this, entity actor, entity trigger)
 {
 	this.classname = "info_player_coop";
 	this.use = func_null;
+	if(IsQBJ3Map())
+		this.state = COOP_SPAWN_ACTIVE; // TODO?
 }
 
 /*QUAKED info_player_coop(1 0 1)(-16 -16 -24)(16 16 24)
@@ -2168,7 +2200,7 @@ spawnfunc(info_player_coop)
 		delete(this);
 		return;
 	}
-	if((this.spawnflags & COOP_SPAWN_START_ACTIVE) || (!this.targetname || this.targetname == ""))
+	if((this.spawnflags & COOP_SPAWN_START_ACTIVE) || (!this.targetname || this.targetname == "") || IsQBJ3Map())
 		this.state = COOP_SPAWN_ACTIVE;
 
 	Inventory_new(this);

@@ -450,6 +450,7 @@ METHOD(HammerOgre, mr_setup, bool(HammerOgre this, entity actor))
 	precache_sound("ogre/ham_swipe.wav"); // hammer swipe
 	precache_sound("ogre/ham_hit.wav"); // hammer hit ground
 	precache_sound("ogre/ham_wave.wav"); // hammer shockwave
+	precache_sound("ogre/ogwake.wav");
 
 	precache_sound("gibs/gibheavy1.wav");
 	precache_sound("gibs/gibwood.wav");
@@ -484,6 +485,14 @@ METHOD(HammerOgre, mr_setup, bool(HammerOgre this, entity actor))
 		actor.ammo_rockets = 0;
 	else if(actor.ammo_rockets == 0)
 		actor.ammo_rockets = 4;
+
+	return true;
+}
+METHOD(HammerOgre, mr_sight, bool(HammerOgre this, entity actor))
+{
+	TC(HammerOgre, this);
+
+	_sound(actor, CH_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 
 	return true;
 }

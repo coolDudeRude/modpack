@@ -231,7 +231,8 @@ entity minion_spawn(entity own, vector org, entity monster, Monster mon)
 
 	monster_setup(monster, mon);
 
-	setorigin(monster, org);
+	org.z += -mon.m_mins.z; // offset based on size
+	setorigin(monster, org + '0 0 1'); // offset SHOULDN'T be needed, but let's be safe!
 
 	setcefc(monster, monster_customize);
 
@@ -245,6 +246,7 @@ entity minion_spawn(entity own, vector org, entity monster, Monster mon)
 		//DropToFloor_QC_DelayedInit(monster);
 
 	monster.takedamage = DAMAGE_AIM;
+	monster.ideal_yaw = monster.angles * '0 1 0';
 	if(!monster.yaw_speed)
 		monster.yaw_speed = 20;
 	monster.view_ofs = '0 0 25';
@@ -309,7 +311,7 @@ void Hatch_Egg(entity this)
 	}
 
 	// Setup spawn location for minion
-	tracebox(this.origin + '0 0 1', this.mins, this.maxs, this.origin - '0 0 256', true, this);
+	//tracebox(this.origin + '0 0 1', this.mins, this.maxs, this.origin - '0 0 256', false, this);
 	
 	// Spawn minion inside of egg model
 	// this.owner is re-assigned to minion to avoid shell gibs interacting
@@ -323,7 +325,7 @@ void Hatch_Egg(entity this)
 	else if(this.owner.classtype == CT_MONSHAL)
 		minion_voreling(this.oldorigin, this.enemy);
 #endif
-	entity minion = minion_spawn(this.owner, trace_endpos, new(monster), mon);
+	entity minion = minion_spawn(this.owner, this.origin, new(monster), mon);
 
 	if(IS_PLAYER(this.owner))
 	{
@@ -331,7 +333,7 @@ void Hatch_Egg(entity this)
 		minion.charmer = this.owner;
 	}
 
-	te_wizspike(trace_endpos);
+	te_wizspike(this.origin);
 
 	setmodel(this, MDL_Null);
 	setsize(this, '0 0 0', '0 0 0');
@@ -378,7 +380,8 @@ entity Create_Egg(entity this, Monster mon)
 	missile.flags = FL_PROJECTILE;
 	set_movetype(missile, MOVETYPE_BOUNCE);
 	missile.projectiledeathtype = DEATH_CRUSH.m_id;
-	missile.solid = SOLID_BBOX;
+	missile.solid = SOLID_CORPSE;
+	missile.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
 	missile.avelocity = '0 0 0';
 	missile.enemy = this.enemy;
 	missile.monsterdef = mon;

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_JUSTICE,           DEATH_SELF_MON_JUSTICE,           
 #ifdef GAMEQC
 MODEL(MON_JUSTICE, "progs/mon_justice.mdl");
 MODEL(MON_JUSTICE_HEAD, "progs/h_justice.mdl");
-
-SOUND(MON_JUSTICE_SIGHT, "justice/sight1");
 #endif
 
 CLASS(Justice, Monster)
@@ -20,7 +18,6 @@ CLASS(Justice, Monster)
 #ifdef GAMEQC
     ATTRIB(Justice, m_model, Model, MDL_MON_JUSTICE);
     ATTRIB(Justice, m_model_head, Model, MDL_MON_JUSTICE_HEAD);
-    ATTRIB(Justice, m_sound, Sound, SND_MON_JUSTICE_SIGHT);
 #endif
     ATTRIB(Justice, netname, string, "justice");
     ATTRIB(Justice, m_name, string, _("Sword of Justice"));

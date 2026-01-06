@@ -1,0 +1,25 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_SWARMER,                   1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was swarmed by a Swarmer"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_SWARMER,              1,  NULL,           INFO_DEATH_SELF_MON_SWARMER,             CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_SWARMER,          DEATH_SELF_MON_SWARMER,          DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_SWARMER, "progs/swarmer_qbj.mdl");
+#endif
+
+CLASS(Swarmer, Monster)
+    ATTRIB(Swarmer, spawnflags, int, 0);
+    ATTRIB(Swarmer, m_mins, vector, '-6 -6 -24');
+    ATTRIB(Swarmer, m_maxs, vector, '6 6 32');
+#ifdef GAMEQC
+    ATTRIB(Swarmer, m_model, Model, MDL_MON_SWARMER);
+    ATTRIB(Swarmer, m_model_head, Model, MDL_Null);
+#endif
+    ATTRIB(Swarmer, netname, string, "swarmer");
+    ATTRIB(Swarmer, m_name, string, _("Swarmer"));
+ENDCLASS(Swarmer)
+
+REGISTER_MONSTER(SWARMER, NEW(Swarmer));

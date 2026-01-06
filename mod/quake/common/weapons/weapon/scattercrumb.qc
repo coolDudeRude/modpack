@@ -38,7 +38,7 @@ void crumb_touch(entity this, entity toucher)
 		return;
 	}
 
-	spamsound(this, CH_SHOTS, SND_SCATTERCRUMB_BOUNCE, 1, ATTN_NORM);
+	//spamsound(this, CH_SHOTS, SND_SCATTERCRUMB_BOUNCE, 1, ATTN_NORM);
 }
 
 // copied from FireBullets

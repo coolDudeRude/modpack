@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_CENTROID,        DEATH_SELF_MON_CENTROID,        DEAT
 #ifdef GAMEQC
 MODEL(MON_CENTROID, "progs/scor.mdl");
 MODEL(MON_CENTROID_HEAD, "progs/h_scourg.mdl");
-
-SOUND(MON_CENTROID_SIGHT, "scourge/sight");
 #endif
 
 CLASS(Centroid, Monster)
@@ -20,7 +18,6 @@ CLASS(Centroid, Monster)
 #ifdef GAMEQC
     ATTRIB(Centroid, m_model, Model, MDL_MON_CENTROID);
     ATTRIB(Centroid, m_model_head, Model, MDL_MON_CENTROID_HEAD);
-    ATTRIB(Centroid, m_sound, Sound, SND_MON_CENTROID_SIGHT);
 #endif
     ATTRIB(Centroid, netname, string, "scourge");
     ATTRIB(Centroid, m_name, string, _("Centroid"));

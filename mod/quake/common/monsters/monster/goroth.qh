@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_GOROTH,        DEATH_SELF_MON_GOROTH,        DEATH_MU
 
 #ifdef GAMEQC
 MODEL(MON_GOROTH, "progs/goroth.mdl");
-
-SOUND(MON_GOROTH_SIGHT, "goroth/gorwake");
 #endif
 
 CLASS(Goroth, Monster)
@@ -18,7 +16,6 @@ CLASS(Goroth, Monster)
     ATTRIB(Goroth, m_maxs, vector, '192 192 576');
 #ifdef GAMEQC
     ATTRIB(Goroth, m_model, Model, MDL_MON_GOROTH);
-    ATTRIB(Goroth, m_sound, Sound, SND_MON_GOROTH_SIGHT);
 #endif
     ATTRIB(Goroth, netname, string, "goroth");
     ATTRIB(Goroth, m_name, string, _("Goroth"));

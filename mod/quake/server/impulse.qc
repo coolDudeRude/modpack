@@ -221,6 +221,30 @@ X(68)
 X(69)
 X(70)
 X(71)
+X(72)
+X(73)
+X(74)
+X(75)
+X(76)
+X(77)
+X(78)
+X(79)
+X(80)
+X(81)
+X(82)
+X(83)
+X(84)
+X(85)
+X(86)
+X(87)
+X(88)
+X(89)
+X(90)
+X(91)
+X(92)
+X(93)
+X(94)
+X(95)
 #undef X
 
 IMPULSE(weapon_next_byid)
@@ -366,6 +390,7 @@ IMPULSE(weapon_reload)
 	}
 }
 
+// impulse 99
 void GiveAllWeapons(entity this)
 {
 	if(!autocvar_sv_cheats && !this.maycheat)
@@ -381,7 +406,7 @@ void GiveAllWeapons(entity this)
 	{
 		if(it.spawnflags & WEP_FLAG_CHAMPION)
 			continue;
-		if(it == WEP_BALL)
+		if(it == WEP_BALL || it == WEP_BERSERKER_FISTS)
 			continue; // TODO?
 		Inventory_add(it, this, ITEM_OWNED);
 	});

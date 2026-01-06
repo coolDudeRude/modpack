@@ -100,7 +100,7 @@ void monster_start_go(entity this)
 	if(!this.use)
 		this.use = monster_use;
 
-	if(!(mon.spawnflags & MONSTER_TYPE_SWIM) && !(this.flags & FL_DECOY) && !(this.spawnflags & SPAWNFLAG_NO_CONTENTS_DAMAGE) && !(mon.spawnflags & MONSTER_TYPE_BOSS))
+	if(!(mon.spawnflags & MONSTER_TYPE_SWIM) && !(this.flags & FL_DECOY) && (!(this.spawnflags & SPAWNFLAG_NO_CONTENTS_DAMAGE) && !IsQBJ3Map()) && !(mon.spawnflags & MONSTER_TYPE_BOSS))
 	{
 		if(!this.damagedbycontents)
 			IL_PUSH(g_damagedbycontents, this);
@@ -372,6 +372,8 @@ Monster monster_randomize(entity this, Monster mon)
 		return mon; // map is broken currently with random mobs TODO
 	if(substring(world.model, 0, 12) == "maps/dogjam_")
 		return mon; // dogs only please
+	if(IsQBJ3Map())
+		return mon; // unique monster models
 
 	if(mon.spawnflags & MON_FLAG_HIDDEN)
 		return mon; // never replace hidden monsters

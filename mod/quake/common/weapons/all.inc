@@ -67,9 +67,15 @@
 #include "weapon/angelicstaff.qh"
 #include "weapon/sickle.qh"
 #include "weapon/pewpew.qh"
+#include "weapon/invoker.qh"
+#include "weapon/rebar_cannon.qh"
+#include "weapon/multi_missile_launcher.qh"
+#include "weapon/pistol.qh"
+#include "weapon/wrench.qh"
+#include "weapon/berserker_fists.qh"
 
 // WARNING: also update the weapon priority list in all.qh or your weapon won't work properly!!
 
 // Weapon registry is sorted to allocate the weapons included above first, update the value below to the number of listed weapons
 // TODO: remove eventually in a way that does not cause https://gitlab.com/xonotic/xonotic-data.pk3dir/-/issues/2714
-#define WEP_HARDCODED_IMPULSES 69
+#define WEP_HARDCODED_IMPULSES 75

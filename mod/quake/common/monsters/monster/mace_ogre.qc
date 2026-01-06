@@ -364,6 +364,7 @@ METHOD(MaceOgre, mr_setup, bool(MaceOgre this, entity actor))
 	precache_sound("ogre/ogsawatk.wav");
 	precache_sound("ogre/ham_swipe.wav"); // mace swipe
 	precache_sound("ogre/ham_hit.wav"); // mace hit ground
+	precache_sound("ogre/ogwake.wav");
 
 	precache_sound("gibs/gibheavy1.wav");
 	precache_sound("gibs/gibwood.wav");
@@ -398,6 +399,14 @@ METHOD(MaceOgre, mr_setup, bool(MaceOgre this, entity actor))
 		actor.ammo_rockets = 0;
 	else if(actor.ammo_rockets == 0)
 		actor.ammo_rockets = 2;
+
+	return true;
+}
+METHOD(MaceOgre, mr_sight, bool(MaceOgre this, entity actor))
+{
+	TC(MaceOgre, this);
+
+	_sound(actor, CH_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 
 	return true;
 }

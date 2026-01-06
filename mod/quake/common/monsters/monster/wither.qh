@@ -42,7 +42,6 @@ CLASS(Wither, Monster)
 #ifdef GAMEQC
     ATTRIB(Wither, m_model, Model, MDL_MON_WITHER);
     ATTRIB(Wither, m_model_head, Model, MDL_MON_WITHER_HEAD);
-    ATTRIB(Wither, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Wither, netname, string, "wither");
     ATTRIB(Wither, m_name, string, _("Wither"));

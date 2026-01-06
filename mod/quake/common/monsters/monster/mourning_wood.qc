@@ -268,4 +268,12 @@ METHOD(MourningWood, mr_setup, bool(MourningWood this, entity actor))
 
 	return true;
 }
+METHOD(MourningWood, mr_sight, bool(MourningWood this, entity actor))
+{
+	TC(MourningWood, this);
+
+	_sound(actor, CH_VOICE, "mourning_wood/death.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif

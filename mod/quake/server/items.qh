@@ -17,6 +17,10 @@ bool autocvar_sv_quake_instance_backpacks = true;
 
 .float sharp_finished;
 
+.float vamp_finished;
+
+.float berserk_finished;
+
 .int worldtype;
 
 const int SIGIL_E1 = BIT(0);

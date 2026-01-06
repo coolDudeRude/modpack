@@ -1,0 +1,25 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_AMALGAM,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was shlorped by the Amalgam"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_AMALGAM,               1,  NULL,           INFO_DEATH_SELF_MON_AMALGAM,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_AMALGAM,           DEATH_SELF_MON_AMALGAM,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_AMALGAM, "progs/toothy_qbj.mdl");
+#endif
+
+CLASS(Amalgam, Monster)
+    ATTRIB(Amalgam, spawnflags, int, MONSTER_TYPE_FLY);
+    ATTRIB(Amalgam, m_mins, vector, '-32 -32 -32');
+    ATTRIB(Amalgam, m_maxs, vector, '32 32 72');
+#ifdef GAMEQC
+    ATTRIB(Amalgam, m_model, Model, MDL_MON_AMALGAM);
+    ATTRIB(Amalgam, m_model_head, Model, MDL_Null);
+#endif
+    ATTRIB(Amalgam, netname, string, "amalgam");
+    ATTRIB(Amalgam, m_name, string, _("Amalgam"));
+ENDCLASS(Amalgam)
+
+REGISTER_MONSTER(AMALGAM, NEW(Amalgam));

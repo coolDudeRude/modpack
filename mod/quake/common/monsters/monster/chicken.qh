@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_CHICKEN,        DEATH_SELF_MON_CHICKEN,        DEATH_
 #ifdef GAMEQC
 MODEL(MON_CHICKEN, "progs/chicken.mdl");
 
-SOUND(MON_CHICKEN_SIGHT, "chicken/sight");
-
 SOUND(MON_CHICKEN_BOCK1, "chicken/fire");
 SOUND(MON_CHICKEN_BOCK2, "chicken/random1");
 SOUND(MON_CHICKEN_BOCK3, "chicken/random2");
@@ -28,7 +26,6 @@ CLASS(Chicken, Monster)
     ATTRIB(Chicken, m_maxs, vector, '16 16 32');
 #ifdef GAMEQC
     ATTRIB(Chicken, m_model, Model, MDL_MON_CHICKEN);
-    ATTRIB(Chicken, m_sound, Sound, SND_MON_CHICKEN_SIGHT);
 #endif
     ATTRIB(Chicken, netname, string, "chicken");
     ATTRIB(Chicken, m_name, string, _("Chicken"));

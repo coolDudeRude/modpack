@@ -309,3 +309,8 @@ REGISTER_STAT(CHALLENGE, INT, challenge)
 float autocvar_sv_quake_goatstuff = 0.03;
 #endif
 REGISTER_STAT(GOATSTUFF, FLOAT, autocvar_sv_quake_goatstuff)
+
+#ifdef SVQC
+bool have_setskill;
+#endif
+REGISTER_STAT(HAVE_SETSKILL, BOOL, have_setskill)

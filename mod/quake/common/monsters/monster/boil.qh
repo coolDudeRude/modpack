@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_BOIL,           DEATH_SELF_MON_BOIL,           DEATH_
 
 #ifdef GAMEQC
 MODEL(MON_BOIL, "progs/mon_boil.mdl");
-
-SOUND(MON_BOIL_SIGHT, "zombie/boil_sight");
 #endif
 
 CLASS(Boil, Monster)
@@ -19,7 +17,6 @@ CLASS(Boil, Monster)
 #ifdef GAMEQC
     ATTRIB(Boil, m_model, Model, MDL_MON_BOIL);
     ATTRIB(Boil, m_model_head, Model, MDL_Null);
-    ATTRIB(Boil, m_sound, Sound, SND_MON_BOIL_SIGHT);
 #endif
     ATTRIB(Boil, netname, string, "boil");
     ATTRIB(Boil, m_name, string, _("Boil"));

@@ -1061,31 +1061,31 @@ void p_hammer_cooldown_01(entity this) { wep_set_anim(this, 188, p_hammer_cooldo
 // 14-20  high
 
 // 20 FPS
-void x_spark_07(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, SUB_Remove); }
-void x_spark_06(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_07); }
-void x_spark_05(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_06); }
-void x_spark_04(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_05); }
-void x_spark_03(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_04); }
-void x_spark_02(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_03); }
+void x_spark_07(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, SUB_Remove); }
+void x_spark_06(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_07); }
+void x_spark_05(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_06); }
+void x_spark_04(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_05); }
+void x_spark_03(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_04); }
+void x_spark_02(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_spark_03); }
 void x_spark_01(entity this) {                  this.nextthink = time + 0.05; setthink(this, x_spark_02); }
 
 void x_spark_01_touch(entity this, entity toucher) { x_spark_01(this); }
 
 // Fast at start 40 FPS then slower 20 FPS
-void x_blood_15(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, SUB_Remove); }
-void x_blood_14(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_15); }
-void x_blood_13(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_14); }
-void x_blood_12(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_13); }
-void x_blood_11(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_12); }
-void x_blood_10(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_11); }
-void x_blood_09(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_10); }
-void x_blood_08(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_09); }
-void x_blood_07(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_08); }
-void x_blood_06(entity this) { self.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_07); }
-void x_blood_05(entity this) { self.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_06); }
-void x_blood_04(entity this) { self.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_05); }
-void x_blood_03(entity this) { self.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_04); }
-void x_blood_02(entity this) { self.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_03); }
+void x_blood_15(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, SUB_Remove); }
+void x_blood_14(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_15); }
+void x_blood_13(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_14); }
+void x_blood_12(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_13); }
+void x_blood_11(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_12); }
+void x_blood_10(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_11); }
+void x_blood_09(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_10); }
+void x_blood_08(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_09); }
+void x_blood_07(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_08); }
+void x_blood_06(entity this) { this.frame += 1; this.nextthink = time + 0.05; setthink(this, x_blood_07); }
+void x_blood_05(entity this) { this.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_06); }
+void x_blood_04(entity this) { this.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_05); }
+void x_blood_03(entity this) { this.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_04); }
+void x_blood_02(entity this) { this.frame += 1; this.nextthink = time + 0.025; setthink(this, x_blood_03); }
 void x_blood_01(entity this) {                  this.nextthink = time + 0.025; setthink(this, x_blood_02); }
 
 void Spark_Activate(entity this, float spark_type, float spark_charge)

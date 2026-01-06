@@ -89,7 +89,7 @@ void eoc_atkc1(entity this)
 		return;
 	}
 	if(this.bosswave >= 1)
-		sound(this, CH_VOICE, SND_MON_EOC_SIGHT, 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
 	ai_face(this);
 	settouch(this, EOC_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -120,7 +120,7 @@ void eoc_atkd1(entity this)
 		return;
 	}
 	if(this.bosswave >= 1)
-		sound(this, CH_VOICE, SND_MON_EOC_SIGHT, 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
 	ai_face(this);
 	settouch(this, EOC_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -143,7 +143,7 @@ void eoc_transform(entity this)
 	_setmodel(this, "progs/eoc_p2.mdl");
 	setsize(this, oldmin, oldmax);
 
-	sound(this, CH_VOICE, SND_MON_EOC_SIGHT, 1, ATTN_NORM);
+	_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
 
 	this.th_missile = eoc_atkd1; // no more minions!
 	this.bosswave += 1;
@@ -346,6 +346,7 @@ METHOD(EyeOfCthulhu, mr_setup, bool(EyeOfCthulhu this, entity actor))
 	precache_sound("eoc/pain.wav");
 	precache_sound("eoc/charge.wav"); // TODO: unused for now, need a hard mode attack!
 	precache_sound("eoc/spit.wav");
+	precache_sound("eoc/sight.wav");
 
 	if(!actor.minion_maxcount)
 		actor.minion_maxcount = 9;
@@ -363,6 +364,14 @@ METHOD(EyeOfCthulhu, mr_setup, bool(EyeOfCthulhu this, entity actor))
 	actor.th_die = eoc_die;
 
     return true;
+}
+METHOD(EyeOfCthulhu, mr_sight, bool(EyeOfCthulhu this, entity actor))
+{
+	TC(EyeOfCthulhu, this);
+
+	_sound(actor, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif
 

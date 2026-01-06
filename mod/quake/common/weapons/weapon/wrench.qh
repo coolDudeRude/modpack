@@ -1,0 +1,24 @@
+#pragma once
+
+CLASS(Wrench, Weapon)
+/* ammotype  */ ATTRIB(Wrench, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Wrench, impulse, int, 1);
+/* spawnflags*/ ATTRIB(Wrench, spawnflags, int, WEP_FLAG_MELEE | WEP_FLAG_NOAGGRO | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Wrench, aflag, int, 0);
+/* modelname */ ATTRIB(Wrench, mdl, string, "wrench");
+/* crosshair */ ATTRIB(Wrench, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(Wrench, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Wrench, w_crosshair_color, vector, '0.75 0.0.75 0.75');
+/* wepimg    */ ATTRIB(Wrench, model2, string, "wrench");
+/* refname   */ ATTRIB(Wrench, netname, string, "wrench");
+/* wepname   */ ATTRIB(Wrench, m_name, string, _("Wrench"));
+/* framerate */ ATTRIB(Wrench, m_delta, float, 0.05);
+
+ENDCLASS(Wrench)
+REGISTER_WEAPON(WRENCH, NEW(Wrench));
+
+SPAWNFUNC_WEAPON(weapon_wrench, WEP_WRENCH)
+
+#ifdef SVQC
+void W_FireWrench(entity this, .entity weaponentity);
+#endif

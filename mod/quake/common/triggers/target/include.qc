@@ -3,6 +3,7 @@
 #include "kill.qc"
 #include "lock.qc"
 #include "move.qc"
+#include "multiprint.qc"
 #include "music.qc"
 #include "screenshake.qc"
 #include "sound.qc"

@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_DALEK,           DEATH_SELF_MON_DALEK,           DEAT
 
 #ifdef GAMEQC
 MODEL(MON_DALEK, "progs/dalek.mdl");
-
-SOUND(MON_DALEK_SIGHT, "dalek/dalek");
 #endif
 
 CLASS(Dalek, Monster)
@@ -18,7 +16,6 @@ CLASS(Dalek, Monster)
     ATTRIB(Dalek, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Dalek, m_model, Model, MDL_MON_DALEK);
-    ATTRIB(Dalek, m_sound, Sound, SND_MON_DALEK_SIGHT);
 #endif
     ATTRIB(Dalek, netname, string, "dalek");
     ATTRIB(Dalek, m_name, string, _("Dalek"));

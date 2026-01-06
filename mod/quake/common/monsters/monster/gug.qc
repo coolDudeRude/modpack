@@ -844,6 +844,7 @@ METHOD(Gug, mr_setup, bool(Gug this, entity actor))
 	precache_sound("gug/gquake.wav");
 	precache_sound("gug/throw.wav");
 	precache_sound("shambler/smack.wav");
+	precache_sound("gug/sight.wav");
 
 	actor.yaw_speed = 15;
     actor.health = 800;
@@ -858,5 +859,13 @@ METHOD(Gug, mr_setup, bool(Gug this, entity actor))
 	actor.checkattack = CheckGugAttack;
 
     return true;
+}
+METHOD(Gug, mr_sight, bool(Gug this, entity actor))
+{
+	TC(Gug, this);
+
+	_sound(actor, CH_VOICE, "gug/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

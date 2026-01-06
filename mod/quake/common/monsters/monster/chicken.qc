@@ -71,6 +71,7 @@ METHOD(Chicken, mr_setup, bool(Chicken this, entity actor))
 
     precache_sound("chicken/chickdie.wav");
     precache_sound("chicken/peck.wav");
+    precache_sound("chicken/sight.wav");
 
     actor.health = 60;
     actor.th_stand = chicken_stand;
@@ -85,7 +86,7 @@ METHOD(Chicken, mr_sight, bool(Chicken this, entity actor))
 {
     TC(Chicken, this);
 
-	sound7(this, CH_VOICE, "chicken/sight.wav", 1, ATTN_NORM, CHICKEN_PITCH, 0);
+	sound7(actor, CH_VOICE, "chicken/sight.wav", 1, ATTN_NORM, CHICKEN_PITCH, 0);
 
     return true;
 }

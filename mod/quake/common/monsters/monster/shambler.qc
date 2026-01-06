@@ -266,7 +266,10 @@ void sham_magic6(entity this)
 		delete(this.attachment);
 	this.attachment = NULL;
 	CastLightning(this);
-	_sound(this, CH_WEAPON_SINGLE, "shambler/sboom.wav", 1, ATTN_NORM);
+	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map())
+		_sound(this, CH_WEAPON_SINGLE, "shambler/shambler_sboom.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_WEAPON_SINGLE, "shambler/sboom.wav", 1, ATTN_NORM);
 }
 void sham_magic5(entity this)
 {
@@ -301,7 +304,10 @@ void sham_magic1(entity this)
 {
 	set_animofs(this, anim_sham_magic, 1, sham_magic2);
 	ai_face(this);
-	_sound(this, CH_WEAPON_SINGLE, "shambler/sattck1.wav", 1, ATTN_NORM);
+	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map())
+		_sound(this, CH_WEAPON_SINGLE, "shambler/shambler_sattck1.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_WEAPON_SINGLE, "shambler/sattck1.wav", 1, ATTN_NORM);
 }
 
 void sham_pain6(entity this) { set_animofs(this, anim_sham_pain, 6, sham_run1); }
@@ -356,14 +362,37 @@ void sham_die(entity this, entity inflictor, entity attacker, int deathtype)
 // check for gib
 	if(this.health < -60 || this.dmg_take > (this.max_health * 0.6))
 	{
+		bool is_qbj3sham = (season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map());
 		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if(season == SEASON_XMAS)
 			ThrowHead(this, inflictor, "progs/h_shams_xmas.mdl", this.health);
+		else if(is_qbj3sham)
+		{
+			if(random() <= 0.05)
+				ThrowHead(this, inflictor, "progs/gibs/gib_shambler_6.mdl", this.health);
+			else
+				ThrowHead(this, inflictor, "progs/gibs/gibhead_shambler.mdl", this.health);
+		}
 		else
 			ThrowHead(this, inflictor, "progs/h_shams.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+		if(is_qbj3sham)
+		{
+			ThrowGib(this, inflictor, "progs/gibs/gib_shambler_1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gibs/gib_shambler_3.mdl", this.health);
+			float r = random();
+			if(r < 0.2)
+				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_2.mdl", this.health);
+			else if(r < 0.6)
+				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_4.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_5.mdl", this.health);
+		}
+		else
+		{
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+		}
 		return;
 	}
 
@@ -465,6 +494,7 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 	precache_sound("shambler/melee1.wav");
 	precache_sound("shambler/melee2.wav");
 	precache_sound("shambler/smack.wav");
+	precache_sound("shambler/ssight.wav");
 
 	if(autocvar_skill == 3 && random() <= 0.25)
 		actor.spawnflags |= MON_SHAMBLER_COOKIE;
@@ -493,6 +523,23 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 		_setmodel(actor, "progs/shambler_cookie_creature.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
+	else if(IsQBJ3Map())
+	{
+		precache_model("progs/shambler_qbj.mdl");
+		precache_model("progs/gibs/gib_shambler_1.mdl");
+		precache_model("progs/gibs/gib_shambler_2.mdl");
+		precache_model("progs/gibs/gib_shambler_3.mdl");
+		precache_model("progs/gibs/gib_shambler_4.mdl");
+		precache_model("progs/gibs/gib_shambler_5.mdl");
+		precache_model("progs/gibs/gib_shambler_6.mdl");
+		precache_model("progs/gibs/gibhead_shambler.mdl");
+
+		precache_sound("shambler/shambler_sattck1.wav");
+		precache_sound("shambler/shambler_sboom.wav");
+
+		_setmodel(actor, "progs/shambler_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 
 	actor.health = 600;
 	actor.th_stand = sham_stand1;
@@ -518,7 +565,7 @@ METHOD(Shambler, mr_sight, bool(Shambler this, entity actor))
 	else if(actor.spawnflags & MON_SHAMBLER_COOKIE)
 		_sound(actor, CH_VOICE, "shambler/cookie.wav", 1, ATTN_NORM);
 	else
-		sound(actor, CH_VOICE, SND_MON_SHAMBLER_SIGHT, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
 
 	return true;
 }

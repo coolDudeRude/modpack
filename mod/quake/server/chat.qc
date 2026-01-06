@@ -35,22 +35,42 @@ string WeaponNameFromWeaponentity(entity this, .entity weaponentity)
 	return "none"; //REGISTRY_GET(Weapons, wepent.cnt).m_name;
 }
 
+string Ammo_ItemName(int item)
+{
+	switch(item)
+	{
+		case IT_SHELLS: return "shells";
+		case IT_NAILS: return "nails";
+		case IT_ROCKETS: return "rockets";
+		case IT_CELLS: return "cells";
+		case IT_LAVA_NAILS: return "lava nails";
+		case IT_MULTI_ROCKETS: return "multi rockets";
+		case IT_PLASMA_AMMO: return "plasma";
+		case IT_DRILLS: return "drills";
+	}
+	return string_null;
+}
+
+string AmmoNameFromWeaponentity(entity this, .entity weaponentity)
+{
+	entity wepent = this.(weaponentity);
+	string fallback = "N/A";
+	if(!wepent || !IS_PLAYER(this))
+		return fallback;
+	if(wepent.m_weapon.spawnflags & WEP_FLAG_MANA)
+		return "mana";
+	string myammo = Ammo_ItemName(wepent.m_weapon.ammo_type);
+	if(myammo)
+		return myammo;
+	return fallback; // REGISTRY_GET(Weapons, wepent.cnt).ammo_type.m_name;
+}
+
 string formatmessage(entity this, string msg)
 {
 	float p = 0;
 	int n = 7; // max replacements
 
 	chat_grabber_PreFormatMessage(this, msg);
-
-	string ammoitems = "batteries";
-	if(this.items & IT_LAVA_NAILS) ammoitems = "lava nails";
-	else if(this.items & IT_PLASMA_AMMO) ammoitems = "plasma";
-	else if(this.items & IT_MULTI_ROCKETS) ammoitems = "multi rockets";
-	else if(this.items & IT_DRILLS) ammoitems = "drills";
-	else if(this.items & IT_CELLS) ammoitems = "cells";
-	else if(this.items & IT_ROCKETS) ammoitems = "rockets";
-	else if(this.items & IT_NAILS) ammoitems = "nails";
-	else if(this.items & IT_SHELLS) ammoitems = "shells";
 
 	traceline(this.cursor_trace_start, this.cursor_trace_start + normalize(this.cursor_trace_endpos - this.cursor_trace_start) * 16384, MOVE_NORMAL, this);
 	vector cursor = trace_endpos;
@@ -93,7 +113,7 @@ string formatmessage(entity this, string msg)
 			case "o": replacement = vtos(this.origin); break;
 			case "O": replacement = sprintf("'%f %f %f'", this.origin.x, this.origin.y, this.origin.z); break;
 			case "w": replacement = WeaponNameFromWeaponentity(this, weaponentity); break;
-			case "W": replacement = ammoitems; break;
+			case "W": replacement = AmmoNameFromWeaponentity(this, weaponentity); break;
 			case "x": replacement = ((cursor_ent.netname == "" || !cursor_ent) ? "nothing" : cursor_ent.netname); break;
 			case "s": replacement = ftos(vlen(this.velocity - this.velocity_z * '0 0 1')); break;
 			case "S": replacement = ftos(vlen(this.velocity)); break;

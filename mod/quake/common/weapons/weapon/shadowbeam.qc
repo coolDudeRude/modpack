@@ -1,7 +1,8 @@
 #include "shadowbeam.qh"
 
 #ifdef SVQC
-void wep_shadowbeam_shot2(entity this) { wep_set_anim(this, 2, w_ready); }
+void wep_shadowbeam_shot3(entity this) { wep_set_anim(this, 2, w_ready); }
+void wep_shadowbeam_shot2(entity this) { wep_set_anim(this, 2, wep_shadowbeam_shot3); }
 void wep_shadowbeam_shot1(entity this) { wep_set_anim(this, 1, wep_shadowbeam_shot2); this.owner.effects |= EF_MUZZLEFLASH; }
 
 // for railgun damage (hitting multiple enemies)
@@ -27,7 +28,6 @@ void SendCSQCShadowbeam(vector org, vector dir)
 	WriteVector(MSG_BROADCAST, dir);
 }
 
-.float shadowbeamhit;
 void ShadowbeamTrace(entity this, float arange, vector org, vector dir)
 {
 	while(true)
@@ -49,21 +49,15 @@ void ShadowbeamTrace(entity this, float arange, vector org, vector dir)
 	}
 }
 
-void W_FireShadowbeam(entity this, .entity weaponentity)
+void ShadowbeamFire(entity this, vector org, vector dir, float damage, int deathtype)
 {
-	W_TakeMana(this, 7);
 	_sound(this, CH_WEAPON_SINGLE, "weapons/shadowbeam_fire.wav", 1, ATTN_NORM);
 
-	makevectors(this.v_angle);
-
-	float lag = antilag_getlag(this);
+	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
 	if(lag)
 		antilag_takeback_all(this, lag);
 
-	vector org = W_Shotorg(this, weaponentity);
-	vector dir = qc_aim(this, 4000);
 	float blength = SHADOWBEAM_MAXRANGE; // max length of the beam, bounces included
-	float damage = 60;
 
 	SendCSQCShadowbeam(org, dir);
 
@@ -101,7 +95,7 @@ void W_FireShadowbeam(entity this, .entity weaponentity)
 		if (it.takedamage && damage > 0)
 		{
 			SpawnBlood(it.railgunhitloc, '0 0 100', damage, it);
-			T_Damage(it, this, this, damage, WEP_SHADOWBEAM.m_id);
+			T_Damage(it, this, this, damage, deathtype);
 
 			damage = floor(damage * 0.9); // 10% reduction every target hit
 		}
@@ -115,6 +109,16 @@ void W_FireShadowbeam(entity this, .entity weaponentity)
 
 	if(lag)
 		antilag_restore_all(this);
+}
+
+void W_FireShadowbeam(entity this, .entity weaponentity)
+{
+	W_TakeMana(this, 7);
+	makevectors(this.v_angle);
+
+	vector org = W_Shotorg(this, weaponentity);
+	vector dir = qc_aim(this, 4000);
+	ShadowbeamFire(this, org, dir, 60, WEP_SHADOWBEAM.m_id);
 }
 
 METHOD(Shadowbeam, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

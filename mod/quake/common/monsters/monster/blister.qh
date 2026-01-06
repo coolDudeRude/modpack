@@ -1,0 +1,25 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_BLISTER,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was popped by a Blister"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_BLISTER,               1,  NULL,           INFO_DEATH_SELF_MON_BLISTER,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_BLISTER,           DEATH_SELF_MON_BLISTER,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_BLISTER, "progs/sploder_qbj.mdl");
+#endif
+
+CLASS(Blister, Monster)
+    ATTRIB(Blister, spawnflags, int, 0);
+    ATTRIB(Blister, m_mins, vector, '-16 -16 -24');
+    ATTRIB(Blister, m_maxs, vector, '16 16 24');
+#ifdef GAMEQC
+    ATTRIB(Blister, m_model, Model, MDL_MON_BLISTER);
+    ATTRIB(Blister, m_model_head, Model, MDL_Null);
+#endif
+    ATTRIB(Blister, netname, string, "blister");
+    ATTRIB(Blister, m_name, string, _("Blister"));
+ENDCLASS(Blister)
+
+REGISTER_MONSTER(BLISTER, NEW(Blister));

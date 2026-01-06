@@ -217,7 +217,7 @@ void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
 		newSpawn.flags = FL_CLONE;
 		newSpawn.classname = targ.classname;
 		set_movetype(newSpawn, MOVETYPE_STEP);
-		setsize (newSpawn, '-16 -16 -24', '16 16 40');
+		setsize(newSpawn, '-16 -16 -24', '16 16 40');
 		newSpawn.health = 80;
 		if(targ.skin == 1)
 			newSpawn.health = 60;
@@ -268,6 +268,9 @@ spawnfunc(monster_tarbaby)
 spawnfunc(monster_vomit) { monster_start(this, true, MON_SPAWN); }
 spawnfunc(monster_vomitus) { monster_start(this, true, MON_SPAWN); }
 spawnfunc(monster_meatwad) { monster_start(this, true, MON_SPAWN); }
+
+// qbj3
+spawnfunc(monster_spawn) { monster_start(this, true, MON_SPAWN); }
 #endif // SVQC
 
 #ifdef SVQC
@@ -278,6 +281,14 @@ METHOD(Spawn, mr_setup, bool(Spawn this, entity actor))
 	precache_sound("blob/death1.wav");
 	precache_sound("blob/hit1.wav");
 	precache_sound("blob/land1.wav");
+	precache_sound("blob/sight1.wav");
+
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/spawn_qbj.mdl");
+		_setmodel(actor, "progs/spawn_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
 
     actor.health = 80;
     actor.th_stand = tbaby_stand1;
@@ -324,5 +335,13 @@ METHOD(Spawn, mr_setup, bool(Spawn this, entity actor))
 	}
 
     return true;
+}
+METHOD(Spawn, mr_sight, bool(Spawn this, entity actor))
+{
+	TC(Spawn, this);
+
+	_sound(actor, CH_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

@@ -253,15 +253,16 @@ METHOD(SuperChicken, mr_setup, bool(SuperChicken this, entity actor))
 {
     TC(SuperChicken, this);
 
-    precache_sound("chicken/chickdie.wav");
-    precache_sound("chicken/peck.wav");
-    precache_sound("enforcer/enfire.wav");
-
     precache_model("progs/mangib1.mdl");
     precache_model("progs/mangib2.mdl");
     precache_model("progs/mangib3.mdl");
 
     precache_model("progs/egg.mdl");
+
+    precache_sound("enforcer/enfire.wav");
+    precache_sound("chicken/chickdie.wav");
+    precache_sound("chicken/peck.wav");
+    precache_sound("chicken/sight.wav");
 
     actor.yaw_speed = 45;
 
@@ -277,5 +278,13 @@ METHOD(SuperChicken, mr_setup, bool(SuperChicken this, entity actor))
 	actor.th_missile = superchicken_laser1;
 
     return true;
+}
+METHOD(SuperChicken, mr_sight, bool(SuperChicken this, entity actor))
+{
+	TC(SuperChicken, this);
+
+	_sound(actor, CH_VOICE, "chicken/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

@@ -1,34 +1,67 @@
 #ifdef SVQC
 
+bool plat_try_find_trigger(entity this)
+{
+	entity t = find(NULL, targetname, this.target);
+	if(!t)
+		return false;
+	else if(t.classname != "trigger_once" && t.classname != "trigger_multiple" && t.classname != "trigger_multiple_box")
+		return false;
+	else
+	{
+		settouch(t, plat_center_touch);
+		setthink(t, func_null);
+		t.nextthink = 0;
+		t.enemy = this;
+		set_movetype(t, MOVETYPE_NONE);
+		t.enemy = this;
+		this.trigger_field = t;
+		this.target = string_null;
+	}
+	setthink(this, func_null);
+	this.nextthink = 0;
+	return true;
+}
+
 void plat_spawn_inside_trigger(entity this)
 {
+	// find overridden trigger for custom trigger zones
+	if(this.target && this.target != "" && plat_try_find_trigger(this))
+		return;
+
 //
 // middle trigger
 //	
+
+	float high = max(this.pos1_z, this.pos2_z) + this.maxs_z;
+	float low = min(this.pos1_z, this.pos2_z) + this.maxs_z;
+	
+	vector tmin = this.mins + '25 25 0';
+	vector tmax = this.maxs - '25 25 0';
+	
+	if(this.size_x <= 50)
+	{
+		tmin.x = (this.mins_x + this.maxs_x) / 2;
+		tmax.x = tmin.x + 1;
+	}
+	if(this.size_y <= 50)
+	{
+		tmin.y = (this.mins_y + this.maxs_y) / 2;
+		tmax.y = tmin.y + 1;
+	}
+
+	tmin.z = low;
+	if(this.spawnflags & PLAT_LOW_TRIGGER)
+		tmax.z = low + 8;
+	else
+		tmax.z = high + 8;
+
 	entity trigger = spawn();
 	settouch(trigger, plat_center_touch);
 	set_movetype(trigger, MOVETYPE_NONE);
 	trigger.solid = SOLID_TRIGGER;
 	trigger.enemy = this;
 	this.trigger_field = trigger;
-	
-	vector tmin = this.mins + '25 25 0';
-	vector tmax = this.maxs - '25 25 -8';
-	tmin.z = tmax_z -(this.pos1_z - this.pos2_z + 8);
-	if(this.spawnflags & PLAT_LOW_TRIGGER)
-		tmax_z = tmin.z + 8;
-	
-	if(this.size_x <= 50)
-	{
-		tmin.x =(this.mins_x + this.maxs_x) / 2;
-		tmax_x = tmin.x + 1;
-	}
-	if(this.size_y <= 50)
-	{
-		tmin.y =(this.mins_y + this.maxs_y) / 2;
-		tmax_y = tmin.y + 1;
-	}
-	
 	setsize(trigger, tmin, tmax);
 }
 

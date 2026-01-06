@@ -52,6 +52,11 @@ void w_ready(entity w_ent)
 	w_ent.weapon_think = func_null;
 	w_ent.weapon_nextthink = 0;
 	w_ent.misc_bulletcounter = 0;
+	w_ent.m_frame = 0;
+
+	// TODO: idle frame definition
+	if(w_ent.m_weapon == WEP_SQUEAKER)
+		w_ent.m_frame = 31;
 }
 
 // spawning weaponentity for client
@@ -185,6 +190,8 @@ void W_TakeAmmo(entity ent, int ammotype, float amount)
 
 void W_TakeMana(entity ent, float amount)
 {
+	if(!IS_PLAYER(ent))
+		return; // non-players do not consume mana
 	if(StatusEffects_active(STATUSEFFECT_SharpShooter, ent))
 		return;
 	if(ent.armortype == ARMOR_MAGE && ent.armorvalue > 0)

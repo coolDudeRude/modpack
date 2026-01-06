@@ -137,6 +137,131 @@ ATTACKS
 =============================================================================
 */
 
+void ZombieImpalerFade(entity this)
+{
+	this.alpha -= 0.025;
+	
+	if(this.alpha <= 0)
+	{
+		delete(this);
+		return;
+	}
+
+	if(!this.state)
+	{
+		this.angles = vectoangles(this.velocity);
+		UNSET_ONGROUND(this);
+		this.oldvelocity = this.velocity;
+	}
+
+	setthink(this, ZombieImpalerFade);
+	this.nextthink = time + 0.05;
+}
+
+void ZombieImpalerTouch(entity this, entity toucher)
+{
+	if(toucher.classname == "func_void")
+	{
+		settouch(this, func_null);
+		setthink(this, SUB_Remove);
+		this.nextthink = time;
+		this.solid = SOLID_NOT;
+		return;
+	}
+
+	if(toucher.move_movetype == MOVETYPE_NOCLIP || toucher == this.realowner || toucher.solid == SOLID_TRIGGER)
+		return;
+
+	if(toucher.takedamage)
+		T_Damage(toucher, this, this.owner, 10, this.projectiledeathtype);
+
+	float chance = random();
+	if(chance < 0.33)
+		_sound(this, CH_SHOTS, "rebar/pierce1.wav", 0.2, ATTN_NORM);
+	else if(chance < 0.5)
+		_sound(this, CH_SHOTS, "rebar/pierce2.wav", 0.2, ATTN_NORM);
+	else
+		_sound(this, CH_SHOTS, "rebar/pierce3.wav", 0.2, ATTN_NORM);
+
+	if((!toucher || toucher.solid == SOLID_BSP) && toucher.classname != "func_movewall")
+	{
+		set_movetype(this, MOVETYPE_NONE);
+		this.solid = SOLID_NOT;
+		this.owner = toucher;
+		settouch(this, func_null);
+		this.classname = "impaler";
+		// change model so that smoke doesn't appear when stuck to moving brushes
+		// TODO: create a new entity for the stuck rebar
+		_setmodel(this, "progs/proj_rebar_zom_nosmoke.mdl");
+		setsize(this, '0 0 0', '0 0 0');
+
+		_sound(this, CH_SHOTS, "weapons/tink1.wav", 0.5, ATTN_NORM);
+		te_gunshot(this.origin);
+
+		// move origin away from walls when stuck, helps prevent "void-lighting"
+		setorigin(this, this.origin - 5 * normalize(this.velocity));
+		
+		if(toucher)
+			this.state = 2;
+		else
+			this.state = 1;
+		
+		this.alpha = 1;
+		setthink(this, ZombieImpalerFade);
+		this.nextthink = time + 10;
+	}
+	else
+		delete(this);
+}
+
+void ZombieImpalerThink(entity this)
+{
+	if(time > this.lifetime_finished)
+	{
+		ZombieImpalerFade(this);
+		return;
+	}
+
+	this.angles = vectoangles(this.velocity);
+	UNSET_ONGROUND(this);
+	this.oldvelocity = this.velocity;
+	this.nextthink = time + 0.05;
+}
+
+vector lerpVector(vector a, vector b, float mix)
+{
+	if(mix <= 0) return a;
+	if(mix >= 1) return b;
+	return (b * mix + a * (1 - mix));
+}
+
+void ZombieFireRebar(entity this, vector st)
+{
+	fixedmakevectors(this.angles);
+
+	vector org = this.origin + st.x * v_forward + st.y * v_right + st.z * v_up;
+
+	float dist = vlen(this.enemy.origin - org);
+	if(dist == 0)
+		dist = 1; // prevent div0
+	vector goodvel = normalize(this.enemy.origin - org);
+	vector badvel = vec2(goodvel) * 600;
+	badvel.z = 200;
+	goodvel.z *= 1.1;
+	goodvel *= 750;
+
+	entity missile = launch_spike(this, org, v_forward);
+	settouch(missile, ZombieImpalerTouch);
+	setthink(missile, ZombieImpalerThink);
+	missile.lifetime_finished = time + 2.5;
+	missile.nextthink = time + 0.05;
+	_setmodel(missile, "progs/proj_rebar_zom.mdl");
+	setsize(missile, '0 0 0', '0 0 0');
+	missile.velocity = lerpVector(goodvel, badvel, bound(0, 0.2 + dist / 400, 1));
+	missile.angles = vectoangles(missile.velocity);
+	missile.projectiledeathtype = DEATH_MONSTER_ZOMBIE.m_id;
+}
+
 void ZombieGrenadeTouch_Remove(entity this, entity toucher)
 {
 	delete(this);
@@ -166,6 +291,12 @@ ZombieFireGrenade
 void ZombieFireGrenade(entity this, vector st)
 {
 	_sound(this, CH_WEAPON_SINGLE, "zombie/z_shot1.wav", 1, ATTN_NORM);
+
+	if(IsQBJ3Map())
+	{
+		ZombieFireRebar(this, st);
+		return;
+	}
 
 	entity missile = new(zombie_grenade);
 	missile.flags = FL_PROJECTILE;
@@ -414,7 +545,10 @@ void zombie_paine1(entity this)
 void zombie_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
-	ThrowHead(this, inflictor, "progs/h_zombie.mdl", this.health);
+	if(IsQBJ3Map())
+		ThrowHead(this, inflictor, "progs/gibs/gibhead_zombie.mdl", this.health);
+	else
+		ThrowHead(this, inflictor, "progs/h_zombie.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
@@ -628,6 +762,7 @@ METHOD(Zombie, mr_setup, bool(Zombie this, entity actor))
 
     precache_model("progs/zom_gib.mdl");
 
+	precache_sound("zombie/z_idle.wav");
 	precache_sound("zombie/z_idle1.wav");
 	precache_sound("zombie/z_shot1.wav");
 	precache_sound("zombie/z_gib.wav");
@@ -648,13 +783,32 @@ METHOD(Zombie, mr_setup, bool(Zombie this, entity actor))
 
 	actor.steptype = FS_TYPESLOW;
 
-	if(random() <= 0.1 && fexists("progs/mon_zombieking.mdl"))
+	if(IsQBJ3Map())
+	{
+		precache_model("progs/zombie_qbj.mdl");
+		precache_model("progs/zombienm_qbj.mdl");
+		precache_model("progs/gibs/gibhead_zombie.mdl");
+		precache_model("progs/proj_rebar_zom.mdl");
+		precache_model("progs/proj_rebar_zom_nosmoke.mdl");
+
+		precache_sound("rebar/pierce1.wav");
+		precache_sound("rebar/pierce2.wav");
+		precache_sound("rebar/pierce3.wav");
+
+		if(random() < 0.33)
+			_setmodel(actor, "progs/zombienm_qbj.mdl");
+		else
+			_setmodel(actor, "progs/zombie_qbj.mdl");
+		setsize(actor, this.m_mins, this.m_maxs);
+	}
+	else if(random() <= 0.1 && fexists("progs/mon_zombieking.mdl"))
 	{
 		precache_model("progs/mon_zombieking.mdl");
 		_setmodel(actor, "progs/mon_zombieking.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
 
+	// TODO: charmed stuck monster?!
 	if(actor.charmed)
 		actor.spawnflags &= ~SPAWN_CRUCIFIED;
 
@@ -716,5 +870,13 @@ METHOD(Zombie, mr_setup, bool(Zombie this, entity actor))
 		actor.th_stand = zombie_lay;
 
     return true;
+}
+METHOD(Zombie, mr_sight, bool(Zombie this, entity actor))
+{
+	TC(Zombie, this);
+
+	_sound(actor, CH_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

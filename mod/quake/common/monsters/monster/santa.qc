@@ -504,7 +504,7 @@ METHOD(Santa, mr_sight, bool(Santa this, entity actor))
 	if(actor.spawnflags & MON_SANTA_GOOD)
 		_sound(actor, CH_VOICE, "xmas/santa/hohoho.wav", 1, ATTN_NORM);
 	else
-		sound(actor, CH_VOICE, this.m_sound, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "xmas/santa/sight.wav", 1, ATTN_NORM);
 
     return true;
 }

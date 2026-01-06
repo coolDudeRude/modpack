@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_BITER,           DEATH_SELF_MON_BITER,           DEAT
 #ifdef GAMEQC
 MODEL(MON_BITER, "progs/biter.mdl");
 MODEL(MON_BITER_HEAD, "progs/h_biter.mdl");
-
-SOUND(MON_BITER_SIGHT, "biter/sight");
 #endif
 
 CLASS(Biter, Monster)
@@ -20,7 +18,6 @@ CLASS(Biter, Monster)
 #ifdef GAMEQC
     ATTRIB(Biter, m_model, Model, MDL_MON_BITER);
     ATTRIB(Biter, m_model_head, Model, MDL_MON_BITER_HEAD);
-    ATTRIB(Biter, m_sound, Sound, SND_MON_BITER_SIGHT);
 #endif
     ATTRIB(Biter, netname, string, "biter");
     ATTRIB(Biter, m_name, string, _("Biter"));

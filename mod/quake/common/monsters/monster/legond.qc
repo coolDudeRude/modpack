@@ -544,6 +544,7 @@ METHOD(Legond, mr_setup, bool(Legond this, entity actor))
 	precache_sound("monsters/legond/ldeath.wav");
 	precache_sound("monsters/legond/lswipe.wav");
 	precache_sound("monsters/legond/lidle.wav");
+	precache_sound("monsters/legond/legond.wav");
 
     actor.health = 2000;
 	actor.th_stand = legond_stand1;
@@ -557,5 +558,13 @@ METHOD(Legond, mr_setup, bool(Legond this, entity actor))
 	actor.checkattack = LegondCheckAttack;
 
     return true;
+}
+METHOD(Legond, mr_sight, bool(Legond this, entity actor))
+{
+	TC(Legond, this);
+
+	_sound(actor, CH_VOICE, "monsters/legond/legond.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

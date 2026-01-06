@@ -19,7 +19,6 @@ CLASS(Destroyer, Monster)
 #ifdef GAMEQC
     ATTRIB(Destroyer, m_model, Model, MDL_MON_DESTROYER);
     ATTRIB(Destroyer, m_model_head, Model, MDL_Null);
-    ATTRIB(Destroyer, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Destroyer, netname, string, "destroyer");
     ATTRIB(Destroyer, m_name, string, _("The Destroyer"));

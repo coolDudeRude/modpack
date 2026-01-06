@@ -55,6 +55,8 @@ PRECACHE(Sbar)
 	precache_pic("gfx/quake/sb_invuln");
 	precache_pic("gfx/quake/sb_suit");
 	precache_pic("gfx/quake/sb_quad");
+	precache_pic("gfx/quake/sb_vamp");
+	precache_pic("gfx/quake/sb_berserk");
 
 	precache_pic("gfx/quake/disc");
 
@@ -96,6 +98,8 @@ PRECACHE(Sbar)
 	precache_pic("gfx/quake/magic0");
 	precache_pic("gfx/quake/magic1");
 	precache_pic("gfx/quake/magic2");
+
+	precache_pic("gfx/quake/bullit");
 }
 
 string Sbar_PickWeapon(Weapon wpn)
@@ -944,6 +948,36 @@ void Sbar_DrawKeys()
 	drawfont = oldfont;
 }
 
+void Sbar_DrawSkill(vector pos, vector mySize)
+{
+	int oldfont = drawfont;
+	drawfont = 8 + 1; // FONT_USER
+
+	vector text_size = vec2(mySize.x * 0.25, mySize.y * 0.5);
+	//vector offset = (text_size * 0.25 * 0.5);
+	//offset.y += text_size.y;
+
+	vector text_pos = pos + vec2(0, text_size.y);
+	//vector text_pos = pos + offset;
+
+	string skill_text;
+	int skill = STAT(SKILL);
+	vector dcol = '0.6 0.2 0';
+	switch(skill)
+	{
+		default:
+		case 0: skill_text = "Easy"; break;
+		case 1: skill_text = "Normal"; break;
+		case 2: skill_text = "Hard"; break;
+		case 3: skill_text = "Nightmare"; dcol = '1 0 0'; break;
+	}
+	vector bgcolor = Sbar_BgColor();
+	drawpic(text_pos, "gfx/quake/backtile", text_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
+	drawstring_aspect(text_pos, skill_text, text_size, dcol, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+
+	drawfont = oldfont;
+}
+
 /*
 ===============
 Sbar_DrawInventory
@@ -1003,13 +1037,15 @@ void Sbar_DrawInventory(vector pos, vector mySize)
 			if(j == 10)
 				imp = 0; // we want special 0 weapons to show on slot 10!
 			Weapon wep = WEP_Null;
-			if(thiswep.activeweapon.impulse == imp)
+			if(thiswep.activeweapon.impulse == imp && thiswep.activeweapon != WEP_BERSERKER_FISTS)
 				wep = thiswep.activeweapon;
 			else
 			{
 				FOREACH_WORD(weporder, true,
 				{
 					Weapon wepent = Weapon_from_name(it);
+					if(wepent == WEP_BERSERKER_FISTS)
+						continue;
 					if(wepent == WEP_Null || wepent.impulse != imp || !Inventory_have(wepent, g_inventory, ITEM_OWNED))
 						continue;
 					wep = wepent;
@@ -1380,6 +1416,9 @@ void Sbar_Draw()
 				// NOTE: disabled as it seems unnecessary with the frags shown on the side already
 				//if(maxclients > 1)
 					//Sbar_DrawFrags();
+
+				if(!deathmatch && STAT(HAVE_SETSKILL))
+					Sbar_DrawSkill(pos - vec2(0, mySize.y), mySize);
 			}
 
 			if(sb_lines)
@@ -1525,6 +1564,14 @@ void Sbar_Draw()
 					drawpic_aspect(ammo_pos, "gfx/quake/backtile", icon_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
 					drawpic_aspect(ammo_pos, strcat("gfx/quake/", pic), icon_size, '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 				}
+				else if(thiswep.activeweapon == WEP_PISTOL)
+				{
+					int ammo = max(0, PISTOL_MAXSHOTS - thiswep.pistol_shots);
+					sbar = '0 0 0';
+					drawpic_aspect(ammo_pos, "gfx/quake/bullit", icon_size, '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+					Sbar_DrawNum_lettersize(ammo_pos + vec2(icon_size.x, 0), itos(ammo), 2, ((ammo <= 3) ? '1 0 0' : '1 1 1'), icon_size.x, icon_size);
+					sbar = oldsbar;
+				}
 				else
 				{
 					// ammo icon
@@ -1533,11 +1580,12 @@ void Sbar_Draw()
 
 					if(pic)
 					{
+						int ammo = Sbar_ItemStat(ammotype);
 						//Sbar_DrawPic('224 0 0', strcat("gfx/quake/", pic));
 						//Sbar_DrawNum('248 0 0', itos(Sbar_ItemStat(ammotype)), 3, ((Sbar_ItemStat(ammotype) <= 10) ? '1 0 0' : '1 1 1'));
 						sbar = '0 0 0';
 						drawpic_aspect(ammo_pos, strcat("gfx/quake/", pic), icon_size, '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
-						Sbar_DrawNum_lettersize(ammo_pos + vec2(icon_size.x, 0), itos(Sbar_ItemStat(ammotype)), 3, ((Sbar_ItemStat(ammotype) <= 10) ? '1 0 0' : '1 1 1'), icon_size.x, icon_size);
+						Sbar_DrawNum_lettersize(ammo_pos + vec2(icon_size.x, 0), itos(ammo), 3, ((ammo <= 10) ? '1 0 0' : '1 1 1'), icon_size.x, icon_size);
 						sbar = oldsbar;
 					}
 					else

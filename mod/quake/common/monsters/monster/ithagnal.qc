@@ -843,10 +843,18 @@ METHOD(Ithagnal, mr_setup, bool(Ithagnal this, entity actor))
 
     return true;
 }
+METHOD(Ithagnal, mr_sight, bool(Ithagnal this, entity actor))
+{
+	TC(Ithagnal, this);
+
+	_sound(actor, CH_VOICE, "ithagnal/ithwake.wav", 1, ATTN_NORM);
+
+	return true;
+}
 #endif
 
 #ifdef CSQC
-PRECACHE(Volkerh)
+PRECACHE(Ithagnal)
 {
 	precache_model("progs/gib1.mdl");
 	precache_model("progs/gib2.mdl");

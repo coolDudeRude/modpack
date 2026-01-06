@@ -309,6 +309,8 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 
 	champions_Killed(targ, inflictor, attacker, deathtype);
 
+	vampglobe_Killed(targ, attacker);
+
 	// Yoder March04 2022, punish team killspree
 	if(horde_ent && IS_PLAYER(attacker) && IS_PLAYER(targ))
 	{
@@ -449,6 +451,7 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
+void SUB_UseTargets_Ex(entity this, entity actor, entity trigger, int skiptargets, bool nomessage);
 void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int deathtype)
 {
 	entity orig = targ;
@@ -539,6 +542,9 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		damage = Tank_Damage(targ, inflictor, attacker, damage, deathtype);
 
 	if(STAT(CANNON, targ))
+		damage *= 0.5;
+
+	if(StatusEffects_active(STATUSEFFECT_Berserk, targ))
 		damage *= 0.5;
 
 	if(targ.m_champion)
@@ -801,6 +807,24 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		float curtime = StatusEffects_gettime(STATUSEFFECT_Confused, targ);
 		if((time + confusetime) > curtime)
 			StatusEffects_apply(STATUSEFFECT_Confused, targ, time + confusetime, 0);
+	}
+
+	// qbj3 specific hack: trigger on react
+	if(IS_MONSTER(targ) && attacker && !targ.is_frozen && (targ.spawnflags & SPAWN_ALT_TARG) && IsQBJ3Map())
+	{
+		int bits = BIT(1) | BIT(3) | BIT(4);
+		if(IS_PLAYER(attacker) || IS_MONSTER(attacker))
+			bits &= ~BIT(1);
+		if(targ.health <= floor(targ.max_health * 0.5))
+			bits &= ~BIT(3);
+		SUB_UseTargets_Ex(targ, attacker, NULL, bits, false);
+
+		if(!(bits & BIT(1)))
+			targ.target = string_null;
+		if(!(bits & BIT(2)))
+			targ.target2 = string_null;
+		if(!(bits & BIT(3)))
+			targ.target3 = string_null;
 	}
 
 	if(IS_MONSTER(targ) && attacker && !(targ.monsterdef.spawnflags & MON_FLAG_NOAGGRO) && !(targ.monsterdef.spawnflags & MON_FLAG_NOTARGET) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && deathtype != DEATH_TRAP.m_id)

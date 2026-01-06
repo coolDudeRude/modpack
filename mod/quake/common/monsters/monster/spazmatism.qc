@@ -172,7 +172,7 @@ void spaz_atkc1(entity this)
 		return;
 	}
 	if(this.bosswave >= 1)
-		sound(this, CH_VOICE, SND_MON_SPAZMATISM_SIGHT, 1, ATTN_BOSS);
+		_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, Spaz_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -202,7 +202,7 @@ void spaz_atkd1(entity this)
 		setthink(this, gib_spaz);
 		return;
 	}
-	sound(this, CH_VOICE, SND_MON_SPAZMATISM_SIGHT, 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, Spaz_JumpTouch);
 	this.attack_finished = time + 5 + (random() * 2);
@@ -285,7 +285,7 @@ void spaz_transform(entity this)
 	_setmodel(this, "progs/spazmatism.mdl");
 	setsize(this, oldmin, oldmax);
 
-	sound(this, CH_VOICE, SND_MON_SPAZMATISM_SIGHT, 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
 
 	this.th_missile = spaz_attack_phase2;
 	this.bosswave += 1;
@@ -510,6 +510,7 @@ METHOD(Spazmatism, mr_setup, bool(Spazmatism this, entity actor))
 	precache_model("progs/bone.mdl");
 	precache_model("progs/bone2.mdl");
 	precache_model("progs/rawbone2.mdl");
+	precache_model("progs/cursedball.mdl");
 	precache_sound("eoc/death.wav");
 	precache_sound("eoc/pain.wav");
 	precache_sound("twins/explode.wav");
@@ -517,7 +518,7 @@ METHOD(Spazmatism, mr_setup, bool(Spazmatism this, entity actor))
 	precache_sound("twins/cursed_flames.wav");
 	precache_sound("twins/cursed_flame_fire.wav");
 	precache_sound("twins/cursed_flame_impact.wav");
-	precache_model("progs/cursedball.mdl");
+	precache_sound("eoc/sight.wav");
 
 	actor.bosswave = 0;
 	actor.skin = 2;
@@ -534,5 +535,13 @@ METHOD(Spazmatism, mr_setup, bool(Spazmatism this, entity actor))
 	actor.checkattack = SpazmatismCheckAttack;
 
     return true;
+}
+METHOD(Spazmatism, mr_sight, bool(Spazmatism this, entity actor))
+{
+	TC(Spazmatism, this);
+
+	_sound(actor, CH_VOICE, "eoc/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

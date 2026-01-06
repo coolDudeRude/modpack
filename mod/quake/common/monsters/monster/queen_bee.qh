@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_QUEEN_BEE,            DEATH_SELF_MON_QUEEN_BEE,      
 
 #ifdef GAMEQC
 MODEL(MON_QUEEN_BEE, "progs/queen_bee.mdl");
-
-SOUND(MON_QUEEN_BEE_SIGHT, "queen_bee/sight");
 #endif
 
 CLASS(QueenBee, Monster)
@@ -19,7 +17,6 @@ CLASS(QueenBee, Monster)
 #ifdef GAMEQC
     ATTRIB(QueenBee, m_model, Model, MDL_MON_QUEEN_BEE);
     ATTRIB(QueenBee, m_model_head, Model, MDL_Null);
-    ATTRIB(QueenBee, m_sound, Sound, SND_MON_QUEEN_BEE_SIGHT);
 #endif
     ATTRIB(QueenBee, netname, string, "queen_bee");
     ATTRIB(QueenBee, m_name, string, _("Queen Bee"));

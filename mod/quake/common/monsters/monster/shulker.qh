@@ -67,7 +67,6 @@ CLASS(Shulker, Monster)
 #ifdef GAMEQC
     ATTRIB(Shulker, m_model, Model, MDL_MON_SHULKER);
     ATTRIB(Shulker, m_model_head, Model, MDL_Null);
-    ATTRIB(Shulker, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Shulker, netname, string, "shulker");
     ATTRIB(Shulker, m_name, string, _("Shulker"));

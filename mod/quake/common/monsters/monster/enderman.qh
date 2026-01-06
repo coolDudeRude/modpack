@@ -33,8 +33,6 @@ SOUND(MON_ENDERMAN_SCREAM4, "enderman/scream4");
 Sound SND_MON_ENDERMAN_SCREAM_RANDOM() {
     return REGISTRY_GET(Sounds, SND_MON_ENDERMAN_SCREAM1.m_id + floor(prandom() * 4));
 }
-
-SOUND(MON_ENDERMAN_SIGHT, "enderman/stare");
 #endif
 
 CLASS(Enderman, Monster)
@@ -44,7 +42,6 @@ CLASS(Enderman, Monster)
 #ifdef GAMEQC
     ATTRIB(Enderman, m_model, Model, MDL_MON_ENDERMAN);
     ATTRIB(Enderman, m_model_head, Model, MDL_MON_ENDERMAN_HEAD);
-    ATTRIB(Enderman, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Enderman, netname, string, "enderman");
     ATTRIB(Enderman, m_name, string, _("Enderman"));

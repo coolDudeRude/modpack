@@ -310,6 +310,7 @@ METHOD(AxeGrunt, mr_setup, bool(AxeGrunt this, entity actor))
 	precache_sound("knight/sword2.wav");
 	precache_sound("knight/idle.wav");
 	precache_sound("soldier/idle.wav");
+	precache_sound("axegrunt/axgsight.wav");
 
     actor.health = 75;
     actor.th_stand = axe_stand1;
@@ -320,5 +321,13 @@ METHOD(AxeGrunt, mr_setup, bool(AxeGrunt this, entity actor))
 	actor.th_die = axe_die;
 
     return true;
+}
+METHOD(AxeGrunt, mr_sight, bool(AxeGrunt this, entity actor))
+{
+	TC(AxeGrunt, this);
+
+	_sound(actor, CH_VOICE, "axegrunt/axgsight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

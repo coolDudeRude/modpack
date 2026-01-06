@@ -42,7 +42,6 @@ CLASS(MagmaCube, Monster)
 #ifdef GAMEQC
     ATTRIB(MagmaCube, m_model, Model, MDL_MON_MAGMACUBE);
     ATTRIB(MagmaCube, m_model_head, Model, MDL_Null);
-    ATTRIB(MagmaCube, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(MagmaCube, netname, string, "magmacube");
     ATTRIB(MagmaCube, m_name, string, _("Magma Cube"));

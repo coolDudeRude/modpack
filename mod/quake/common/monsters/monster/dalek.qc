@@ -185,6 +185,7 @@ METHOD(Dalek, mr_setup, bool(Dalek this, entity actor))
 	precache_sound("dalek/daldie.wav");
 
 	precache_sound("enforcer/enfire.wav");
+	precache_sound("dalek/dalek.wav");
 
     actor.health = 200;
     actor.th_stand = dalek_stand1;
@@ -194,5 +195,13 @@ METHOD(Dalek, mr_setup, bool(Dalek this, entity actor))
 	actor.th_die = dalek_die;
 
     return true;
+}
+METHOD(Dalek, mr_sight, bool(Dalek this, entity actor))
+{
+	TC(Dalek, this);
+
+	_sound(actor, CH_VOICE, "dalek/dalek.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

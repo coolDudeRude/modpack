@@ -528,6 +528,7 @@ METHOD(Blud, mr_setup, bool(Blud this, entity actor))
 	precache_sound("monsters/blud/blood.wav");
 	precache_sound("zombie/z_miss.wav");
 	precache_sound("zombie/z_hit.wav");
+	precache_sound("monsters/blud/blsight.wav");
 
     actor.health = 3000;
 	actor.th_stand = blud_stand1;
@@ -539,5 +540,13 @@ METHOD(Blud, mr_setup, bool(Blud this, entity actor))
 	actor.th_die = blud_die;
 
     return true;
+}
+METHOD(Blud, mr_sight, bool(Blud this, entity actor))
+{
+	TC(Blud, this);
+
+	_sound(actor, CH_VOICE, "monsters/blud/blsight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

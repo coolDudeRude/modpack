@@ -18,7 +18,6 @@ CLASS(Tortoise, Monster)
 #ifdef GAMEQC
     ATTRIB(Tortoise, m_model, Model, MDL_MON_TORTOISE);
     ATTRIB(Tortoise, m_model_head, Model, MDL_MON_TORTOISE_HEAD);
-    ATTRIB(Tortoise, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Tortoise, netname, string, "tortoise");
     ATTRIB(Tortoise, m_name, string, _("Tortoise"));

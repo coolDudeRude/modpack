@@ -34,7 +34,6 @@ CLASS(Slime, Monster)
 #ifdef GAMEQC
     ATTRIB(Slime, m_model, Model, MDL_MON_SLIME);
     ATTRIB(Slime, m_model_head, Model, MDL_Null);
-    ATTRIB(Slime, m_sound, Sound, SND_Null);
 #endif
     ATTRIB(Slime, netname, string, "slime");
     ATTRIB(Slime, m_name, string, _("Slime"));

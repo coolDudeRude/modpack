@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_RAINDEER,           DEATH_SELF_MON_RAINDEER,         
 #ifdef GAMEQC
 MODEL(MON_RAINDEER, "progs/xmas/mon_raindeer.mdl");
 MODEL(MON_RAINDEER_HEAD, "progs/xmas/h_raindeer.mdl");
-
-SOUND(MON_RAINDEER_SIGHT, "xmas/raindeer/sight");
 #endif
 
 CLASS(Raindeer, Monster)

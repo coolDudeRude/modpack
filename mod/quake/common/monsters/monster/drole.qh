@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_DROLE,           DEATH_SELF_MON_DROLE,           DEAT
 #ifdef GAMEQC
 MODEL(MON_DROLE, "progs/mon_drole.mdl");
 MODEL(MON_DROLE_HEAD, "progs/h_drole.mdl");
-
-SOUND(MON_DROLE_SIGHT, "drole/sight");
 #endif
 
 CLASS(Drole, Monster)
@@ -20,7 +18,6 @@ CLASS(Drole, Monster)
 #ifdef GAMEQC
     ATTRIB(Drole, m_model, Model, MDL_MON_DROLE);
     ATTRIB(Drole, m_model_head, Model, MDL_MON_DROLE_HEAD);
-    ATTRIB(Drole, m_sound, Sound, SND_MON_DROLE_SIGHT);
 #endif
     ATTRIB(Drole, netname, string, "drole");
     ATTRIB(Drole, m_name, string, _("Drole"));

@@ -25,6 +25,7 @@ const int MONAI_SKULLWINVIS = 2;		// Invisible
 
 const int MON_SKULLWIZ_GUARDIAN = 2;	// Special version guarding the runes
 const int MON_SKULLWIZ_MINIONS = 4;
+const int MON_SKULLWIZ_SHADOW = 8; // custom flag for shadowbeam support
 
 .int blink_fails; // safety measure
 
@@ -384,6 +385,28 @@ void skullw_attack1(entity this)
 	_sound(this, CH_VOICE, "skullwiz/attack.wav", 1, ATTN_NORM);
 }
 
+void skullw_fireshadow(entity this)
+{
+	vector spread = '0.3 1.4 0'; // erratic attack, as it can bounce
+	vector dir = normalize(this.enemy.origin - this.origin);
+	dir += (crandom() * spread.x) * v_right + (crandom() * spread.y) * v_up;
+
+	ShadowbeamFire(this, this.origin + '0 0 16', dir, 70, DEATH_MONSTER_SKULLWIZARD.m_id);
+}
+
+void skullw_shadow8(entity this) { set_animofs(this, anim_skullwiz_spella, 15, skullw_run1); }
+void skullw_shadow7(entity this) { set_animofs(this, anim_skullwiz_spella, 13, skullw_shadow8); }
+void skullw_shadow6(entity this) { set_animofs(this, anim_skullwiz_spella, 12, skullw_shadow7); skullw_fireshadow(this); }
+void skullw_shadow5(entity this) { set_animofs(this, anim_skullwiz_spella, 11, skullw_shadow6); ai_face(this); }
+void skullw_shadow4(entity this) { set_animofs(this, anim_skullwiz_spella, 10, skullw_shadow5); ai_face(this); }
+void skullw_shadow3(entity this) { set_animofs(this, anim_skullwiz_spella, 7, skullw_shadow4); ai_face(this); }
+void skullw_shadow2(entity this) { set_animofs(this, anim_skullwiz_spella, 5, skullw_shadow3); ai_face(this); }
+void skullw_shadow1(entity this)
+{
+	set_animofs(this, anim_skullwiz_spella, 3, skullw_shadow2);
+	_sound(this, CH_VOICE, "skullwiz/attack.wav", 1, ATTN_NORM);
+}
+
 //============================================================================
 // Poison Skull Attack (Guardians)
 //============================================================================
@@ -621,12 +644,14 @@ void skullw_magic(entity this)
 			else
 				skullw_attack1(this);
 		}
-		// Red Skull wizards attacks with skull rockets
-		else
+		else if(this.spawnflags & MON_SKULLWIZ_SHADOW)
+			skullw_shadow1(this);
+		else // Red Skull wizards attacks with skull rockets
 			skullw_attack1(this);
 	}
-	// Always attack monsters with skull rockets
-	else
+	else if(this.spawnflags & MON_SKULLWIZ_SHADOW)
+		skullw_shadow1(this);
+	else // Always attack monsters with skull rockets
 		skullw_attack1(this);
 }
 	
@@ -754,7 +779,10 @@ void skullw_death1(entity this) { set_animofs(this, anim_skullwiz_death, 2, skul
 void skullw_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	Inventory_new(this);
-	Inventory_add(WEP_SPELLBOOK, this, ITEM_OWNED);
+	if(this.spawnflags & MON_SKULLWIZ_SHADOW)
+		Inventory_add(WEP_SHADOWBEAM, this, ITEM_OWNED);
+	else
+		Inventory_add(WEP_SPELLBOOK, this, ITEM_OWNED);
 	DropBackpack(this);
 
 	// Play fade away/death sound
@@ -881,6 +909,7 @@ METHOD(SkullWizard, mr_setup, bool(SkullWizard this, entity actor))
 	precache_sound("skullwiz/blinkspk2.wav");
 	precache_sound("skullwiz/blinkout.wav");	// Sound of blink animation
 	precache_sound("skullwiz/blinkin.wav");
+	precache_sound("skullwiz/sight.wav");
 
 	if(!actor.bodyphased)
 		actor.bodyphased = MONAI_SKULLWSOLID;
@@ -924,10 +953,27 @@ METHOD(SkullWizard, mr_setup, bool(SkullWizard this, entity actor))
 		actor.skin = 3;
 		actor.poisonous = true;
 	}
+	else
+	{
+		if(random() < 0.5)
+		{
+			actor.spawnflags |= MON_SKULLWIZ_SHADOW;
+			actor.health *= 2;
+			actor.skin = 4;
+		}
+	}
 
 	actor.checkattack = SkullWizCheckAttack;
 
     return true;
+}
+METHOD(SkullWizard, mr_sight, bool(SkullWizard this, entity actor))
+{
+	TC(SkullWizard, this);
+
+	_sound(actor, CH_VOICE, "skullwiz/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif
 

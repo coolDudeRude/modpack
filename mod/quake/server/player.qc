@@ -291,13 +291,15 @@ void player_stand1(entity this)
 	
 	set_anim(this, anim_player_axstnd1, player_stand1);
 
+#if 0
 	for(int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 	{
 		.entity wepent = weaponentities[slot];
 		Weapon w = this.(wepent).m_weapon;
-		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && w != WEP_ANGELICSTAFF && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
+		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && w != WEP_ANGELICSTAFF && w != WEP_INVOKER && w != WEP_BERSERKER_FISTS && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
 			this.(wepent).m_frame = 0;
 	}
+#endif
 
 	if(this.velocity_x || this.velocity_y)
 	{
@@ -368,6 +370,19 @@ void player_stand1(entity this)
 			if(this.(weaponentity).m_frame > 4)
 				this.(weaponentity).m_frame = 0;
 		}
+		else if(wep == WEP_INVOKER)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame >= 110 || this.(weaponentity).m_frame < 95)
+				this.(weaponentity).m_frame = 95;
+		}
+		else if(wep == WEP_BERSERKER_FISTS)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame >= 100 || this.(weaponentity).m_frame < 81)
+				this.(weaponentity).m_frame = 81;
+			this.(weaponentity).weapon_nextthink = time + 0.05;
+		}
 	}
 
 	.entity priwep = weaponentities[0];
@@ -404,13 +419,15 @@ void player_run(entity this)
 
 	set_anim(this, anim_player_rockrun1, player_run);
 
+#if 0
 	for(int slot = 0; slot < MAX_WEAPONSLOTS; ++slot)
 	{
 		.entity wepent = weaponentities[slot];
 		Weapon w = this.(wepent).m_weapon;
-		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && w != WEP_ANGELICSTAFF && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
+		if(w != WEP_RIPPER && w != WEP_CHAINSAW && w != WEP_MAGIC && w != WEP_SPELLBOOK && w != WEP_PORTAL_GUN && w != WEP_LIGHT_DISC && w != WEP_SQUEAKER && w != WEP_ANGELICSTAFF && w != WEP_INVOKER && w != WEP_BERSERKER_FISTS && time > ATTACK_FINISHED(this, wepent) && time > this.(wepent).weapon_nextthink && !this.tank)
 			this.(wepent).m_frame = 0;
 	}
+#endif
 	if(!this.velocity_x && !this.velocity_y)
 	{
 		if(!STAT(SKATING, this))
@@ -474,6 +491,19 @@ void player_run(entity this)
 			this.(weaponentity).m_frame += 1;
 			if(this.(weaponentity).m_frame > 4)
 				this.(weaponentity).m_frame = 0;
+		}
+		else if(wep == WEP_INVOKER)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame >= 110 || this.(weaponentity).m_frame < 95)
+				this.(weaponentity).m_frame = 95;
+		}
+		else if(wep == WEP_BERSERKER_FISTS)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame >= 100 || this.(weaponentity).m_frame < 81)
+				this.(weaponentity).m_frame = 81;
+			this.(weaponentity).weapon_nextthink = time + 0.05;
 		}
 	}
 
@@ -1028,6 +1058,7 @@ entity ThrowGib(entity this, entity inflictor, string gibname, float dm)
 	gib.nextthink = time + 10 + random()*10;
 	gib.frame = 0;
 	gib.flags = 0;
+	gib.skin = this.skin;
 	return gib;
 }
 

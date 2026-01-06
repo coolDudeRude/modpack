@@ -1,0 +1,14 @@
+#pragma once
+
+CLASS(Berserk, Powerups)
+    ATTRIB(Berserk, netname, string, "berserk");
+    ATTRIB(Berserk, m_name, string, _("Berserk"));
+    ATTRIB(Berserk, m_color, vector, '1 0.5 0');
+    ATTRIB(Berserk, m_icon, string, "sb_berserk");
+ENDCLASS(Berserk)
+REGISTER_STATUSEFFECT(Berserk, NEW(Berserk));
+
+#ifdef SVQC
+.float berserk_sound;
+.bool berserk_warning;
+#endif

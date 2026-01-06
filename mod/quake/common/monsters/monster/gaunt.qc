@@ -571,6 +571,7 @@ METHOD(Gaunt, mr_setup, bool(Gaunt this, entity actor))
 
 	precache_sound("gaunt/pain.wav");
 	precache_sound("gaunt/death.wav");
+	precache_sound("gaunt/sight.wav");
 
 	precache_sound("weapons/r_exp3b.wav");
 
@@ -610,5 +611,13 @@ METHOD(Gaunt, mr_setup, bool(Gaunt this, entity actor))
 	actor.checkattack = GauntCheckAttack;
 
     return true;
+}
+METHOD(Gaunt, mr_sight, bool(Gaunt this, entity actor))
+{
+	TC(Gaunt, this);
+
+	_sound(actor, CH_VOICE, "gaunt/sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

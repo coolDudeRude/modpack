@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_CHEDDAR_GOBLIN,          DEATH_SELF_MON_CHEDDAR_GOBLI
 #ifdef GAMEQC
 MODEL(MON_CHEDDAR_GOBLIN, "progs/cheddar_goblin.mdl");
 MODEL(MON_CHEDDAR_GOBLIN_HEAD, "progs/h_grem.mdl");
-
-SOUND(MON_CHEDDAR_GOBLIN_SIGHT, "cheddar_goblin/sight");
 #endif
 
 CLASS(CheddarGoblin, Monster)
@@ -20,7 +18,6 @@ CLASS(CheddarGoblin, Monster)
 #ifdef GAMEQC
     ATTRIB(CheddarGoblin, m_model, Model, MDL_MON_CHEDDAR_GOBLIN);
     ATTRIB(CheddarGoblin, m_model_head, Model, MDL_MON_CHEDDAR_GOBLIN_HEAD);
-    ATTRIB(CheddarGoblin, m_sound, Sound, SND_MON_CHEDDAR_GOBLIN_SIGHT);
 #endif
     ATTRIB(CheddarGoblin, netname, string, "cheddar_goblin");
     ATTRIB(CheddarGoblin, m_name, string, _("Cheddar Goblin"));

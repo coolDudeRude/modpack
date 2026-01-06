@@ -74,7 +74,7 @@ void spider_run1(entity this)
 
 void spider_die2(entity this)
 {
-	T_RadiusDamage(this, this, 80, DEATH_MONSTER_SPIDER_DROID.m_id, this.other2);
+	T_RadiusDamage(this, this, 80, DEATH_MONSTER_SPIDER_DROID.m_id, this);
 	ThrowGib(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
 	ThrowGib(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
 	ThrowHead(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
@@ -86,7 +86,6 @@ void spider_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	setthink(this, spider_die2);
 	this.nextthink = time;
-	this.other2 = attacker;
 }
 
 void spider_blowup(entity this)
@@ -123,6 +122,7 @@ METHOD(SpiderDroid, mr_setup, bool(SpiderDroid this, entity actor))
 	precache_model("progs/spidgib.mdl");
 	precache_model("progs/spid.mdl");
 	precache_sound("monsters/spider/swalk.wav");
+	precache_sound("monsters/spider/sactiv.wav");
 
     actor.health = 50;
 	actor.th_stand = spider_stand1;
@@ -140,7 +140,7 @@ METHOD(SpiderDroid, mr_sight, bool(SpiderDroid this, entity actor))
 	if(!actor.target || actor.target == "")
 	{
 		spider_wake1(actor);
-		sound(actor, CHAN_AUTO, this.m_sound, 1, ATTN_NORM);
+		_sound(actor, CH_VOICE, "monsters/spider/sactiv.wav", 1, ATTN_NORM);
 		return false;
 	}
 

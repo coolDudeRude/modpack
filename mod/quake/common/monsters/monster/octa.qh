@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_OCTA,           DEATH_SELF_MON_OCTA,           DEATH_
 
 #ifdef GAMEQC
 MODEL(MON_OCTA, "progs/madfox/mon_octa_extra.mdl");
-
-SOUND(MON_OCTA_SIGHT, "tronyn/mon_bigfish_bite");
 #endif
 
 CLASS(Octa, Monster)
@@ -18,7 +16,6 @@ CLASS(Octa, Monster)
     ATTRIB(Octa, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Octa, m_model, Model, MDL_MON_OCTA);
-    ATTRIB(Octa, m_sound, Sound, SND_MON_OCTA_SIGHT);
 #endif
     ATTRIB(Octa, netname, string, "octa");
     ATTRIB(Octa, m_name, string, _("Octa"));

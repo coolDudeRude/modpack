@@ -1107,6 +1107,7 @@ METHOD(FuryKnight, mr_setup, bool(FuryKnight this, entity actor))
 	precache_sound("dknight/dfury_grunt3.wav");
 	precache_sound("dknight/dfury_grunt4.wav");
 	precache_sound("dknight/dfury_leap.wav");
+	precache_sound("dknight/dfury_sight.wav");
 
 	actor.meleeattack = rint(random() * 5);
 	actor.weaponswitch = time + 5;
@@ -1134,5 +1135,13 @@ METHOD(FuryKnight, mr_setup, bool(FuryKnight this, entity actor))
 	actor.steptype = FS_TYPEMEDIUM;
 
     return true;
+}
+METHOD(FuryKnight, mr_sight, bool(FuryKnight this, entity actor))
+{
+	TC(FuryKnight, this);
+
+	_sound(actor, CH_VOICE, "dknight/dfury_sight.wav", 1, ATTN_NORM);
+
+	return true;
 }
 #endif

@@ -9,8 +9,6 @@ REGISTER_DEATHTYPE(MONSTER_ARACHNOFLOYD,           DEATH_SELF_MON_ARACHNOFLOYD, 
 #ifdef GAMEQC
 MODEL(MON_ARACHNOFLOYD, "progs/arachnofloyd.mdl");
 MODEL(MON_ARACHNOFLOYD_HEAD, "progs/h_arach.mdl");
-
-SOUND(MON_ARACHNOFLOYD_SIGHT, "arachnofloyd/sight");
 #endif
 
 CLASS(Arachnofloyd, Monster)
@@ -20,7 +18,6 @@ CLASS(Arachnofloyd, Monster)
 #ifdef GAMEQC
     ATTRIB(Arachnofloyd, m_model, Model, MDL_MON_ARACHNOFLOYD);
     ATTRIB(Arachnofloyd, m_model_head, Model, MDL_MON_ARACHNOFLOYD_HEAD);
-    ATTRIB(Arachnofloyd, m_sound, Sound, SND_MON_ARACHNOFLOYD_SIGHT);
 #endif
     ATTRIB(Arachnofloyd, netname, string, "arachnofloyd");
     ATTRIB(Arachnofloyd, m_name, string, _("Arachnofloyd"));
