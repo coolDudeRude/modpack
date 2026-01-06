@@ -10,6 +10,7 @@
 #include "explosion.qc"
 #include "fog.qc"
 #include "hurt.qc"
+#include "instateleport.qc"
 #include "jumppads.qc"
 #include "ladder.qc"
 #include "multi.qc"

@@ -1,1 +1,13 @@
 #pragma once
+
+#ifdef SVQC
+const int TELEPORT_PLAYER_ONLY = 1;
+const int TELEPORT_SILENT = 2;
+const int TELEPORT_PUSH = 2;
+const int TELEPORT_TRIGGER_FIRST = 4;
+const int TELEPORT_NOTRIGGER = 8;
+const int TELEPORT_NOFLASH = 16;
+const int TELEPORT_MONSTER_ONLY = 32;
+
+void teleport_hum(entity this);
+#endif

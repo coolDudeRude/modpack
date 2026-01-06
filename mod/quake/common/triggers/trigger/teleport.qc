@@ -1,13 +1,5 @@
 #ifdef SVQC
 
-const int TELEPORT_PLAYER_ONLY = 1;
-const int TELEPORT_SILENT = 2;
-const int TELEPORT_PUSH = 2;
-const int TELEPORT_TRIGGER_FIRST = 4;
-const int TELEPORT_NOTRIGGER = 8;
-const int TELEPORT_NOFLASH = 16;
-const int TELEPORT_MONSTER_ONLY = 32;
-
 void teleport(entity traveler, entity dst, bool tfog, bool nofwd);
 void teleport_touch(entity this, entity toucher)
 {
@@ -147,30 +139,6 @@ spawnfunc(trigger_teleport)
 	trigger_teleport_setup(this);	// after inittrigger, so that size/model is set, so the telehum hums in the right place
 	if(this.spawnflags & TELEPORT_TRIGGER_FIRST)
 		this.use = teleport_reactivate;
-}
-
-// qbj3
-spawnfunc(info_teleport_target);
-spawnfunc(trigger_instateleport) { spawnfunc_trigger_teleport(this); }
-spawnfunc(trigger_instateleport_destination)
-{
-	if(!this.targetname || this.targetname == "")
-	{
-		objerror(this, "no targetname");
-		return;
-	}
-
-	this.solid = SOLID_TRIGGER;
-	_setmodel(this, this.model); // set size and link into world
-	set_movetype(this, MOVETYPE_NONE);
-	this.modelindex = 0;
-	this.model = "";
-
-	if(this.mangle == '0 0 0' && this.angles != '0 0 0')
-		this.mangle = this.angles;
-
-	// flips the stealth flag
-	//this.spawnflags ^= TELEDEST_STEALTH;
 }
 
 // alkaline version

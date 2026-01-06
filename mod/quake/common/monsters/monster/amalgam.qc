@@ -84,7 +84,6 @@ void AmalGoop_Touch(entity this, entity toucher)
 	if(!attacker || wasfreed(attacker))
 		attacker = this;
 
-
 	T_Damage(toucher, this, attacker, this.dmg, this.projectiledeathtype);
 
 	if(random() > 0.5)
@@ -93,7 +92,9 @@ void AmalGoop_Touch(entity this, entity toucher)
 		_sound(this, CH_VOICE, "amalg/amalg_goop2.wav", 0.6, ATTN_NORM);
 
 	GoopBlood(this, 0);
-	delete(this); //change this to an animation l8r
+	setthink(this, SUB_Remove);
+	this.nextthink = time;
+	this.solid = SOLID_NOT;
 }
 
 void AmalGoop_Die_Loop(entity this)

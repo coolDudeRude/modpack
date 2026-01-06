@@ -2,6 +2,7 @@
 
 #include "changelevel.qh"
 #include "fog.qh"
+#include "instateleport.qh"
 #include "ladder.qh"
 #include "multi.qh"
 #include "teleport.qh"
