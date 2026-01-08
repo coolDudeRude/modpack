@@ -3005,7 +3005,7 @@ void ClientConnect(entity this)
 	if (PlayerInList(this, autocvar_g_chatban_list)) // chatban
 		this.muted = true;
 
-	string thetrack = ((current_cdtrack) ? current_cdtrack : getcdtrack(world.sounds));
+	string thetrack = ((current_cdtrack) ? current_cdtrack : getcdtrack(world_cdtrack));
 	stuffcmd(this, strcat("cd loop ", thetrack, "\n"));
 
 	if(autocvar_sv_eventlog)

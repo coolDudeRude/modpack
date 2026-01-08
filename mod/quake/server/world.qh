@@ -30,6 +30,8 @@ int intermission_running;
 
 bool gameover;
 
+int world_cdtrack; // a hack to work around the engine sending world.sounds to clients on join which plays Xonotic music
+
 .string endtext;
 
 .bool jump_flag;

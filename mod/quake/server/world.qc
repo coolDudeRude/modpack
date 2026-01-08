@@ -1496,6 +1496,19 @@ spawnfunc(worldspawn)
 		serverflags = 0; // clean up serverflags!
 	}
 
+	world_cdtrack = this.sounds;
+	// assign reflectively to avoid "assignment to world" warning
+	for (int i = 0, n = numentityfields(); i < n; ++i)
+	{
+		string k = entityfieldname(i);
+		if (k == "sounds")
+		{
+			// safeguard against various stuff ;)
+			putentityfieldstring(i, this, "0");
+			break;
+		}
+	}
+
 	// NOTE: let's set this when a trigger_changelevel changes it again, not here
 	// setting it here causes map restarts to lose position!
 	//cvar_set("_spawntarget", "");
