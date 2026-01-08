@@ -153,8 +153,8 @@ void Inventory_new(entity this)
 		Net_LinkEntity(inv, false, 0, Inventory_Send);
 }
 
-void Inventory_delete(entity e) { delete(e.inventory); e.inventory = NULL; }
-void Inventory_update(entity e) { e.inventory.SendFlags = 0xFFFFFF; }
+void Inventory_delete(entity e) { if(e.inventory) delete(e.inventory); e.inventory = NULL; }
+void Inventory_update(entity e) { if(e.inventory) e.inventory.SendFlags = 0xFFFFFF; }
 
 void Inventory_clear(entity store, int op)
 {

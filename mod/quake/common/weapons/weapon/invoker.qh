@@ -3,7 +3,7 @@
 CLASS(Invoker, Weapon)
 /* ammotype  */ ATTRIB(Invoker, ammo_type, int, 0);
 /* impulse   */ ATTRIB(Invoker, impulse, int, 8);
-/* spawnflags*/ ATTRIB(Invoker, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* spawnflags*/ ATTRIB(Invoker, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED | WEP_FLAG_NOSTEAL);
 /* ammo */      ATTRIB(Invoker, aflag, int, 0);
 /* modelname */ ATTRIB(Invoker, mdl, string, "invoker");
 /* crosshair */ ATTRIB(Invoker, w_crosshair, string, "gfx/crosshaircrylink");

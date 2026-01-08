@@ -3,7 +3,7 @@
 CLASS(MultiMissileLauncher, Weapon)
 /* ammotype  */ ATTRIB(MultiMissileLauncher, ammo_type, int, IT_ROCKETS);
 /* impulse   */ ATTRIB(MultiMissileLauncher, impulse, int, 7);
-/* spawnflags*/ ATTRIB(MultiMissileLauncher, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* spawnflags*/ ATTRIB(MultiMissileLauncher, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED | WEP_FLAG_NOSTEAL);
 /* ammo */      ATTRIB(MultiMissileLauncher, aflag, int, 5);
 /* modelname */ ATTRIB(MultiMissileLauncher, mdl, string, "mmml");
 /* crosshair */ ATTRIB(MultiMissileLauncher, w_crosshair, string, "gfx/crosshairfireball");

@@ -372,7 +372,7 @@ Monster monster_randomize(entity this, Monster mon)
 		return mon; // map is broken currently with random mobs TODO
 	if(substring(world.model, 0, 12) == "maps/dogjam_")
 		return mon; // dogs only please
-	if(IsQBJ3Map())
+	if(IsQBJ3Map() || mon == MON_SWARMER || mon == MON_BLISTER)
 		return mon; // unique monster models
 
 	if(mon.spawnflags & MON_FLAG_HIDDEN)

@@ -38,7 +38,6 @@ void hknight_shot(entity this, float offset)
 	entity newmis = launch_spike(this, org, vec);
 	newmis.projectiledeathtype = DEATH_MONSTER_HELL_KNIGHT.m_id;
 	newmis.classname = "knight_spike";
-	//_setmodel(newmis, "progs/k_spike.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
 	newmis.velocity = vec*300;
 	_sound(this, CH_WEAPON_SINGLE, "hknight/attack1.wav", 1, ATTN_NORM);
@@ -584,7 +583,6 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 		precache_sound("hknight/pain1.wav");
 		precache_sound("hknight/idle.wav");
 	}
-	precache_model("progs/k_spike.mdl");
 	precache_sound("hknight/attack1.wav");
 	precache_sound("hknight/hit.wav");		// used by C code, so don't sound2
 	precache_sound("hknight/slash1.wav");

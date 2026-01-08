@@ -536,6 +536,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.effects |= EF_ADDITIVE;
 				this.dphitcontentsmask = DPCONTENTS_DONOTENTER;
 				break;
+			case PROJECTILE_KNIGHT_SPIKE:
 			case PROJECTILE_BULLETKIN_SHOT:
 				this.effects |= EF_FULLBRIGHT;
 				break;

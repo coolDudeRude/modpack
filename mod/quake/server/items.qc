@@ -1034,6 +1034,9 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 {
 	if(wpn == WEP_AXE || wpn == WEP_SHOTGUN)
 		return wpn;
+	// qbj3 weapons
+	if(wpn == WEP_PISTOL || wpn == WEP_REBAR_CANNON || wpn == WEP_INVOKER || wpn == WEP_MMML)
+		return wpn;
 	RandomSelection_Init();
 	FOREACH(Weapons, it != WEP_Null && it != WEP_AXE && it != WEP_SHOTGUN && it != WEP_BALL && !(it.spawnflags & WEP_FLAG_CHAMPION),
 	{

@@ -7,7 +7,7 @@ EFFECT(0, REBAR_CANNON_BOUNCE,                 "TE_SPARK")
 CLASS(RebarCannon, Weapon)
 /* ammotype  */ ATTRIB(RebarCannon, ammo_type, int, IT_NAILS);
 /* impulse   */ ATTRIB(RebarCannon, impulse, int, 5);
-/* spawnflags*/ ATTRIB(RebarCannon, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* spawnflags*/ ATTRIB(RebarCannon, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED | WEP_FLAG_NOSTEAL);
 /* ammo */      ATTRIB(RebarCannon, aflag, int, 30);
 /* modelname */ ATTRIB(RebarCannon, mdl, string, "rebar");
 /* crosshair */ ATTRIB(RebarCannon, w_crosshair, string, "gfx/crosshair15");
