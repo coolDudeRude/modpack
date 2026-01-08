@@ -473,8 +473,15 @@ void mino_magic13(entity this)
 	minotaur_finish_attachment(this);
 	ai_face(this);
 	makevectors(this.angles);
+	vector finalang = this.origin + (v_forward * 44) + (v_up * 32);
 	// Spawn a mist of blue/green particles where projectiles came from
-	__pointparticles(_particleeffectnum("shockwave_attack"), this.origin + (v_forward * 44) + (v_up * 32), '0 0 0', 1);
+	//__pointparticles(_particleeffectnum("shockwave_attack"), this.origin + (v_forward * 44) + (v_up * 32), '0 0 0', 1);
+	if(this.poisonous)
+		particle_explode(finalang, 50, 3, PARTICLE_BURST_GREEN, PARTICLE_BURST_MINOTAUR);
+	else if(this.spawnflags & MON_MINOTAUR_MINIONS)
+		particle_explode(finalang, 50, 3, PARTICLE_BURST_RED, PARTICLE_BURST_MINOTAUR);
+	else
+		particle_explode(finalang, 50, 3, PARTICLE_BURST_BLUE, PARTICLE_BURST_MINOTAUR);
 	// Random chance of final growl at player
 	if(random() < 0.3)
 		_sound(this, CHAN_BODY, "minotaur/attack1end.wav", 1, ATTN_NORM);
@@ -562,13 +569,21 @@ void mino_sumball(entity this, float dbframe)
 	this.attachment.frame = dbframe;
 	this.attachment.lip = 0.3 + ((7-dbframe) * 0.1);
 	this.attachment.alpha = this.attachment.lip;
-	//particle_explode(this.pos2, 5+random()*10, 3, this.part_style, PARTICLE_BURST_MINOTAUR);
+#if 0
 	if(this.poisonous)
 		te_explosion2(this.pos2, 50, 20);
 	else if(this.spawnflags & MON_MINOTAUR_MINIONS)
 		te_explosion2(this.pos2, 225, 10);
 	else
 		te_explosion2(this.pos2, 200, 25);
+#else
+	if(this.poisonous)
+		particle_explode(this.pos2, 5+random()*10, 3, PARTICLE_BURST_GREEN, PARTICLE_BURST_MINOTAUR);
+	else if(this.spawnflags & MON_MINOTAUR_MINIONS)
+		particle_explode(this.pos2, 5+random()*10, 3, PARTICLE_BURST_RED, PARTICLE_BURST_MINOTAUR);
+	else
+		particle_explode(this.pos2, 5+random()*10, 3, PARTICLE_BURST_BLUE, PARTICLE_BURST_MINOTAUR);
+#endif
 }
 
 //----------------------------------------------------------------------
@@ -585,12 +600,21 @@ void mino_summon15(entity this)
 	minotaur_finish_attachment(this);
 	if(this.minotaur_summonflag)
 	{
+#if 0
 		if(this.poisonous)
 			te_explosion2(this.pos2, 50, 20);
 		else if(this.spawnflags & MON_MINOTAUR_MINIONS)
 			te_explosion2(this.pos2, 225, 10);
 		else
 			te_explosion2(this.pos2, 200, 25);
+#else
+		if(this.poisonous)
+			particle_explode(self.pos1, 50, 3, PARTICLE_BURST_GREEN, PARTICLE_BURST_MINOTAUR);
+		else if(this.spawnflags & MON_MINOTAUR_MINIONS)
+			particle_explode(self.pos1, 50, 3, PARTICLE_BURST_RED, PARTICLE_BURST_MINOTAUR);
+		else
+			particle_explode(self.pos1, 50, 3, PARTICLE_BURST_BLUE, PARTICLE_BURST_MINOTAUR);
+#endif
 	}
 }
 void mino_summon14(entity this) { set_animofs(this, anim_minotaur_howl, 27, mino_summon15); mino_sumeffect(this); mino_sumball(this, 7); }

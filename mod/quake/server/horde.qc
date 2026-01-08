@@ -1663,7 +1663,6 @@ bool SpawnWavePrep(entity this)
 
 void horde_squad_setup(entity this)
 {
-
 	if(this.spawnflags & HORDE_FINALBOSS)
 		this.spawnflags |= HORDE_BOSS; // ensure also marked as boss
 
@@ -1871,6 +1870,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_FODDER, HORDE_SQUAD_TYPE_NORMAL, "1 kamikaze");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_FODDER, HORDE_SQUAD_TYPE_NORMAL, "1 gremlin");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_FODDER, HORDE_SQUAD_TYPE_NORMAL, "1 cheddar_goblin");
+		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_FODDER, HORDE_SQUAD_TYPE_RANGED, "1 bulletkin");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_FODDER, HORDE_SQUAD_TYPE_FLYING, "1 jim");
 	}
 
@@ -1882,6 +1882,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 hogreham");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 hogremac");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 ogre");
+		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 mancubus");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 scourge");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 sword");
 		Horde_SpawnSquadEntity(HORDE_ARMY | HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 lenforcer");
@@ -1938,6 +1939,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 hogreham");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_NORMAL, "1 hogremac");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 ogre");
+		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_RANGED, "1 mancubus");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "3 wizard");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "1 cacodemon");
 		Horde_SpawnSquadEntity(HORDE_ELITE, HORDE_SQUAD_TYPE_FLYING, "2 demon_eye");
@@ -1978,6 +1980,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_NORMAL, "1 demon 1 mutant");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_NORMAL, "2 grunt 1 arachnofloyd");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_NORMAL, "2 grunt 1 norb");
+		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_NORMAL, "2 bulletkin");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_BOSS, "2 bambler");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_BOSS, "1 mutant 1 drole");
 		Horde_SpawnSquadEntity(HORDE_BOSS, HORDE_SQUAD_TYPE_BOSS, "1 justice 1 hknight");

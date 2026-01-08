@@ -410,6 +410,8 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(GHOST_SICKLE)       this.traileffect = EFFECT_TR_SICKLE.m_id; this.avelocity = '720 0 0'; break;
 			HANDLE(CACODEMON_FIREBALL) this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; break;
 			HANDLE(MISSILE)            this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '0 0 -540'; break;
+			HANDLE(MANCUBUS_BOLT)      this.traileffect = EFFECT_Null.m_id; this.avelocity = '0 0 -540'; break;
+			HANDLE(BULLETKIN_SHOT)     this.traileffect = EFFECT_Null.m_id; this.avelocity = '200 100 300'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -487,6 +489,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				break;
 			case PROJECTILE_LASER:
 			case PROJECTILE_JIM_LASER:
+			case PROJECTILE_MANCUBUS_BOLT:
 				this.effects |= EF_DIMLIGHT;
 				break;
 			case PROJECTILE_SNOWBALL:
@@ -532,6 +535,9 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.effects |= EF_FULLBRIGHT;
 				this.effects |= EF_ADDITIVE;
 				this.dphitcontentsmask = DPCONTENTS_DONOTENTER;
+				break;
+			case PROJECTILE_BULLETKIN_SHOT:
+				this.effects |= EF_FULLBRIGHT;
 				break;
 			default:
 				break;

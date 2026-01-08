@@ -31,8 +31,9 @@ void W_FirePewPew(entity this, .entity weaponentity)
 
 	this.punchangle_x = -2;
 
-	vector dir = qc_aim(this, 1000);
-	entity missile = LaunchLaser(this, W_Shotorg(this, weaponentity) + v_right * 7, dir);
+	vector org = W_Shotorg(this, weaponentity) + v_right * 7;
+	vector dir = qc_aim_fromorg(this, org, 1000);
+	entity missile = LaunchLaser(this, org, dir);
 	missile.projectiledeathtype = WEP_PEWPEW.m_id;
 	missile.dmg = 25;
 	missile.velocity = dir * 1000;

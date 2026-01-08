@@ -138,9 +138,10 @@ void W_FireCrossbow(entity this, float ox, .entity weaponentity)
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/penfire.wav", vol, ATTN_NORM);
 	W_TakeAmmo(this, IT_NAILS, 1);
-	vector dir = qc_aim(this, 1000);
+	vector org = W_Shotorg(this, weaponentity) + v_right * ox + v_up * -4;
+	vector dir = qc_aim_fromorg(this, org, 1000);
 	// NOTE: position fix by Seven and Sajt applied here
-	entity missile = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * ox + v_up * -4, dir);
+	entity missile = launch_spike(this, org, dir);
 	set_movetype(missile, MOVETYPE_FLYMISSILE);
 	missile.solid = SOLID_TRIGGER;
 	missile.dphitcontentsmask = DPCONTENTS_SOLID;

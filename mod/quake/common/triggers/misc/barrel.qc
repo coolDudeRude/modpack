@@ -4,7 +4,11 @@ void barrel_explode(entity this)
 {
 	// did say this.owner
 	vector org = (this.absmin + this.absmax) * 0.5;
-	T_RadiusDamage(this, this.enemy, 160, DEATH_TRAP.m_id, NULL);
+	float damage = (this.dmg > 0) ? this.dmg : 160;
+	if(this.dmg < 0)
+		damage = 0;
+	if(damage > 0)
+		T_RadiusDamage(this, this.enemy, damage, DEATH_TRAP.m_id, NULL);
 	sound(this, CH_TRIGGER_SINGLE, SND_ROCKET_EXPLOSION, 1, ATTN_NORM);
 	particle(org, '0 0 0', 75, 255);
 

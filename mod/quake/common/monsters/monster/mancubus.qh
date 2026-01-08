@@ -1,0 +1,26 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_MANCUBUS,                     1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was devoured by a Mancubus"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_MANCUBUS,                1,  NULL,           INFO_DEATH_SELF_MON_MANCUBUS,               CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_MANCUBUS,            DEATH_SELF_MON_MANCUBUS,            DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_MANCUBUS, "progs/mon_mancubus.mdl");
+MODEL(MON_MANCUBUS_HEAD, "progs/h_mancubus.mdl");
+#endif
+
+CLASS(Mancubus, Monster)
+    ATTRIB(Mancubus, spawnflags, int, 0);
+    ATTRIB(Mancubus, m_mins, vector, '-32 -32 -24');
+    ATTRIB(Mancubus, m_maxs, vector, '32 32 64');
+#ifdef GAMEQC
+    ATTRIB(Mancubus, m_model, Model, MDL_MON_MANCUBUS);
+    ATTRIB(Mancubus, m_model_head, Model, MDL_MON_MANCUBUS_HEAD);
+#endif
+    ATTRIB(Mancubus, netname, string, "mancubus");
+    ATTRIB(Mancubus, m_name, string, _("Mancubus"));
+ENDCLASS(Mancubus)
+
+REGISTER_MONSTER(MANCUBUS, NEW(Mancubus));

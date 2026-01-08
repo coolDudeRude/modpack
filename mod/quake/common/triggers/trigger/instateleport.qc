@@ -331,6 +331,8 @@ void instateleport_touch(entity this, entity toucher)
 	}
 	//dprint3("After: ", vtos(other.angles),"\n");
 	UNSET_ONGROUND(toucher);
+
+	BITXOR_ASSIGN(toucher.effects, EF_TELEPORT_BIT);
 }
 
 void instateleport_use(entity this, entity actor, entity trigger)

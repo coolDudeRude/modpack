@@ -1211,7 +1211,7 @@ void FoundTarget(entity this)
 		this.target4 = "";
 	}
 
-	if(IS_PLAYER(this.enemy) && !this.is_frozen && this.target && this.target != "" && IsQBJ3Map())
+	if(IS_PLAYER(this.enemy) && !this.is_frozen && this.target && this.target != "" && (this.spawnflags & SPAWN_ALT_TARG) && IsQBJ3Map())
 	{
 		SUB_UseTargets_Ex(this, this.enemy, this.enemy, BIT(2) | BIT(3) | BIT(4), false);
 		this.target = string_null;

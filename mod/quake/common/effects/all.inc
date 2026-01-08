@@ -458,8 +458,62 @@ STATIC_INIT(Effect_DPP_BURSTSHOCKWAVE2)
 
 EFFECT(0, DPP_BURSTPARTY,           "DPP_ITSPART_BURSTY")
 EFFECT(0, DPP_BURSTPARTG,           "DPP_ITSPART_BURSTG")
+#ifdef CSQC
+STATIC_INIT(Effect_DPP_BURSTPARTG)
+{
+	registercvar("cl_particle_DPP_ITSPART_BURSTG", "smoke");
+
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_count", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_type", "static");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_color", "0x101010 0x6b6b0f");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_tex", "62 63");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_size", "1 3");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_sizeincrease", "0.5");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_alpha", "128 192 64");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_velocityjitter", "32 32 32");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_velocitymultiplier", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_airfriction", "0.65");
+	registercvar("cl_particle_DPP_ITSPART_BURSTG_smoke_rotate", "0 360 45 90");
+}
+#endif
 EFFECT(0, DPP_BURSTPARTR,           "DPP_ITSPART_BURSTR")
+#ifdef CSQC
+STATIC_INIT(Effect_DPP_BURSTPARTR)
+{
+	registercvar("cl_particle_DPP_ITSPART_BURSTR", "smoke");
+
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_count", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_type", "static");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_color", "0x801010 0xe71b1b");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_tex", "62 63");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_size", "1 3");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_sizeincrease", "0.5");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_alpha", "128 192 64");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_velocityjitter", "32 32 32");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_velocitymultiplier", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_airfriction", "0.65");
+	registercvar("cl_particle_DPP_ITSPART_BURSTR_smoke_rotate", "0 360 45 90");
+}
+#endif
 EFFECT(0, DPP_BURSTPARTB,           "DPP_ITSPART_BURSTB")
+#ifdef CSQC
+STATIC_INIT(Effect_DPP_BURSTPARTB)
+{
+	registercvar("cl_particle_DPP_ITSPART_BURSTB", "smoke");
+
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_count", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_type", "static");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_color", "0x545470 0x8b8bc1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_tex", "62 63");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_size", "1 3");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_sizeincrease", "0.5");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_alpha", "128 192 64");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_velocityjitter", "32 32 32");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_velocitymultiplier", "1");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_airfriction", "0.65");
+	registercvar("cl_particle_DPP_ITSPART_BURSTB_smoke_rotate", "0 360 45 90");
+}
+#endif
 EFFECT(0, DPP_BURSTPARTP,           "DPP_ITSPART_BURSTP")
 
 EFFECT(0, DPP_BURSTPARTW,           "DPP_ITSPART_BURSTW")

@@ -85,7 +85,7 @@ Pick a vector for the player to shoot along
 vector aim(entity, missilespeed)
 =============
 */
-vector qc_aim(entity this, float missilespeed)
+vector qc_aim_fromorg(entity this, vector org, float missilespeed)
 {
 	// assume failure if it returns early
 	return = v_forward;
@@ -98,7 +98,7 @@ vector qc_aim(entity this, float missilespeed)
 #if 1
 		traceline(this.origin + this.view_ofs, this.origin + this.view_ofs + v_forward * missilespeed, MOVE_NOMONSTERS, this);
 		vector w_shotend = trace_endpos;
-		vector w_shotorg = W_Shotorg(this, weaponentities[0]);
+		vector w_shotorg = org;
 		return normalize(w_shotend - w_shotorg);
 #else
 		return;
@@ -163,6 +163,11 @@ vector qc_aim(entity this, float missilespeed)
 	{
 		return bestdir;
 	}
+}
+
+vector qc_aim(entity this, float missilespeed)
+{
+	return qc_aim_fromorg(this, W_Shotorg(this, weaponentities[0]), missilespeed);
 }
 
 /*

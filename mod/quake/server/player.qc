@@ -1103,11 +1103,8 @@ void ThrowHead(entity this, entity inflictor, string gibname, float dm)
 	}
 }
 
-void CorpseThink(entity this)
+void Corpse_Fade(entity this)
 {
-	if(!IS_MONSTER(this))
-		return;
-
 	if(horde_ent)
 	{
 		setthink(this, MonsterFade);
@@ -1118,6 +1115,14 @@ void CorpseThink(entity this)
 		setthink(this, SUB_Remove);
 		this.nextthink = time + 30 + (random () * 30);
 	}
+}
+
+void CorpseThink(entity this)
+{
+	if(!IS_MONSTER(this))
+		return;
+
+	Corpse_Fade(this);
 }
 
 void GibPlayer(entity this, entity inflictor, entity attacker)

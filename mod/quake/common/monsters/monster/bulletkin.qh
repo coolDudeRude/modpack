@@ -1,0 +1,26 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_BULLETKIN,                 1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 bit the Bullet Kin"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_BULLETKIN,            1,  NULL,           INFO_DEATH_SELF_MON_BULLETKIN,           CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_BULLETKIN,        DEATH_SELF_MON_BULLETKIN,        DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_BULLETKIN, "progs/mon_bulletkin.mdl");
+MODEL(MON_BULLETKIN_HEAD, "progs/h_bulletkin.mdl");
+#endif
+
+CLASS(BulletKin, Monster)
+    ATTRIB(BulletKin, spawnflags, int, 0);
+    ATTRIB(BulletKin, m_mins, vector, '-16 -16 -24');
+    ATTRIB(BulletKin, m_maxs, vector, '16 16 24');
+#ifdef GAMEQC
+    ATTRIB(BulletKin, m_model, Model, MDL_MON_BULLETKIN);
+    ATTRIB(BulletKin, m_model_head, Model, MDL_MON_BULLETKIN_HEAD);
+#endif
+    ATTRIB(BulletKin, netname, string, "bulletkin");
+    ATTRIB(BulletKin, m_name, string, _("Bullet Kin"));
+ENDCLASS(BulletKin)
+
+REGISTER_MONSTER(BULLETKIN, NEW(BulletKin));

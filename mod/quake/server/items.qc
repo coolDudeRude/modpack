@@ -1187,49 +1187,49 @@ void ammo_touch(entity this, entity toucher)
 	if(this.ammo_shells && toucher.ammo_shells < GetAmmoLimit(toucher, IT_SHELLS))
 	{
 		toucher.ammo_shells += this.ammo_shells;
-		SendItemPickup(toucher, this.items, this.ammo_shells);
+		SendItemPickup(toucher, IT_SHELLS, this.ammo_shells);
 		pickedup = true;
 	}
 	if(this.ammo_nails && toucher.ammo_nails < GetAmmoLimit(toucher, IT_NAILS))
 	{
 		toucher.ammo_nails += this.ammo_nails;
-		SendItemPickup(toucher, this.items, this.ammo_nails);
+		SendItemPickup(toucher, IT_NAILS, this.ammo_nails);
 		pickedup = true;
 	}
 	if(this.ammo_rockets && toucher.ammo_rockets < GetAmmoLimit(toucher, IT_ROCKETS))
 	{
 		toucher.ammo_rockets += this.ammo_rockets;
-		SendItemPickup(toucher, this.items, this.ammo_rockets);
+		SendItemPickup(toucher, IT_ROCKETS, this.ammo_rockets);
 		pickedup = true;
 	}
 	if(this.ammo_cells && toucher.ammo_cells < GetAmmoLimit(toucher, IT_CELLS))
 	{
 		toucher.ammo_cells += this.ammo_cells;
-		SendItemPickup(toucher, this.items, this.ammo_cells);
+		SendItemPickup(toucher, IT_CELLS, this.ammo_cells);
 		pickedup = true;
 	}
 	if(this.ammo_lava_nails && toucher.ammo_lava_nails < GetAmmoLimit(toucher, IT_LAVA_NAILS))
 	{
 		toucher.ammo_lava_nails += this.ammo_lava_nails;
-		SendItemPickup(toucher, this.items, this.ammo_lava_nails);
+		SendItemPickup(toucher, IT_LAVA_NAILS, this.ammo_lava_nails);
 		pickedup = true;
 	}
 	if(this.ammo_multi_rockets && toucher.ammo_multi_rockets < GetAmmoLimit(toucher, IT_MULTI_ROCKETS))
 	{
 		toucher.ammo_multi_rockets += this.ammo_multi_rockets;
-		SendItemPickup(toucher, this.items, this.ammo_multi_rockets);
+		SendItemPickup(toucher, IT_MULTI_ROCKETS, this.ammo_multi_rockets);
 		pickedup = true;
 	}
 	if(this.ammo_plasma && toucher.ammo_plasma < GetAmmoLimit(toucher, IT_PLASMA_AMMO))
 	{
 		toucher.ammo_plasma += this.ammo_plasma;
-		SendItemPickup(toucher, this.items, this.ammo_plasma);
+		SendItemPickup(toucher, IT_PLASMA_AMMO, this.ammo_plasma);
 		pickedup = true;
 	}
 	if(this.ammo_drills && toucher.ammo_drills < GetAmmoLimit(toucher, IT_DRILLS))
 	{
 		toucher.ammo_drills += this.ammo_drills;
-		SendItemPickup(toucher, this.items, this.ammo_drills);
+		SendItemPickup(toucher, IT_DRILLS, this.ammo_drills);
 		pickedup = true;
 	}
 

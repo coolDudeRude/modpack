@@ -558,7 +558,10 @@ void SetMovedir(entity this)
 			myangle = '0 -90 0';
 		else if(myangle == '0 -2 0')
 			myangle = '0 90 0';
-		this.angles = vec3(this.mangle_y, this.mangle_x, this.mangle_z);
+		//this.angles = vec3(this.mangle_y, this.mangle_x, this.mangle_z);
+		this.angles_x = this.mangle_y;
+		this.angles_y = this.mangle_x;
+		this.angles_z = this.mangle_z;
 	}
 
 	if(this.angles == '0 -1 0')

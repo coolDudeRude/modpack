@@ -73,6 +73,8 @@ MODEL(PROJECTILE_TANK_BIGROCKET,            "progs/brocket.mdl");
 MODEL(PROJECTILE_GHOST_SICKLE,              "progs/ghost_sickle.mdl");
 MODEL(PROJECTILE_CACODEMON_FIREBALL,        "progs/cacodemon_fireball.mdl");
 MODEL(PROJECTILE_MISSILE,                   "progs/proj_missile.mdl");
+MODEL(PROJECTILE_MANCUBUS_BOLT,             "progs/proj_mancubus.mdl");
+MODEL(PROJECTILE_BULLETKIN_SHOT,            "progs/proj_bulletkin.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

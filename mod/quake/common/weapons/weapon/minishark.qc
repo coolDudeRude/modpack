@@ -73,8 +73,9 @@ void W_FireMinishark(entity this, .entity weaponentity)
 	_sound(this, CH_WEAPON_SINGLE, "weapons/minishark_fire.wav", 1, ATTN_NORM);
 	ATTACK_FINISHED(this, weaponentity) = time + 0.2;
 	W_TakeAmmo(this, IT_NAILS, 1);
-	vector dir = qc_aim(this, 1000);
-	entity newmis = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * 3, dir);
+	vector org = W_Shotorg(this, weaponentity) + v_right * 3;
+	vector dir = qc_aim_fromorg(this, org, 1000);
+	entity newmis = launch_spike(this, org, dir);
 	newmis.projectiledeathtype = WEP_MINISHARK.m_id;
 	newmis.classname = "minishark_bullet";
 	settouch(newmis, minishark_bullet_touch);

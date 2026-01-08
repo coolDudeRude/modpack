@@ -63,7 +63,6 @@ void W_Snowball_Fire(entity this, .entity weaponentity)
 	//newmis.scale = 2;
 	newmis.gravity = 0.5;
 	settouch(newmis, snowball_touch);
-	_setmodel(newmis, "progs/snowball.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 	CSQCProjectile(newmis, true, PROJECTILE_SNOWBALL, true);
 }
