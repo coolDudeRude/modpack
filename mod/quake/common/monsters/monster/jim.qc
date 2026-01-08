@@ -789,6 +789,7 @@ METHOD(Jim, mr_setup, bool(Jim this, entity actor))
     precache_sound("jim/death1.wav");
     precache_sound("jim/pain1.wav");
     precache_sound("jim/pain2.wav");
+	precache_sound("jim/sight1.wav");
 
 	precache_sound("jim/explode_minor.wav");
 	precache_sound("jim/explode_major.wav");
