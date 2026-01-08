@@ -138,7 +138,8 @@ void wep_pistol_anim(entity this)
 		return;
 	}
 
-	this.pistol_shots += 1;
+	if(!StatusEffects_active(STATUSEFFECT_SharpShooter, this))
+		this.pistol_shots += 1;
 
 	SuperDamageSound(actor);
 	W_FirePistol(actor, weaponentity);
