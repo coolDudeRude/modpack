@@ -35,6 +35,9 @@ void InvokerTrail_Spawn(vector org, vector direction, bool isNew)
 	traceline(org, org + direction * 8192, false, NULL);
 	vector dest = trace_endpos;
 
+	if(trace_fraction < 1 || !trace_ent || trace_ent.solid == SOLID_BSP)
+		te_gunshot(dest);
+
 	float len = vlen(dest - org);
 	vector dir = normalize(dest - org);
 	vector ang = vectoangles(dest - org);
@@ -270,10 +273,6 @@ void InvokerTrace(entity this, float arange, vector org, vector dir)
 
 void InvokerFire(entity this, vector org, vector dir, float damage, int deathtype, bool drawtrail)
 {
-	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
-	if(lag)
-		antilag_takeback_all(this, lag);
-
 	float blength = 8192; // max length of the beam, bounces included
 	vector start_org = org;
 
@@ -294,8 +293,8 @@ void InvokerFire(entity this, vector org, vector dir, float damage, int deathtyp
 		blength -= vlen(org - oldorg);
 		if(blength <= 0)
 			break;
-		if(!trace_ent || trace_ent.solid == SOLID_BSP)
-			te_gunshot(org);
+		//if(!trace_ent || trace_ent.solid == SOLID_BSP)
+			//te_gunshot(org);
 	}
 
 	// find all the entities the railgun hit and restore their solid state
@@ -353,9 +352,6 @@ void InvokerFire(entity this, vector org, vector dir, float damage, int deathtyp
 	});
 
 	IL_CLEAR(g_railgunhit);
-
-	if(lag)
-		antilag_restore_all(this);
 }
 
 void W_FireInvoker(entity this, .entity weaponentity)
@@ -370,6 +366,10 @@ void W_FireInvoker(entity this, .entity weaponentity)
 
 	float damage = 333; // TODO: double against monsters?
 	int deathtype = WEP_INVOKER.m_id | HITTYPE_MAGIC;
+
+	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
+	if(lag)
+		antilag_takeback_all(this, lag);
 
 	InvokerFire(this, org + (up * 32) + (right * -32), dir, damage, deathtype, true); // top left
 	InvokerFire(this, org + (up * 32) + (right * 0), dir, damage, deathtype, true); // top center
@@ -386,6 +386,9 @@ void W_FireInvoker(entity this, .entity weaponentity)
 	InvokerFire(this, org + (up * 0) + (right * -24), dir, damage, deathtype, false); // left
 	InvokerFire(this, org + (up * 0) + (right * 12), dir, damage, deathtype, false); // right
 	InvokerFire(this, org + (up * 0) + (right * 24), dir, damage, deathtype, false); // right
+
+	if(lag)
+		antilag_restore_all(this);
 
 	SendCSQCInvokerTrail(org, dir);
 }
