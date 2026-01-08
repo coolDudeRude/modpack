@@ -83,13 +83,12 @@ classfield(Tether) .vector velocity;
 classfield(Tether) .float teleport_time;
 void Draw_Tether(entity this)
 {
-	vector a = this.velocity, b = this.origin;
-	string tex;
-
 	InterpolateOrigin_Do(this);
 
+	vector a = this.velocity, b = this.origin;
 	vector rgb = '1 1 1';
 	float thickness = (this.TetherWidth) ? this.TetherWidth : 8;
+	string tex;
 
 	switch(this.TetherType)
 	{
