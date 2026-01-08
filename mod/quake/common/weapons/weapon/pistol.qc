@@ -138,7 +138,7 @@ void wep_pistol_anim(entity this)
 		return;
 	}
 
-	if(!StatusEffects_active(STATUSEFFECT_SharpShooter, this))
+	if(!StatusEffects_active(STATUSEFFECT_SharpShooter, actor))
 		this.pistol_shots += 1;
 
 	SuperDamageSound(actor);
