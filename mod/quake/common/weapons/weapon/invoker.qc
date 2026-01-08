@@ -36,7 +36,10 @@ void InvokerTrail_Spawn(vector org, vector direction, bool isNew)
 	vector dest = trace_endpos;
 
 	if(trace_fraction < 1 || !trace_ent || trace_ent.solid == SOLID_BSP)
-		te_gunshot(dest);
+	{
+		if(!((trace_dphitcontents & DPCONTENTS_SKY) || pointcontents(dest) == CONTENT_SKY))
+			te_gunshot(dest);
+	}
 
 	float len = vlen(dest - org);
 	vector dir = normalize(dest - org);
