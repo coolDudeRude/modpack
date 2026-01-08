@@ -5,11 +5,11 @@ REGISTER_NET_TEMP(TE_CSQC_INVOKERTRAIL)
 #endif
 
 #if defined(SVQC)
-void SendCSQCInvokerTrail(vector start, vector end)
+void SendCSQCInvokerTrail(vector start, vector dir)
 {
 	WriteHeader(MSG_BROADCAST, TE_CSQC_INVOKERTRAIL);
 	WriteVector(MSG_BROADCAST, start);
-	WriteVector(MSG_BROADCAST, end);
+	WriteAngleVector(MSG_BROADCAST, dir);
 }
 #elif defined(CSQC)
 PRECACHE(Invoker)
@@ -29,10 +29,11 @@ void InvokerTrail_Draw(entity this)
 		delete(this);
 }
 
-NET_HANDLE(TE_CSQC_INVOKERTRAIL, bool isNew)
+void InvokerTrail_Spawn(vector org, vector direction, bool isNew)
 {
-	vector org = ReadVector();
-	vector dest = ReadVector();
+	// no need for all the excessive tracing the server side, we're just guessing here!
+	traceline(org, org + direction * 8192, false, NULL);
+	vector dest = trace_endpos;
 
 	float len = vlen(dest - org);
 	vector dir = normalize(dest - org);
@@ -66,6 +67,33 @@ NET_HANDLE(TE_CSQC_INVOKERTRAIL, bool isNew)
 		pointparticles(EFFECT_INVOKER_MUZZLEFLASH, sg.origin, dir * -1, 1);
 		//sg.effects |= EF_MUZZLEFLASH;
 	}
+}
+
+NET_HANDLE(TE_CSQC_INVOKERTRAIL, bool isNew)
+{
+	vector org = ReadVector();
+	vector dir = ReadAngleVector();
+
+	makevectors(dir);
+	
+	vector up = v_up;
+	vector right = v_right;
+
+	InvokerTrail_Spawn(org + (up * 32) + (right * -32), dir, isNew); // top left
+	InvokerTrail_Spawn(org + (up * 32) + (right * 0), dir, isNew); // top center
+	InvokerTrail_Spawn(org + (up * 32) + (right * 32), dir, isNew); // top right
+	InvokerTrail_Spawn(org + (up * 0) + (right * -32), dir, isNew); // center left
+	InvokerTrail_Spawn(org + (up * 0) + (right * 0), dir, isNew); // center
+	InvokerTrail_Spawn(org + (up * 0) + (right * 32), dir, isNew); // center right
+	InvokerTrail_Spawn(org + (up * -32) + (right * -32), dir, isNew); // bottom left
+	InvokerTrail_Spawn(org + (up * -32) + (right * 0), dir, isNew); // bottom center
+	InvokerTrail_Spawn(org + (up * -32) + (right * 32), dir, isNew); // bottom right
+
+	// extra invisible traces to the sides of the crosshair to catch up rogue swarmers
+	//InvokerTrail_Spawn(org + (up * 0) + (right * -12), dir, isNew); // left
+	//InvokerTrail_Spawn(org + (up * 0) + (right * -24), dir, isNew); // left
+	//InvokerTrail_Spawn(org + (up * 0) + (right * 12), dir, isNew); // right
+	//InvokerTrail_Spawn(org + (up * 0) + (right * 24), dir, isNew); // right
 
 	return true;
 }
@@ -257,8 +285,8 @@ void InvokerFire(entity this, vector org, vector dir, float damage, int deathtyp
 		vector oldorg = org;
 		InvokerTrace(this, blength, org, dir);
 		org = trace_endpos;
-		if(drawtrail)
-			SendCSQCInvokerTrail(oldorg, org);
+		//if(drawtrail)
+			//SendCSQCInvokerTrail(oldorg, org);
 
 		if((trace_dphitcontents & DPCONTENTS_SKY) || pointcontents(org) == CONTENT_SKY)
 			break;
@@ -358,6 +386,8 @@ void W_FireInvoker(entity this, .entity weaponentity)
 	InvokerFire(this, org + (up * 0) + (right * -24), dir, damage, deathtype, false); // left
 	InvokerFire(this, org + (up * 0) + (right * 12), dir, damage, deathtype, false); // right
 	InvokerFire(this, org + (up * 0) + (right * 24), dir, damage, deathtype, false); // right
+
+	SendCSQCInvokerTrail(org, dir);
 }
 
 void weaponanim_invoker_loop(entity this)
