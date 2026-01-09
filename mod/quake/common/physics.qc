@@ -700,12 +700,12 @@ void PM_Main(entity this, float dt)
 
 	if(this.move_movetype == MOVETYPE_NOCLIP)
 		{ /* do nothing */ }
-	else if(CheckLadder(this) || CheckWallClimb(this))
+	else if(CheckLadder(this))
 	{
 		PM_LadderMove(this, maxspeed_mod, dt);
 		return;
 	}
-	else if(this.waterlevel >= 2)
+	else if(this.waterlevel >= 2 || CheckWallClimb(this))
 	{
 		PM_WaterMove(this, maxspeed_mod, dt);
 		return;
