@@ -321,6 +321,43 @@ void WaterMove(entity this, float dt)
 #endif
 }
 
+void PM_LadderMove(entity this, float maxspd_mod, float dt)
+{
+	makevectors(this.v_angle);
+
+	vector wishvel;
+	wishvel = v_forward * this.movement_x + v_right * this.movement_y + '0 0 1' * this.movement_z;
+
+	float maxspeed = PHYS_MAXSPEED(this) * maxspd_mod;
+
+	vector wishdir = normalize(wishvel);
+	float wishspeed = min(maxspeed, vlen(wishvel));
+	wishspeed *= 3.7; // counteracts the friction penalty
+
+	// friction
+	float frict = PHYS_FRICTION(this);
+	frict = 64;
+	float speed = vlen(this.velocity);
+	float spd = (1 - dt * frict);
+	float newspeed = max(0, speed - spd);
+	this.velocity *= spd;
+
+	// acceleration
+	if (!wishspeed)
+		return;
+
+	float addspeed = wishspeed - newspeed;
+	if (addspeed <= 0)
+		return;
+
+	float accel = PHYS_ACCELERATE(this);
+	float accelspeed = accel * wishspeed * dt;
+	if (accelspeed > addspeed)
+		accelspeed = addspeed;
+
+	this.velocity += accelspeed * wishdir;
+}
+
 void CheckWaterJump(entity this)
 {
 	// check for a jump-out-of-water
@@ -661,7 +698,14 @@ void PM_Main(entity this, float dt)
 		return;
 	}
 
-	if((this.waterlevel >= 2 || CheckLadder(this) || CheckWallClimb(this)) && this.move_movetype != MOVETYPE_NOCLIP)
+	if(this.move_movetype == MOVETYPE_NOCLIP)
+		{ /* do nothing */ }
+	else if(CheckLadder(this) || CheckWallClimb(this))
+	{
+		PM_LadderMove(this, maxspeed_mod, dt);
+		return;
+	}
+	else if(this.waterlevel >= 2)
 	{
 		PM_WaterMove(this, maxspeed_mod, dt);
 		return;
