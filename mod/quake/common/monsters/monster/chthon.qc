@@ -13,6 +13,8 @@ const int anim_boss_shockb = 90; //'90 95 0'
 const int anim_boss_shockc = 96; //'96 105 0'
 
 const int BOSS_KILLABLE = 2;
+.int bosswave;
+.int bosswavetotal;
 
 void boss_pain(entity targ, entity attacker, float damage, int deathtype); // Yoder add, September 9 2020
 void SUB_Freeze(entity this); // Yoder add, Dec 16 2020
@@ -385,7 +387,11 @@ void boss_awake(entity this)
 	this.max_health = this.health;
 	this.use = func_null; // prevent from being re-triggered into boss_awake state
 	if(world.model == "maps/mgend.bsp" && !this.charmed) // special damage states
+	{
+		this.bosswave = 0;
+		this.bosswavetotal = 3;
 		this.th_pain = boss_pain; // Yoder add, September 9 2020
+	}
 
 	te_lavasplash(this.origin);
 
@@ -571,35 +577,44 @@ void boss_pain(entity this, entity attacker, float damage, int deathtype)
 {
 	if(!(this.spawnflags & BOSS_KILLABLE))
 		return;
+
+	// TODO: if you do enough damage to the boss, it can skip some phases
+	// this can lead to map breakage!
 	
-	float priorhealth = this.health + damage;
+	//float priorhealth = this.health + damage;
 	//LOG_DEBUGF("prior health: %d\ncurrent health: %d", priorhealth, this.health);
 	
 	// check if first hit
-	if(priorhealth == this.max_health && this.health < this.max_health)
+	if(this.health < this.max_health && this.bosswave == 0)
 	{
 		//LOG_DEBUG("FIRST HIT!");
+		// first phase is just a tutorial damage check
 		boss_shockz1(this);
+		this.bosswave += 1;
 		SUB_UseTargets(this, NULL, NULL);
 		return;
 	}
-	// check if crossed 1/3 threshold
-	if((this.health < (this.max_health/3)) && (priorhealth > (this.max_health/3)))
-	{
-		//LOG_DEBUG("CROSSED 1/3 MARK!");
-		boss_shockb1(this);
-		SUB_UseTargets(this, NULL, NULL); // Yoder add, Dec 16 2020
-		return;
-	}
-	
+
 	// check if crossed 2/3 threshold
-	if((this.health < (this.max_health * 2/3)) && (priorhealth > this.max_health * 2/3))
+	if(this.health < (this.max_health * 0.666) && this.bosswave <= 1)
 	{
 		//LOG_DEBUG("CROSSED 2/3 MARK!");
 		boss_shocka1(this);
+		//this.health = (this.max_health * 0.666);
+		this.bosswave = 2;
 		SUB_UseTargets(this, NULL, NULL); // Yoder add, Dec 16 2020
 		return;
 	}
-	
+
+	// check if crossed 1/3 threshold
+	if(this.health < (this.max_health * 0.333) && this.bosswave <= 2)
+	{
+		//LOG_DEBUG("CROSSED 1/3 MARK!");
+		boss_shockb1(this);
+		//this.health = (this.max_health * 0.333);
+		this.bosswave = 3;
+		SUB_UseTargets(this, NULL, NULL); // Yoder add, Dec 16 2020
+		return;
+	}
 }
 #endif

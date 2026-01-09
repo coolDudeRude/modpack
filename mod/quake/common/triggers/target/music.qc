@@ -196,6 +196,35 @@ void TargetMusic_Advance()
 	//bgmtime = (best) ? getsoundtime(best, CH_BGM_SINGLE) : gettime(GETTIME_CDTRACK);
 }
 
+// copied from CDAudio_Play_byName in DarkPlaces
+string engine_fixsound(string trackname)
+{
+	if(fexists(trackname))
+		return trackname;
+
+	string filename;
+
+	// first try with extension
+	filename = sprintf("sound/%s", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("sound/cdtracks/%s", trackname); if(fexists(filename)) return filename;
+
+	// no luck? strip it!
+	string ending = substring(trackname, -4, 4);
+	if(ending == ".wav" || ending == ".ogg")
+		trackname = substring(trackname, 0, -5);
+
+	filename = sprintf("%s.wav", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("%s.ogg", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("sound/%s.wav", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("sound/%s.ogg", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("sound/cdtracks/%s.wav", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("sound/cdtracks/%s.ogg", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("music/%s.ogg", trackname); if(fexists(filename)) return filename;
+	filename = sprintf("music/cdtracks/%s.ogg", trackname); if(fexists(filename)) return filename;
+
+	return trackname;
+}
+
 NET_HANDLE(TE_CSQC_TARGET_MUSIC, bool isNew)
 {
 	Net_TargetMusic();
@@ -209,7 +238,7 @@ void Net_TargetMusic()
 	const float fai = ReadByte() / 16.0;
 	const float fao = ReadByte() / 16.0;
 	const float tim = ReadByte();
-	const string noi = ReadString();
+	const string noi = engine_fixsound(ReadString());
 
 	entity e = NULL;
 	LL_EACH(TargetMusic_list, it.count == id, { e = it; break; });
@@ -218,8 +247,15 @@ void Net_TargetMusic()
 		LL_PUSH(TargetMusic_list, e = new_pure(TargetMusic));
 		e.count = id;
 	}
-	if(e.noise != noi)
+	if(!fexists(noi))
 	{
+		e.lastvol = 0; // reset its status just incase
+		_sound(e, CH_BGM_SINGLE, "misc/null.wav", 0, ATTEN_NONE);
+		strfree(e.noise);
+	}
+	else if(e.noise != noi)
+	{
+		e.lastvol = 0; // reset its status just incase
 		strcpy(e.noise, noi);
 		precache_sound(e.noise);
 		_sound(e, CH_BGM_SINGLE, e.noise, 0, ATTEN_NONE);
@@ -322,6 +358,58 @@ NET_HANDLE(ENT_CLIENT_TRIGGER_MUSIC, bool isnew)
 		IL_PUSH(g_drawables, this);
 	}
 	return true;
+}
+
+// NOTE: relies on boss bars!
+bool autocvar_cl_quake_bossmusic = false;
+.entity musicdef;
+
+void bossmusic_draw(entity this)
+{
+	if(!autocvar_cl_quake_bossmusic)
+		return;
+
+	entity chosen = NULL;
+	float chosen_dist = 0;
+	IL_EACH(g_bossbars, it.monsterdef && it.monsterdef != MON_Null && it.monsterdef.musicdef && (it.state & BOSS_AGGRO) && vdist(view_origin - it.origin, <=, 2048),
+	{
+		float mydist = vlen2(view_origin - it.origin);
+		if(!chosen || mydist <= chosen_dist)
+		{
+			chosen = it;
+			chosen_dist = mydist;
+		}
+	});
+
+	if(chosen)
+		music_trigger = chosen.monsterdef.musicdef;
+}
+
+STATIC_INIT_LATE(BossMusic)
+{
+	if(!autocvar_cl_quake_bossmusic)
+		return;
+	
+	FOREACH(Monsters, it != MON_Null,
+	{
+		string s = engine_fixsound(it.netname);
+		if(!fexists(s))
+			continue;
+		entity bmusic = spawn();
+		bmusic.classname = "bossmusic";
+		precache_sound(s);
+		strcpy(bmusic.noise, s);
+		bmusic.volume = 1;
+		bmusic.fade_time = 3;
+		bmusic.fade_rate = 2;
+		bmusic.active = ACTIVE_ACTIVE;
+		bmusic.draw = bossmusic_draw;
+		
+		it.musicdef = bmusic;
+
+		LL_PUSH(TargetMusic_list, bmusic);
+		IL_PUSH(g_drawables, bmusic);
+	});
 }
 
 #endif

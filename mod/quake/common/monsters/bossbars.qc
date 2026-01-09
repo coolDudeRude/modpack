@@ -4,14 +4,6 @@
 bool bossbar_send(entity this, entity to, int sf)
 {
 	WriteHeader(MSG_ENTITY, ENT_CLIENT_BOSSBAR);
-
-	// TODO: separate bit flag for extra states?
-	// phases etc
-	if(this.owner.is_frozen)
-		sf |= BIT(7);
-	else
-		sf &= ~BIT(7);
-
 	WriteByte(MSG_ENTITY, sf);
 
 	if(sf & BIT(0))
@@ -27,6 +19,11 @@ bool bossbar_send(entity this, entity to, int sf)
 		WriteVector(MSG_ENTITY, this.origin);
 	}
 
+	if(sf & BIT(3))
+	{
+		WriteByte(MSG_ENTITY, this.state);
+	}
+
 	return true;
 }
 
@@ -40,6 +37,9 @@ void bossbar_think(entity this)
 	this.nextthink = time;
 
 	entity boss = this.owner;
+	if(boss.enemy)
+		this.had_enemy = true;
+
 	if(this.max_health != boss.max_health || this.health != boss.health)
 	{
 		this.max_health = boss.max_health;
@@ -51,6 +51,19 @@ void bossbar_think(entity this)
 	{
 		this.origin = boss.origin;
 		this.SendFlags |= BIT(2);
+	}
+
+	// TODO: phases?
+	int boss_state = 0;
+	if(boss.is_frozen)
+		boss_state |= BOSS_FROZEN;
+	if(this.had_enemy)
+		boss_state |= BOSS_AGGRO;
+
+	if(this.state != boss_state)
+	{
+		this.state = boss_state;
+		this.SendFlags |= BIT(3);
 	}
 }
 
@@ -69,6 +82,8 @@ void bossbar_spawn(entity this, Monster mon)
 	bar.health = this.health;
 	bar.monsterdef = mon;
 	bar.origin = this.origin;
+	bar.state = 0; // built during tick
+	bar.had_enemy = false;
 
 	Net_LinkEntity(bar, false, 0, bossbar_send);
 }
@@ -91,24 +106,18 @@ NET_HANDLE(ENT_CLIENT_BOSSBAR, bool isnew)
 {
 	if (isnew) IL_PUSH(g_bossbars, this);
 	int sf = ReadByte();
-	// frozen
-	if(sf & BIT(7))
-		this.count = true;
-	else
-		this.count = false;
 
 	if(sf & BIT(0))
-	{
 		this.monsterdef = get_monsterinfo(ReadByte());
-	}
 
 	if(sf & BIT(1))
 		this.health = ReadByte() / 191.0;
 
 	if(sf & BIT(2))
-	{
 		this.origin = ReadVector();
-	}
+
+	if(sf & BIT(3))
+		this.state = ReadByte();
 
 	return true;
 }
@@ -128,7 +137,7 @@ void HUD_BossBar_Draw(entity this)
 	vector tcolor = mon.m_color;
 	if(tcolor == '0 0 0')
 		tcolor = '1 0.2 0';
-	if(this.count)
+	if(this.state & BOSS_FROZEN)
 		tcolor = '0.5 0.5 0.5';
 
 	// TODO: proper positioning and stuff!

@@ -1,6 +1,12 @@
 #pragma once
 
 #ifdef GAMEQC
+// boss states synced with the client
+const int BOSS_FROZEN = BIT(0); // boss is stunned (.is_frozen)
+const int BOSS_AGGRO = BIT(1); // boss has been aggro'd (had .enemy set at some point)
+
+.bool had_enemy; // stored state to tell if the boss had an enemy
+
 IntrusiveList g_bossbars;
 STATIC_INIT(BossBars_List)
 {

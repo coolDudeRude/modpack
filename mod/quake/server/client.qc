@@ -728,11 +728,52 @@ void GotoNextMap()
 	}
 }
 
-void SendCDTrack(entity to, int numb)
+bool autocvar_sv_quake_enginemusic = true;
+
+entity music_ent;
+
+spawnfunc(target_music);
+void target_music_sendto(entity this, int to, bool is);
+void Music_Init(entity this)
+{
+	music_ent = NULL;
+	FOREACH_ENTITY_CLASS("target_music", (!it.targetname || it.targetname == ""),
+	{
+		music_ent = it;
+		break;
+	});
+
+	if(!music_ent)
+	{
+		music_ent = this;
+		music_ent.classname = "target_music";
+		music_ent.spawnfunc_checked = true;
+		strcpy(music_ent.noise, getcdtrack(world_cdtrack));
+		music_ent.targetname = ""; // mark it as the default
+		spawnfunc_target_music(music_ent);
+	}
+
+	if(music_ent != this)
+		delete(this); // no dangling entities thank you very much
+}
+
+STATIC_INIT_LATE(Music)
+{
+	if(autocvar_sv_quake_enginemusic)
+		return;
+
+	entity mus_start = spawn();
+	mus_start.classname = "music_init";
+	mus_start.nextthink = time; // delay slightly for everything to load in
+	setthink(mus_start, Music_Init);
+}
+
+void PlayCDTrack(entity to, int numb)
 {
 	if(!to)
 	{
 		// TODO: doesn't support play/loop
+		// neither does the engine though!
 		string thetrack = getcdtrack(numb);
 		string tostuff = strcat("cd loop ", thetrack, "\n");
 		FOREACH_CLIENT(IS_REAL_CLIENT(it),
@@ -748,6 +789,27 @@ void SendCDTrack(entity to, int numb)
 	}
 
 	stuffcmd(to, strcat("cd loop ", getcdtrack(numb), "\n"));
+}
+
+void SendCDTrack(entity to, int numb)
+{
+	if(autocvar_sv_quake_enginemusic || !music_ent)
+	{
+		PlayCDTrack(to, numb);
+		return;
+	}
+
+	if(!to)
+	{
+		string thetrack = getcdtrack(numb);
+		strcpy(music_ent.noise, thetrack);
+		target_music_sendto(music_ent, MSG_ALL, true);
+		return;
+	}
+
+	// NOTE: doesn't actually support entity parameter
+	// we don't keep a list of the soundtracks on the server
+	// and this information is already sent to clients on load
 }
 
 void ExitIntermission()
@@ -776,7 +838,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 			//if(!autocvar_registered)
 			//{
@@ -797,7 +859,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 
 			WriteByte(MSG_ALL, SVC_FINALE);
@@ -811,7 +873,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 
 			WriteByte(MSG_ALL, SVC_FINALE);
@@ -825,7 +887,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 
 			WriteByte(MSG_ALL, SVC_FINALE);
@@ -864,7 +926,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 6);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 6);
 		#endif
 			WriteByte(MSG_ALL, SVC_FINALE);
 /*
@@ -922,7 +984,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 6);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 6);
 		#endif
 
 			WriteByte(MSG_ALL, SVC_FINALE);
@@ -963,7 +1025,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 
 			WriteByte(MSG_ALL, SVC_FINALE);
@@ -988,7 +1050,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 			WriteByte(MSG_ALL, SVC_FINALE);
 			WriteString(MSG_ALL, "The stench of Blud's rotting gibs\nare enough to make even YOU sick.\n\nNever before have you fought a\ncreature as aggressive and vile as\nthis! You were to be its first victim\nsince being locked away so many ages\nago, without creatures to devour.\n\nDrained from the fight, you realize\nthe worst is far from over...");
@@ -1001,7 +1063,7 @@ void ExitIntermission()
 			WriteByte(MSG_ALL, 2);
 			WriteByte(MSG_ALL, 3);
 		#else
-			SendCDTrack(NULL, 3);
+			SendCDTrack(NULL, 2);
 		#endif
 			WriteByte(MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "You find yourself standing before the\ncorpse of Quake's highest minion.\n\nThe vapor from her rockets, and the\nslight scent of ionized air particles\nsinge your lungs as you realize that\nyou have won the battle at last.\n\nLegond set out to take revenge on you\nand display your dead lifeless body\nto the citizens of the empire.\nShe wanted to humiliate, desecrate,\ndevour, and torture you for you were\nthe cause of the destruction of\nQuake, the center of her world.\n\nYou have won. It is time to rest\n\nAt least for now...");
@@ -3005,8 +3067,11 @@ void ClientConnect(entity this)
 	if (PlayerInList(this, autocvar_g_chatban_list)) // chatban
 		this.muted = true;
 
-	string thetrack = ((current_cdtrack) ? current_cdtrack : getcdtrack(world_cdtrack));
-	stuffcmd(this, strcat("cd loop ", thetrack, "\n"));
+	if(autocvar_sv_quake_enginemusic)
+	{
+		string thetrack = ((current_cdtrack) ? current_cdtrack : getcdtrack(world_cdtrack));
+		stuffcmd(this, strcat("cd loop ", thetrack, "\n"));
+	}
 
 	if(autocvar_sv_eventlog)
 		GameLogEcho(strcat(":join:", ftos(this.playerid), ":", ftos(etof(this)), ":", this.netaddress, ":", this.netname));
