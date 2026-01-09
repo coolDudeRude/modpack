@@ -291,7 +291,7 @@ void des_death(entity this, entity inflictor, entity attacker, int deathtype)
 	{
 		for(entity ent = this; ent; ent = ent.des_next)
 		{
-			FX_Invoked(ent.model, ent.frame, ent.origin, ent.angles, ent.mins, ent.maxs, attacker.origin);
+			FX_Invoked(ent.model, ent.frame, ent.origin, ent.angles, ent.mins, ent.maxs, ent.scale, attacker.origin);
 			setthink(ent, SUB_Remove);
 			ent.nextthink = time;
 			ent.solid = SOLID_NOT;
