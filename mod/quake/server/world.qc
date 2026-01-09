@@ -2120,6 +2120,8 @@ void StartFrame()
 
 	dodgeball_StartFrame();
 
+	playerscale_StartFrame();
+
 	monsters_StartFrame();
 
 	FixPhysics();

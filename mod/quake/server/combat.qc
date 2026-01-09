@@ -16,6 +16,32 @@ bool IsExplosionDamage;
 // Yoder Sept24 2021 Horde Merge
 void horde_spawn_powerup(entity this, entity attacker);
 
+int autocvar__playerscale_testing; // internal setting for testing purposes
+void playerscale_StartFrame()
+{
+	if(!autocvar_sv_quake_playerscaling || horde_ent)
+	{
+		player_scale = 1;
+		return;
+	}
+
+	int playercount = 0;
+	FOREACH_CLIENT(IS_PLAYER(it),
+	{
+		playercount += 1;
+	});
+
+	if(autocvar__playerscale_testing > 0)
+		playercount = autocvar__playerscale_testing;
+
+	if(!playercount)
+		playercount = 1; // avoid div0
+
+	float difficulty = (0.5 + autocvar_skill * ((1.2 - 0.3) / (2 / playercount)));
+
+	player_scale = bound(1, difficulty, PLAYER_SCALE_MAX);
+}
+
 //============================================================================
 
 void DelayedExplosionThink(entity this)
@@ -498,6 +524,17 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 
 	if(DEATH_ISWEAPON(deathtype, WEP_LOOSECANNON) && inflictor.owner == attacker)
 		forcezscale *= 4;
+
+	// multiplayer boss health scaling
+	// similar to armor but handled separately so bosses can also have armor
+	if(targ.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
+	{
+		// NOTE: avoid reducing by 1.0 as that is invulnerability!
+		float dmgcap = 0.8;
+		float reduction = min((player_scale / PLAYER_SCALE_MAX), dmgcap);
+		//LOG_INFO("Reducing damage by ", ftos(damage * reduction);
+		damage -= (damage * reduction);
+	}
 
 	// major hack to keep the high push force
 	if(deathtype == DEATH_MONSTER_BREEZE.m_id)

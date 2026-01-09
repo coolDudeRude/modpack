@@ -1059,6 +1059,7 @@ entity ThrowGib(entity this, entity inflictor, string gibname, float dm)
 	gib.frame = 0;
 	gib.flags = 0;
 	gib.skin = this.skin;
+	//gib.scale = this.scale;
 	return gib;
 }
 

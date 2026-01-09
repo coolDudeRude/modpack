@@ -252,11 +252,16 @@ void bulletkin_die(entity this, entity inflictor, entity attacker, int deathtype
 // check for gib
 	if(this.health < -35)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_bulletkin.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+		_sound(this, CH_VOICE, "weapons/resist_rocket.wav", 1, ATTN_NORM);
+		te_tarexplosion(this.origin);
+		ThrowHead(this, inflictor, "progs/bullet_casing.mdl", this.health);
+		this.scale = 3;
+		entity gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+		gib.scale = 3;
+		gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+		gib.scale = 3;
+		gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+		gib.scale = 3;
 		return;
 	}
 
@@ -280,6 +285,7 @@ METHOD(BulletKin, mr_setup, bool(BulletKin this, entity actor))
 
 	precache_sound("bulletkin/attack.wav");
 	precache_sound("bulletkin/hit.wav");
+	precache_sound("weapons/resist_rocket.wav");
 	precache_sound("weapons/lock4.wav");
 
 	precache_sound("bulletkin/death.wav");

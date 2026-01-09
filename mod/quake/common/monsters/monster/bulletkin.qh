@@ -8,7 +8,7 @@ REGISTER_DEATHTYPE(MONSTER_BULLETKIN,        DEATH_SELF_MON_BULLETKIN,        DE
 
 #ifdef GAMEQC
 MODEL(MON_BULLETKIN, "progs/mon_bulletkin.mdl");
-MODEL(MON_BULLETKIN_HEAD, "progs/h_bulletkin.mdl");
+MODEL(MON_BULLETKIN_HEAD, "progs/bullet_casing.mdl");
 #endif
 
 CLASS(BulletKin, Monster)

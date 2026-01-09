@@ -4,6 +4,7 @@ int autocvar_sv_aim = 2;
 bool autocvar_g_friendlyfire_virtual;
 float autocvar_g_friendlyfire;
 bool autocvar_sv_quake_nopushing;
+bool autocvar_sv_quake_playerscaling = true;
 
 .float pain_finished;
 
@@ -13,6 +14,9 @@ bool autocvar_sv_quake_nopushing;
 .entity pusher;
 
 float autocvar_g_maxpushtime = 8.0;
+
+float player_scale = 1;
+const float PLAYER_SCALE_MAX = 8;
 
 bool empathyused; // hipnotic
 
