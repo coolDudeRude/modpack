@@ -218,7 +218,7 @@ void anim_invoked(entity this)
 }
 
 // NOTE: needs to be given a pre-death model!
-void FX_Invoked(string invoked_model, int targframe, vector targorg, vector targangles, vector targmin, vector targmax, vector playerpos)
+void FX_Invoked(string invoked_model, int targframe, vector targorg, vector targangles, vector targmin, vector targmax, float oldscale, vector playerpos)
 {
 	entity fx = spawn();
 	set_movetype(fx, MOVETYPE_NONE);
@@ -233,6 +233,7 @@ void FX_Invoked(string invoked_model, int targframe, vector targorg, vector targ
 	fx.effects = EF_ADDITIVE;
 	fx.colormod = '1 0 0';
 	fx.alpha = 1;
+	fx.scale = oldscale;
 	
 	fx.pos1 = playerpos;
 	
@@ -393,6 +394,7 @@ void invokerTrace(entity this, vector org, vector dir)
 				vector prevmin = it.mins;
 				vector prevmax = it.maxs;
 				int oldframe = it.frame;
+				float oldscale = it.scale;
 
 				float damage = (IS_MONSTER(it) ? 666 : 333);
 
@@ -413,7 +415,7 @@ void invokerTrace(entity this, vector org, vector dir)
 						}
 					}							
 
-					FX_Invoked(oldmdl, oldframe, prevorg, prevangles, prevmin, prevmax, this.origin);
+					FX_Invoked(oldmdl, oldframe, prevorg, prevangles, prevmin, prevmax, oldscale, this.origin);
 				}
 			}
 	});
