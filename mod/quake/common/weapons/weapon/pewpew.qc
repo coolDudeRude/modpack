@@ -56,7 +56,7 @@ METHOD(PewPew, wr_think, void(entity thiswep, entity actor, .entity weaponentity
 	if(fire & 2)
 	if(!(time < actor.attack2_finished))
 	{
-		_sound(actor, CH_WEAPON_SINGLE, "weapons/pewpew_load.wav", 1, ATTN_NORM);
+		_sound(actor, CH_SHOTS_SINGLE, "weapons/pewpew_load.wav", 1, ATTN_NORM);
 		actor.attack2_finished = time + 0.2; // not too spammy thank you
 		crosshair_trace_plusvisibletriggers(actor);
 		entity wp = WaypointSprite_DeployFixed(WP_Here, false, actor, trace_endpos, NULL);

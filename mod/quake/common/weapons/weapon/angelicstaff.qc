@@ -51,7 +51,7 @@ bool W_AngelicStaff_Heal(entity this, int healamount)
 	if(!washealed)
 		return false;
 
-	Send_Effect(EFFECT_ANGELICSTAFF_HEAL, this.origin, '0 0 0', 1);
+	Send_Effect(EFFECT_RUNE_HEAL, this.origin, '0 0 0', 1);
 	return true;
 }
 

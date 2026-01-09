@@ -1346,6 +1346,7 @@ STATIC_INIT(Effect_BELCH)
 }
 #endif
 
+#if 0
 EFFECT(0, ANGELICSTAFF_HEAL,        "angelicstaff")
 #ifdef CSQC
 STATIC_INIT(Effect_ANGELICSTAFF_HEAL)
@@ -1364,6 +1365,7 @@ STATIC_INIT(Effect_ANGELICSTAFF_HEAL)
 	registercvar("cl_particle_angelicstaff_heal_tex", "46 46");
 	registercvar("cl_particle_angelicstaff_heal_velocityjitter", "20 20 0");
 }
+#endif
 #endif
 
 EFFECT(0, RAILGUN_MUZZLEFLASH,       "nex_muzzleflash")

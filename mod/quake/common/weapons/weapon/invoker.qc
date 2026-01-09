@@ -2,6 +2,10 @@
 
 #ifdef GAMEQC
 REGISTER_NET_TEMP(TE_CSQC_INVOKERTRAIL)
+
+const float INVOKER_RANGE = 8192;
+const float INVOKER_SPREAD_MIN = 70;
+const float INVOKER_SPREAD_MAX = 120;
 #endif
 
 #if defined(SVQC)
@@ -21,12 +25,48 @@ PRECACHE(Invoker)
 // defined elsewhere
 float lerpCosine(float a, float b, float mix);
 
+#if 0
 void InvokerTrail_Draw(entity this)
 {
 	this.alpha = bound(0.0001, lerpCosine(1, 0, 1 - (this.count - time) / 0.5), 1);
 
 	if(time > this.count)
 		delete(this);
+}
+#endif
+void rail_fade(entity this)
+{
+	setthink(this, rail_fade);
+	this.nextthink = time + this.count;
+
+	//if(this.skin < 6)
+	//	this.skin++;
+
+	if(this.cnt >= 10)
+		this.alpha = 0.9;
+	else if(this.cnt == 9)
+		this.alpha = 0.7;
+	else if(this.cnt == 8)
+		this.alpha = 0.5;
+	else if(this.cnt == 7)
+		this.alpha = 0.4;
+	else if(this.cnt == 6)
+		this.alpha = 0.3;
+	else if(this.cnt == 5)
+		this.alpha = 0.2;
+	else if(this.cnt == 4)
+		this.alpha = 0.15;
+	else if(this.cnt == 3)
+		this.alpha = 0.1;
+	else if(this.cnt == 2)
+		this.alpha = 0.07;
+	else 
+	{
+		this.alpha = 0.05;
+		setthink(this, SUB_Remove);
+	}	
+	
+	this.cnt -= 1;
 }
 
 void InvokerTrail_Spawn(vector org, vector direction, bool isNew)
@@ -53,16 +93,19 @@ void InvokerTrail_Spawn(vector org, vector direction, bool isNew)
 		setsize(sg, '0 0 0', '0 0 0');
 		setorigin(sg, org + dir * 30 * i);
 
-		sg.draw = InvokerTrail_Draw;
-		if (isNew) IL_PUSH(g_drawables, sg);
+		//sg.draw = InvokerTrail_Draw;
+		if(isNew) IL_PUSH(g_drawables, sg);
 		sg.drawmask = MASK_NORMAL;
 
 		sg.classname = "lgsegment";
 		sg.effects = EF_FULLBRIGHT;
 		sg.angles = ang;
 		sg.angles_z = random()*360;
-		sg.count = time + 0.02 + 0.001 * i;
+		sg.count = 0.02 + (i * 0.0001);
+		setthink(sg, rail_fade);
+		sg.nextthink = time + sg.count;
 		sg.alpha = 0.9;
+		sg.cnt = 4 + i;
 	}
 	// add an effect to the impact site
 	if(sg)
@@ -78,6 +121,8 @@ NET_HANDLE(TE_CSQC_INVOKERTRAIL, bool isNew)
 	vector dir = ReadAngleVector();
 
 	makevectors(dir);
+
+	dir = v_forward;
 	
 	vector up = v_up;
 	vector right = v_right;
@@ -250,108 +295,131 @@ void sound_invoker_impact(entity this, float invokerhit_volume)
 
 //=============================================================================================
 
-void InvokerTrace(entity this, float arange, vector org, vector dir)
+float invokerTrace_CheckSpread(vector targetorg, vector nearest_on_line, vector org, vector end)
 {
-	while(true)
-	{
-		traceline(org, org + dir * arange, false, this);
+	float distance_of_attack = vlen(org - end);
+	float distance_from_line = vlen(targetorg - nearest_on_line);
 
-		if(!trace_ent || trace_fraction == 1 || trace_ent.railgunhit)
-			break; // if the same target is traced, we've hit an engine bug, thank you bones
+	float spreadlimit = (distance_of_attack ? min(1, (vlen(org - nearest_on_line) / distance_of_attack)) : 1);
+	spreadlimit = ((INVOKER_SPREAD_MIN * (1 - spreadlimit)) + (INVOKER_SPREAD_MAX * spreadlimit));
 
-		IL_PUSH(g_railgunhit, trace_ent);
-		trace_ent.railgunhit = true;
-		trace_ent.railgunhitloc = trace_endpos;
-		trace_ent.railgunhitsolidbackup = trace_ent.solid;
-
-		if(trace_ent.solid == SOLID_BSP)
-			break;
-
-		trace_ent.solid = SOLID_NOT;
-	}
+	if((spreadlimit && (distance_from_line <= spreadlimit)) && ((vlen(normalize(targetorg - org) - normalize(end - org)) * RAD2DEG) <= 90))
+		return bound(0, (distance_from_line / spreadlimit), 1);
+	else
+		return 0;
 }
 
-void InvokerFire(entity this, vector org, vector dir, float damage, int deathtype, bool drawtrail)
+bool invokerTrace_IsVisible(entity this, entity head, vector nearest_on_line, vector nearest_on_head, vector org, vector end)
 {
-	float blength = 8192; // max length of the beam, bounces included
-	vector start_org = org;
+	vector nearest_to_attacker = nearest_on_head;
+	vector center = (head.origin + (head.mins + head.maxs) * 0.5);
 
-	//SendCSQCInvoker(org, dir);
-
-	// limit the max bounces regardless
-	for(int j = 0; j < 64; ++j)
+	// STEP ONE: Check if the nearest point is clear
+	if(invokerTrace_CheckSpread(nearest_to_attacker, nearest_on_line, org, end))
 	{
-		vector oldorg = org;
-		InvokerTrace(this, blength, org, dir);
-		org = trace_endpos;
-		//if(drawtrail)
-			//SendCSQCInvokerTrail(oldorg, org);
-
-		if((trace_dphitcontents & DPCONTENTS_SKY) || pointcontents(org) == CONTENT_SKY)
-			break;
-
-		blength -= vlen(org - oldorg);
-		if(blength <= 0)
-			break;
-		//if(!trace_ent || trace_ent.solid == SOLID_BSP)
-			//te_gunshot(org);
+		traceline(org, nearest_to_attacker, true, this);
+		if(trace_fraction == 1) { return true; } // yes, the nearest point is clear and we can allow the damage
 	}
 
-	// find all the entities the railgun hit and restore their solid state
-	IL_EACH(g_railgunhit, it.railgunhit,
+	// STEP TWO: Check if shotorg to center point is clear
+	if(invokerTrace_CheckSpread(center, nearest_on_line, org, end))
 	{
-		it.solid = it.railgunhitsolidbackup;
-	});
+		traceline(org, center, true, this);
+		if(trace_fraction == 1) { return true; } // yes, the center point is clear and we can allow the damage
+	}
 
-	// find all the entities the railgun hit and hurt them
-	IL_EACH(g_railgunhit, it.railgunhit,
+	// STEP THREE: Check each corner to see if they are clear
+	for(int i=1; i<=8; ++i)
 	{
-		// removal from the list is handled below
-		/* no falloff applied */
-
-		// apply the damage
-		if (it.takedamage && it.invokerhit != time)
+		vector corner = get_corner_position(head, i);
+		if(invokerTrace_CheckSpread(corner, nearest_on_line, org, end))
 		{
-			vector vel = dir + 2 * normalize(it.railgunhitloc - start_org);
-			vel *= 200;
-			it.effects |= EF_MUZZLEFLASH;
-			it.invokerhit = time; // prevent enemy damage spam
-			string oldmdl = it.model;
-			int oldmovetype = it.move_movetype;
-			vector prevorg = it.origin;
-			vector prevangles = it.angles;
-			vector prevmin = it.mins;
-			vector prevmax = it.maxs;
-			int oldframe = it.frame;
-			// double damage against non-players!
-			float damg = (IS_PLAYER(it)) ? damage : damage * 2;
-			if(!(it.monsterdef.spawnflags & MON_FLAG_METAL))
-				SpawnBlood(it.railgunhitloc, vel * 0.2, damg, it);
-			FX_Chains(it.railgunhitloc, dir);
-			sound_invoker_impact(this, 1);
-			T_Damage(it, this, this, damg, deathtype);
+			traceline(org, corner, true, this);
+			if(trace_fraction == 1) { return true; } // yes, this corner is clear and we can allow the damage
+		}
+	}
 
-			if(!wasfreed(it) && it.health <= 0 && (IS_MONSTER(it) || IS_PLAYER(it)))
+	return false;
+}
+
+void invokerTrace(entity this, vector org, vector dir)
+{
+	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
+	if(lag)
+		antilag_takeback_all(this, lag);
+
+	float force = 400;
+
+	vector attack_endpos = org + (dir * INVOKER_RANGE);
+	traceline(org, attack_endpos, true, this);
+
+	FOREACH_ENTITY_RADIUS(org, INVOKER_RANGE, it != this && it.takedamage,
+	{
+			vector center = CENTER_OR_VIEWOFS(it);
+
+			// find the closest point on the enemy to the center of the attack
+			float h; // hypotenuse, which is the distance between attacker to it
+			float a; // adjacent side, which is the distance between attacker and the point on dir that is closest to it.origin
+
+			h = vlen(center - this.origin);
+			a = h * (normalize(center - this.origin) * dir);
+
+			vector nearest_on_line = (org + a * dir);
+			//vector nearest_to_attacker = NearestPointOnBoundingBox(center + it.mins, center + it.maxs, nearest_on_line);
+
+			vector p = NearestPointOnBoundingBox(it.origin + it.mins, it.origin + it.maxs, org);
+
+			if(vlen(p) <= INVOKER_RANGE && invokerTrace_IsVisible(this, it, nearest_on_line, p, org, attack_endpos))
 			{
-				if(oldmovetype != it.move_movetype && it.move_movetype == MOVETYPE_BOUNCE) // rough gib check
-					FX_Invoked(oldmdl, oldframe, prevorg, prevangles, prevmin, prevmax, this.origin);
-				else
-				{
-					it.velocity = '0 0 175';
-					UNSET_ONGROUND(it);
+				// figure out the direction of force
+				vector final_force = normalize(center - (nearest_on_line - dir));
 
-					if(!(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(it.monsterdef.spawnflags & MON_FLAG_STATIONARY))
-						it.velocity = dir * 400;
+				// now multiply the direction by force units
+				final_force *= force;
+
+				// queue damage with this calculated info
+				SpawnBlood(center, final_force*0.2, 400, it);
+
+				it.effects |= EF_MUZZLEFLASH;
+
+				FX_Chains(center, dir);
+
+				sound_invoker_impact(it, 1);
+
+				string oldmdl = it.model;
+				int oldmovetype = it.move_movetype;
+				vector prevorg = it.origin;
+				vector prevangles = it.angles;
+				vector prevmin = it.mins;
+				vector prevmax = it.maxs;
+				int oldframe = it.frame;
+
+				float damage = (IS_MONSTER(it) ? 666 : 333);
+
+				T_Damage(it, this, this, damage, WEP_INVOKER.m_id | HITTYPE_MAGIC);
+
+				// ded
+				if(it && it.health <= 0 && (IS_MONSTER(it) || IS_PLAYER(it)))
+				{
+					// if we have the right amount of health add some velocity if we're not gibbing
+					if(!(oldmovetype != it.move_movetype && it.move_movetype == MOVETYPE_BOUNCE)) // rough gib check
+					{
+						if(!(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(it.monsterdef.spawnflags & MON_FLAG_STATIONARY))
+						{
+							// zero out the velocity and give it some z velocity so its off ground
+							it.velocity = '0 0 175';
+							// also set the flag
+							UNSET_ONGROUND(it);
+						}
+					}							
+
+					FX_Invoked(oldmdl, oldframe, prevorg, prevangles, prevmin, prevmax, this.origin);
 				}
 			}
-		}
-
-		it.railgunhitloc = '0 0 0';
-		it.railgunhitsolidbackup = SOLID_NOT;
-		it.railgunhit = false;
 	});
 
-	IL_CLEAR(g_railgunhit);
+	if(lag)
+		antilag_restore_all(this);
 }
 
 void W_FireInvoker(entity this, .entity weaponentity)
@@ -361,36 +429,15 @@ void W_FireInvoker(entity this, .entity weaponentity)
 	vector org = W_Shotorg(this, weaponentity);
 	vector dir = qc_aim(this, 8192);
 	
-	vector up = v_up;
-	vector right = v_right;
+	//vector up = v_up;
+	//vector right = v_right;
 
-	float damage = 333; // TODO: double against monsters?
-	int deathtype = WEP_INVOKER.m_id | HITTYPE_MAGIC;
+	//float damage = 333; // TODO: double against monsters?
+	//int deathtype = WEP_INVOKER.m_id | HITTYPE_MAGIC;
 
-	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
-	if(lag)
-		antilag_takeback_all(this, lag);
+	invokerTrace(this, org, dir);
 
-	InvokerFire(this, org + (up * 32) + (right * -32), dir, damage, deathtype, true); // top left
-	InvokerFire(this, org + (up * 32) + (right * 0), dir, damage, deathtype, true); // top center
-	InvokerFire(this, org + (up * 32) + (right * 32), dir, damage, deathtype, true); // top right
-	InvokerFire(this, org + (up * 0) + (right * -32), dir, damage, deathtype, true); // center left
-	InvokerFire(this, org + (up * 0) + (right * 0), dir, damage, deathtype, true); // center
-	InvokerFire(this, org + (up * 0) + (right * 32), dir, damage, deathtype, true); // center right
-	InvokerFire(this, org + (up * -32) + (right * -32), dir, damage, deathtype, true); // bottom left
-	InvokerFire(this, org + (up * -32) + (right * 0), dir, damage, deathtype, true); // bottom center
-	InvokerFire(this, org + (up * -32) + (right * 32), dir, damage, deathtype, true); // bottom right
-
-	// extra invisible traces to the sides of the crosshair to catch up rogue swarmers
-	InvokerFire(this, org + (up * 0) + (right * -12), dir, damage, deathtype, false); // left
-	InvokerFire(this, org + (up * 0) + (right * -24), dir, damage, deathtype, false); // left
-	InvokerFire(this, org + (up * 0) + (right * 12), dir, damage, deathtype, false); // right
-	InvokerFire(this, org + (up * 0) + (right * 24), dir, damage, deathtype, false); // right
-
-	if(lag)
-		antilag_restore_all(this);
-
-	SendCSQCInvokerTrail(org, dir);
+	SendCSQCInvokerTrail(org, this.v_angle);
 }
 
 void weaponanim_invoker_loop(entity this)

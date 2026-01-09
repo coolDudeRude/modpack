@@ -412,6 +412,12 @@ METHOD(Swarmer, mr_setup, bool(Swarmer this, entity actor))
 
 	precache_model("progs/zom_gib.mdl");
 	precache_model("progs/gibs/gibhead_swarmer.mdl");
+	precache_model("progs/gibs/gib_gen_1.mdl");
+	precache_model("progs/gibs/gib_gen_2.mdl");
+	precache_model("progs/gibs/gib_gen_3.mdl");
+	precache_model("progs/gibs/gib_gen_4.mdl");
+	precache_model("progs/gibs/gib_gen_5.mdl");
+	precache_model("progs/gibs/gib_gen_6.mdl");
 
 	precache_sound("swarmer/sight1.wav");
 	precache_sound("swarmer/sight2.wav");
