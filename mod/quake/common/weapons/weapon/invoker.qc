@@ -354,7 +354,7 @@ void invokerTrace(entity this, vector org, vector dir)
 	vector attack_endpos = org + (dir * INVOKER_RANGE);
 	traceline(org, attack_endpos, true, this);
 
-	FOREACH_ENTITY_RADIUS(org, INVOKER_RANGE, it != this && it.takedamage,
+	FOREACH_ENTITY_RADIUS(org, INVOKER_RANGE, it != this && it.takedamage && Damage_ValidTarget(it, this),
 	{
 			vector center = CENTER_OR_VIEWOFS(it);
 

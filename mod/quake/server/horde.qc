@@ -326,6 +326,10 @@ void PrecacheMonsters()
 	precache_sound("items/armor_mage.wav");
 	precache_model("progs/armor.mdl"); // regular armor
 	precache_model("progs/armor_mage.mdl");
+	precache_model("progs/armor_tech.mdl");
+	precache_model("items/armor_tech.wav");
+	precache_model("progs/item_armor_heavy.mdl");
+	precache_model("items/armor_heavy.wav");
 	// TODO: cache simple items?
 	
 	// quad damage
@@ -446,7 +450,8 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 {
 	if(!mon || mon == MON_Null || (mon.spawnflags & MONSTER_TYPE_DECOY))
 		return NULL;
-	entity monster = new(monster);
+	entity monster = spawn();
+	monster.classname = "monster";
 	monster.monsterdef = mon;
 	monster.spawnfunc_checked = true;
 	monster.angles = temp_angles; 
@@ -454,6 +459,7 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	//monster.target = "horde_manager";
 	monster.flags = FL_MONSTER;
 	//monster.alpha = 1; // only set monster alpha after they're a corpse
+	monster.clipgroup = CLIPGROUP_HORDE;
 
 	if(mon.spawnflags & MONSTER_TYPE_SWIM) { monster.flags |= FL_SWIM; }
 	if(mon.spawnflags & MONSTER_TYPE_FLY) { monster.flags |= FL_FLY; }
@@ -477,8 +483,11 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	monster_setup(monster, mon);
 
 	setup_minionsupport(monster);
-	if(autocvar_skill >= 3)
+	float difficulty = HordeGetDifficulty(this);
+	if(difficulty > 4)
 	{
+		// after wave 9, enemies are at full health?
+		// TODO: this can make encounters basically impossible!
 		if(this.wave <= 9)
 			monster.health = min(monster.health, 3000);
 	}
@@ -1533,7 +1542,7 @@ void SpawnWave2(entity this)
 	//LOG_DEBUG("spawnpoint found was: ", t.classname);
 	if(t && (squad_cat != HORDE_SQUAD_CAT_ERROR))
 	{
-		t.wait = time + SPAWN_RESET_TIME; // block spawnpoint from reuse for a duration
+		t.wait = time + (random() * SPAWN_RESET_TIME); // block spawnpoint from reuse for a duration
 		
 		SUB_UseTargets(t, NULL, NULL);
 		
@@ -2006,12 +2015,14 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_BOSS, "1 cthulhu");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_BOSS, "1 king_slime");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_BOSS, "1 mourning_wood");
+		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_BOSS, "1 jungle_golem");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_BOSS, "1 zerstorer"); // technically flying, but small enough to use regular spawns
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 volkerh");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 eoc");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 destroyer");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 queen_bee");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 pumpking");
+		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 ice_queen");
 	}
 
 	entity shop = find(NULL, classname, "info_horde_shop");

@@ -12,6 +12,8 @@ int keys_silver; // number of silver keys the players are carrying
 int keys_gold; // number of gold keys the players are carrying
 int keys_platinum; // number of platinum keys the players are carrying
 
+const int CLIPGROUP_HORDE = 69; // randomly picked (also nice) TODO: if for some reason we have more than 69 players this will break!
+
 .float storednextthink;
 .void(entity this) storedthink;
 void Countdown(entity this);
