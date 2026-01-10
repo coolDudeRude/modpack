@@ -213,16 +213,13 @@ void army_fire(entity this)
 {
 	ai_face(this);
 
-// fire somewhat behind the player, so a dodging player is harder to hit
 	entity en = this.enemy;
 	vector org = this.origin;
 
 	if(this.variant == GRUNT_ROCKET && !IS_PLAYER(this))
 		org.z = this.absmin_z + this.size_z * 0.7;
 	
-	vector dir = (en.absmin + en.absmax) * 0.5;
-	if(en.velocity != '0 0 0')
-		dir -= en.velocity * 0.2;
+	vector dir = ai_shotlead(org, (en.absmin + en.absmax) * 0.5, en.velocity, 900);
 	dir = normalize(dir - org);
 
 	switch(this.variant)

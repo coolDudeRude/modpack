@@ -2295,7 +2295,7 @@ void horde_setup_powerup(entity this, int powerup)
 			_setmodel(this, "progs/item_berserk.mdl");
 			this.netname = "Berserk";
 			this.powerups = POWERUP_BERSERK;
-			this.vamp_finished = 10;
+			this.berserk_finished = 10;
 			this.classname = "item_artifact_berserk";
 			break;
 		}

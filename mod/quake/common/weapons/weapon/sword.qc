@@ -10,7 +10,7 @@ void player_sworda3(entity this) { set_animofs(this, anim_player_axattd1, 3, pla
 void player_sworda2(entity this) { set_animofs(this, anim_player_axattd1, 2, player_sworda3); }
 void player_sworda1(entity this) { set_animofs(this, anim_player_axattd1, 1, player_sworda2); }
 
-void wep_sword_sworda4(entity this) { wep_set_anim(this, 3, w_ready); }
+void wep_sword_sworda4(entity this) { wep_set_anim(this, 3, w_ready); this.weapon_nextthink = time + 0.2; }
 void wep_sword_sworda3(entity this) { wep_set_anim(this, 2, wep_sword_sworda4); W_FireSword(this.owner, this.weaponentity_fld); }
 void wep_sword_sworda2(entity this) { wep_set_anim(this, 1, wep_sword_sworda3); }
 void wep_sword_sworda1(entity this) { wep_set_anim(this, 0, wep_sword_sworda2); W_Parry_Trigger(this.owner, 0); }
@@ -20,7 +20,7 @@ void player_swordb3(entity this) { set_animofs(this, anim_player_axattc1, 3, pla
 void player_swordb2(entity this) { set_animofs(this, anim_player_axattc1, 2, player_swordb3); }
 void player_swordb1(entity this) { set_animofs(this, anim_player_axattc1, 1, player_swordb2); }
 
-void wep_sword_swordb4(entity this) { wep_set_anim(this, 8, w_ready); }
+void wep_sword_swordb4(entity this) { wep_set_anim(this, 8, w_ready); this.weapon_nextthink = time + 0.2; }
 void wep_sword_swordb3(entity this) { wep_set_anim(this, 7, wep_sword_swordb4); W_FireSword(this.owner, this.weaponentity_fld); }
 void wep_sword_swordb2(entity this) { wep_set_anim(this, 6, wep_sword_swordb3); }
 void wep_sword_swordb1(entity this) { wep_set_anim(this, 5, wep_sword_swordb2); W_Parry_Trigger(this.owner, 0); }

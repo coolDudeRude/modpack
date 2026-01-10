@@ -2,6 +2,8 @@
 
 .bool attack_rage;
 
+vector ai_shotlead(vector org, vector targorigin, vector targvelocity, float shotspeed);
+
 bool CheckAttack(entity this);
 
 void ai_face(entity this);

@@ -88,8 +88,10 @@ void enforcer_fire(entity this)
 	fixedmakevectors(this.angles);
 	
 	vector org = this.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
+	vector targ_org = (this.enemy.absmin + this.enemy.absmax) * 0.5;
+	vector enemy_org = ai_shotlead(org, targ_org, this.enemy.velocity, 600);
 
-	LaunchLaser(this, org, this.enemy.origin - this.origin);
+	LaunchLaser(this, org, enemy_org - org);
 }
 
 .int lmg_rof;

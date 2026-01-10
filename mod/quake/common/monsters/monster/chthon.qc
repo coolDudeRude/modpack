@@ -317,27 +317,13 @@ void boss_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 void boss_launch_missile(entity this, entity targ, vector offset)
 {
-	vector vec, d;
-
 	vector offang = vectoangles(targ.origin - this.origin);	
 	makevectors(offang);
 
 	vector org = this.origin + offset.x * v_forward + offset.y * v_right + offset.z * '0 0 1';
-	
-// lead the player on hard mode
-	if(autocvar_skill > 1)
-	{
-		float t = vlen(targ.origin - org) / 300;
-		vec = targ.velocity;
-		vec.z = 0;
-		d = targ.origin + t * vec;		
-	}
-	else
-	{
-		d = targ.origin;
-	}
-	
-	vec = normalize(d - org);
+
+	vector d = ai_shotlead(org, targ.origin, targ.velocity, 300);
+	vector vec = normalize(d - org);
 
 	entity newmis = launch_spike(this, org, vec);
 	newmis.projectiledeathtype = DEATH_MONSTER_CHTHON.m_id | HITTYPE_MAGIC;

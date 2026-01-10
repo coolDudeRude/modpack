@@ -157,15 +157,8 @@ void edie_Fire(entity this, float valx, float valy, float valz, bool moving)
 	{
 		if(visible(this, this.enemy))
 		{
-			vector vec = this.enemy.origin - org; // set missile speed
-
-			float fly = vlen(vec) / 800; // calc aproximate time for missile to reach vec
-
-			vector move = this.enemy.velocity; // get the entities xy velocity
-			move.z = 0; //so a jumping player can't cheat and make him miss
-
-			vec = vec + move * fly;	// project the target forward in time
-			vec = normalize(vec);
+			vector vec = ai_shotlead(org, this.enemy.origin, this.enemy.velocity, 800);
+			vec = normalize(vec - org);
 			
 			//makevectors (this.angles);
 			//vec = vec + accuracy*v_up*(random()- 0.5) + accuracy*v_right*(random()- 0.5); //commented out, make it always accurate (edie's hardcore!)

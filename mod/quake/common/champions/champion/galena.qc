@@ -202,6 +202,8 @@ METHOD(Galena, m_takedamage, float(Champions this, entity targ, entity inflictor
 	return 1;
 }
 
+void wep_sword_charge(entity this) { wep_set_anim(this, 3, w_ready); this.weapon_nextthink = time + 0.5; }
+
 METHOD(Galena, m_playerthink, void(Champions this, entity actor))
 {
 	// hack to make charging animation work TODO
@@ -213,7 +215,7 @@ METHOD(Galena, m_playerthink, void(Champions this, entity actor))
 		{
 			//wepent.weapon_nextthink = time + 0.5; // just to keep it from switching anims
 			ATTACK_FINISHED(actor, weaponentity) = time + 0.25; // prevent attacking while charging
-			wepent.m_frame = 3;
+			wep_sword_charge(wepent);
 			if(time >= actor.galena_charge_time)
 			{
 				Galena_ChargeAttack(actor, weaponentity);

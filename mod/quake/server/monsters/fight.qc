@@ -15,6 +15,20 @@ When it decides it can't attack, it goes into hunt mode.
 
 //=============================================================================
 
+// on easy, returns a position slightly behind the target
+// on normal, aims directly at the target
+// hard and above leads shots
+vector ai_shotlead(vector org, vector targorigin, vector targvelocity, float shotspeed)
+{
+	if(autocvar_skill == 0)
+		return targorigin - targvelocity * 0.2;
+	else if(autocvar_skill <= 1)
+		return targorigin;
+	// Try to add code here that predicts gravity effect here, no clue HOW to though ... well not yet atleast...
+	// TODO: also make it an average? way too easy to trick shots!
+	return targorigin + vec2(targvelocity) * (vlen(targorigin - org) / shotspeed);
+}
+
 /*
 ===========
 CheckAttack
