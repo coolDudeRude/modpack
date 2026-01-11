@@ -73,6 +73,7 @@ void disc_think(entity this)
 		vector dir = normalize(vtemp - this.origin);
 		this.velocity = dir * this.speed;
 		this.dphitcontentsmask &= ~DPCONTENTS_SOLID;
+		// TODO: thanks to the way collision changes on these, returning may need to be a separate projectile
 		//UpdateCSQCProjectile(this);
 	}
 
@@ -106,8 +107,8 @@ void W_FireLightDisc(entity this, .entity weaponentity)
 	disc.angles = vectoangles(disc.velocity);
 	settouch(disc, disc_touch);
 	disc.cnt = time + 8; // deletion time
-	disc.count = time + 2; // return time
-	disc.dmg = 30;
+	disc.count = time + 1; // return time
+	disc.dmg = 40;
 	disc.nextthink = time;
 	setthink(disc, disc_think);
 
