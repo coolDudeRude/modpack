@@ -108,6 +108,9 @@ void parms_read(entity this)
 		Weapon wepent = Weapon_from_name(it);
 		if(wepent == WEP_Null)
 			continue;
+		// TODO: special exclusion list?
+		if(wepent == WEP_INVOKER && IsQBJ3Map())
+			continue;
 		Inventory_add(wepent, this, ITEM_OWNED);
 	});
 	QCC_ClearWeapons(this);
@@ -701,6 +704,11 @@ entity FindIntermission(entity this)
 
 // then look for the start position
 	entity spot = find(NULL, classname, "info_player_start");
+	if(spot)
+		return spot;
+
+// also try co-op spawns
+	spot = find(NULL, classname, "info_player_coop");
 	if(spot)
 		return spot;
 	

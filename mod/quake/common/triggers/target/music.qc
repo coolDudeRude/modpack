@@ -199,6 +199,8 @@ void TargetMusic_Advance()
 // copied from CDAudio_Play_byName in DarkPlaces
 string engine_fixsound(string trackname)
 {
+	if(!trackname || trackname == "")
+		return string_null;
 	if(fexists(trackname))
 		return trackname;
 
@@ -247,7 +249,7 @@ void Net_TargetMusic()
 		LL_PUSH(TargetMusic_list, e = new_pure(TargetMusic));
 		e.count = id;
 	}
-	if(!fexists(noi))
+	if(!noi || noi == "" || !fexists(noi))
 	{
 		e.lastvol = 0; // reset its status just incase
 		_sound(e, CH_BGM_SINGLE, "misc/null.wav", 0, ATTEN_NONE);

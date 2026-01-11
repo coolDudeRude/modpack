@@ -372,7 +372,7 @@ Monster monster_randomize(entity this, Monster mon)
 		return mon; // map is broken currently with random mobs TODO
 	if(substring(world.model, 0, 12) == "maps/dogjam_")
 		return mon; // dogs only please
-	if(IsQBJ3Map() || mon == MON_SWARMER || mon == MON_BLISTER)
+	if(IsQBJ3Map() || mon == MON_SWARMER || mon == MON_BLISTER || mon == MON_AMALGAM)
 		return mon; // unique monster models
 
 	if(mon.spawnflags & MON_FLAG_HIDDEN)
@@ -404,6 +404,8 @@ Monster monster_randomize(entity this, Monster mon)
 			continue;
 		if((it.spawnflags & MON_FLAG_BLOCKY) && !minecraft)
 			continue;
+		if(it == MON_SWARMER || it == MON_BLISTER || it == MON_AMALGAM)
+			continue; // qbj3 only for now
 		tracebox(this.origin, it.m_mins, it.m_maxs, this.origin, MOVE_WORLDONLY, this);
 		if(trace_startsolid)
 			continue;

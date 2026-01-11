@@ -1045,6 +1045,8 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 			continue; // but not in deathmatch
 		if(deathmatch && (it == WEP_NUKE || (it.spawnflags & WEP_FLAG_MANA)))
 			continue; // lol no
+		if(wpn == WEP_PISTOL || wpn == WEP_REBAR_CANNON || wpn == WEP_INVOKER || wpn == WEP_MMML)
+			continue; // none of these yet!
 		int mytype = it.ammo_type;
 		switch(it)
 		{

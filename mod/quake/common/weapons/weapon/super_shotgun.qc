@@ -15,11 +15,13 @@ PRECACHE(SuperShotgun)
 
 void wep_supershotgun_anim(entity this)
 {
+	entity actor = this.owner;
+
 	if(intermission_running)
 		return;
 
 	if(this.m_frame == 18)
-		_sound(this, CH_WEAPON_B, "flak/pump_reload.wav", 0.7, ATTN_NORM);
+		_sound(actor, CH_WEAPON_B, "flak/pump_reload.wav", 0.7, ATTN_NORM);
 
 	if(this.m_frame >= 35)
 	{
