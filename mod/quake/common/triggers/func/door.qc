@@ -180,7 +180,7 @@ void door_trigger_touch(entity this, entity toucher)
 		return;
 	this.attack_finished = time + 1;
 
-	door_use(this.owner, toucher, NULL);
+	door_use(this.owner, toucher, this);
 }
 
 
@@ -188,7 +188,7 @@ void door_killed(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	this.owner.health = this.owner.max_health;
 	this.owner.takedamage = DAMAGE_NO;	// will be reset upon return
-	door_use(this.owner, attacker, NULL);
+	door_use(this.owner, attacker, inflictor);
 }
 
 void door_lock_do(entity d)
@@ -365,7 +365,7 @@ void door_touch(entity this, entity toucher)
 		settouch(t, func_null);
 		t = t.enemy;
 	}
-	door_use(this.owner, NULL, toucher);
+	door_use(this.owner, toucher, this);
 }
 
 /*
@@ -677,6 +677,8 @@ float BoundsAngleSize(vector v, vector s)
 
 bool door_iscopper(entity this)
 {
+	if(IsQBJ3Map())
+		return true;
 	return ((this.spawnflags & SPAWN_ALT_TARG) && (this.target2 != "" || this.target3 != "" || this.target4 != ""));
 }
 
