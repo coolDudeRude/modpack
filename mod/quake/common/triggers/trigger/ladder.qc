@@ -2,13 +2,19 @@ bool CheckLadder(entity this)
 {
 	if(IL_EMPTY(g_ladders))
 		return false;
-	// TODO: optimise so it doesn't check every single ladder in the map!
-	IL_EACH(g_ladders, boxesoverlap(this.origin + this.mins, this.origin + this.maxs, it.absmin, it.absmax),
+
+	vector emin = this.absmin, emax = this.absmax;
+	emin -= '1 1 1';
+	emax += '1 1 1';
+	bool foundladder = false;
+
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != this && it.classname == "ladder",
 	{
-		return true;
+		foundladder = true;
+		break;
 	});
 
-	return false;
+	return foundladder;
 }
 
 #ifdef SVQC
@@ -40,14 +46,20 @@ bool trigger_ladder_SendEntity(entity this, entity to, int sendflags)
 
 spawnfunc(trigger_ladder)
 {
+	this.solid = SOLID_TRIGGER; // for radius checks
 	if(this.model != "")
+	{
+		precache_model(this.model);
 		_setmodel(this, this.model);
+	}
 
 	if(!this.modelindex)
 	{
 		setorigin(this, this.origin + this.mins);
 		setsize(this, '0 0 0', this.maxs - this.mins);
 	}
+
+	this.classname = "ladder";
 
 	Net_LinkEntity(this, false, 0, trigger_ladder_SendEntity);
 
@@ -83,6 +95,8 @@ NET_HANDLE(ENT_CLIENT_TRIGGER_LADDER, bool isnew)
 		}
 	}
 
+	this.solid = SOLID_TRIGGER;
+	this.classname = "ladder";
 	setorigin(this, this.origin);
 	setsize(this, this.mins, this.maxs);
 	if(isnew)

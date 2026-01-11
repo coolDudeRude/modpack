@@ -374,6 +374,9 @@ void teleport_target_use(entity this, entity actor, entity trigger)
 		teleport(actor, this, !(this.spawnflags & TELEPORT_NOFLASH), !(this.spawnflags & TELEPORT_PUSH));
 		actor.jump_flag = 0;
 	}
+
+	//if(!this.count)
+		//delete(this);
 }
 
 /*QUAKED info_teleport_target (.5 .75 .25) (-16 -16 -8) (16 16 40) PLAYER_ONLY PUSH TRIGGER_FIRST ACT_ON_TARGETS NOFLASH MONSTER_ONLY

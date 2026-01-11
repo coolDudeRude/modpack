@@ -92,6 +92,8 @@ void AmalGoop_Touch(entity this, entity toucher)
 		_sound(this, CH_VOICE, "amalg/amalg_goop2.wav", 0.6, ATTN_NORM);
 
 	GoopBlood(this, 0);
+
+	settouch(this, func_null);
 	setthink(this, SUB_Remove);
 	this.nextthink = time;
 	this.solid = SOLID_NOT;

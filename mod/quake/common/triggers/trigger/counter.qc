@@ -34,7 +34,9 @@ void counter_use(entity this, entity actor, entity trigger)
 		float rem = this.count - this.state;
 		if(IS_PLAYER(actor) && !(this.spawnflags & SPAWNFLAG_NOMESSAGE))
 		{
-			if(rem >= 6)
+			if(rem >= 20)
+				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER_LOTMORE);
+			else if(rem >= 6)
 				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER);
 			else
 				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER_FEWMORE, rem);
@@ -106,7 +108,9 @@ void counter_timed_use(entity this, entity actor, entity trigger)
 	{
 		if(IS_PLAYER(actor) && !(this.spawnflags & SPAWNFLAG_NOMESSAGE))
 		{
-			if(this.count >= 4)
+			if(this.count >= 20)
+				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER_LOTMORE);
+			else if(this.count >= 4)
 				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER);
 			else
 				Send_Notification(NOTIF_ONE, actor, MSG_CENTER, CENTER_SEQUENCE_COUNTER_FEWMORE, this.count);
