@@ -332,7 +332,7 @@ void PM_LadderMove(entity this, float maxspd_mod, float dt)
 
 	vector wishdir = normalize(wishvel);
 	float wishspeed = min(maxspeed, vlen(wishvel));
-	wishspeed *= 3.7; // counteracts the friction penalty
+	wishspeed *= 4.0; // counteracts the friction penalty
 
 	// friction
 	float frict = PHYS_FRICTION(this);

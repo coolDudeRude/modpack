@@ -247,9 +247,9 @@ void misc_model_animate(entity this)
 		anim = this.pos1;
 	
 	this.frame += 1;
-	if(this.frame > anim_z)
+	if(this.frame > anim.z)
 	{
-		this.frame = anim_x;
+		this.frame = anim.x;
 		if((this.spawnflags & SPAWN_MODEL_ANIMONCE) && !this.state)
 		{
 			this.state = !this.state;
@@ -335,7 +335,7 @@ void misc_model_copper(entity this)
 		else
 			this.state = 1;
 	}
-	if(this.pos1 == '0 0 0')
+	if(this.pos1 != '0 0 0')
 	{
 		this.frame = this.pos1_y;
 		setthink(this, misc_model_animate);

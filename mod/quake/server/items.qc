@@ -1607,6 +1607,12 @@ spawnfunc(item_cells)
 		return;
 	}
 
+	if(IsQBJ3Map())
+	{
+		spawnfunc_item_spikes(this);
+		return;
+	}
+
 	settouch(this, ammo_touch);
 
 	if(this.spawnflags & WEAPON_BIG2)
