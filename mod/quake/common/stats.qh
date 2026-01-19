@@ -119,6 +119,7 @@ REGISTER_STAT(MOVEVARS_JUMPSTEP, INT, autocvar_sv_jumpstep)
 REGISTER_STAT(NOSTEP, INT, autocvar_sv_nostep)
 
 REGISTER_STAT(MOVEVARS_GRAVITY, FLOAT, autocvar_sv_gravity)
+REGISTER_STAT(MOVEVARS_WORLDGRAVITY, FLOAT, autocvar_sv_gravity) // CSQC projectiles etc
 .float gravity;
 // FIXME: Was 0 on server, 1 on client. Still want that?
 REGISTER_STAT(MOVEVARS_ENTGRAVITY, FLOAT, (this.gravity) ? this.gravity : 1)

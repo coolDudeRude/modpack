@@ -5,6 +5,9 @@ void DropToFloor_QC_DelayedInit(entity this);
 
 int maxclients;
 
+// workaround for Xonotic code calling stuff it shouldn't
+#define CS(s) (s)
+
 const string STR_PLAYER = "player";
 //const string STR_SPECTATOR = "spectator";
 const string STR_OBSERVER = "observer";
