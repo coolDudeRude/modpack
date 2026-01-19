@@ -181,7 +181,7 @@ bool Arena_CheckPlayers()
 	if(prev_numspawned != numspawned && numspawned == 1)
 	{
 		if(maxspawned - numspawned > 0)
-			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_MISSING_PLAYERS, maxspawned - numspawned);
+			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, COUNTDOWN_STOP_MINPLAYERS, maxspawned - numspawned);
 		prev_numspawned = numspawned;
 	}
 
@@ -265,11 +265,6 @@ MUTATOR_HOOKFUNCTION(arena, PlayerSpawn)
 	if(arena_roundbased)
 		player.player_blocked = 1;
 	return true; // true?
-}
-
-MUTATOR_HOOKFUNCTION(arena, ForbidPlayerScore_Clear)
-{
-	return true;
 }
 
 MUTATOR_HOOKFUNCTION(arena, GiveFragsForKill)

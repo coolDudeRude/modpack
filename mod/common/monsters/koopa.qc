@@ -11,9 +11,11 @@ REGISTER_DEATHTYPE(MONSTER_KOOPA,            				DEATH_SELF_MON_KOOPA,          
 #endif
 
 CLASS(Koopa, Monster)
+#ifdef SVQC
     ATTRIB(Koopa, spawnflags, int, MONSTER_TYPE_PASSIVE | MON_FLAG_CRUSH | MON_FLAG_HIDDEN);
     ATTRIB(Koopa, m_mins, vector, '-15 -15 -15');
     ATTRIB(Koopa, m_maxs, vector, '15 15 1');
+#endif
 #ifdef GAMEQC
     ATTRIB(Koopa, m_model, Model, MDL_MON_KOOPA);
 #endif
