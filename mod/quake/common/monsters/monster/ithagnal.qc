@@ -783,6 +783,27 @@ void ith_death_proc(entity this)
 
 void ith_death(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	FOREACH_ENTITY_CLASS("monster_hitbox", it.realowner == this,
+	{
+		setthink(it, SUB_Remove);
+		it.nextthink = time;
+		settouch(it, func_null);
+		it.solid = SOLID_NOT;
+	});
+	
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, ith_gib);
+			this.nextthink = time + 0.1;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.walkframe = anim_ithagnal_death;
 	_sound(this, CH_VOICE, "ithagnal/ithpain2.wav", 1, ATTN_ITHAGNAL);
 	ith_death_proc(this);

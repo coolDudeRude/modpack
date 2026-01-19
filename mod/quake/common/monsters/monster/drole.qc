@@ -457,10 +457,12 @@ void drole_explode(entity this, entity inflictor, bool isgib)
 {
 	float myhealth = (isgib) ? this.health : -100;
 	_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-	ThrowHead(this, inflictor, "progs/h_drole.mdl", myhealth);
+	ThrowGib(this, inflictor, "progs/h_drole.mdl", myhealth);
 	ThrowGib(this, inflictor, "progs/gib_drolearm1.mdl", myhealth);
 	ThrowGib(this, inflictor, "progs/gib_drolearm2.mdl", myhealth);
 	ThrowGib(this, inflictor, "progs/gib_droleleg1.mdl", myhealth);
+	if(!isgib)
+		delete(this);
 }
 
 void drole_death26(entity this) { set_animofs(this, anim_drole_death, 26, drole_death26); drole_explode(this, this, false); }
@@ -492,12 +494,16 @@ void drole_death1(entity this) { set_animofs(this, anim_drole_death, 1, drole_de
 
 void drole_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -50)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		// custom gib function reused for death
-		drole_explode(this, inflictor, true);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			drole_explode(this, inflictor, true);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -613,6 +619,7 @@ METHOD(Drole, mr_setup, bool(Drole this, entity actor))
 {
     TC(Drole, this);
 
+    precache_model("progs/h_drole.mdl");
 	precache_model("progs/gib_drolearm1.mdl");
 	precache_model("progs/gib_drolearm2.mdl");
 	precache_model("progs/gib_droleleg1.mdl");
@@ -629,6 +636,7 @@ METHOD(Drole, mr_setup, bool(Drole this, entity actor))
 	precache_sound("drole/sight.wav");
 
     actor.health = 500;
+    actor.gibhealth = -50;
     actor.th_stand = drole_standC1;
 	actor.th_walk = drole_walk1;
 	actor.th_run = drole_run;

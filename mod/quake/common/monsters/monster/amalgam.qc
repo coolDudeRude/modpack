@@ -240,7 +240,7 @@ void amalgam_fire(entity this)
 	goop.projectiledeathtype = DEATH_MONSTER_AMALGAM.m_id;
 	goop.velocity = dir * (432 + (random() * 200));
 
-	if(autocvar_skill < 3)
+	if(autocvar_skill <= 1)
 	{
 		settouch(goop, AmalGoop_Touch);
 		_setmodel(goop, "progs/proj_amalgoop.mdl");
@@ -522,14 +522,18 @@ void amalgam_die1(entity this) { set_animofs(this, anim_amalgam_death, 1, amalga
 
 void amalgam_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		AmalGoop_Spam(this, 12);
-		SpawnMeatUndConcreteBurst(this, this.origin, VelocityForDamage(this, inflictor, this.health), 12, true);
-		GoopBlood(this, 1);
-		delete(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			AmalGoop_Spam(this, 12);
+			SpawnMeatUndConcreteBurst(this, this.origin, VelocityForDamage(this, inflictor, this.health), 12, true);
+			GoopBlood(this, 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	amalgam_die1(this);
@@ -611,12 +615,14 @@ METHOD(Amalgam, mr_setup, bool(Amalgam this, entity actor))
 	precache_sound("amalg/amalgpain2.wav");
 	precache_sound("amalg/amalgshoot.wav");
 	precache_sound("amalg/amalgsight.wav");
+	precache_sound("amalg/slab.wav");
 
 	precache_model("progs/s_blood_128x.spr");
 	precache_model("progs/s_blood_96x.spr");
 	precache_model("progs/s_blood_64x.spr");
 
 	actor.health = 400;
+	actor.gibhealth = -150;
 	actor.th_stand = amalgam_stand1;
 	actor.th_walk = amalgam_walk1;
 	actor.th_run = amalgam_run1;
@@ -632,7 +638,10 @@ METHOD(Amalgam, mr_sight, bool(Amalgam this, entity actor))
 {
 	TC(Amalgam, this);
 
-	_sound(actor, CH_VOICE, "amalg/amalgsight.wav", 1, ATTN_NORM);
+	if(random() <= 0.2)
+		_sound(actor, CH_VOICE, "amalg/slab.wav", 1, 0.5);
+	else
+		_sound(actor, CH_VOICE, "amalg/amalgsight.wav", 1, ATTN_NORM);
 
 	return true;
 }

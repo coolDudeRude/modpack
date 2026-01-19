@@ -1444,7 +1444,7 @@ void Spawn_judgeMin(entity this)
 		setthink(this.bossminchain, Spawn_judgeMinFX);
 		this.bossminchain.nextthink = time + 0.01 + random() * 0.3;
 
-		// If the spawn locaiton all clear, spawn something!
+		// If the spawn location all clear, spawn something!
 		this.pos1 = this.bossminchain.origin;
 		this.judge_summonflag = find_minionspace(this.pos1);			
 		if(this.judge_summonflag) 
@@ -1669,15 +1669,20 @@ void judge_die(entity this, entity inflictor, entity attacker, int deathtype)
 		});
 	}
 
-// check for gib
-	if(this.health < -60)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_judge.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/w_judgesword.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_judgeboot.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_judgeshould.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_judge.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/w_judgesword.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_judgeboot.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_judgeshould.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -1890,6 +1895,7 @@ METHOD(Judicator, mr_setup, bool(Judicator this, entity actor))
 {
     TC(Judicator, this);
 
+	precache_model("progs/h_judge.mdl");
 	precache_model("progs/w_judgesword.mdl");
 	precache_model("progs/gib_judgeboot.mdl");
 	precache_model("progs/gib_judgeshould.mdl");
@@ -1941,6 +1947,7 @@ METHOD(Judicator, mr_setup, bool(Judicator this, entity actor))
 		actor.skin = 0;
 
     actor.health = 50000; // health is actually in stages
+    actor.gibhealth = -60;
     actor.th_stand = judge_stand;
 	actor.th_walk = judge_walk;
 	actor.th_run = judge_run;

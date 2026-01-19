@@ -18,7 +18,15 @@ void mcspider_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_MCSPIDER_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "mcspider/say1.wav", 1, ATTN_NORM);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "mcspider/say2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "mcspider/say3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "mcspider/say4.wav", 1, ATTN_NORM);
 	}
 }
 
@@ -42,7 +50,15 @@ void mcspider_moveframe(entity this)
 	{
 		this.oldorigin = this.origin;
 		this.footstep = time + 0.2 * random();
-		sound(this, CH_VOICE, SND_MON_MCSPIDER_STEP_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "mcspider/step1.wav", 1, ATTN_NORM);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "mcspider/step2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "mcspider/step3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "mcspider/step4.wav", 1, ATTN_NORM);
 	}
 
 	mcspider_idlesound(this);
@@ -95,7 +111,15 @@ void mcspider_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_MCSPIDER_IDLE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "mcspider/say1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "mcspider/say2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "mcspider/say3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "mcspider/say4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -123,6 +147,19 @@ void mcspider_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "mcspider/death.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.colormod = '1 0.6 0.6';
 	mcspider_die1(this);
 }
@@ -138,6 +175,16 @@ METHOD(MCSpider, mr_setup, bool(MCSpider this, entity actor))
     TC(MCSpider, this);
 
 	precache_sound("mcspider/death.wav");
+
+	precache_sound("mcspider/say1.wav");
+	precache_sound("mcspider/say2.wav");
+	precache_sound("mcspider/say3.wav");
+	precache_sound("mcspider/say4.wav");
+
+	precache_sound("mcspider/step1.wav");
+	precache_sound("mcspider/step2.wav");
+	precache_sound("mcspider/step3.wav");
+	precache_sound("mcspider/step4.wav");
 
 	if(random() < 0.25)
 		actor.spawnflags |= MON_MCSPIDER_CAVE;

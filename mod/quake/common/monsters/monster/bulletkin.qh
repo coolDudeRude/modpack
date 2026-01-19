@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_BULLETKIN,        DEATH_SELF_MON_BULLETKIN,        DE
 
 #ifdef GAMEQC
 MODEL(MON_BULLETKIN, "progs/mon_bulletkin.mdl");
-MODEL(MON_BULLETKIN_HEAD, "progs/bullet_casing.mdl");
 #endif
 
 CLASS(BulletKin, Monster)
@@ -17,7 +16,6 @@ CLASS(BulletKin, Monster)
     ATTRIB(BulletKin, m_maxs, vector, '16 16 24');
 #ifdef GAMEQC
     ATTRIB(BulletKin, m_model, Model, MDL_MON_BULLETKIN);
-    ATTRIB(BulletKin, m_model_head, Model, MDL_MON_BULLETKIN_HEAD);
 #endif
     ATTRIB(BulletKin, netname, string, "bulletkin");
     ATTRIB(BulletKin, m_name, string, _("Bullet Kin"));

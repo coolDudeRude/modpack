@@ -65,9 +65,11 @@ METHOD(Goat, m_touch, void(Champions this, entity actor, entity toucher))
 		if(toucher.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD)
 			thedamage = 120;
 
-		T_Damage(toucher, actor, actor, thedamage, DEATH_SHIELD.m_id);
+		T_Damage(toucher, actor, actor, thedamage, DEATH_GOAT_BONK.m_id);
 
-		player_sound(actor, CH_VOICE, "bonk.wav", ATTN_NORM);
+		// if they died, we'll hear another sound!
+		if(toucher.health > 0)
+			player_sound(actor, CH_VOICE, "bonk.wav", ATTN_NORM);
 
 		actor.goat_bash_time = time + 0.5;
 	}

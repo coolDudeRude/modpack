@@ -524,7 +524,7 @@ void boglord_explode(entity this)
 	SpawnExplosion(EXPLODE_SMALL, this.origin, "weapons/r_exp3b.wav");
 	if(this.spawnflags & MON_BOGL_STRONG)
 	{
-		ThrowHead(this, this.enemy, "progs/h_boglordb.mdl", this.health);
+		ThrowGib(this, this.enemy, "progs/h_boglordb.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blclaw1b.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blclaw2b.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blfoot1b.mdl", this.health);
@@ -532,12 +532,13 @@ void boglord_explode(entity this)
 	}
 	else
 	{
-		ThrowHead(this, this.enemy, "progs/h_boglord.mdl", this.health);
+		ThrowGib(this, this.enemy, "progs/h_boglord.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blclaw1.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blclaw2.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blfoot1.mdl", this.health);
 		ThrowGib(this, this.enemy, "progs/gib_blfoot2.mdl", this.health);
 	}
+	delete(this);
 }
 
 void bogl_die(entity this, entity inflictor, entity attacker, int deathtype)
@@ -546,15 +547,22 @@ void bogl_die(entity this, entity inflictor, entity attacker, int deathtype)
 	bogl_finish_attachment(this);
 	bogl_remove_attachment(this);
 
-// check for gib
-	if(this.health < -60 || this.dmg_take > (this.max_health * 0.6))
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && this.dmg_take > (this.max_health * 0.6))
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		// delay by a frame to prevent recursive explosion crashes
-		setthink(this, boglord_explode);
-		this.nextthink = time;
-		this.enemy = inflictor; // for gib direction
-		this.solid = SOLID_NOT;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			// delay by a frame to prevent recursive explosion crashes
+			setthink(this, boglord_explode);
+			this.nextthink = time;
+			this.enemy = inflictor; // for gib direction
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -663,6 +671,8 @@ METHOD(BogLord, mr_setup, bool(BogLord this, entity actor))
 {
     TC(BogLord, this);
 
+	precache_model("progs/h_boglord.mdl");
+
 	precache_model("progs/gib_blclaw1.mdl");
 	precache_model("progs/gib_blclaw2.mdl");
 	precache_model("progs/gib_blfoot1.mdl");
@@ -721,6 +731,7 @@ METHOD(BogLord, mr_setup, bool(BogLord this, entity actor))
 		actor.poisonous = true;
 	}
 
+	actor.gibhealth = -60;
     actor.th_stand = bogl_stand1;
 	actor.th_walk = bogl_walk1;
 	actor.th_run = bogl_run1;

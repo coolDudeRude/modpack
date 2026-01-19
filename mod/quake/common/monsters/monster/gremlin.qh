@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_GREMLIN,         DEATH_SELF_MON_GREMLIN,         DEAT
 
 #ifdef GAMEQC
 MODEL(MON_GREMLIN, "progs/grem.mdl");
-MODEL(MON_GREMLIN_HEAD, "progs/h_grem.mdl");
 #endif
 
 CLASS(Gremlin, Monster)
@@ -17,7 +16,6 @@ CLASS(Gremlin, Monster)
     ATTRIB(Gremlin, m_maxs, vector, VEC_HULL_MAX);
 #ifdef GAMEQC
     ATTRIB(Gremlin, m_model, Model, MDL_MON_GREMLIN);
-    ATTRIB(Gremlin, m_model_head, Model, MDL_MON_GREMLIN_HEAD);
 #endif
     ATTRIB(Gremlin, netname, string, "gremlin");
     ATTRIB(Gremlin, m_name, string, _("Gremlin"));

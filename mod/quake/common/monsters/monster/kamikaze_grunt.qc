@@ -184,7 +184,7 @@ void kami_cdie1(entity this) { set_animofs(this, anim_kamikaze_deathc, 1, kami_c
 void kami_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-	ThrowHead(this, inflictor, "progs/h_guard.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/h_guard.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
@@ -196,16 +196,26 @@ void kami_gib(entity this, entity inflictor)
 void kamikaze_detonate(entity this);
 void kami_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		kami_gib(this, inflictor);
-
-		if(this.kamikaze_box && !wasfreed(this.kamikaze_box))
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			setthink(this.kamikaze_box, kamikaze_detonate);
-			this.kamikaze_box.nextthink = time;
+			kami_gib(this, inflictor);
+			// fall through to special handling
 		}
-		return;
+		default:
+		{
+			Death_SpecialHandle(this, killed_type);
+			// no matter what happens to us, always blow up the box?
+			if(this.kamikaze_box && !wasfreed(this.kamikaze_box))
+			{
+				setthink(this.kamikaze_box, kamikaze_detonate);
+				this.kamikaze_box.nextthink = time;
+			}
+			return;
+		}
 	}
 
 	_sound(this, CH_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
@@ -266,6 +276,7 @@ void kamikaze_explosiveboom(entity this, entity inflictor, entity attacker, int 
 			{
 				this.owner.health = -50;
 				kami_gib(this.owner, inflictor);
+				delete(this.owner);
 			}
 			else if(this.owner.health > 0)
 			{
@@ -326,6 +337,7 @@ METHOD(KamikazeGrunt, mr_setup, bool(KamikazeGrunt this, entity actor))
 {
     TC(KamikazeGrunt, this);
 
+	precache_model("progs/h_guard.mdl");
 	precache_model("progs/gib1.mdl");
 	precache_model("progs/gib2.mdl");
 	precache_model("progs/gib3.mdl");
@@ -347,6 +359,7 @@ METHOD(KamikazeGrunt, mr_setup, bool(KamikazeGrunt this, entity actor))
 	actor.pos1 = '8 0 32';
 
     actor.health = 40;
+    actor.gibhealth = -35;
     actor.th_stand = kami_stand1;
 	actor.th_walk = kami_walk1;
 	actor.th_run = kami_run1;

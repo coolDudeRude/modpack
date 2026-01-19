@@ -8,14 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_VAMPIRE,           DEATH_SELF_MON_VAMPIRE,           
 
 #ifdef GAMEQC
 MODEL(MON_VAMPIRE, "progs/vampire.mdl");
-
-SOUND(MON_VAMPIRE_IDLE1, "evocation_illager/idle1");
-SOUND(MON_VAMPIRE_IDLE2, "evocation_illager/idle2");
-SOUND(MON_VAMPIRE_IDLE3, "evocation_illager/idle3");
-SOUND(MON_VAMPIRE_IDLE4, "evocation_illager/idle4");
-Sound SND_MON_VAMPIRE_IDLE_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_VAMPIRE_IDLE1.m_id + floor(prandom() * 4));
-}
 #endif
 
 CLASS(Vampire, Monster)
@@ -24,7 +16,6 @@ CLASS(Vampire, Monster)
     ATTRIB(Vampire, m_maxs, vector, '24 24 60');
 #ifdef GAMEQC
     ATTRIB(Vampire, m_model, Model, MDL_MON_VAMPIRE);
-    ATTRIB(Vampire, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Vampire, netname, string, "vampire");
     ATTRIB(Vampire, m_name, string, _("Sanguine Evoker"));

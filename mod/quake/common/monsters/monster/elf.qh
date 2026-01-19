@@ -8,15 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_ELF,           DEATH_SELF_MON_ELF,           DEATH_MU
 
 #ifdef GAMEQC
 MODEL(MON_ELF, "progs/xmas/mon_elf.mdl");
-MODEL(MON_ELF_HEAD, "progs/xmas/h_elf.mdl");
-
-SOUND(MON_ELF_SIGHT1, "xmas/elf/sight1");
-SOUND(MON_ELF_SIGHT2, "xmas/elf/sight2");
-SOUND(MON_ELF_SIGHT3, "xmas/elf/sight3");
-SOUND(MON_ELF_SIGHT4, "xmas/elf/sight4");
-Sound SND_MON_ELF_SIGHT_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_ELF_SIGHT1.m_id + floor(prandom() * 4));
-}
 #endif
 
 CLASS(Elf, Monster)
@@ -25,7 +16,6 @@ CLASS(Elf, Monster)
     ATTRIB(Elf, m_maxs, vector, '16 16 16');
 #ifdef GAMEQC
     ATTRIB(Elf, m_model, Model, MDL_MON_ELF);
-    ATTRIB(Elf, m_model_head, Model, MDL_MON_ELF_HEAD);
 #endif
     ATTRIB(Elf, netname, string, "elf");
     ATTRIB(Elf, m_name, string, _("Elf"));

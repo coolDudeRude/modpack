@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SCRAG,           DEATH_SELF_MON_SCRAG,           DEAT
 
 #ifdef GAMEQC
 MODEL(MON_SCRAG, "progs/wizard.mdl");
-MODEL(MON_SCRAG_HEAD, "progs/h_wizard.mdl");
 #endif
 
 CLASS(Scrag, Monster)
@@ -17,7 +16,6 @@ CLASS(Scrag, Monster)
     ATTRIB(Scrag, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Scrag, m_model, Model, MDL_MON_SCRAG);
-    ATTRIB(Scrag, m_model_head, Model, MDL_MON_SCRAG_HEAD);
 #endif
     ATTRIB(Scrag, netname, string, "wizard");
     ATTRIB(Scrag, m_name, string, _("Scrag"));

@@ -17,7 +17,15 @@ void vindicator_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2 + (random() * 2);
-		sound(this, CH_VOICE, SND_MON_VINDICATOR_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "vindicator/idle1.wav", 1, ATTN_IDLE);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "vindicator/idle2.wav", 1, ATTN_IDLE);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "vindicator/idle3.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "vindicator/idle4.wav", 1, ATTN_IDLE);
 	}
 }
 
@@ -102,7 +110,13 @@ void vindicator_pain(entity this, entity attacker, float damage, int deathtype)
 	if(random()*200 > damage)
 		return;		// didn't flinch
 
-	sound(this, CH_VOICE, SND_MON_VINDICATOR_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "vindicator/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "vindicator/hurt2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "vindicator/hurt3.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -134,11 +148,17 @@ void vindicator_die(entity this, entity inflictor, entity attacker, int deathtyp
 	else
 		_sound(this, CH_VOICE, "vindicator/death2.wav", 1, ATTN_NORM);
 
-	if(this.health < -55)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.colormod = '1 1 1';
-		ThrowHead(this, inflictor, MDL_MON_VINDICATOR_HEAD.model_str(), this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			ThrowGib(this, inflictor, "progs/h_vindicator.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -155,15 +175,26 @@ METHOD(Vindicator, mr_setup, bool(Vindicator this, entity actor))
 {
     TC(Vindicator, this);
 
+	precache_model("progs/h_vindicator.mdl");
 	precache_sound("vindicator/death1.wav");
 	precache_sound("vindicator/death2.wav");
 	precache_sound("knight/sword1.wav");
+
+	precache_sound("vindicator/hurt1.wav");
+	precache_sound("vindicator/hurt2.wav");
+	precache_sound("vindicator/hurt3.wav");
+
+	precache_sound("vindicator/idle1.wav");
+	precache_sound("vindicator/idle2.wav");
+	precache_sound("vindicator/idle3.wav");
+	precache_sound("vindicator/idle4.wav");
 
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 
 	actor.yaw_speed = 180;
 
     actor.health = 150;
+    actor.gibhealth = -55;
     actor.th_stand = vindicator_stand;
 	actor.th_walk = vindicator_walk;
 	actor.th_run = vindicator_run;

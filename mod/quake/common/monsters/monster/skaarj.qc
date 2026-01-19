@@ -675,17 +675,22 @@ void skaarj_die_b(entity this)
 
 void skaarj_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -50)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -729,6 +734,7 @@ METHOD(Skaarj, mr_setup, bool(Skaarj this, entity actor))
 		actor.th_stand = skaarj_stand;
 
     actor.health = 500;
+    actor.gibhealth = -50;
 	actor.th_walk = skaarj_walk1;
 	actor.th_run = skaarj_fight;
 	actor.th_pain = skaarj_pain;

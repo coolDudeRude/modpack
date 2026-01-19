@@ -351,14 +351,32 @@ void mummy_paine3(entity this) { set_animofs(this, anim_mummy_paine, 3, mummy_pa
 void mummy_paine2(entity this) { set_animofs(this, anim_mummy_paine, 2, mummy_paine3); ai_pain(this, 8); }
 void mummy_paine1(entity this) { set_animofs(this, anim_mummy_paine, 1, mummy_paine2); _sound(this, CH_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM); this.solid = SOLID_CORPSE; }
 
-void mummy_die(entity this, entity inflictor, entity attacker, int deathtype)
+void mummy_gib(entity this, entity inflictor)
 {
 	this.health = -35;
 	_sound(this, CH_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
-	ThrowHead(this, inflictor, "progs/h_zombie.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/h_zombie.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+}
+
+void mummy_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			mummy_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	mummy_gib(this, inflictor);
+	delete(this);
 }
 
 /*
@@ -424,6 +442,7 @@ METHOD(Mummy, mr_setup, bool(Mummy this, entity actor))
 {
     TC(Mummy, this);
 
+	precache_model("progs/h_zombie.mdl");
 	precache_model("progs/zom_gib.mdl");
 
 	precache_sound("zombie/z_idle.wav");

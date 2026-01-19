@@ -18,9 +18,20 @@ float autocvar_g_maxpushtime = 8.0;
 float player_scale = 1;
 const float PLAYER_SCALE_MAX = 8;
 
+enum {
+	KILLED_NORMAL,
+	KILLED_GIBBED,
+	KILLED_IMPALED,
+	KILLED_INVOKED,
+	KILLED_HAPPY,
+	KILLED_ZAPPED
+};
+
 bool empathyused; // hipnotic
 
 bool discharged; // hipnotic
+
+.float gibhealth;
 
 .string deathtarget; // hack from ad
 
@@ -42,6 +53,10 @@ const float AGGRO_ADD = 2; // random additional wait
 .float killtime; // game time at which player got their last killed
 .int killspree; // player's current killing spree
 const float KILLSPREE_GAP = 3; // amount of time that can lapse for a kill to no longer count as part of a spree
+
+int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deathtype);
+
+void Death_SpecialHandle(entity targ, int killed_type);
 
 bool CanDamage(entity targ, entity inflictor);
 

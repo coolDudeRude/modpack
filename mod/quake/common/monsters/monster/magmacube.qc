@@ -27,9 +27,31 @@ void magmacube_hop(entity this, float dist, float distz)
 	this.velocity = dir;
 
 	if(this.magmacube_size >= 3)
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "magmacube/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "magmacube/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "magmacube/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "magmacube/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_JUMP_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "magmacube/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "magmacube/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "magmacube/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/big4.wav", 1, ATTN_NORM);
+	}
 }
 
 void magmacube_stand(entity this) { set_anim(this, 0, magmacube_stand); ai_stand(this); }
@@ -69,15 +91,38 @@ void magmacube_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 
 	if(this.magmacube_size >= 3)
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "magmacube/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "magmacube/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "magmacube/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "magmacube/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_BIG_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "magmacube/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "magmacube/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "magmacube/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/big4.wav", 1, ATTN_NORM);
+	}
 
 	this.pain_finished = time + 0.5;
 	this.colormod = '1 0.9 0.9';
 	this.glowmod = this.colormod;
 
-	magmacube_pain1(this);
+	setthink(this, magmacube_pain1);
+	this.nextthink = time;
 }
 
 //===========================================================================
@@ -127,10 +172,34 @@ void magmacube_die1(entity this) { set_anim(this, 0, magmacube_die2); this.solid
 void magmacube_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	if(this.magmacube_size >= 3)
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "magmacube/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "magmacube/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "magmacube/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "magmacube/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_MAGMACUBE_BIG_RANDOM(), 1, ATTN_NORM);
-
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "magmacube/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "magmacube/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "magmacube/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "magmacube/big4.wav", 1, ATTN_NORM);
+	}
+	
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	// ensure it gets gibbed by non-player sources (TODO?)
 	switch(deathtype)
 	{
 		case DEATH_VOID.m_id:
@@ -140,10 +209,21 @@ void magmacube_die(entity this, entity inflictor, entity attacker, int deathtype
 		case DEATH_LAVA.m_id:
 		case DEATH_CHECKPOINT.m_id:
 		{
-			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
-			delete(this);
-			return;
+			if(killed_type == KILLED_NORMAL)
+				killed_type = KILLED_GIBBED;
+			break;
 		}
+	}
+
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -183,6 +263,17 @@ spawnfunc(monster_magmacube) { monster_start(this, true, MON_MAGMACUBE); }
 METHOD(MagmaCube, mr_setup, bool(MagmaCube this, entity actor))
 {
     TC(MagmaCube, this);
+
+	precache_sound("magmacube/big1.wav");
+	precache_sound("magmacube/big2.wav");
+	precache_sound("magmacube/big3.wav");
+	precache_sound("magmacube/big4.wav");
+
+	precache_sound("magmacube/small1.wav");
+	precache_sound("magmacube/small2.wav");
+	precache_sound("magmacube/small3.wav");
+	precache_sound("magmacube/small4.wav");
+	precache_sound("magmacube/small5.wav");
 
 	actor.yaw_speed = 90;
 

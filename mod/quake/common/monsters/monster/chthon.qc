@@ -65,12 +65,7 @@ void boss_face(entity this)
 		ai_face(this);
 }
 
-void boss_rise17(entity this)
-{
-	set_animofs(this, anim_boss_rise, 17, boss_missile1);
-	if(!this.enemy)
-		setthink(this, this.th_stand);
-}
+void boss_rise17(entity this) { set_animofs(this, anim_boss_rise, 17, monster_start_go); }
 void boss_rise16(entity this) { set_animofs(this, anim_boss_rise, 16, boss_rise17); }
 void boss_rise15(entity this) { set_animofs(this, anim_boss_rise, 15, boss_rise16); }
 void boss_rise14(entity this) { set_animofs(this, anim_boss_rise, 14, boss_rise15); }
@@ -273,7 +268,6 @@ void GibBoss(entity this)
 	te_lavasplash(boss);
 	// as a monster chthon will call this on death anyway
 	//SUB_UseTargets(this, this.enemy, NULL);
-	delete(this);
 }
 
 void boss_death10(entity this)
@@ -307,10 +301,16 @@ void boss_death1(entity this)
 
 void boss_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		GibBoss(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			GibBoss(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 	boss_death1(this);
 }
@@ -370,6 +370,7 @@ void boss_awake(entity this)
 	this.th_die = boss_die;
 	this.th_stand = boss_idle1;
 	this.health = 3000;
+	this.gibhealth = -150;
 	this.max_health = this.health;
 	this.use = func_null; // prevent from being re-triggered into boss_awake state
 	if(world.model == "maps/mgend.bsp" && !this.charmed) // special damage states

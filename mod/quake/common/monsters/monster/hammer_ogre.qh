@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_HAMMER_OGRE,            DEATH_SELF_MON_HAMMER_OGRE,  
 
 #ifdef GAMEQC
 MODEL(MON_HAMMER_OGRE, "progs/mon_hogreham.mdl");
-MODEL(MON_HAMMER_OGRE_HEAD, "progs/h_hogreham.mdl");
 #endif
 
 CLASS(HammerOgre, Monster)
@@ -17,7 +16,6 @@ CLASS(HammerOgre, Monster)
     ATTRIB(HammerOgre, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(HammerOgre, m_model, Model, MDL_MON_HAMMER_OGRE);
-    ATTRIB(HammerOgre, m_model_head, Model, MDL_MON_HAMMER_OGRE_HEAD);
 #endif
     ATTRIB(HammerOgre, netname, string, "hogreham");
     ATTRIB(HammerOgre, m_name, string, _("Hammer Ogre"));

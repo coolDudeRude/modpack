@@ -37,6 +37,7 @@
 #include "endermite.qc"
 #include "enforcer.qc"
 #include "eoc.qc"
+#include "eow.qc"
 #include "fiend.qc"
 #include "floyd.qc"
 #include "fury_knight.qc"

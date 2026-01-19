@@ -19,9 +19,25 @@ void mczombie_idlesound(entity this)
 	{
 		this.idle_finished = time + 2 + (random() * 2);
 		if(this.skin == 1)
-			sound(this, CH_VOICE, SND_MON_HUSK_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.33)
+				_sound(this, CH_VOICE, "husk/idle1.wav", 1, ATTN_NORM);
+			else if(r < 0.66)
+				_sound(this, CH_VOICE, "husk/idle2.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "husk/idle3.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_MCZOMBIE_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.33)
+				_sound(this, CH_VOICE, "mczombie/say1.wav", 1, ATTN_NORM);
+			else if(r < 0.66)
+				_sound(this, CH_VOICE, "mczombie/say2.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "mczombie/say3.wav", 1, ATTN_NORM);
+		}
 	}
 }
 
@@ -45,9 +61,33 @@ void mczombie_moveframe(entity this)
 	{
 		this.footstep = time + 1 + random();
 		if(this.skin == 1)
-			sound(this, CH_VOICE, SND_MON_HUSK_STEP_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.2)
+				_sound(this, CH_VOICE, "husk/step1.wav", 1, ATTN_NORM);
+			else if(r < 0.4)
+				_sound(this, CH_VOICE, "husk/step2.wav", 1, ATTN_NORM);
+			else if(r < 0.6)
+				_sound(this, CH_VOICE, "husk/step3.wav", 1, ATTN_NORM);
+			else if(r < 0.8)
+				_sound(this, CH_VOICE, "husk/step4.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "husk/step5.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_MCZOMBIE_STEP_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.2)
+				_sound(this, CH_VOICE, "mczombie/step1.wav", 1, ATTN_NORM);
+			else if(r < 0.4)
+				_sound(this, CH_VOICE, "mczombie/step2.wav", 1, ATTN_NORM);
+			else if(r < 0.6)
+				_sound(this, CH_VOICE, "mczombie/step3.wav", 1, ATTN_NORM);
+			else if(r < 0.8)
+				_sound(this, CH_VOICE, "mczombie/step4.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "mczombie/step5.wav", 1, ATTN_NORM);
+		}
 	}
 
 	mczombie_idlesound(this);
@@ -95,9 +135,19 @@ void mczombie_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 
 	if(this.skin == 1)
-		sound(this, CH_VOICE, SND_MON_HUSK_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		if(random() < 0.5)
+			_sound(this, CH_VOICE, "husk/hurt1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "husk/hurt2.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_MCZOMBIE_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		if(random() < 0.5)
+			_sound(this, CH_VOICE, "mczombie/hurt1.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "mczombie/hurt2.wav", 1, ATTN_NORM);
+	}
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -140,11 +190,17 @@ void mczombie_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "mczombie/death.wav", 1, ATTN_NORM);
 
-	if(this.health < -55)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.colormod = '1 1 1';
-		ThrowHead(this, inflictor, MDL_MON_MCZOMBIE_HEAD.model_str(), this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			ThrowGib(this, inflictor, "progs/h_mczombie.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -161,7 +217,35 @@ METHOD(MCZombie, mr_setup, bool(MCZombie this, entity actor))
 {
     TC(MCZombie, this);
 
+    precache_model("progs/h_mczombie.mdl");
+
 	precache_sound("mczombie/death.wav");
+
+	precache_sound("mczombie/hurt1.wav");
+	precache_sound("mczombie/hurt2.wav");
+
+	precache_sound("mczombie/say1.wav");
+	precache_sound("mczombie/say2.wav");
+	precache_sound("mczombie/say3.wav");
+
+	precache_sound("mczombie/step1.wav");
+	precache_sound("mczombie/step2.wav");
+	precache_sound("mczombie/step3.wav");
+	precache_sound("mczombie/step4.wav");
+	precache_sound("mczombie/step5.wav");
+
+	precache_sound("husk/hurt1.wav");
+	precache_sound("husk/hurt2.wav");
+
+	precache_sound("husk/idle1.wav");
+	precache_sound("husk/idle2.wav");
+	precache_sound("husk/idle3.wav");
+
+	precache_sound("husk/step1.wav");
+	precache_sound("husk/step2.wav");
+	precache_sound("husk/step3.wav");
+	precache_sound("husk/step4.wav");
+	precache_sound("husk/step5.wav");
 
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 
@@ -171,6 +255,7 @@ METHOD(MCZombie, mr_setup, bool(MCZombie this, entity actor))
 	actor.yaw_speed = 180;
 
     actor.health = 100;
+    actor.gibhealth = -55;
     actor.th_stand = mczombie_stand1;
 	actor.th_walk = mczombie_walk;
 	actor.th_run = mczombie_run;

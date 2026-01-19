@@ -142,16 +142,34 @@ void tortoise_pain(entity this, entity attacker, float damage, int deathtype)
 	this.attack_finished = time + 0.5; // slight delay on attacks
 }
 
+void tortoise_gib(entity this, entity inflictor)
+{
+	particle(this.origin + (this.absmin + this.absmax) * 0.5, '0 0 0', 73, 70);
+
+	ThrowGib(this, inflictor, "progs/h_tortoise.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+}
+
 void tortoise_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "tortoise/death.wav", 1, ATTN_NORM);
 
-	particle(this.origin + (this.absmin + this.absmax) * 0.5, '0 0 0', 73, 70);
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			tortoise_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
-	ThrowHead(this, inflictor, "progs/h_tortoise.mdl", this.health);
-	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+	tortoise_gib(this, inflictor);
+	delete(this);
 }
 
 /*
@@ -262,6 +280,8 @@ spawnfunc(monster_tortoise) { monster_start(this, true, MON_TORTOISE); }
 METHOD(Tortoise, mr_setup, bool(Tortoise this, entity actor))
 {
 	TC(Tortoise, this);
+
+	precache_model("progs/h_tortoise.mdl");
 
 	precache_sound("tortoise/death.wav");
 	precache_sound("tortoise/idle.wav");

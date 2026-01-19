@@ -20,7 +20,15 @@ void vampire_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2 + random();
-		sound(this, CH_VOICE, SND_MON_VAMPIRE_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "evocation_illager/idle1.wav", 1, ATTN_IDLE);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "evocation_illager/idle2.wav", 1, ATTN_IDLE);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "evocation_illager/idle3.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "evocation_illager/idle4.wav", 1, ATTN_IDLE);
 	}
 }
 
@@ -286,6 +294,19 @@ void vampire_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "evocation_illager/death2.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	// some nice death animations thank you
 	if(this.flags & FL_FLY)
 		this.walkframe = anim_vampire_bat_fly;
@@ -316,6 +337,11 @@ METHOD(Vampire, mr_setup, bool(Vampire this, entity actor))
 	precache_sound("evocation_illager/prepare_wololo.wav");
 	precache_sound("evocation_illager/cast1.wav");
 	precache_sound("evocation_illager/cast2.wav");
+
+	precache_sound("evocation_illager/idle1.wav");
+	precache_sound("evocation_illager/idle2.wav");
+	precache_sound("evocation_illager/idle3.wav");
+	precache_sound("evocation_illager/idle4.wav");
 
 	actor.yaw_speed = 90;
 

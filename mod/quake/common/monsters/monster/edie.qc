@@ -568,19 +568,25 @@ void edie_death1(entity this) { set_animofs(this, anim_edie_death, 1, edie_death
 
 void edie_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -80)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_ogre.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_ogre.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	_sound(this, CH_VOICE, "edie/death.wav", 1, ATTN_NORM);
 
 	edie_death1(this);
@@ -696,6 +702,7 @@ METHOD(Edie, mr_setup, bool(Edie this, entity actor))
 {
     TC(Edie, this);
 
+    precache_model("progs/h_ogre.mdl");
     precache_sound("edie/death.wav");
 	
 	precache_sound("edie/pain.wav");
@@ -720,6 +727,7 @@ METHOD(Edie, mr_setup, bool(Edie this, entity actor))
 
 	actor.yaw_speed = 16;
 	actor.health = 500;
+	actor.gibhealth = -80;
 	actor.multiplier = 1.2;
 
 	// Custom feet sounds (specific order)

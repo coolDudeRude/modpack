@@ -359,41 +359,48 @@ void sham_death1(entity this) { set_animofs(this, anim_sham_death, 1, sham_death
 
 void sham_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -60 || this.dmg_take > (this.max_health * 0.6))
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && this.dmg_take > (this.max_health * 0.6))
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		bool is_qbj3sham = (season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map());
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(season == SEASON_XMAS)
-			ThrowHead(this, inflictor, "progs/h_shams_xmas.mdl", this.health);
-		else if(is_qbj3sham)
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			if(random() <= 0.05)
-				ThrowHead(this, inflictor, "progs/gibs/gib_shambler_6.mdl", this.health);
+			bool is_qbj3sham = (season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map());
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(season == SEASON_XMAS)
+				ThrowGib(this, inflictor, "progs/h_shams_xmas.mdl", this.health);
+			else if(is_qbj3sham)
+			{
+				if(random() <= 0.05)
+					ThrowGib(this, inflictor, "progs/gibs/gib_shambler_6.mdl", this.health);
+				else
+					ThrowGib(this, inflictor, "progs/gibs/gibhead_shambler.mdl", this.health);
+			}
 			else
-				ThrowHead(this, inflictor, "progs/gibs/gibhead_shambler.mdl", this.health);
-		}
-		else
-			ThrowHead(this, inflictor, "progs/h_shams.mdl", this.health);
-		if(is_qbj3sham)
-		{
-			ThrowGib(this, inflictor, "progs/gibs/gib_shambler_1.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gibs/gib_shambler_3.mdl", this.health);
-			float r = random();
-			if(r < 0.2)
-				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_2.mdl", this.health);
-			else if(r < 0.6)
-				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_4.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/h_shams.mdl", this.health);
+			if(is_qbj3sham)
+			{
+				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_1.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_3.mdl", this.health);
+				float r = random();
+				if(r < 0.2)
+					ThrowGib(this, inflictor, "progs/gibs/gib_shambler_2.mdl", this.health);
+				else if(r < 0.6)
+					ThrowGib(this, inflictor, "progs/gibs/gib_shambler_4.mdl", this.health);
+				else
+					ThrowGib(this, inflictor, "progs/gibs/gib_shambler_5.mdl", this.health);
+			}
 			else
-				ThrowGib(this, inflictor, "progs/gibs/gib_shambler_5.mdl", this.health);
+			{
+				ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			}
+			// fall through to special handling
 		}
-		else
-		{
-			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		}
-		return;
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -483,6 +490,7 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 {
 	TC(Shambler, this);
 
+	precache_model("progs/h_shams.mdl");
 	precache_model("progs/s_light.mdl");
 	precache_model("progs/bolt.mdl");
 	
@@ -542,6 +550,7 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 	}
 
 	actor.health = 600;
+	actor.gibhealth = -60;
 	actor.th_stand = sham_stand1;
 	actor.th_walk = sham_walk1;
 	actor.th_run = sham_run1;

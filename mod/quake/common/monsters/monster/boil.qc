@@ -257,6 +257,20 @@ void boil_explode(entity this)
 
 void boil_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "zombie/boil_explode.wav", 1, ATTN_NORM);
+			setthink(this, boil_explode);
+			this.nextthink = time + 0.1;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CH_VOICE, "zombie/boil_explode.wav", 1, ATTN_NORM);
 
 	// Delay the t_radius explosion for one frame

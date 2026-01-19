@@ -8,21 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_CREEPER,           DEATH_SELF_MON_CREEPER,           
 
 #ifdef GAMEQC
 MODEL(MON_CREEPER, "progs/creeper.mdl");
-
-SOUND(MON_CREEPER_PAIN1, "creeper/pain1");
-SOUND(MON_CREEPER_PAIN2, "creeper/pain2");
-SOUND(MON_CREEPER_PAIN3, "creeper/pain3");
-SOUND(MON_CREEPER_PAIN4, "creeper/pain4");
-Sound SND_MON_CREEPER_PAIN_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_CREEPER_PAIN1.m_id + floor(prandom() * 4));
-}
-SOUND(MON_CREEPER_EXPLODE1, "creeper/explode1");
-SOUND(MON_CREEPER_EXPLODE2, "creeper/explode2");
-SOUND(MON_CREEPER_EXPLODE3, "creeper/explode3");
-SOUND(MON_CREEPER_EXPLODE4, "creeper/explode4");
-Sound SND_MON_CREEPER_EXPLODE_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_CREEPER_EXPLODE1.m_id + floor(prandom() * 4));
-}
 #endif
 
 CLASS(Creeper, Monster)
@@ -31,7 +16,6 @@ CLASS(Creeper, Monster)
     ATTRIB(Creeper, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Creeper, m_model, Model, MDL_MON_CREEPER);
-    ATTRIB(Creeper, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Creeper, netname, string, "creeper");
     ATTRIB(Creeper, m_name, string, _("Creeper"));

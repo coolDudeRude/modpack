@@ -249,20 +249,25 @@ void bulletkin_fdie1(entity this) { set_animofs(this, anim_bulletkin_fdeath, 1, 
 
 void bulletkin_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "weapons/resist_rocket.wav", 1, ATTN_NORM);
-		te_tarexplosion(this.origin);
-		ThrowHead(this, inflictor, "progs/bullet_casing.mdl", this.health);
-		this.scale = 3;
-		entity gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
-		gib.scale = 3;
-		gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
-		gib.scale = 3;
-		gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
-		gib.scale = 3;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "weapons/resist_rocket.wav", 1, ATTN_NORM);
+			te_tarexplosion(this.origin);
+			entity gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+			gib.scale = 3;
+			gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+			gib.scale = 3;
+			gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+			gib.scale = 3;
+			gib = ThrowGib(this, inflictor, "progs/bullet_casing.mdl", this.health);
+			gib.scale = 3;
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -283,6 +288,8 @@ METHOD(BulletKin, mr_setup, bool(BulletKin this, entity actor))
 {
 	TC(BulletKin, this);
 
+	precache_model("progs/bullet_casing.mdl");
+
 	precache_sound("bulletkin/attack.wav");
 	precache_sound("bulletkin/hit.wav");
 	precache_sound("weapons/resist_rocket.wav");
@@ -294,6 +301,7 @@ METHOD(BulletKin, mr_setup, bool(BulletKin this, entity actor))
 	precache_sound("bulletkin/sight.wav");
 
 	actor.health = 70;
+	actor.gibhealth = -35;
 	actor.th_stand = bulletkin_stand1;
 	actor.th_walk = bulletkin_walk1;
 	actor.th_run = bulletkin_run1;

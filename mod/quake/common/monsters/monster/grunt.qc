@@ -327,35 +327,40 @@ void army_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case GRUNT_PISTOL: this.ammo_shells = 4; break;
 	}
 	DropBackpack(this);
-	
-// check for gib
-	if(this.health < -35)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(this.mdl_head != "")
-			ThrowHead(this, inflictor, this.mdl_head, this.health);
-		else
-			ThrowHead(this, inflictor, "progs/h_guard.mdl", this.health);
-		if(IsQBJ3Map())
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
-			if(random() < 0.5)
-				ThrowGib(this, inflictor, "progs/gibs/gib_gen_3.mdl", this.health);
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(this.mdl_head != "")
+				ThrowGib(this, inflictor, this.mdl_head, this.health);
 			else
-				ThrowGib(this, inflictor, "progs/gibs/gib_gen_4.mdl", this.health);
-			if(random() < 0.5)
-				ThrowGib(this, inflictor, "progs/gibs/gib_gen_5.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/h_guard.mdl", this.health);
+			if(IsQBJ3Map())
+			{
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
+				if(random() < 0.5)
+					ThrowGib(this, inflictor, "progs/gibs/gib_gen_3.mdl", this.health);
+				else
+					ThrowGib(this, inflictor, "progs/gibs/gib_gen_4.mdl", this.health);
+				if(random() < 0.5)
+					ThrowGib(this, inflictor, "progs/gibs/gib_gen_5.mdl", this.health);
+				else
+					ThrowGib(this, inflictor, "progs/gibs/gib_gen_6.mdl", this.health);
+			}
 			else
-				ThrowGib(this, inflictor, "progs/gibs/gib_gen_6.mdl", this.health);
+			{
+				ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+				ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			}
+			// fall through to special handling
 		}
-		else
-		{
-			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		}
-		return;
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -464,6 +469,7 @@ METHOD(Grunt, mr_setup, bool(Grunt this, entity actor))
 {
     TC(Grunt, this);
 
+	precache_model("progs/h_guard.mdl");
 	precache_sound("soldier/sattck1.wav");
 
 	precache_sound("player/udeath.wav");		// gib death
@@ -541,6 +547,7 @@ METHOD(Grunt, mr_setup, bool(Grunt this, entity actor))
 	}
 
     actor.health = 30;
+    actor.gibhealth = -35;
     actor.th_stand = army_stand1;
 	actor.th_walk = army_walk1;
 	actor.th_run = army_run1;

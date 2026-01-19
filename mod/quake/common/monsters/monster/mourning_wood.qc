@@ -217,7 +217,6 @@ void mw_pain(entity this, entity attacker, float damage, int deathtype)
 void gib_mw(entity this)
 {
 	_sound(this, CH_VOICE, "mourning_wood/death.wav", 1, ATTN_BOSS);
-	settouch(this, func_null);
 
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/gib1.mdl", this.health);
@@ -231,12 +230,25 @@ void gib_mw(entity this)
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 	ThrowGib(this, this, "progs/gib3.mdl", this.health);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
 void mw_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_mw(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	gib_mw(this);
+	delete(this);
 }
 
 spawnfunc(monster_mourning_wood) { monster_start(this, true, MON_MOURNING_WOOD); }

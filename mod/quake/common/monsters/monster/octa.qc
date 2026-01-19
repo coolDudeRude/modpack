@@ -395,15 +395,20 @@ void octa_dieb1(entity this) { set_animofs(this, anim_octa_dieb, 1, octa_dieb2);
 
 void octa_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -445,6 +450,7 @@ METHOD(Octa, mr_setup, bool(Octa this, entity actor))
 	precache_sound("player/udeath.wav");		// gib death
 
     actor.health = 120;
+    actor.gibhealth = -35;
     actor.th_stand = octa_stand1;
 	actor.th_walk = octa_walk1;
 	actor.th_run = octa_run1;

@@ -186,17 +186,7 @@ PRECACHE(Invoker)
 
 void anim_invoked(entity this)
 {
-	vector playerpos = this.pos1;
-	
-	// further away = slower fade
-	float dist = vlen(this.origin - playerpos);
-	
-	if(dist > 600)
-		dist = 600;
-	else if(dist == 0)
-		dist = 1; // div0 fix
-	
-	float fade_rate = 0.05 - (dist / 600) * 0.03;
+	float fade_rate = 0.05 - 0.33 * 0.03;
 	
 	this.alpha -= fade_rate;
 
@@ -217,36 +207,26 @@ void anim_invoked(entity this)
 	this.nextthink = time + 0.05;
 }
 
-// NOTE: needs to be given a pre-death model!
-void FX_Invoked(string invoked_model, int targframe, vector targorg, vector targangles, vector targmin, vector targmax, float oldscale, vector playerpos)
+void FX_Invoked(entity targ)
 {
 	entity fx = spawn();
 	set_movetype(fx, MOVETYPE_NONE);
 	fx.solid = SOLID_NOT;
 	fx.classname = "impact";
-	
-	//fx.angles = vectoangles(dir);
-	
-	//fx.frame = 0;
-	fx.frame = targframe;
-	fx.angles = targangles;
-	fx.effects = EF_ADDITIVE;
+	fx.frame = targ.frame;
+	fx.angles = targ.angles;
+	fx.effects = EF_ADDITIVE | EF_NOMODELFLAGS;
 	fx.colormod = '1 0 0';
 	fx.alpha = 1;
-	fx.scale = oldscale;
-	
-	fx.pos1 = playerpos;
+	fx.scale = targ.scale;
 	
 	setthink(fx, anim_invoked);
 	fx.nextthink = time + 0.1;
 
-	if(invoked_model && invoked_model != "")
-		_setmodel(fx, invoked_model);
-	else
-		_setmodel(fx, "progs/null.mdl");
-	setsize(fx, targmin, targmax);
+	_setmodel(fx, targ.model);
+	setsize(fx, targ.mins, targ.maxs);
 
-	setorigin(fx, targorg);
+	setorigin(fx, targ.origin);
 }
 //==============================================
 
@@ -387,14 +367,7 @@ void invokerTrace(entity this, vector org, vector dir)
 
 				sound_invoker_impact(it, 1);
 
-				string oldmdl = it.model;
 				int oldmovetype = it.move_movetype;
-				vector prevorg = it.origin;
-				vector prevangles = it.angles;
-				vector prevmin = it.mins;
-				vector prevmax = it.maxs;
-				int oldframe = it.frame;
-				float oldscale = it.scale;
 
 				float damage = (IS_MONSTER(it) ? 666 : 333);
 
@@ -413,9 +386,7 @@ void invokerTrace(entity this, vector org, vector dir)
 							// also set the flag
 							UNSET_ONGROUND(it);
 						}
-					}							
-
-					FX_Invoked(oldmdl, oldframe, prevorg, prevangles, prevmin, prevmax, oldscale, this.origin);
+					}
 				}
 			}
 	});

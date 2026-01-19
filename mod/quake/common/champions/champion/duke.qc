@@ -114,7 +114,7 @@ METHOD(Duke, m_killed, void(Champions this, entity targ, entity inflictor, entit
 		return;
 	}
 
-	if(deathtype == WEP_AXE.m_id)
+	if(DEATH_ISWEAPON(deathtype, WEP_AXE))
 	{
 		if(r < 0.25)
 			s = "footface.wav";

@@ -37,7 +37,7 @@ void bossbar_think(entity this)
 	this.nextthink = time;
 
 	entity boss = this.owner;
-	if(boss.enemy)
+	if(boss.enemy || boss.had_enemy)
 		this.had_enemy = true;
 
 	if(this.max_health != boss.max_health || this.health != boss.health)
@@ -95,7 +95,7 @@ PRECACHE(BossBars)
 	precache_pic("gfx/quake/bossbar");
 	precache_pic("gfx/quake/bossbar_bg");
 
-	FOREACH(Monsters, it.spawnflags & MONSTER_TYPE_BOSS,
+	FOREACH(Monsters, ((it.spawnflags & MONSTER_TYPE_BOSS) || it.spawnflags & MONSTER_TYPE_CONTROLLER) && !(it.spawnflags & MON_FLAG_PART),
 	{
 		precache_pic(strcat("gfx/quake/bossbar_", it.netname));
 		precache_pic(strcat("gfx/quake/progressbar_", it.netname));

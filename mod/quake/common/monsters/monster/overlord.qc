@@ -373,11 +373,8 @@ void ol_toss(entity this, string gibName)
 	myGib.velocity = flingVelocity;
 }
 
-// note - death frame 9 is intentionally done twice.
-void overlord_die19(entity this)
+void overlord_gib(entity this)
 {
-	set_animofs(this, anim_swrath_s_wtdt, 17, overlord_die19);
-
 	int counter = 2;
 
 	te_explosion2(this.origin, 0, 4);
@@ -387,8 +384,16 @@ void overlord_die19(entity this)
 		ol_toss(this, "progs/gib1.mdl");
 		ol_toss(this, "progs/gib2.mdl");
 		ol_toss(this, "progs/gib3.mdl");
-		counter = counter - 1;
+		counter -= 1;
 	}
+}
+
+// note - death frame 9 is intentionally done twice.
+void overlord_die19(entity this)
+{
+	set_animofs(this, anim_swrath_s_wtdt, 17, overlord_die19);
+
+	overlord_gib(this);
 
 	delete(this);
 }
@@ -443,11 +448,18 @@ void overlord_die02(entity this) { set_animofs(this, anim_swrath_s_wtdt, 2, over
 
 void overlord_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		overlord_die19(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			overlord_gib(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	overlord_die02(this);
 }
 
@@ -495,6 +507,7 @@ METHOD(Overlord, mr_setup, bool(Overlord this, entity actor))
 	precache_sound("s_wrath/smash.wav");
 
     actor.health = 1000;
+    actor.gibhealth = -150;
 	actor.pain_finished = 0;
 	
 //    if(actor.spawnflags & 2)

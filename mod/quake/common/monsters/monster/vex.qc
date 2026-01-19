@@ -76,7 +76,15 @@ void Vex_idlesound(entity this)
 	if(this.waitmin < time)
 	{
 		this.waitmin = time + 2;
-		sound(this, CH_VOICE, SND_MON_VEX_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "vex/idle1.wav", 1, ATTN_IDLE);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "vex/idle2.wav", 1, ATTN_IDLE);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "vex/idle3.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "vex/idle4.wav", 1, ATTN_IDLE);
 	}
 }
 
@@ -193,7 +201,13 @@ void vex_fastc1(entity this) { set_anim(this, anim_vex_fly, vex_fastc2); ai_char
 
 void vex_fast(entity this)
 {
-	sound(this, CH_VOICE, SND_MON_VEX_CHARGE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "vex/charge1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "vex/charge2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "vex/charge3.wav", 1, ATTN_NORM);
 
 	if(random() <= 0.3)
 		vex_fast1(this);
@@ -238,6 +252,19 @@ void vex_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "vex/death2.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	vex_death1(this);
 }
 
@@ -267,6 +294,15 @@ METHOD(Vex, mr_setup, bool(Vex this, entity actor))
 	precache_sound("vex/death2.wav");
 	precache_sound("vex/hurt1.wav");
 	precache_sound("vex/hurt2.wav");
+
+	precache_sound("vex/idle1.wav");
+	precache_sound("vex/idle2.wav");
+	precache_sound("vex/idle3.wav");
+	precache_sound("vex/idle4.wav");
+
+	precache_sound("vex/charge1.wav");
+	precache_sound("vex/charge2.wav");
+	precache_sound("vex/charge3.wav");
 
     actor.health = 50;
 	actor.th_stand = vex_stand1;

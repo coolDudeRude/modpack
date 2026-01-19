@@ -192,16 +192,24 @@ void lenf_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	this.ammo_cells = 5;
 	DropBackpack(this);
-	
-	if(this.health < -35)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_mega.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_mega.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
+	// regular death
 	if(random() > 0.5)
 	{
 		_sound(this, CHAN_AUTO, "monsters/lenforce/ledeath1.wav", 1, ATTN_NORM);
@@ -232,6 +240,8 @@ METHOD(LightningEnforcer, mr_setup, bool(LightningEnforcer this, entity actor))
 {
     TC(LightningEnforcer, this);
 
+    precache_model("progs/h_mega.mdl");
+
 	precache_sound("monsters/lenforce/ledeath1.wav");
 	precache_sound("monsters/lenforce/ledeath2.wav");
 	precache_sound("monsters/lenforce/leidle1.wav");
@@ -240,7 +250,13 @@ METHOD(LightningEnforcer, mr_setup, bool(LightningEnforcer this, entity actor))
 	precache_sound("monsters/lenforce/lepain3.wav");
 	precache_sound("monsters/lenforce/lepain4.wav");
 
+	precache_sound("monsters/lenforce/lesight1.wav");
+	precache_sound("monsters/lenforce/lesight2.wav");
+	precache_sound("monsters/lenforce/lesight3.wav");
+	precache_sound("monsters/lenforce/lesight4.wav");
+
     actor.health = 120;
+    actor.gibhealth = -35;
 	actor.th_stand = lenf_stand1;
 	actor.th_walk = lenf_walk1;
 	actor.th_run = lenf_run1;
@@ -256,7 +272,15 @@ METHOD(LightningEnforcer, mr_sight, bool(LightningEnforcer this, entity actor))
 {
     TC(LightningEnforcer, this);
 
-	sound(actor, CH_VOICE, SND_MON_LENFORCER_SIGHT_RANDOM(), 1, ATTN_NORM);
+    float r = random();
+	if(r < 0.25)
+		_sound(actor, CH_VOICE, "monsters/lenforce/lesight1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(actor, CH_VOICE, "monsters/lenforce/lesight2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(actor, CH_VOICE, "monsters/lenforce/lesight3.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "monsters/lenforce/lesight4.wav", 1, ATTN_NORM);
 
     return true;
 }

@@ -75,7 +75,7 @@ void W_GhostSickle_Fire(entity this, vector org, .entity weaponentity)
 	missile.cnt = 32; // rough area of effect during travel
 	missile.dmg = 20;
 
-	vector dir = qc_aim(this, 10000);
+	vector dir = qc_aim_fromorg(this, org, 800);
 	missile.velocity = dir * 800;
 	//missile.velocity_z = 200;
 

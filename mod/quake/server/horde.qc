@@ -327,9 +327,9 @@ void PrecacheMonsters()
 	precache_model("progs/armor.mdl"); // regular armor
 	precache_model("progs/armor_mage.mdl");
 	precache_model("progs/armor_tech.mdl");
-	precache_model("items/armor_tech.wav");
+	precache_sound("items/armor_tech.wav");
 	precache_model("progs/item_armor_heavy.mdl");
-	precache_model("items/armor_heavy.wav");
+	precache_sound("items/armor_heavy.wav");
 	// TODO: cache simple items?
 	
 	// quad damage
@@ -455,7 +455,6 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	monster.monsterdef = mon;
 	monster.spawnfunc_checked = true;
 	monster.angles = temp_angles; 
-	monster.solid = SOLID_SLIDEBOX;
 	//monster.target = "horde_manager";
 	monster.flags = FL_MONSTER;
 	//monster.alpha = 1; // only set monster alpha after they're a corpse
@@ -464,16 +463,24 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	if(mon.spawnflags & MONSTER_TYPE_SWIM) { monster.flags |= FL_SWIM; }
 	if(mon.spawnflags & MONSTER_TYPE_FLY) { monster.flags |= FL_FLY; }
 
-	if(monster.flags & FL_FLY)
-		set_movetype(monster, MOVETYPE_QCENTITY);
-	else
-		set_movetype(monster, MOVETYPE_STEP);
-
-	if(!(monster.flags & FL_SWIM))
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
 	{
-		IL_PUSH(g_damagedbycontents, monster);
-		monster.damagedbycontents	= true;
+		monster.solid = SOLID_SLIDEBOX;
+
+		if(monster.flags & FL_FLY)
+			set_movetype(monster, MOVETYPE_QCENTITY);
+		else
+			set_movetype(monster, MOVETYPE_STEP);
+
+		if(!(monster.flags & FL_SWIM))
+		{
+			IL_PUSH(g_damagedbycontents, monster);
+			monster.damagedbycontents	= true;
+		}
 	}
+
+	monster.enemy = HordeFindTarget(); // find a random living player
+	monster.category = CATEGORY_MONSTER;
 
 	setorigin(monster, org);
 
@@ -495,20 +502,31 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 		monster.health = min(monster.health, 1750); // limit health to avoid sponges
 
 	// finish the shared settings
-	org.z += -monster.mins.z; // offset based on size
-	setorigin(monster, org + '0 0 1');
 
-	setcefc(monster, monster_customize);
-	
-	if(!(mon.spawnflags & MONSTER_TYPE_FLY))
-		DropToFloor_QC_DelayedInit(monster);
-	
-	tracebox(monster.origin, monster.mins, monster.maxs, monster.origin, MOVE_NOMONSTERS, monster);
-	if(trace_startsolid)
-		LOG_DEBUG("Monster in wall at ", vtos(monster.origin), "\n");
-	
-	monster.category = CATEGORY_MONSTER;
-	monster.takedamage = DAMAGE_AIM;
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
+	{
+		org.z += -monster.mins.z; // offset based on size
+		setorigin(monster, org + '0 0 1');
+
+		setcefc(monster, monster_customize);
+
+		monster.takedamage = DAMAGE_AIM;
+
+		if(!(mon.spawnflags & MONSTER_TYPE_FLY))
+			DropToFloor_QC_DelayedInit(monster);
+		
+		tracebox(monster.origin, monster.mins, monster.maxs, monster.origin, MOVE_NOMONSTERS, monster);
+		if(trace_startsolid)
+			LOG_DEBUG("Monster in wall at ", vtos(monster.origin), "\n");
+
+		setthink(monster, FoundTarget);
+	}
+	else
+	{
+		//monster.health = monster.max_health = 1; // give it an initial health so it isn't instantly killed
+		setthink(monster, controller_think);
+	}
+
 	monster.ideal_yaw = monster.angles * '0 1 0';
 	if(!monster.yaw_speed)
 		monster.yaw_speed = 20;
@@ -516,9 +534,7 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	monster.use = monster_use;
 	monster.max_health = monster.health;
 
-	monster.enemy = HordeFindTarget(); // find a random living player
 	//monster.enemy = find (NULL, classname, "player");
-	setthink(monster, FoundTarget);
 		
 	//monster.nextthink = monster.nextthink + 0.1;
 	monster.nextthink = time;
@@ -680,6 +696,8 @@ void horde_health_touch(entity this, entity toucher)
 
 void horde_armor_touch(entity this, entity toucher)
 {
+	if(this.m_transform)
+		return; // gets reset when transforming back
 	if(!CanTouchItem(this, toucher))
 		return;
 

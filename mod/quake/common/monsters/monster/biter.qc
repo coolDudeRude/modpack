@@ -182,18 +182,23 @@ void biter_die1(entity this)
 
 void biter_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -30)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "biter/gib.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_biter.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/h_biter.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "biter/gib.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_biter.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/h_biter.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/bone.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -334,6 +339,7 @@ METHOD(Biter, mr_setup, bool(Biter this, entity actor))
 {
 	TC(Biter, this);
 
+	precache_model("progs/h_biter.mdl");
 	precache_sound("biter/death1.wav");
 	precache_sound("biter/death2.wav");
 	precache_sound("biter/gib.wav");
@@ -349,6 +355,7 @@ METHOD(Biter, mr_setup, bool(Biter this, entity actor))
 	precache_model("progs/bone.mdl");
 
 	actor.health = 150;
+	actor.gibhealth = -30;
 	actor.th_stand = biter_stand1;
 	actor.th_walk = biter_walk1;
 	actor.th_run = biter_run1;

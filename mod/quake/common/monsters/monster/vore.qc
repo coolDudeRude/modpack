@@ -116,18 +116,23 @@ void shalrath_pain(entity this, entity attacker, float damage, int deathtype)
 
 void shalrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -90)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(IsQBJ3Map())
-			ThrowHead(this, inflictor, "progs/gibs/gibhead_vore.mdl", this.health);
-		else
-			ThrowHead(this, inflictor, "progs/h_shal.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(IsQBJ3Map())
+				ThrowGib(this, inflictor, "progs/gibs/gibhead_vore.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/h_shal.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	if(IsQBJ3Map())
@@ -162,7 +167,6 @@ void ShalMissile(entity this)
 
 	missile.solid = SOLID_BBOX;
 	set_movetype(missile, MOVETYPE_FLYMISSILE);
-	//_setmodel(missile, "progs/v_spike.mdl");
 
 	setsize(missile, '0 0 0', '0 0 0');		
 
@@ -245,7 +249,7 @@ METHOD(Vore, mr_setup, bool(Vore this, entity actor))
 {
     TC(Vore, this);
 
-	precache_model("progs/v_spike.mdl");
+	precache_model("progs/h_shal.mdl");
 
 	precache_sound("shalrath/attack2.wav");
 
@@ -273,6 +277,7 @@ METHOD(Vore, mr_setup, bool(Vore this, entity actor))
 	}
 
     actor.health = 400;
+    actor.gibhealth = -90;
     actor.th_stand = shal_stand;
 	actor.th_walk = shal_walk1;
 	actor.th_run = shal_run1;

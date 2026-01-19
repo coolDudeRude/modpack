@@ -59,7 +59,16 @@ void creeper_primecolor(entity this, float colorscale)
 
 void creeper_detonate(entity this)
 {
-	sound(this, CH_VOICE, SND_MON_CREEPER_EXPLODE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "creeper/explode1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "creeper/explode2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "creeper/explode3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "creeper/explode4.wav", 1, ATTN_NORM);
+
 	Send_Effect(EFFECT_SMOKE_LARGE, this.origin, '0 0 0', 1);
 	T_RadiusDamage(this, this, 160, DEATH_MONSTER_CREEPER.m_id, this);
 
@@ -119,7 +128,15 @@ void creeper_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_CREEPER_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "creeper/pain1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "creeper/pain2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "creeper/pain3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "creeper/pain4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -160,7 +177,7 @@ void creeper_die1(entity this) { set_animofs(this, anim_creeper_death, 1, creepe
 
 void creeper_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(deathtype == DEATH_MONSTER_CREEPER.m_id && attacker == this)
+	if(DEATH_IS(deathtype, DEATH_MONSTER_CREEPER) && attacker == this)
 	{
 		// exploded to death
 		delete(this);
@@ -169,7 +186,7 @@ void creeper_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 	_sound(this, CH_VOICE, "creeper/death.wav", 1, ATTN_NORM);
 
-	if(deathtype == DEATH_MONSTER_SKELETON.m_id)
+	if(DEATH_IS(deathtype, DEATH_MONSTER_SKELETON))
 	{
 		RandomSelection_Init();
 		FOREACH(Weapons, it.spawnflags & WEP_FLAG_MUSIC,
@@ -179,6 +196,19 @@ void creeper_die(entity this, entity inflictor, entity attacker, int deathtype)
 		Inventory_new(this);
 		Inventory_add(RandomSelection_chosen_ent, this, ITEM_OWNED);
 		DropBackpack(this);
+	}
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -196,11 +226,17 @@ METHOD(Creeper, mr_setup, bool(Creeper this, entity actor))
     TC(Creeper, this);
 
 	precache_sound("creeper/death.wav");
+	precache_sound("creeper/ranged.wav");
+
 	precache_sound("creeper/explode1.wav");
 	precache_sound("creeper/explode2.wav");
 	precache_sound("creeper/explode3.wav");
 	precache_sound("creeper/explode4.wav");
-	precache_sound("creeper/ranged.wav");
+
+	precache_sound("creeper/pain1.wav");
+	precache_sound("creeper/pain2.wav");
+	precache_sound("creeper/pain3.wav");
+	precache_sound("creeper/pain4.wav");
 
 	if(random() < 0.2)
 		actor.spawnflags |= MON_CREEPER_NERD;

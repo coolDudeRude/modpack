@@ -1,0 +1,40 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_EOW,                     1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was turned into monster food by the Eater of Worlds"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_EOW,                1,  NULL,           INFO_DEATH_SELF_MON_EOW,               CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_EOW,            DEATH_SELF_MON_EOW,            DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_EOW, "progs/eow_head.mdl");
+#endif
+
+CLASS(EaterPart, Monster)
+    ATTRIB(EaterPart, spawnflags, int, MONSTER_TYPE_BOSS | MON_FLAG_PART | MONSTER_TYPE_FLY | MON_FLAG_EXPLOSIONRESISTANT);
+    ATTRIB(EaterPart, m_mins, vector, '-32 -32 -32');
+    ATTRIB(EaterPart, m_maxs, vector, '32 32 32');
+    ATTRIB(EaterPart, view_ofs, vector, '0 0 16');
+#ifdef GAMEQC
+    ATTRIB(EaterPart, m_model, Model, MDL_MON_EOW);
+#endif
+    ATTRIB(EaterPart, netname, string, "eow_part");
+    ATTRIB(EaterPart, m_name, string, "Eater of Worlds");
+    ATTRIB(EaterPart, m_color, vector, '0.51 0.08 0.51');
+ENDCLASS(EaterPart)
+
+REGISTER_MONSTER(EOW_PART, NEW(EaterPart));
+
+CLASS(EaterOfWorlds, Monster)
+    ATTRIB(EaterOfWorlds, spawnflags, int, MON_FLAG_HIDDEN | MONSTER_TYPE_CONTROLLER);
+    ATTRIB(EaterOfWorlds, m_mins, vector, '0 0 0');
+    ATTRIB(EaterOfWorlds, m_maxs, vector, '0 0 0');
+#ifdef GAMEQC
+    ATTRIB(EaterOfWorlds, m_model, Model, MDL_Null);
+#endif
+    ATTRIB(EaterOfWorlds, netname, string, "eow");
+    ATTRIB(EaterOfWorlds, m_name, string, "Eater of Worlds");
+    ATTRIB(EaterOfWorlds, m_color, vector, '0.51 0.08 0.51');
+ENDCLASS(EaterOfWorlds)
+
+REGISTER_MONSTER(EOW, NEW(EaterOfWorlds));

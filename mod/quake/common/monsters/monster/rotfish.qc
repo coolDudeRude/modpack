@@ -142,16 +142,19 @@ void f_pain1(entity this) { set_animofs(this, anim_fish_pain, 1, f_pain2); }
 
 void fish_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	// check for gib
-	if(this.health < -20)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		setthink(this, SUB_Remove);
-		this.nextthink = time + 0.1;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	// regular death
@@ -187,6 +190,9 @@ METHOD(Rotfish, mr_setup, bool(Rotfish this, entity actor))
 {
     TC(Rotfish, this);
 
+	precache_model("progs/gib1.mdl");
+	precache_model("progs/gib2.mdl");
+	precache_model("progs/gib3.mdl");
 	precache_sound("fish/death.wav");
 	precache_sound("fish/bite.wav");
 	precache_sound("fish/idle.wav");
@@ -208,6 +214,7 @@ METHOD(Rotfish, mr_setup, bool(Rotfish this, entity actor))
 	}
 
     actor.health = 25;
+    actor.gibhealth = -20;
     actor.th_stand = f_stand1;
 	actor.th_walk = f_walk1;
 	actor.th_run = f_run1;

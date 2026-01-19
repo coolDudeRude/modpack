@@ -126,8 +126,41 @@ void dalek_die3(entity this) { set_animofs(this, anim_dalek_die, 3, dalek_die4);
 void dalek_die2(entity this) { set_animofs(this, anim_dalek_die, 2, dalek_die3); ai_back(this, 16); }
 void dalek_die1(entity this) { set_animofs(this, anim_dalek_die, 1, dalek_die2); ai_back(this, 14); this.solid = SOLID_NOT; }
 
+void dalek_explode(entity this, entity inflictor)
+{
+	entity boom = spawn();
+	setorigin(boom, this.origin + '0 0 30');
+
+	set_movetype(boom, MOVETYPE_NONE);
+	boom.velocity = '0 0 0';
+	settouch(boom, func_null);
+	_setmodel(boom, "progs/s_explod.spr");
+	boom.solid = SOLID_NOT;
+	boom.nextthink = time + 0.1;
+	setthink(boom, s_explode1);
+
+	te_explosion(this.origin);
+
+	_sound(this, CH_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+
+	ThrowGib(this, inflictor, "progs/daltop.mdl", -50);
+	ThrowGib(this, inflictor, "progs/dalmid.mdl", -48);
+}
+
 void dalek_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			dalek_explode(this, inflictor);
+			// fall back to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	if(random() < 0.5)
 	{
 		_sound(this, CH_VOICE, "dalek/daldie.wav", 1, ATTN_NORM);
@@ -135,32 +168,17 @@ void dalek_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 	else
 	{
-		entity boom = spawn();
-		setorigin(boom, this.origin + '0 0 30');
+		dalek_explode(this, inflictor);
 
-		set_movetype(boom, MOVETYPE_NONE);
-		boom.velocity = '0 0 0';
-		settouch(boom, func_null);
-		_setmodel(boom, "progs/s_explod.spr");
-		boom.solid = SOLID_NOT;
-		boom.nextthink = time + 0.1;
-		setthink(boom, s_explode1);
-
-		te_explosion(this.origin);
-
-		_sound(this, CH_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
-
-		ThrowGib(this, inflictor, "progs/daltop.mdl", -50);
-		ThrowGib(this, inflictor, "progs/dalmid.mdl", -48);
-
-		_setmodel(this, "progs/dalskrt.mdl");
-
+		// leave an exploded base as the aftermath
 		this.frame = 0;
-		this.nextthink = -1;
+		this.nextthink = 0;
+		setthink(this, func_null);
 		set_movetype(this, MOVETYPE_NONE);
 		this.takedamage = DAMAGE_NO;
 		this.solid = SOLID_NOT;
 		this.view_ofs = '0 0 8';
+		_setmodel(this, "progs/dalskrt.mdl");
 		setsize(this, '-16 -16 -24', '16 16 20');
 		this.velocity = '0 0 0';
 		UNSET_ONGROUND(this);

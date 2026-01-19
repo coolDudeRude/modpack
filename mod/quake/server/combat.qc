@@ -301,6 +301,67 @@ bool Damage_ValidTarget(entity targ, entity attacker)
 	return true;
 }
 
+void HappyDeath(entity this)
+{
+	soundat(NULL, this.origin, CH_VOICE, SND(CHEER), 1, ATTEN_NORM);
+	Send_Effect(EFFECT_CHEER, this.origin, '0 0 0', 1);
+}
+
+void ZappyDeath(entity this)
+{
+	setthink(this, gibhim);
+	this.nextthink = time;
+}
+
+int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = KILLED_NORMAL;
+
+	if(inflictor.classname == "impaler")
+	{
+		if(IS_PLAYER(targ))
+			killed_type = KILLED_IMPALED;
+		else
+			killed_type = KILLED_GIBBED;
+	}
+	else if(DEATH_ISWEAPON(deathtype, WEP_INVOKER))
+		killed_type = KILLED_INVOKED;
+	else if(DEATH_ISWEAPON(deathtype, WEP_LIGHTME) || DEATH_ISWEAPON(deathtype, WEP_LIGHTNING))
+		killed_type = KILLED_ZAPPED;
+	else if(targ.gibhealth != 0 && targ.health < targ.gibhealth)
+		killed_type = KILLED_GIBBED;
+
+	if(attacker.m_champion == CHAMPION_Doom)
+		killed_type = KILLED_GIBBED; // force it!!
+	else if(DEATH_IS(deathtype, DEATH_GOAT_BONK))
+		killed_type = KILLED_HAPPY;
+
+	return killed_type;
+}
+
+void Death_SpecialHandle(entity targ, int killed_type)
+{
+	if(killed_type == KILLED_NORMAL)
+		return; // not special TODO: warn about this? means the monster will linger!
+
+	// set these first incase the other effects want to override them
+	setthink(targ, SUB_VanishOrRemove);
+	targ.nextthink = time;
+	targ.solid = SOLID_NOT;
+	targ.takedamage = DAMAGE_NO;
+	settouch(targ, func_null);
+
+	switch(killed_type)
+	{
+		default:
+		case KILLED_GIBBED: break; // effect handled by entity
+		case KILLED_INVOKED: FX_Invoked(targ); break;
+		case KILLED_IMPALED: impale(targ); break;
+		case KILLED_HAPPY: HappyDeath(targ); break;
+		case KILLED_ZAPPED: ZappyDeath(targ); break;
+	}
+}
+
 /*
 ============
 Killed
@@ -457,9 +518,7 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 
 	//targ.target = oldtarg;
 
-	if(inflictor.classname == "impaler")
-		impale(targ);
-	else if(targ.th_die)
+	if(targ.th_die)
 		targ.th_die(targ, inflictor, attacker, deathtype);
 }
 
@@ -532,12 +591,12 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		// NOTE: avoid reducing by 1.0 as that is invulnerability!
 		float dmgcap = 0.8;
 		float reduction = min((player_scale / PLAYER_SCALE_MAX), dmgcap);
-		//LOG_INFO("Reducing damage by ", ftos(damage * reduction);
+		//LOG_INFO("Reducing damage by ", ftos(damage * reduction));
 		damage -= (damage * reduction);
 	}
 
 	// major hack to keep the high push force
-	if(deathtype == DEATH_MONSTER_BREEZE.m_id)
+	if(DEATH_IS(deathtype, DEATH_MONSTER_BREEZE))
 		damage *= 0.05;
 
 	if(attacker.armortype == ARMOR_MAGE && attacker.armorvalue > 0)
@@ -708,7 +767,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	// special case for killable chthon (yoder, december 16 2020)
 	if(targ.monsterdef == MON_CHTHON && (targ.spawnflags & 2)) // is killable chthon
 	{
-		if(deathtype == WEP_LIGHTNING.m_id)
+		if(DEATH_ISWEAPON(deathtype, WEP_LIGHTNING))
 		{
 			// TODO: Spawn blood
 			//LOG_DEBUG("Player has LG! Damage Chthon!");
@@ -991,13 +1050,13 @@ void T_RadiusDamage(entity inflictor, entity attacker, float damage, int deathty
 				points *= 0.5;
 			if(head.monsterdef && (head.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && points > (head.health * 0.25))
 				points = 120; // always gib zombies
-			if(deathtype == DEATH_DISCHARGE.m_id)
+			if(DEATH_IS(deathtype, DEATH_DISCHARGE))
 			{
 				int cont = Mod_Q1BSP_SuperContentsFromNativeContents(pointcontents(head.origin));
 				if(!(cont & DPCONTENTS_LIQUIDSMASK))
 					points = 0;
 			}
-			if(deathtype == DEATH_EXPLODE.m_id)
+			if(DEATH_IS(deathtype, DEATH_EXPLODE))
 			{
 				if(IS_PLAYER(head))
 					points = 0;

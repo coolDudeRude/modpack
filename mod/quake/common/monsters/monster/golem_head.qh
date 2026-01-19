@@ -16,7 +16,6 @@ CLASS(GolemHead, Monster)
     ATTRIB(GolemHead, m_maxs, vector, '32 32 72');
 #ifdef GAMEQC
     ATTRIB(GolemHead, m_model, Model, MDL_MON_GOLEM_HEAD);
-    ATTRIB(GolemHead, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(GolemHead, netname, string, "golem_head");
     ATTRIB(GolemHead, m_name, string, _("Golem"));

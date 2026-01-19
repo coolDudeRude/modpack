@@ -18,7 +18,13 @@ void wskeleton_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_WITHER_SKELETON_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "wither_skeleton/idle1.wav", 1, ATTN_NORM);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "wither_skeleton/idle2.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "wither_skeleton/idle3.wav", 1, ATTN_NORM);
 	}
 }
 
@@ -43,7 +49,15 @@ void wskeleton_moveframe(entity this, int startframe, int endframe)
 	if(time >= this.footstep && IS_ONGROUND(this))
 	{
 		this.footstep = time + 0.3 + random();
-		sound(this, CH_VOICE, SND_MON_WITHER_SKELETON_STEP_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "wither_skeleton/step1.wav", 1, ATTN_NORM);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "wither_skeleton/step2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "wither_skeleton/step3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "wither_skeleton/step4.wav", 1, ATTN_NORM);
 	}
 
 	wskeleton_idlesound(this);
@@ -97,7 +111,15 @@ void wskeleton_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_WITHER_SKELETON_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "wither_skeleton/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "wither_skeleton/hurt2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "wither_skeleton/hurt3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "wither_skeleton/hurt4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1;
 	this.colormod = '1 0.9 0.9';
@@ -128,6 +150,19 @@ void wskeleton_die(entity this, entity inflictor, entity attacker, int deathtype
 	else
 		_sound(this, CH_VOICE, "wither_skeleton/death2.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
 	wskeleton_die1(this);
@@ -145,6 +180,20 @@ METHOD(WitherSkeleton, mr_setup, bool(WitherSkeleton this, entity actor))
 
 	precache_sound("wither_skeleton/death1.wav");
 	precache_sound("wither_skeleton/death2.wav");
+
+	precache_sound("wither_skeleton/hurt1.wav");
+	precache_sound("wither_skeleton/hurt2.wav");
+	precache_sound("wither_skeleton/hurt3.wav");
+	precache_sound("wither_skeleton/hurt4.wav");
+
+	precache_sound("wither_skeleton/idle1.wav");
+	precache_sound("wither_skeleton/idle2.wav");
+	precache_sound("wither_skeleton/idle3.wav");
+
+	precache_sound("wither_skeleton/step1.wav");
+	precache_sound("wither_skeleton/step2.wav");
+	precache_sound("wither_skeleton/step3.wav");
+	precache_sound("wither_skeleton/step4.wav");
 
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 

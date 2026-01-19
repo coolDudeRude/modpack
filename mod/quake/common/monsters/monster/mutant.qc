@@ -169,19 +169,24 @@ void mutant_die1(entity this)
 
 void mutant_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -80)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.skin = 0;
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_mutant.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.skin = 0;
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_mutant.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.skin = 1;
@@ -322,6 +327,7 @@ METHOD(Mutant, mr_setup, bool(Mutant this, entity actor))
 {
     TC(Mutant, this);
 
+	precache_model("progs/h_mutant.mdl");
 	precache_sound("mutant/mutidle1.wav");
 	precache_sound("mutant/mutatck1.wav");
 	precache_sound("mutant/mutatck2.wav");
@@ -336,6 +342,7 @@ METHOD(Mutant, mr_setup, bool(Mutant this, entity actor))
 	precache_sound("mutant/mutsrch1.wav");
 
 	actor.health = 220;
+	actor.gibhealth = -80;
 	actor.th_stand = mutant_stand1;
 	actor.th_walk = mutant_walk1;
 	actor.th_run = mutant_run1;

@@ -254,17 +254,23 @@ void axe_diee1(entity this) { set_animofs(this, anim_axegrunt_deathe, 1, axe_die
 
 void axe_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -30)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.skin = 0;
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_guard.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.skin = 0;
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_guard.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.skin = 3;
@@ -303,6 +309,7 @@ METHOD(AxeGrunt, mr_setup, bool(AxeGrunt this, entity actor))
 {
     TC(AxeGrunt, this);
 
+    precache_model("progs/h_guard.mdl");
 	precache_sound("axegrunt/axgdeath.wav");
 	precache_sound("axegrunt/axgpain.wav");
 	precache_sound("axegrunt/axgsight.wav");
@@ -313,6 +320,7 @@ METHOD(AxeGrunt, mr_setup, bool(AxeGrunt this, entity actor))
 	precache_sound("axegrunt/axgsight.wav");
 
     actor.health = 75;
+    actor.gibhealth = -30;
     actor.th_stand = axe_stand1;
 	actor.th_walk = axe_walk1;
 	actor.th_run = axe_run1;

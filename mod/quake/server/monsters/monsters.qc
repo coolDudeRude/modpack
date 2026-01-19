@@ -22,6 +22,74 @@
 //		<code>
 // }
 
+entity spawnmonster(entity monster, vector spawnpos, vector ang, Monster mon)
+{
+	if(!mon || mon == MON_Null)
+	{
+		bool is_water = (pointcontents(spawnpos) == CONTENT_WATER);
+
+		RandomSelection_Init();
+		FOREACH(Monsters, it != MON_Null,
+		{
+			if((it.spawnflags & MONSTER_TYPE_SWIM) && !is_water)
+				continue;
+			if(it.spawnflags & MONSTER_TYPE_DECOY)
+				continue; // no decoys please!
+			if((it.spawnflags & MONSTER_TYPE_BOSS) || (it.spawnflags & MON_FLAG_STATIONARY) || (it.spawnflags & MON_FLAG_HIDDEN) || (it.spawnflags & MONSTER_TYPE_UNDEAD))
+				continue;
+			if((it.spawnflags & MON_FLAG_XMAS) && season != SEASON_XMAS)
+				continue;
+			if(it.spawnflags & MON_FLAG_PART)
+				continue;
+			RandomSelection_AddEnt(it, 1, 1);
+		});
+		mon = RandomSelection_chosen_ent;
+	}
+
+	if(!mon || mon == MON_Null)
+	{
+		delete(monster);
+		return NULL;
+	}
+
+	// since the monster type may be different, offset the spawn location
+	// prevents monster falling through platforms
+	vector org = spawnpos;
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
+	{
+		org.z += -mon.m_mins.z; // offset based on size
+		setorigin(monster, org + '0 0 1');
+		// monster code will handle dropping
+	}
+	else
+		setorigin(monster, org); // not necessary but may as well link it!
+
+	monster.angles = ang;
+	monster.classname = "monster";
+
+	monster.spawnfunc_checked = true;
+	monster.nightmare_checked = true; // prevent randomisation
+
+	return (monster_start(monster, false, mon)) ? monster : NULL;
+}
+
+void monster_charm(entity this, entity actor, bool docharm)
+{
+	if(docharm)
+	{
+		this.charmed = true;
+		this.charmer = actor;
+		this.colormod = '0 1 0';
+		this.clipgroup = actor.clipgroup;
+	}
+	else
+	{
+		this.charmed = false;
+		this.charmer = NULL;
+		this.colormod = '0 0 0';
+		this.clipgroup = 0; // TODO: monster clipgroup?
+	}
+}
 
 /*
 ================
@@ -34,6 +102,8 @@ void monster_use(entity this, entity actor, entity trigger)
 {
 	if(this.enemy || this.health <= 0 || StatusEffects_active(STATUSEFFECT_Invisibility, actor) || (actor.flags & FL_NOTARGET) || (!IS_PLAYER(actor) && !IS_MONSTER(actor)))
 		return;
+	if(this.monsterdef.spawnflags & MONSTER_TYPE_CONTROLLER)
+		return; // TODO: tell our pets to target this enemy!
 	
 	// delay reaction so if the monster is teleported, its sound is still heard
 	if(IS_MONSTER(actor))
@@ -431,7 +501,13 @@ void monster_setup(entity this, Monster mon)
 
 	this.max_health = this.health;
 
-	if(!horde_ent && !this.charmed && this.health > 0 && (mon.spawnflags & MONSTER_TYPE_BOSS))
+	if(this.realowner.monsterdef.spawnflags & MONSTER_TYPE_CONTROLLER)
+	{
+		this.realowner.max_health += this.max_health;
+		this.realowner.health += this.health;
+	}
+
+	if(!horde_ent && !this.charmed && this.health > 0 && ((mon.spawnflags & MONSTER_TYPE_BOSS) || (mon.spawnflags & MONSTER_TYPE_CONTROLLER)) && !(mon.spawnflags & MON_FLAG_PART))
 	{
 		if(autocvar_sv_quake_bossbars == 1 && !this.sprite)
 		{
@@ -450,7 +526,7 @@ void monster_setup(entity this, Monster mon)
 	}
 }
 
-void monster_start(entity this, bool check_appear, Monster mon)
+bool monster_start(entity this, bool check_appear, Monster mon)
 {
 	if(!autocvar_horde && autocvar_skill == 3 && !this.nightmare_checked && !(mon.spawnflags & MONSTER_TYPE_BOSS) && !(mon.spawnflags & MONSTER_TYPE_SWIM) && !(mon.spawnflags & MONSTER_TYPE_UNDEAD) && !(mon.spawnflags & MON_FLAG_STATIONARY))
 		mon = monster_randomize(this, mon);
@@ -458,19 +534,19 @@ void monster_start(entity this, bool check_appear, Monster mon)
 	if(check_appear && qonquer_monstercompat(this, mon))
 	{
 		delete(this);
-		return;
+		return false;
 	}
 
-	if(!mon || mon == MON_Null) { return; } // invalid monster
-	if(deathmatch) { delete(this); return; }
-	if(Inhibit_Coop(this) || RemovedOutsideCoop(this))
+	if(!mon || mon == MON_Null) { delete(this); return false; } // invalid monster
+	if(check_appear && deathmatch) { delete(this); return false; }
+	if(check_appear && (Inhibit_Coop(this) || RemovedOutsideCoop(this)))
 	{
 		delete(this);
-		return;
+		return false;
 	}
 
 	if(check_appear && Monster_Appear_Check(this, mon))
-		return;
+		return true;
 
 	if(this.statuseffects && this.statuseffects.owner == this)
 	{
@@ -487,21 +563,33 @@ void monster_start(entity this, bool check_appear, Monster mon)
 	// hipnotic
 	if(mon.spawnflags & MONSTER_TYPE_DECOY) { this.flags |= FL_DECOY; }
 
-	this.solid = SOLID_SLIDEBOX;
-	if((mon.spawnflags & MONSTER_TYPE_FLY) || (mon.spawnflags & MONSTER_TYPE_SWIM))
-		set_movetype(this, MOVETYPE_QCENTITY);
+	// link the monster into the world
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
+	{
+		this.solid = SOLID_SLIDEBOX;
+		if((mon.spawnflags & MONSTER_TYPE_FLY) || (mon.spawnflags & MONSTER_TYPE_SWIM))
+			set_movetype(this, MOVETYPE_QCENTITY);
+		else
+			set_movetype(this, MOVETYPE_STEP);
+
+		// allow maps to define custom models
+		// but need to check * for brush models set by hipnotic maps for some reason
+		if(!this.model || this.model == "" || substring(this.model, 0, 1) == "*")
+			setmodel(this, mon.m_model);
+		setsize(this, mon.m_mins, mon.m_maxs);
+		setcefc(this, monster_customize);
+
+		this.nextthink = this.nextthink + random() * 0.5;
+		setthink(this, monster_start_go);
+	}
 	else
-		set_movetype(this, MOVETYPE_STEP);
+	{
+		//this.health = this.max_health = 1; // give it an initial health so it isn't instantly killed
+		set_movetype(this, MOVETYPE_NONE); // NOTE: controllers do move, but only to adapt to their average targets' location
 
-	// allow maps to define custom models
-	// but need to check * for brush models set by hipnotic maps for some reason
-	if(!this.model || this.model == "" || substring(this.model, 0, 1) == "*")
-		setmodel(this, mon.m_model);
-	setsize(this, mon.m_mins, mon.m_maxs);
-	setcefc(this, monster_customize);
-
-	this.nextthink = this.nextthink + random() * 0.5;
-	setthink(this, monster_start_go);
+		this.nextthink = time;
+		setthink(this, controller_think);
+	}
 
 	this.resist_shells = 0;
 	this.resist_nails = 0;
@@ -530,8 +618,9 @@ void monster_start(entity this, bool check_appear, Monster mon)
 		this.solid = SOLID_NOT;
 		setthink(this, func_null);
 		this.nextthink = 0;
-		return;
 	}
+
+	return true;
 }
 
 // Yoder Sept24 2021, Horde Merge
@@ -558,4 +647,76 @@ void MonsterFade(entity this)
 		this.alpha = 1;
 	setthink(this, MonsterFade2);
 	this.nextthink = time + 10 + random() * 5; // wait a bit before fading
+}
+
+// boss controllers
+void controller_think(entity this)
+{
+	this.nextthink = time;
+
+	vector center = '0 0 0';
+	float myhealth = 0;
+	int found = 0;
+	IL_EACH(g_moveables, it.realowner == this && (it.monsterdef.spawnflags & MON_FLAG_PART),
+	{
+		if(it.health <= 0)
+			continue; // TODO: clean up list?
+
+		center += it.origin;
+		found += 1;
+
+		myhealth += it.health;
+
+		if(it.enemy)
+			this.had_enemy = true;
+	});
+
+	// ded
+	if(myhealth <= 0)
+	{
+		this.health = 0;
+		Killed(this, this, this, DEATH_GENERIC.m_id); // call any triggers as needed
+		setthink(this, SUB_Remove);
+		this.nextthink = time;
+		return;
+	}
+
+	if(found > 0)
+	{
+		if(center.x != 0)
+			center.x /= found;
+		if(center.y != 0)
+			center.y /= found;
+		if(center.z != 0)
+			center.z /= found;
+
+		this.origin = center;
+	}
+
+	this.health = myhealth;
+	// NOTE: max_health needs to include monsters that were killed, so it's added up during creation!
+	//this.max_health = mymaxhealth;
+}
+
+entity controller_create(entity controller, entity monster, Monster mon)
+{
+	monster.classname = "monster";
+
+	// TODO: more fields copied?
+	setorigin(monster, controller.origin);
+	monster.angles = controller.angles;
+	monster.spawnflags = controller.spawnflags;
+	monster.charmed = controller.charmed; // TODO: keep this up to date? dusk will try spawning in the individual pair anyway!
+	monster.charmer = controller.charmer;
+	monster.colormod = controller.colormod;
+	monster.owner = controller;
+	monster.realowner = controller;
+	monster.enemy = controller.enemy; // may be set by spawners
+	monster.flags |= FL_CLONE; // no counting to caps!
+	monster.category = controller.category;
+	monster.clipgroup = controller.clipgroup;
+	monster.scale = controller.scale;
+	monster.angles = controller.angles;
+
+	return (monster_start(monster, false, mon)) ? monster : NULL;
 }

@@ -321,18 +321,25 @@ void floyd_death2(entity this) { set_animofs(this, anim_floyd_death1, 2, floyd_d
 
 void floyd_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	//check for gib
-	if(this.health < -35 || random() > 0.75 || (this.spawnflags & FLOYD_ROLLING))
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && (random() > 0.75 || (this.spawnflags & FLOYD_ROLLING)))
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		this.takedamage = DAMAGE_NO;
-		setthink(this, floyd_explode);
-		this.nextthink = time; // add a delay so there isn't a recursive explosion
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.takedamage = DAMAGE_NO;
+			setthink(this, floyd_explode);
+			this.nextthink = time; // add a delay so there isn't a recursive explosion
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
-	else // regular death
-	{
-		_sound(this, CH_VOICE, "floyd/death.wav", 1, ATTN_NORM);
-		floyd_death2(this); //skip $death1, which is the idle frame
-	}
+
+	// regular death
+	_sound(this, CH_VOICE, "floyd/death.wav", 1, ATTN_NORM);
+	floyd_death2(this); //skip $death1, which is the idle frame
 }
 
 void floyd_roll(entity this)
@@ -465,6 +472,7 @@ METHOD(Floyd, mr_setup, bool(Floyd this, entity actor))
     TC(Floyd, this);
 
 	precache_model("progs/floyd.mdl");
+	precache_model("progs/h_floyd.mdl");
 	precache_model("progs/flaser.mdl");
 	precache_model("progs/h_floyd.mdl");
 	precache_model("progs/fgib1.mdl");
@@ -527,6 +535,7 @@ METHOD(Floyd, mr_setup, bool(Floyd this, entity actor))
 		actor.th_missile = floyd_ready1;
     }
 
+    actor.gibhealth = -35;
     actor.steptype = FS_TYPELARGE;
 
     return true;

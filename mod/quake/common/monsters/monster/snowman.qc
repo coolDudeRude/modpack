@@ -177,17 +177,33 @@ void snowm_explode(entity this)
 	SpawnProjectileSmoke(this.origin, 200, 250, 100);
 
 	// No blood or guts!
-	ThrowHead(this, this, "progs/xmas/h_snowman.mdl", this.health);
+	ThrowGib(this, this, "progs/xmas/h_snowman.mdl", this.health);
 	ThrowGib(this, this, "progs/xmas/gib_snowclaw.mdl", this.health);
 	ThrowGib(this, this, "progs/xmas/gib_snowgun.mdl", this.health);
 	for(int j = 0; j < floor(random() * 8); ++j)
 	{
 		ThrowGib(this, this, "progs/xmas/gib_snowball.mdl", this.health);
 	}
+
+	delete(this);
 }
 
 void snowm_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, snowm_explode);
+			this.nextthink = time;
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	if(random() < 0.5)
 		_sound(this, CHAN_BODY, "xmas/snowman/death1.wav", 1, ATTN_NORM);
 	else
@@ -266,6 +282,7 @@ METHOD(Snowman, mr_setup, bool(Snowman this, entity actor))
 {
     TC(Snowman, this);
 
+	precache_model("progs/xmas/h_snowman.mdl");
 	precache_model("progs/xmas/gib_snowclaw.mdl");
 	precache_model("progs/xmas/gib_snowgun.mdl");
 	precache_model("progs/xmas/gib_snowball.mdl");
@@ -284,6 +301,9 @@ METHOD(Snowman, mr_setup, bool(Snowman this, entity actor))
 	precache_sound("xmas/snowman/death1.wav");
 	precache_sound("xmas/snowman/death2.wav");
 
+	precache_sound("xmas/snowman/sight1.wav");
+	precache_sound("xmas/snowman/sight2.wav");
+
     actor.health = 125;
 	actor.checkattack = SnowmanCheckAttack;
 	actor.th_stand = snowm_stand1;
@@ -300,7 +320,10 @@ METHOD(Snowman, mr_sight, bool(Snowman this, entity actor))
 {
     TC(Snowman, this);
 
-	sound(actor, CH_VOICE, SND_MON_SNOWMAN_SIGHT_RANDOM(), 1, ATTN_NORM);
+    if(random() < 0.5)
+		_sound(actor, CH_VOICE, "xmas/snowman/sight1.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "xmas/snowman/sight2.wav", 1, ATTN_NORM);
 
     return true;
 }

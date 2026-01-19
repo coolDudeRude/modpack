@@ -24,11 +24,11 @@ REGISTRY_DEFINE_GET(Deathtypes, NULL)
 const int DEATH_WEAPONMASK = BITS(8);
 const int HITTYPE_SECONDARY =   BIT(8);
 const int HITTYPE_SPLASH =      BIT(9); // automatically set by RadiusDamage
-const int HITTYPE_BOUNCE =      BIT(10); // set manually after projectile has bounced
+const int HITTYPE_UNUSED =      BIT(10); // currently unused
 const int HITTYPE_ARMORPIERCE = BIT(11); // ignore armor calculations
 const int HITTYPE_SOUND =       BIT(12); // cause bleeding from ears
 const int HITTYPE_MAGIC =       BIT(13); // magical attack, affected by mage armor and such
-const int DEATH_HITTYPEMASK = HITTYPE_SECONDARY | HITTYPE_SPLASH | HITTYPE_BOUNCE | HITTYPE_ARMORPIERCE | HITTYPE_SOUND | HITTYPE_MAGIC;
+const int DEATH_HITTYPEMASK = HITTYPE_SECONDARY | HITTYPE_SPLASH | HITTYPE_UNUSED | HITTYPE_ARMORPIERCE | HITTYPE_SOUND | HITTYPE_MAGIC;
 // normal deaths begin
 const int DT_FIRST = BIT(14);
 

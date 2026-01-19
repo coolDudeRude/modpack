@@ -16,7 +16,6 @@ CLASS(EyeOfCthulhu, Monster)
     ATTRIB(EyeOfCthulhu, m_maxs, vector, '32 32 48');
 #ifdef GAMEQC
     ATTRIB(EyeOfCthulhu, m_model, Model, MDL_MON_EOC);
-    ATTRIB(EyeOfCthulhu, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(EyeOfCthulhu, netname, string, "eoc");
     ATTRIB(EyeOfCthulhu, m_name, string, _("Eye Of Cthulhu"));

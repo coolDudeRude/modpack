@@ -232,15 +232,8 @@ void SpearDig(entity this)
 
 void ImpaledGibs(entity this)
 {
-	ThrowHead(this, this, "progs/gib3.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/gib2.mdl", this.health);
-	ThrowGib(this, this, "progs/gib1.mdl", this.health);
-	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
-	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
-	ThrowGib(this, this, "progs/rawbone2.mdl", this.health);
-	if(IS_PLAYER(this))
-		this.impaled = false;
+	this.health = -666; // always gib
+	Killed(this, this, this.enemy, WEP_SPEAR.m_id); // inflictor is long gone by now
 }
 
 void ImpaledExplosion(entity this)
@@ -251,6 +244,7 @@ void ImpaledExplosion(entity this)
 		BecomeBloodSpurt(this, 60);
 		this.enemy.health = this.enemy.health - 60 - random() * 100;
 		setorigin(this, this.origin - 8 * normalize(this.velocity));
+		this.enemy.enemy = this.owner;
 		setthink(this.enemy, ImpaledGibs);
 		this.enemy.nextthink = time;
 		_sound(this.enemy, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);

@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_RAINDEER,           DEATH_SELF_MON_RAINDEER,         
 
 #ifdef GAMEQC
 MODEL(MON_RAINDEER, "progs/xmas/mon_raindeer.mdl");
-MODEL(MON_RAINDEER_HEAD, "progs/xmas/h_raindeer.mdl");
 #endif
 
 CLASS(Raindeer, Monster)
@@ -17,7 +16,6 @@ CLASS(Raindeer, Monster)
     ATTRIB(Raindeer, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Raindeer, m_model, Model, MDL_MON_RAINDEER);
-    ATTRIB(Raindeer, m_model_head, Model, MDL_MON_RAINDEER_HEAD);
 #endif
     ATTRIB(Raindeer, netname, string, "raindeer");
     ATTRIB(Raindeer, m_name, string, _("Raindeer"));

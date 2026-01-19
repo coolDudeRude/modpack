@@ -8,8 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_GUARDIAN,        DEATH_SELF_MON_GUARDIAN,        DEAT
 
 #ifdef GAMEQC
 MODEL(MON_GUARDIAN_AZTEC, "progs/morph_az.mdl");
-MODEL(MON_GUARDIAN_EGYPT, "progs/morph_eg.mdl");
-MODEL(MON_GUARDIAN_GREEK, "progs/morph_gr.mdl");
 #endif
 
 CLASS(Guardian, Monster)

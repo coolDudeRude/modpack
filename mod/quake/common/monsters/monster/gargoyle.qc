@@ -414,18 +414,26 @@ void garg_die(entity this, entity inflictor, entity attacker, int deathtype)
 		garg_fbfinish(this);
 	}
 
-	if(this.health < -70 || dogib)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && dogib)
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_gargoyle.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		if(random() < 0.5)
-			ThrowGib(this, inflictor, "progs/gib_gargwing1.mdl", this.health);
-		if(random() < 0.5)
-			ThrowGib(this, inflictor, "progs/gib_gargwing2.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_gargoyle.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/gib_gargwing1.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/gib_gargwing2.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 	
 	// If not gibbed, then drop to ground
@@ -515,6 +523,7 @@ METHOD(Gargoyle, mr_setup, bool(Gargoyle this, entity actor))
 {
     TC(Gargoyle, this);
 
+	precache_model("progs/h_gargoyle.mdl");
 	precache_model("progs/gib_gargwing1.mdl");
 	precache_model("progs/gib_gargwing2.mdl");
 	precache_model("progs/proj_gargball.mdl");
@@ -541,6 +550,7 @@ METHOD(Gargoyle, mr_setup, bool(Gargoyle this, entity actor))
 		actor.spawnflags &= ~MON_GARGOYLE_PERCH;
 
     actor.health = 120;
+    actor.gibhealth = -70;
 	actor.th_pain = garg_pain; 
 	actor.th_die = garg_die;
 

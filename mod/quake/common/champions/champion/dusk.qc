@@ -151,7 +151,7 @@ METHOD(Dusk, m_clear, void(Dusk this, entity actor))
 
 void Dusk_Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 {
-	if(!IS_MONSTER(targ) || targ.monsterdef == MON_Null || (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY) || targ.charmed)
+	if(!IS_MONSTER(targ) || targ.monsterdef == MON_Null || (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY) || (targ.monsterdef.spawnflags & MON_FLAG_PART) || targ.charmed)
 		return;
 	if(targ.monsterdef == MON_TENTACLE)
 		return; // TODO: "can't be spawned" flag?

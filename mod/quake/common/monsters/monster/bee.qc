@@ -187,13 +187,30 @@ void bee_pain3(entity this) { bee_anim(this, bee_pain4); }
 void bee_pain2(entity this) { bee_anim(this, bee_pain3); }
 void bee_pain1(entity this) { bee_anim(this, bee_pain2); }
 
-void bee_die(entity this, entity inflictor, entity attacker, int deathtype)
+void bee_gib(entity this)
 {
 	_sound(this, CH_VOICE, "bee/death.wav", 1, ATTN_NORM);
 
 	particle(this.origin, '0 0 0', 79, (random() * 40) * 1);
 	particle(this.origin, '0 0 0', 74, (random() * 40) * 5);
 	particle(this.origin, '0 0 0', 69, (random() * 40) * 2);
+}
+
+void bee_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			bee_gib(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	bee_gib(this);
 
 	delete(this);
 }

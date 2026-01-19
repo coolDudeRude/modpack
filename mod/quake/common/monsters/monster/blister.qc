@@ -313,6 +313,21 @@ void sploder_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 	if(getthink(this) == sploder_explode)
 		return;	// already exploding
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.enemy = attacker;
+			setthink(this, sploder_explode);
+			this.nextthink = time + 0.05; // infini-sploder crash fixed
+			return; // handled separately
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.enemy = attacker;
 	setthink(this, sploder_explode);
 	this.nextthink = time + 0.05; // infini-sploder crash fixed

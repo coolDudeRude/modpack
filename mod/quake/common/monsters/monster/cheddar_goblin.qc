@@ -290,20 +290,25 @@ void cheddar_die1(entity this) { set_animofs(this, anim_cheddar_death, 1, chedda
 
 void cheddar_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -40)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_grem.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-
-		for(int j = 0; j < 12; ++j)
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			cheddar_spit(this, 0, true);
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_grem.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+
+			for(int j = 0; j < 12; ++j)
+			{
+				cheddar_spit(this, 0, true);
+			}
+			// fall through to special handling
 		}
-		return;
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -321,6 +326,7 @@ METHOD(CheddarGoblin, mr_setup, bool(CheddarGoblin this, entity actor))
 {
 	TC(CheddarGoblin, this);
 
+	precache_model("progs/h_grem.mdl");
 	precache_model("progs/s_macpool.mdl");
 	precache_model("progs/s_macspit.mdl");
 	precache_model("progs/gib1.mdl");
@@ -337,6 +343,7 @@ METHOD(CheddarGoblin, mr_setup, bool(CheddarGoblin this, entity actor))
 	precache_sound("cheddar_goblin/sight.wav");
 
 	actor.health = 110;
+	actor.gibhealth = -40;
 	actor.th_stand = cheddar_stand1;
 	actor.th_walk = cheddar_walk1;
 	actor.th_run = cheddar_run1;

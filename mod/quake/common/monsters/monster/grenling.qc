@@ -259,18 +259,25 @@ void gren_deathb1(entity this)
 
 void gren_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -40)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CHAN_VOICE, "monsters/grenling/grdie1.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_gren.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CHAN_VOICE, "monsters/grenling/grdie1.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_gren.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	if(random() < 0.5)
 		gren_death1(this);
 	else
@@ -312,6 +319,7 @@ METHOD(Grenling, mr_setup, bool(Grenling this, entity actor))
 {
     TC(Grenling, this);
 
+	precache_model("progs/h_gren.mdl");
 	precache_model("progs/grenbone.mdl");
 	precache_sound("monsters/grenling/grswipe.wav");
 	precache_sound("monsters/grenling/grcut.wav");
@@ -324,7 +332,11 @@ METHOD(Grenling, mr_setup, bool(Grenling this, entity actor))
 	precache_sound("monsters/grenling/grpain1.wav");
 	precache_sound("monsters/grenling/grpain2.wav");
 
+	precache_sound("monsters/grenling/grsight1.wav");
+	precache_sound("monsters/grenling/grsight2.wav");
+
     actor.health = 130;
+    actor.gibhealth = -40;
 	float rand = random() * 6;
 	if(rand < 1)
 		actor.th_stand = gren_stand1;
@@ -351,7 +363,10 @@ METHOD(Grenling, mr_sight, bool(Grenling this, entity actor))
 {
     TC(Grenling, this);
 
-	sound(actor, CH_VOICE, SND_MON_GRENLING_SIGHT_RANDOM(), 1, ATTN_NORM);
+	if(random() > 0.5)
+		_sound(actor, CH_VOICE, "monsters/grenling/grsight1.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "monsters/grenling/grsight2.wav", 1, ATTN_NORM);
 
     return true;
 }

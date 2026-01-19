@@ -542,16 +542,34 @@ void zombie_paine1(entity this)
 	this.solid = SOLID_CORPSE;
 }
 
-void zombie_die(entity this, entity inflictor, entity attacker, int deathtype)
+void zombie_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
 	if(IsQBJ3Map())
-		ThrowHead(this, inflictor, "progs/gibs/gibhead_zombie.mdl", this.health);
+		ThrowGib(this, inflictor, "progs/gibs/gibhead_zombie.mdl", this.health);
 	else
-		ThrowHead(this, inflictor, "progs/h_zombie.mdl", this.health);
+		ThrowGib(this, inflictor, "progs/h_zombie.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+}
+
+void zombie_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			zombie_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	zombie_gib(this, inflictor);
+	delete(this);
 }
 
 /*
@@ -578,7 +596,7 @@ void zombie_pain(entity this, entity attacker, float take, int deathtype)
 	if(attacker.solid == SOLID_BSP || !attacker)
 		return; // if killed by trigger or world, don't reset health
 
-	bool is_parried = (deathtype == DEATH_MONSTER_ZOMBIE.m_id && IS_PLAYER(attacker));
+	bool is_parried = (DEATH_IS(deathtype, DEATH_MONSTER_ZOMBIE) && IS_PLAYER(attacker));
 
 	Weapon death_weapon = DEATH_WEAPONOF(deathtype);
 	if(!(death_weapon.spawnflags & WEP_FLAG_HITUNDEAD) && !is_parried)
@@ -760,6 +778,7 @@ METHOD(Zombie, mr_setup, bool(Zombie this, entity actor))
 {
     TC(Zombie, this);
 
+    precache_model("progs/h_zombie.mdl");
     precache_model("progs/zom_gib.mdl");
 
 	precache_sound("zombie/z_idle.wav");

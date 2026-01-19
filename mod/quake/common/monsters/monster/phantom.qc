@@ -74,9 +74,33 @@ void Phantom_idlesound(entity this)
 	{
 		this.waitmin = time + 2 + (random() * 2);
 		if(random() < 0.5)
-			sound(this, CH_VOICE, SND_MON_PHANTOM_FLAP_RANDOM(), 1, ATTN_NORM);
+		{
+			int r = floor(random() * 6) + 1;
+			switch(r)
+			{
+				default:
+				case 1: _sound(this, CH_VOICE, "phantom/flap1.wav", 1, ATTN_NORM); break;
+				case 2: _sound(this, CH_VOICE, "phantom/flap2.wav", 1, ATTN_NORM); break;
+				case 3: _sound(this, CH_VOICE, "phantom/flap3.wav", 1, ATTN_NORM); break;
+				case 4: _sound(this, CH_VOICE, "phantom/flap4.wav", 1, ATTN_NORM); break;
+				case 5: _sound(this, CH_VOICE, "phantom/flap5.wav", 1, ATTN_NORM); break;
+				case 6: _sound(this, CH_VOICE, "phantom/flap6.wav", 1, ATTN_NORM); break;
+			}
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_PHANTOM_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.2)
+				_sound(this, CH_VOICE, "phantom/idle1.wav", 1, ATTN_NORM);
+			else if(r < 0.4)
+				_sound(this, CH_VOICE, "phantom/idle2.wav", 1, ATTN_NORM);
+			else if(r < 0.6)
+				_sound(this, CH_VOICE, "phantom/idle3.wav", 1, ATTN_NORM);
+			else if(r < 0.8)
+				_sound(this, CH_VOICE, "phantom/idle4.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "phantom/idle5.wav", 1, ATTN_NORM);
+		}
 	}
 }
 
@@ -232,7 +256,26 @@ void phantom_death1(entity this)
 
 void phantom_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	sound(this, CH_VOICE, SND_MON_PHANTOM_DIE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "phantom/death1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "phantom/death2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "phantom/death3.wav", 1, ATTN_NORM);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	phantom_death1(this);
 }
@@ -243,7 +286,13 @@ void phantom_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 	if(this.pain_finished > time)
 		return;
-	sound(this, CHAN_BODY, SND_MON_PHANTOM_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "phantom/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "phantom/hurt2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "phantom/hurt3.wav", 1, ATTN_NORM);
 	phantom_pain1(this);
 	this.pain_finished = time + 0.2;
 }
@@ -258,6 +307,32 @@ METHOD(Phantom, mr_setup, bool(Phantom this, entity actor))
 
 	precache_sound("phantom/bite1.wav");
 	precache_sound("phantom/bite2.wav");
+
+	precache_sound("phantom/swoop1.wav");
+	precache_sound("phantom/swoop2.wav");
+	precache_sound("phantom/swoop3.wav");
+	precache_sound("phantom/swoop4.wav");
+
+	precache_sound("phantom/death1.wav");
+	precache_sound("phantom/death2.wav");
+	precache_sound("phantom/death3.wav");
+
+	precache_sound("phantom/hurt1.wav");
+	precache_sound("phantom/hurt2.wav");
+	precache_sound("phantom/hurt3.wav");
+
+	precache_sound("phantom/idle1.wav");
+	precache_sound("phantom/idle2.wav");
+	precache_sound("phantom/idle3.wav");
+	precache_sound("phantom/idle4.wav");
+	precache_sound("phantom/idle5.wav");
+
+	precache_sound("phantom/flap1.wav");
+	precache_sound("phantom/flap2.wav");
+	precache_sound("phantom/flap3.wav");
+	precache_sound("phantom/flap4.wav");
+	precache_sound("phantom/flap5.wav");
+	precache_sound("phantom/flap6.wav");
 
     actor.health = 70;
 	actor.th_stand = phantom_stand1;
@@ -274,7 +349,15 @@ METHOD(Phantom, mr_sight, bool(Phantom this, entity actor))
 {
     TC(Phantom, this);
 
-	sound(actor, CH_VOICE, SND_MON_PHANTOM_SIGHT_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "phantom/swoop1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "phantom/swoop2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "phantom/swoop3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "phantom/swoop4.wav", 1, ATTN_NORM);
 
     return true;
 }

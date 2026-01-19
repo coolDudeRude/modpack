@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_EDIE,            DEATH_SELF_MON_EDIE,            DEAT
 
 #ifdef GAMEQC
 MODEL(MON_EDIE, "progs/edie.mdl");
-MODEL(MON_EDIE_HEAD, "progs/h_ogre.mdl");
 #endif
 
 CLASS(Edie, Monster)
@@ -17,7 +16,6 @@ CLASS(Edie, Monster)
     ATTRIB(Edie, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Edie, m_model, Model, MDL_MON_EDIE);
-    ATTRIB(Edie, m_model_head, Model, MDL_MON_EDIE_HEAD);
 #endif
     ATTRIB(Edie, netname, string, "edie");
     ATTRIB(Edie, m_name, string, _("Edie"));

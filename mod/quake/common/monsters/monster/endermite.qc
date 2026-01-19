@@ -24,7 +24,15 @@ void endermite_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_ENDERMITE_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "silverfish/say1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "silverfish/say2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "silverfish/say3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "silverfish/say4.wav", 1, ATTN_NORM);
 	}
 }
 
@@ -48,7 +56,15 @@ void endermite_moveframe(entity this)
 	{
 		this.oldorigin = this.origin;
 		this.footstep = time + 0.2 * random();
-		sound(this, CH_VOICE, SND_MON_ENDERMITE_STEP_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "silverfish/step1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "silverfish/step2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "silverfish/step3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "silverfish/step4.wav", 1, ATTN_NORM);
 	}
 
 	endermite_idlesound(this);
@@ -93,7 +109,13 @@ void endermite_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_ENDERMITE_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "silverfish/hit1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "silverfish/hit2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "silverfish/hit4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -121,6 +143,19 @@ void endermite_die(entity this, entity inflictor, entity attacker, int deathtype
 {
 	_sound(this, CH_VOICE, "silverfish/kill.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.angles_z = 0;
 	this.colormod = '1 0.6 0.6';
 	this.glowmod = this.colormod;
@@ -138,6 +173,20 @@ METHOD(Endermite, mr_setup, bool(Endermite this, entity actor))
     TC(Endermite, this);
 
 	precache_sound("silverfish/kill.wav");
+
+	precache_sound("silverfish/say1.wav");
+	precache_sound("silverfish/say2.wav");
+	precache_sound("silverfish/say3.wav");
+	precache_sound("silverfish/say4.wav");
+
+	precache_sound("silverfish/step1.wav");
+	precache_sound("silverfish/step2.wav");
+	precache_sound("silverfish/step3.wav");
+	precache_sound("silverfish/step4.wav");
+
+	precache_sound("silverfish/hit1.wav");
+	precache_sound("silverfish/hit2.wav");
+	precache_sound("silverfish/hit3.wav");
 
 	actor.yaw_speed = 180;
 

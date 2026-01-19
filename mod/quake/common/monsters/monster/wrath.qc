@@ -139,19 +139,21 @@ void wrath_pain(entity this, entity attacker, float damage, int deathtype)
 	_sound(this, CH_VOICE, "wrath/wpain.wav", 1, ATTN_NORM);
 }
 
-void wrath_die15(entity this)
+void wrath_explode(entity this)
 {
-	set_animofs(this, anim_wrath_wrthdt01, 15, wrath_die15);
-
 	ThrowGib(this, this, "progs/wrthgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/wrthgib2.mdl", this.health);
 	ThrowGib(this, this, "progs/wrthgib3.mdl", this.health);
 	T_RadiusDamage(this, this, 80, DEATH_MONSTER_WRATH.m_id, NULL);
 
-	this.origin = this.origin + '0 0 24';
+	te_explosion2(this.origin + '0 0 24', 0, 4);
+}
 
-	te_explosion2(this.origin, 0, 4);
+void wrath_die15(entity this)
+{
+	set_animofs(this, anim_wrath_wrthdt01, 15, wrath_die15);
 
+	wrath_explode(this);
 	delete(this);
 }
 void wrath_die13(entity this) { set_animofs(this, anim_wrath_wrthdt01, 13, wrath_die15); }
@@ -161,11 +163,28 @@ void wrath_die07(entity this) { set_animofs(this, anim_wrath_wrthdt01, 7, wrath_
 void wrath_die05(entity this) { set_animofs(this, anim_wrath_wrthdt01, 5, wrath_die07); }
 void wrath_die04(entity this) { set_animofs(this, anim_wrath_wrthdt01, 4, wrath_die05); }
 void wrath_die03(entity this) { set_animofs(this, anim_wrath_wrthdt01, 3, wrath_die04); }
-void wrath_die02(entity this, entity inflictor, entity attacker, int deathtype)
+void wrath_die02(entity this) { set_animofs(this, anim_wrath_wrthdt01, 2, wrath_die03); }
+
+void wrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	set_animofs(this, anim_wrath_wrthdt01, 2, wrath_die03);
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.solid = SOLID_NOT;
+			setthink(this, wrath_explode);
+			this.nextthink = time;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CH_VOICE, "wrath/wdthc.wav", 1, ATTN_NORM);
-	this.solid = SOLID_NOT; // so players can get away while it explodes!
+	this.solid = SOLID_NOT;
+	setthink(this, wrath_die02);
+	this.nextthink = time;
 }
 
 /*
@@ -304,6 +323,7 @@ METHOD(Wrath, mr_setup, bool(Wrath this, entity actor))
 	precache_sound("wrath/wsee.wav");
 
     actor.health = 400;
+    actor.gibhealth = -100;
 	actor.yaw_speed = 35;
 	
 	actor.th_stand = wrath_stand1;
@@ -311,7 +331,7 @@ METHOD(Wrath, mr_setup, bool(Wrath this, entity actor))
 	actor.th_run = wrath_run01;
 	actor.th_missile = wrath_attack;
 	actor.th_pain = wrath_pain;
-	actor.th_die = wrath_die02;
+	actor.th_die = wrath_die;
 
     return true;
 }

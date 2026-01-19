@@ -18,7 +18,20 @@ void goat_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_GOAT_IDLE_RANDOM(), 1, ATTN_NORM);
+		int r = floor(random() * 9) + 1;
+		switch(r)
+		{
+			default:
+			case 1: _sound(this, CH_VOICE, "goat/scream1.wav", 1, ATTN_NORM); break;
+			case 2: _sound(this, CH_VOICE, "goat/scream2.wav", 1, ATTN_NORM); break;
+			case 3: _sound(this, CH_VOICE, "goat/scream3.wav", 1, ATTN_NORM); break;
+			case 4: _sound(this, CH_VOICE, "goat/scream4.wav", 1, ATTN_NORM); break;
+			case 5: _sound(this, CH_VOICE, "goat/scream5.wav", 1, ATTN_NORM); break;
+			case 6: _sound(this, CH_VOICE, "goat/scream6.wav", 1, ATTN_NORM); break;
+			case 7: _sound(this, CH_VOICE, "goat/scream7.wav", 1, ATTN_NORM); break;
+			case 8: _sound(this, CH_VOICE, "goat/scream8.wav", 1, ATTN_NORM); break;
+			case 9: _sound(this, CH_VOICE, "goat/scream9.wav", 1, ATTN_NORM); break;
+		}
 	}
 }
 
@@ -44,7 +57,17 @@ void goat_moveframe(entity this)
 	{
 		this.oldorigin = this.origin;
 		this.footstep = time + 0.6 * random();
-		sound(this, CH_VOICE, SND_MON_GOAT_STEP_RANDOM(), 1, ATTN_NORM);
+		int r = floor(random() * 6) + 1;
+		switch(r)
+		{
+			default:
+			case 1: _sound(this, CH_VOICE, "goat/step1.wav", 1, ATTN_NORM); break;
+			case 2: _sound(this, CH_VOICE, "goat/step2.wav", 1, ATTN_NORM); break;
+			case 3: _sound(this, CH_VOICE, "goat/step3.wav", 1, ATTN_NORM); break;
+			case 4: _sound(this, CH_VOICE, "goat/step4.wav", 1, ATTN_NORM); break;
+			case 5: _sound(this, CH_VOICE, "goat/step5.wav", 1, ATTN_NORM); break;
+			case 6: _sound(this, CH_VOICE, "goat/step6.wav", 1, ATTN_NORM); break;
+		}
 	}
 
 	goat_idlesound(this);
@@ -182,7 +205,18 @@ void goat_ram1(entity this)
 	}
 
 	ai_face(this);
-	sound(this, CH_VOICE, SND_MON_GOAT_RAM_RANDOM(), 1, ATTN_NORM);
+
+	float r = random();
+	if(r < 0.2)
+		_sound(this, CH_VOICE, "goat/screaming_pre_ram1.wav", 1, ATTN_NORM);
+	else if(r < 0.4)
+		_sound(this, CH_VOICE, "goat/screaming_pre_ram2.wav", 1, ATTN_NORM);
+	else if(r < 0.6)
+		_sound(this, CH_VOICE, "goat/screaming_pre_ram3.wav", 1, ATTN_NORM);
+	else if(r < 0.8)
+		_sound(this, CH_VOICE, "goat/screaming_pre_ram4.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "goat/screaming_pre_ram5.wav", 1, ATTN_NORM);
 }
 
 //===========================================================================
@@ -201,7 +235,13 @@ void goat_pain(entity this, entity attacker, float damage, int deathtype)
 	if(gettouch(this) == goat_ram_touch)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_GOAT_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "goat/screaming_hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "goat/screaming_hurt2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "goat/screaming_hurt3.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
@@ -227,7 +267,26 @@ void goat_die1(entity this) { set_animofs(this, anim_goat_death, 1, goat_die2); 
 
 void goat_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	sound(this, CH_VOICE, SND_MON_GOAT_DEATH_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "goat/screaming_death1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "goat/screaming_death2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "goat/screaming_death3.wav", 1, ATTN_NORM);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
@@ -248,6 +307,37 @@ METHOD(MCGoat, mr_setup, bool(MCGoat this, entity actor))
     precache_sound("goat/jump2.wav");
     precache_sound("player_goat/bonk.wav");
     precache_sound("player_goat/death2.wav");
+
+	precache_sound("goat/scream1.wav");
+	precache_sound("goat/scream2.wav");
+	precache_sound("goat/scream3.wav");
+	precache_sound("goat/scream4.wav");
+	precache_sound("goat/scream5.wav");
+	precache_sound("goat/scream6.wav");
+	precache_sound("goat/scream7.wav");
+	precache_sound("goat/scream8.wav");
+	precache_sound("goat/scream9.wav");
+
+	precache_sound("goat/step1.wav");
+	precache_sound("goat/step2.wav");
+	precache_sound("goat/step3.wav");
+	precache_sound("goat/step4.wav");
+	precache_sound("goat/step5.wav");
+	precache_sound("goat/step6.wav");
+
+	precache_sound("goat/screaming_pre_ram1.wav");
+	precache_sound("goat/screaming_pre_ram2.wav");
+	precache_sound("goat/screaming_pre_ram3.wav");
+	precache_sound("goat/screaming_pre_ram4.wav");
+	precache_sound("goat/screaming_pre_ram5.wav");
+
+	precache_sound("goat/screaming_hurt1.wav");
+	precache_sound("goat/screaming_hurt2.wav");
+	precache_sound("goat/screaming_hurt3.wav");
+
+	precache_sound("goat/screaming_death1.wav");
+	precache_sound("goat/screaming_death2.wav");
+	precache_sound("goat/screaming_death3.wav");
 
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 

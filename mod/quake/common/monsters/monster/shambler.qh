@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SHAMBLER,        DEATH_SELF_MON_SHAMBLER,        DEAT
 
 #ifdef GAMEQC
 MODEL(MON_SHAMBLER, "progs/shambler.mdl");
-MODEL(MON_SHAMBLER_HEAD, "progs/h_shams.mdl");
 #endif
 
 CLASS(Shambler, Monster)
@@ -17,7 +16,6 @@ CLASS(Shambler, Monster)
     ATTRIB(Shambler, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Shambler, m_model, Model, MDL_MON_SHAMBLER);
-    ATTRIB(Shambler, m_model_head, Model, MDL_MON_SHAMBLER_HEAD);
 #endif
     ATTRIB(Shambler, netname, string, "shambler");
     ATTRIB(Shambler, m_name, string, _("Shambler"));

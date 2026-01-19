@@ -767,13 +767,12 @@ void vol_gib(entity this, entity inflictor)
 	//WriteVector(channel, inflictor.origin);
 	WriteShort(channel, compressShortVector(normalize(this.origin - inflictor.origin)));
 	WriteShort(channel, compressShortVector(inflictor.velocity));
-
-	delete(this);
 }
 
 void vol_gibthink(entity this)
 {
 	vol_gib(this, this);
+	delete(this);
 }
 
 void vol_death26(entity this) { set_animofs(this, anim_volkerh_death, 26, vol_gibthink); }
@@ -810,11 +809,18 @@ void vol_death1(entity this) { set_animofs(this, anim_volkerh_death, 1, vol_deat
 
 void vol_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		vol_gib(this, inflictor);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			vol_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	vol_death1(this);
 }
 
@@ -851,6 +857,7 @@ METHOD(Volkerh, mr_setup, bool(Volkerh this, entity actor))
 	precache_sound("volkerh/voldie.wav");
 
     actor.health = 3000;
+    actor.gibhealth = -150;
     if(horde_ent || actor.charmed)
     	actor.scale = 0.2;
     else

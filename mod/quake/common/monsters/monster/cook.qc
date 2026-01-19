@@ -209,7 +209,16 @@ void cook_wins(entity this)
 	this.goalentity = NULL;
 	this.cook_target = NULL;
 	this.walkframe = 0;
-	sound(this, CH_WEAPON_SINGLE, SND_MON_COOK_WIN_RANDOM(), 1, ATTN_IDLE);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "cook/daddy.wav", 1, ATTN_IDLE);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "cook/cannot.wav", 1, ATTN_IDLE);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "cook/mademe.wav", 1, ATTN_IDLE);
+	else
+		_sound(this, CH_VOICE, "cook/pity01.wav", 1, ATTN_IDLE);
+
 	cook_stand(this);
 }
 
@@ -478,16 +487,23 @@ void cook_die(entity this, entity inflictor, entity attacker, int deathtype)
 	Inventory_new(this);
 	Inventory_add(WEP_PAN, this, ITEM_OWNED);
 	DropBackpack(this);
-	
-	if(this.health < -80)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_ogre.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_ogre.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	_sound(this, CH_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
 	set_anim(this, 71, cook_die2);
 	this.solid = SOLID_NOT;
@@ -710,6 +726,7 @@ METHOD(Cook, mr_setup, bool(Cook this, entity actor))
 	actor.aflag = 0;
 
     actor.health = 280;
+    actor.gibhealth = -80;
     actor.th_stand = cook_control1;
 	actor.th_walk = cook_nowalk;
 	actor.th_run = cook_run1;

@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_MINOTAUR,        DEATH_SELF_MON_MINOTAUR,        DEAT
 
 #ifdef GAMEQC
 MODEL(MON_MINOTAUR, "progs/mon_minotaur.mdl");
-MODEL(MON_MINOTAUR_HEAD, "progs/h_minotaur.mdl");
 #endif
 
 CLASS(Minotaur, Monster)
@@ -17,7 +16,6 @@ CLASS(Minotaur, Monster)
     ATTRIB(Minotaur, m_maxs, vector, '24 24 48');
 #ifdef GAMEQC
     ATTRIB(Minotaur, m_model, Model, MDL_MON_MINOTAUR);
-    ATTRIB(Minotaur, m_model_head, Model, MDL_MON_MINOTAUR_HEAD);
 #endif
     ATTRIB(Minotaur, netname, string, "minotaur");
     ATTRIB(Minotaur, m_name, string, _("Minotaur"));

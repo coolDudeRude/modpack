@@ -22,6 +22,11 @@ const int SPAWN_TRIGGERED = 16; // copper junk
 
 .float enemy_reveal_time;
 
+// places the monster in the world, be sure to do any setup on the entity before calling it
+entity spawnmonster(entity monster, vector spawnpos, vector ang, Monster mon);
+
+void monster_charm(entity this, entity actor, bool docharm);
+
 void monster_use(entity this, entity actor, entity trigger);
 
 bool monster_checkspawnedflag(entity this);
@@ -32,4 +37,9 @@ void monster_start_go(entity this);
 
 void monster_setup(entity this, Monster mon);
 
-void monster_start(entity this, bool check_appear, Monster mon);
+bool monster_start(entity this, bool check_appear, Monster mon);
+
+// multi-part boss controller
+void controller_think(entity this);
+
+entity controller_create(entity controller, entity monster, Monster mon);

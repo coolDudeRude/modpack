@@ -509,18 +509,29 @@ void legond_die1(entity this)
 
 void legond_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		Legond_NextLevel(this);
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default:
+		{
+			Legond_NextLevel(this);
+			Death_SpecialHandle(this, killed_type);
+			return;
+		}
 	}
+
 	legond_die1(this);
 }
 
@@ -547,6 +558,7 @@ METHOD(Legond, mr_setup, bool(Legond this, entity actor))
 	precache_sound("monsters/legond/legond.wav");
 
     actor.health = 2000;
+    actor.gibhealth = -150;
 	actor.th_stand = legond_stand1;
 	actor.th_walk = legond_walk1;
 	actor.th_run = legond_run1;

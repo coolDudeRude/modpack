@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_GUG,        DEATH_SELF_MON_GUG,        DEATH_MURDER_M
 
 #ifdef GAMEQC
 MODEL(MON_GUG, "progs/gug.mdl");
-MODEL(MON_GUG_HEAD, "progs/gib1.mdl");
 #endif
 
 CLASS(Gug, Monster)
@@ -17,7 +16,6 @@ CLASS(Gug, Monster)
     ATTRIB(Gug, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Gug, m_model, Model, MDL_MON_GUG);
-    ATTRIB(Gug, m_model_head, Model, MDL_MON_GUG_HEAD);
 #endif
     ATTRIB(Gug, netname, string, "gug");
     ATTRIB(Gug, m_name, string, _("Gug"));

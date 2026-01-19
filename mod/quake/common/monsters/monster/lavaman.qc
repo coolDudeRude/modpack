@@ -280,7 +280,7 @@ void lavaman_death9(entity this)
 {
 	set_animofs(this, anim_lavaman_death1, 9, lavaman_death10);
 
-	_sound(this, CH_PLAYER, "boss1/out1.wav", 1, ATTN_NORM);
+	_sound(this, CH_VOICE, "boss1/out1.wav", 1, ATTN_NORM);
 	te_lavasplash(this.origin);
 }
 void lavaman_death8(entity this) { set_animofs(this, anim_lavaman_death1, 8, lavaman_death9); }
@@ -290,7 +290,30 @@ void lavaman_death5(entity this) { set_animofs(this, anim_lavaman_death1, 5, lav
 void lavaman_death4(entity this) { set_animofs(this, anim_lavaman_death1, 4, lavaman_death5); }
 void lavaman_death3(entity this) { set_animofs(this, anim_lavaman_death1, 3, lavaman_death4); }
 void lavaman_death2(entity this) { set_animofs(this, anim_lavaman_death1, 2, lavaman_death3); }
-void lavaman_death1(entity this, entity inflictor, entity attacker, int deathtype) { set_animofs(this, anim_lavaman_death1, 1, lavaman_death2); _sound(this, CH_VOICE, "boss1/death.wav", 1, ATTN_NORM); this.solid = SOLID_NOT; }
+void lavaman_death1(entity this) { set_animofs(this, anim_lavaman_death1, 1, lavaman_death2); }
+
+void lavaman_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			// steam eruption!
+			_sound(this, CH_VOICE, "boss1/out1.wav", 1, ATTN_NORM);
+			te_lavasplash(this.origin);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	_sound(this, CH_VOICE, "boss1/death.wav", 1, ATTN_NORM);
+	this.solid = SOLID_NOT;
+
+	setthink(this, lavaman_death1);
+	this.nextthink = time;
+}
 
 void lavaman_touch(entity this, entity toucher)
 {
@@ -404,7 +427,7 @@ void lavaman_awake(entity this)
 	this.th_run = lavaman_walk1;
 	this.th_missile = lavaman_fire1;
 	this.th_pain = lavaman_pain;
-	this.th_die = lavaman_death1;
+	this.th_die = lavaman_die;
 	this.th_melee = lavaman_fire1;
 
 	te_lavasplash(this.origin);

@@ -1055,6 +1055,19 @@ void iceg_die(entity this, entity inflictor, entity attacker, int deathtype)
 	this.effects = 0;			// Remove effects on death
 	this.style = ICEG_PHASE4;	// Heavy Water
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			// steam eruption!
+			Send_Effect(EFFECT_SMOKE_LARGE, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CHAN_BODY, "golem/death.wav", 1, ATTN_NORM);
 	this.solid = SOLID_NOT;
 	iceg_death1(this);

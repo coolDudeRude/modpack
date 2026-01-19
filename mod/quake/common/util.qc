@@ -5,6 +5,43 @@
 #endif
 
 #ifdef GAMEQC
+string getworldbasename()
+{
+#ifdef SVQC
+	return cvar_string("sv_worldbasename");
+#else
+	return cvar_string("cl_worldbasename");
+#endif
+}
+// a hack needed for map-specific content
+// caching due reduce substring calls
+bool is_qbj3map = false;
+bool is_roguemap = false;
+STATIC_INIT(MapSpecific)
+{
+	string wname = substring(world.model, 0, 10);
+	if(wname == "maps/qbj3_" || wname == "maps/qbjr_")
+		is_qbj3map = true;
+	if(substring(world.model, 0, 7) == "maps/r1" || substring(world.model, 0, 7) == "maps/r2" || substring(world.model, 0, 10) == "maps/banjo" || world.model == "maps/e2m8.bsp")
+		is_roguemap = true;
+}
+
+bool IsRogueMap()
+{
+	//string wname = substring(world.model, 0, 7);
+	//return (wname == "maps/r1" || wname == "maps/r2" || substring(world.model, 0, 10) == "maps/banjo" || world.model == "maps/e2m8.bsp");
+	return is_roguemap;
+}
+
+bool IsQBJ3Map()
+{
+	//string wname = substring(world.model, 0, 10);
+	//return (wname == "maps/qbj3_" || wname == "maps/qbjr_");
+	return is_qbj3map;
+}
+#endif
+
+#ifdef GAMEQC
 /*
 ==================
 findbetterlocation

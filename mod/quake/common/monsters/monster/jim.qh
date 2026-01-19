@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_JIM,           DEATH_SELF_MON_JIM,           DEATH_MU
 
 #ifdef GAMEQC
 MODEL(MON_JIM, "progs/mon_jim.mdl");
-MODEL(MON_JIM2, "progs/mon_jimrock.mdl");
 #endif
 
 CLASS(Jim, Monster)

@@ -15,9 +15,29 @@ void breeze_idlesound(entity this)
 	{
 		this.idle_finished = time + 2;
 		if(!IS_ONGROUND(this))
-			sound(this, CH_VOICE, SND_MON_BREEZE_IDLE_AIR_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "breeze/idle_air1.wav", 1, ATTN_NORM);
+			else if(r < 0.50)
+				_sound(this, CH_VOICE, "breeze/idle_air2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "breeze/idle_air3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "breeze/idle_air4.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_BREEZE_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "breeze/idle1.wav", 1, ATTN_NORM);
+			else if(r < 0.50)
+				_sound(this, CH_VOICE, "breeze/idle2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "breeze/idle3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "breeze/idle4.wav", 1, ATTN_NORM);
+		}
 	}
 }
 
@@ -43,7 +63,14 @@ void breeze_gust_touch(entity this, entity toucher)
 		return;
 	}
 
-	sound(this, CH_VOICE, SND_MON_BREEZE_EXPLODE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "breeze/wind_burst1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "breeze/wind_burst2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "breeze/wind_burst3.wav", 1, ATTN_NORM);
+
 	Send_Effect(EFFECT_EXPLOSION_MEDIUM, this.origin, '0 0 0', 1);
 	// NOTE: super high damage is reduced in the main function
 	T_RadiusDamage(this, this, 500, DEATH_MONSTER_BREEZE.m_id, this);
@@ -125,7 +152,14 @@ void breeze_shoot(entity this)
 		return;
 	}
 
-	sound(this, CH_WEAPON_SINGLE, SND_MON_BREEZE_CHARGE_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_WEAPON_SINGLE, "breeze/charge1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_WEAPON_SINGLE, "breeze/charge2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_WEAPON_SINGLE, "breeze/charge3.wav", 1, ATTN_NORM);
+
 	breeze_shoot1(this);
 }
 
@@ -143,12 +177,19 @@ void breeze_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_BREEZE_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "breeze/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "breeze/hurt2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "breeze/hurt3.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 0.5;
 	this.colormod = '1 0.9 0.9';
 
-	breeze_pain1(this);
+	setthink(this, breeze_pain1);
+	this.nextthink = time;
 }
 
 /*
@@ -240,6 +281,31 @@ void breeze_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "breeze/death2.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default:
+		{
+			entity body = this.breeze_body;
+			this.breeze_body = NULL;
+			Death_SpecialHandle(this, killed_type);
+			if(body)
+			{
+				// unattach the body so we have an actual location for effects
+				setattachment(body, NULL, "");
+				setorigin(body, this.origin);
+				Death_SpecialHandle(body, killed_type);
+			}
+			return;
+		}
+	}
+
 	this.colormod = '1 0.6 0.6';
 	breeze_die1(this);
 }
@@ -272,7 +338,7 @@ void breeze_body_create(entity this)
 	body.classname = "breeze_body";
 	body.owner = this;
 	body.solid = SOLID_NOT; // main monster handles hitbox
-	setmodel(body, MDL_MON_BREEZE_BODY);
+	_setmodel(body, "progs/breeze_body.mdl");
 	setsize(body, '0 0 0', '0 0 0');
 	set_movetype(body, MOVETYPE_NONE);
 	setattachment(body, this, "");
@@ -307,6 +373,8 @@ METHOD(Breeze, mr_setup, bool(Breeze this, entity actor))
 {
     TC(Breeze, this);
 
+   	precache_model("progs/breeze_body.mdl");
+
 	precache_sound("breeze/death1.wav");
 	precache_sound("breeze/death2.wav");
 	precache_sound("breeze/shoot.wav");
@@ -314,6 +382,28 @@ METHOD(Breeze, mr_setup, bool(Breeze this, entity actor))
 	precache_sound("breeze/jump2.wav");
 	precache_sound("breeze/inhale1.wav");
 	precache_sound("breeze/inhale2.wav");
+
+	precache_sound("breeze/idle_air1.wav");
+	precache_sound("breeze/idle_air2.wav");
+	precache_sound("breeze/idle_air3.wav");
+	precache_sound("breeze/idle_air4.wav");
+
+	precache_sound("breeze/idle1.wav");
+	precache_sound("breeze/idle2.wav");
+	precache_sound("breeze/idle3.wav");
+	precache_sound("breeze/idle4.wav");
+
+	precache_sound("breeze/charge1.wav");
+	precache_sound("breeze/charge2.wav");
+	precache_sound("breeze/charge3.wav");
+
+	precache_sound("breeze/wind_burst1.wav");
+	precache_sound("breeze/wind_burst2.wav");
+	precache_sound("breeze/wind_burst3.wav");
+
+	precache_sound("breeze/hurt1.wav");
+	precache_sound("breeze/hurt2.wav");
+	precache_sound("breeze/hurt3.wav");
 
 	precache_model("progs/v_spike.mdl");
 

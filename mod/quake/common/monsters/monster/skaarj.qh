@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SKAARJ,           DEATH_SELF_MON_SKAARJ,           DE
 
 #ifdef GAMEQC
 MODEL(MON_SKAARJ, "progs/skaarj.mdl");
-MODEL(MON_SKAARJ_HEAD, "progs/gib3.mdl");
 #endif
 
 CLASS(Skaarj, Monster)
@@ -17,7 +16,6 @@ CLASS(Skaarj, Monster)
     ATTRIB(Skaarj, m_maxs, vector, '16 16 26');
 #ifdef GAMEQC
     ATTRIB(Skaarj, m_model, Model, MDL_MON_SKAARJ);
-    ATTRIB(Skaarj, m_model_head, Model, MDL_MON_SKAARJ_HEAD);
 #endif
     ATTRIB(Skaarj, netname, string, "skaarj");
     ATTRIB(Skaarj, m_name, string, _("Skaarj"));

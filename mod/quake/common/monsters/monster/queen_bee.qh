@@ -16,7 +16,6 @@ CLASS(QueenBee, Monster)
     ATTRIB(QueenBee, m_maxs, vector, '26 26 60');
 #ifdef GAMEQC
     ATTRIB(QueenBee, m_model, Model, MDL_MON_QUEEN_BEE);
-    ATTRIB(QueenBee, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(QueenBee, netname, string, "queen_bee");
     ATTRIB(QueenBee, m_name, string, _("Queen Bee"));

@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SKULLWIZARD,           DEATH_SELF_MON_SKULLWIZARD,   
 
 #ifdef GAMEQC
 MODEL(MON_SKULLWIZARD, "progs/mon_skullwiz.mdl");
-MODEL(MON_SKULLWIZARD_HEAD, "progs/h_skullwiz.mdl");
 #endif
 
 CLASS(SkullWizard, Monster)
@@ -17,7 +16,6 @@ CLASS(SkullWizard, Monster)
     ATTRIB(SkullWizard, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(SkullWizard, m_model, Model, MDL_MON_SKULLWIZARD);
-    ATTRIB(SkullWizard, m_model_head, Model, MDL_MON_SKULLWIZARD_HEAD);
 #endif
     ATTRIB(SkullWizard, netname, string, "skullwiz");
     ATTRIB(SkullWizard, m_name, string, _("Skull Wizard"));

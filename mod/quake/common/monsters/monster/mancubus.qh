@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_MANCUBUS,            DEATH_SELF_MON_MANCUBUS,        
 
 #ifdef GAMEQC
 MODEL(MON_MANCUBUS, "progs/mon_mancubus.mdl");
-MODEL(MON_MANCUBUS_HEAD, "progs/h_mancubus.mdl");
 #endif
 
 CLASS(Mancubus, Monster)
@@ -17,7 +16,6 @@ CLASS(Mancubus, Monster)
     ATTRIB(Mancubus, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Mancubus, m_model, Model, MDL_MON_MANCUBUS);
-    ATTRIB(Mancubus, m_model_head, Model, MDL_MON_MANCUBUS_HEAD);
 #endif
     ATTRIB(Mancubus, netname, string, "mancubus");
     ATTRIB(Mancubus, m_name, string, _("Mancubus"));

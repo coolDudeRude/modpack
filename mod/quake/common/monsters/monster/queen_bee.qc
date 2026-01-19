@@ -187,7 +187,7 @@ void QueenBeeFireBaby(entity this)
 	vector org = CENTER_OR_VIEWOFS(this) + v_forward * 64 + v_up * -48;
 	this.qb_summonflag = find_minionspace(org);
 	
-	// If the spawn locaiton all clear, spawn something!
+	// If the spawn location all clear, spawn something!
 	if(this.qb_summonflag)
 	{
 		_sound(this, CH_VOICE, "queen_bee/stinger_attack.wav", 1, ATTN_BOSS);
@@ -255,7 +255,6 @@ void qb_pain(entity this, entity attacker, float damage, int deathtype)
 void gib_qb(entity this)
 {
 	_sound(this, CH_VOICE, "queen_bee/death.wav", 1, ATTN_BOSS);
-	settouch(this, func_null);
 
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/gib1.mdl", this.health);
@@ -269,12 +268,25 @@ void gib_qb(entity this)
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 	ThrowGib(this, this, "progs/gib3.mdl", this.health);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
 void qb_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_qb(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	gib_qb(this);
+	delete(this);
 }
 
 spawnfunc(monster_queen_bee) { monster_start(this, true, MON_QUEEN_BEE); }

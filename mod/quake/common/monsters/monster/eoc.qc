@@ -273,7 +273,7 @@ void EOCFireBaby(entity this)
 	vector org = CENTER_OR_VIEWOFS(this) + v_forward * 64;
 	this.eoc_summonflag = find_minionspace(org);
 	
-	// If the spawn locaiton all clear, spawn something!
+	// If the spawn location all clear, spawn something!
 	if(this.eoc_summonflag)
 	{
 		_sound(this, CH_VOICE, "eoc/spit.wav", 1, ATTN_NORM);
@@ -321,12 +321,25 @@ void gib_eoc(entity this)
 	WriteVector(channel, this.origin);
 	WriteFloat(channel, this.health);
 
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
 void eoc_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_eoc(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	gib_eoc(this);
+	delete(this);
 }
 
 spawnfunc(monster_eoc) { monster_start(this, true, MON_EOC); }

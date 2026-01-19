@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_FURY_KNIGHT,           DEATH_SELF_MON_FURY_KNIGHT,   
 
 #ifdef GAMEQC
 MODEL(MON_FURY_KNIGHT, "progs/mon_dfury.mdl");
-MODEL(MON_FURY_KNIGHT_HEAD, "progs/h_dfury.mdl");
 #endif
 
 CLASS(FuryKnight, Monster)
@@ -17,7 +16,6 @@ CLASS(FuryKnight, Monster)
     ATTRIB(FuryKnight, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(FuryKnight, m_model, Model, MDL_MON_FURY_KNIGHT);
-    ATTRIB(FuryKnight, m_model_head, Model, MDL_MON_FURY_KNIGHT_HEAD);
 #endif
     ATTRIB(FuryKnight, netname, string, "dfury");
     ATTRIB(FuryKnight, m_name, string, _("Fury Knight"));

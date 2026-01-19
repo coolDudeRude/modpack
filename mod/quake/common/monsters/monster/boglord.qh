@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_BOGLORD,        DEATH_SELF_MON_BOGLORD,        DEATH_
 
 #ifdef GAMEQC
 MODEL(MON_BOGLORD, "progs/mon_bossboglord.mdl");
-MODEL(MON_BOGLORD_HEAD, "progs/h_boglord.mdl");
 #endif
 
 CLASS(BogLord, Monster)
@@ -17,7 +16,6 @@ CLASS(BogLord, Monster)
     ATTRIB(BogLord, m_maxs, vector, '32 32 80');
 #ifdef GAMEQC
     ATTRIB(BogLord, m_model, Model, MDL_MON_BOGLORD);
-    ATTRIB(BogLord, m_model_head, Model, MDL_MON_BOGLORD_HEAD);
 #endif
     ATTRIB(BogLord, netname, string, "boglord");
     ATTRIB(BogLord, m_name, string, _("Bog Lord"));

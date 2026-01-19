@@ -8,13 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_ZERSTORER,           DEATH_SELF_MON_ZERSTORER,       
 
 #ifdef GAMEQC
 MODEL(MON_ZERSTORER, "progs/zer.mdl");
-MODEL(MON_ZERSTORER_HEAD, "progs/h_zer.mdl");
-
-SOUND(MON_ZERSTORER_SIGHT1, "zer/sight1");
-SOUND(MON_ZERSTORER_SIGHT2, "zer/sight2");
-Sound SND_MON_ZERSTORER_SIGHT_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_ZERSTORER_SIGHT1.m_id + floor(prandom() * 2));
-}
 #endif
 
 CLASS(Zerstorer, Monster)
@@ -23,7 +16,6 @@ CLASS(Zerstorer, Monster)
     ATTRIB(Zerstorer, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Zerstorer, m_model, Model, MDL_MON_ZERSTORER);
-    ATTRIB(Zerstorer, m_model_head, Model, MDL_MON_ZERSTORER_HEAD);
 #endif
     ATTRIB(Zerstorer, netname, string, "zerstorer");
     ATTRIB(Zerstorer, m_name, string, _("Zerstorer"));

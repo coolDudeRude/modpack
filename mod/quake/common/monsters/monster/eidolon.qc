@@ -841,7 +841,11 @@ void eidolon_die2(entity this)
 		if(this.lip == 26)
 			_sound(this, CH_VOICE, "eidolon/implode_death.wav", 1, ATTN_NONE);
 		if(this.lip > 40)
+		{
 			eidolon_explode(this);
+			delete(this);
+			return;
+		}
 	}
 }
 
@@ -859,10 +863,16 @@ void eidolon_die(entity this, entity inflictor, entity attacker, int deathtype)
 	eidolon_finish_attachment(this);	// Remove any attachments
 	eidolon_remove_attachment(this);
 
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		eidolon_explode(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			eidolon_explode(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	_sound(this, CH_VOICE, "eidolon/death.wav", 1, ATTN_NORM);
@@ -1122,6 +1132,7 @@ METHOD(Eidolon, mr_setup, bool(Eidolon this, entity actor))
 	precache_sound("eidolon/idle1.wav");
 	precache_sound("eidolon/idle2.wav");
 	precache_sound("eidolon/pain.wav");
+	precache_sound("eidolon/sight.wav");
 
 	// Final death sequence
 	precache_sound("eidolon/death.wav");
@@ -1164,6 +1175,7 @@ METHOD(Eidolon, mr_setup, bool(Eidolon this, entity actor))
 	//actor.pain_finished = time + 999999;
 
     actor.health = 50000;
+    actor.gibhealth = -150;
 
 	eidolon_start(actor);
 

@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_EEL,             DEATH_SELF_MON_EEL,             DEAT
 
 #ifdef GAMEQC
 MODEL(MON_EEL, "progs/eel2.mdl");
-MODEL(MON_EEL_HEAD, "progs/eelgib.mdl");
 #endif
 
 CLASS(Eel, Monster)
@@ -17,7 +16,6 @@ CLASS(Eel, Monster)
     ATTRIB(Eel, m_maxs, vector, VEC_HULL_MAX);
 #ifdef GAMEQC
     ATTRIB(Eel, m_model, Model, MDL_MON_EEL);
-    ATTRIB(Eel, m_model_head, Model, MDL_MON_EEL_HEAD);
 #endif
     ATTRIB(Eel, netname, string, "eel");
     ATTRIB(Eel, m_name, string, _("Eel"));

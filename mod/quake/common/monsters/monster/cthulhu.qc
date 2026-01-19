@@ -534,7 +534,15 @@ void cth_pain(entity this, entity attacker, float damage, int deathtype)
 			_sound(this, CH_VOICE, "zoidberg/pain3.wav", 1, ATTN_CTHULHU);
 	}
 	else
-		sound(this, CH_VOICE, SND_MON_CTHULHU_PAIN_RANDOM(), 1, ATTN_CTHULHU);
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "cthulhu/pain1.wav", 1, ATTN_CTHULHU);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "cthulhu/pain2.wav", 1, ATTN_CTHULHU);
+		else
+			_sound(this, CH_VOICE, "cthulhu/pain3.wav", 1, ATTN_CTHULHU);
+	}
 
 	if(random() < 0.5)
 		setthink(this, cth_paina1);
@@ -575,12 +583,12 @@ void cth_gib(entity this, entity inflictor)
 		}
 		posz += 64;
 	}
-	delete(this);
 }
 
 void cth_gibthink(entity this)
 {
 	cth_gib(this, this);
+	delete(this);
 }
 
 void cth_fadethink(entity this)
@@ -629,10 +637,16 @@ void cth_death1(entity this) { set_animofs(this, anim_cthulhu_death, 1, cth_deat
 
 void cth_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		cth_gib(this, inflictor);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			cth_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	if(this.spawnflags & MON_CTHULHU_ZOID)
@@ -646,7 +660,15 @@ void cth_die(entity this, entity inflictor, entity attacker, int deathtype)
 			_sound(this, CH_VOICE, "zoidberg/die3.wav", 1, ATTN_CTHULHU);
 	}
 	else
-		sound(this, CH_VOICE, SND_MON_CTHULHU_DEATH_RANDOM(), 1, ATTN_CTHULHU);
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "cthulhu/die1.wav", 1, ATTN_CTHULHU);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "cthulhu/die2.wav", 1, ATTN_CTHULHU);
+		else
+			_sound(this, CH_VOICE, "cthulhu/die3.wav", 1, ATTN_CTHULHU);
+	}
 	cth_death1(this);
 }
 
@@ -656,12 +678,8 @@ void cth_wakeframe(entity this)
 	this.frame = this.walkframe;
 	if(this.walkframe >= 43)
 	{
-		if(this.enemy)
-			cth_run1(this);
-		else if(this.movetarget)
-			cth_walk1(this);
-		else
-			cth_stand1(this);
+		setthink(this, monster_start_go);
+		this.nextthink = time + 0.1;
 		return;
 	}
 	if(this.walkframe == anim_cthulhu_roar + 4)
@@ -684,7 +702,13 @@ void cth_wake(entity this, entity actor, entity trigger)
 	}
 	else
 	{
-		sound(this, CH_VOICE, SND_MON_CTHULHU_SIGHT_RANDOM(), 1, ATTN_CTHULHU);
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "cthulhu/alert1.wav", 1, ATTN_CTHULHU);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "cthulhu/alert2.wav", 1, ATTN_CTHULHU);
+		else
+			_sound(this, CH_VOICE, "cthulhu/alert3.wav", 1, ATTN_CTHULHU);
 	}
 	this.cthtaunt_timer = time + 10;
 	this.enemy = actor;
@@ -721,6 +745,18 @@ METHOD(Cthulhu, mr_setup, bool(Cthulhu this, entity actor))
 	precache_sound("cthulhu/laser.wav");
 	precache_sound("cthulhu/tentacle_impact.wav");
 
+	precache_sound("cthulhu/alert1.wav");
+	precache_sound("cthulhu/alert2.wav");
+	precache_sound("cthulhu/alert3.wav");
+
+	precache_sound("cthulhu/pain1.wav");
+	precache_sound("cthulhu/pain2.wav");
+	precache_sound("cthulhu/pain3.wav");
+
+	precache_sound("cthulhu/die1.wav");
+	precache_sound("cthulhu/die2.wav");
+	precache_sound("cthulhu/die3.wav");
+
 	if(random() < 0.15)
 		actor.spawnflags |= MON_CTHULHU_ZOID;
 	actor.skin = 0;
@@ -746,6 +782,7 @@ METHOD(Cthulhu, mr_setup, bool(Cthulhu this, entity actor))
 	}
 
 	actor.health = 4000;
+	actor.gibhealth = -150;
 	if(horde_ent || actor.charmed)
 		actor.scale = 0.5;
 	else if(!actor.scale)
@@ -796,7 +833,15 @@ METHOD(Cthulhu, mr_sight, bool(Cthulhu this, entity actor))
 			_sound(actor, CH_VOICE, "zoidberg/alert3.wav", 1, ATTN_CTHULHU);
 	}
 	else
-		sound(actor, CH_VOICE, SND_MON_CTHULHU_SIGHT_RANDOM(), 1, ATTN_CTHULHU);
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(actor, CH_VOICE, "cthulhu/alert1.wav", 1, ATTN_CTHULHU);
+		else if(r < 0.66)
+			_sound(actor, CH_VOICE, "cthulhu/alert2.wav", 1, ATTN_CTHULHU);
+		else
+			_sound(actor, CH_VOICE, "cthulhu/alert3.wav", 1, ATTN_CTHULHU);
+	}
 
 	actor.cthtaunt_timer = time + 10;
 

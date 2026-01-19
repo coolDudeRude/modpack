@@ -16,7 +16,6 @@ CLASS(MourningWood, Monster)
     ATTRIB(MourningWood, m_maxs, vector, '32 32 48');
 #ifdef GAMEQC
     ATTRIB(MourningWood, m_model, Model, MDL_MON_MOURNING_WOOD);
-    ATTRIB(MourningWood, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(MourningWood, netname, string, "mourning_wood");
     ATTRIB(MourningWood, m_name, string, _("Mourning Wood"));

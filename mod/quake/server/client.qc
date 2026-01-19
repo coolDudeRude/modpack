@@ -551,9 +551,8 @@ string get_playermodel(entity this)
 
 string get_playerhead(entity this)
 {
-	if(STAT(SKATING, this))
-		return "progs/h_player.mdl";
-	else if(STAT(SLIDE_ON, this))
+	// kickflip and slide use ranger variants
+	if(STAT(SKATING, this) || STAT(SLIDE_ON, this))
 		return "progs/h_player.mdl";
 	if(this.m_champion)
 		return this.m_champion.m_model_head.model_str();
@@ -1278,7 +1277,7 @@ void set_suicide_frame(entity this);
 // respawned elsewhere
 void CopyToBodyQueue(entity ent)
 {
-	if(ent.model == "")
+	if(ent.model == "" || (ent.effects & EF_NODRAW) || ent.alpha < 0)
 		return;
 
 	entity body = new(bodyqueue);
@@ -1571,7 +1570,7 @@ entity SelectSpawnPoint(entity this, bool forceSpawn)
 			spot = find(spot, classname, "info_player_deathmatch");                
 		}
 
-		totalspots = totalspots - 1;
+		totalspots -= 1;
 
 		// on small maps with few spawn points, our "ideal" spawn conditions may not be possible to meet
 		// so fallback to just trying to pick a point without a player on top of it, so we don't start
@@ -1893,6 +1892,7 @@ void PutPlayerInServer(entity this)
 	this.spectating = false;
 	this.classname = STR_PLAYER;
 	this.health = 100;
+	this.gibhealth = -40;
 	this.takedamage = DAMAGE_AIM;
 	this.solid = SOLID_SLIDEBOX;
 	set_movetype(this, MOVETYPE_WALK);
@@ -3804,6 +3804,7 @@ bool ping_waypointsprite_visible_for_player(entity this, entity player, entity v
 	return (this.realowner == player);
 }
 
+.int monsters_cycle;
 int Say(entity source, int teamsay, entity privatesay, string msgin, bool floodcontrol);
 void NoclipCheat(entity this);
 void GodCheat(entity this);
@@ -4015,8 +4016,15 @@ void SV_ParseClientCommand(entity this, string command)
 		if(argv(1) == "list")
 		{
 			string monlist = "";
+			bool want_boss = (argv(2) == "boss");
 			FOREACH(Monsters, it != MON_Null,
 			{
+				if(want_boss)
+				{
+					bool is_boss = (((it.spawnflags & MONSTER_TYPE_BOSS) && !(it.spawnflags & MON_FLAG_PART)) || (it.spawnflags & MONSTER_TYPE_CONTROLLER));
+					if(!is_boss)
+						continue;
+				}
 				monlist = cons(monlist, it.netname);
 			});
 
@@ -4031,23 +4039,40 @@ void SV_ParseClientCommand(entity this, string command)
 		if(arg == "randomboss")
 		{
 			RandomSelection_Init();
-			FOREACH(Monsters, it.spawnflags & MONSTER_TYPE_BOSS,
+			FOREACH(Monsters, ((it.spawnflags & MONSTER_TYPE_BOSS) || (it.spawnflags & MONSTER_TYPE_CONTROLLER)) && !(it.spawnflags & MON_FLAG_PART),
 			{
 				RandomSelection_AddEnt(it, 1, 1);
 			});
 			mon = RandomSelection_chosen_ent;
 		}
-		else if(arg != "")
+		else if(arg == "cycle")
 		{
-			FOREACH(Monsters, it.netname == arg,
+			if(argv(2) == "reset")
 			{
-				mon = it;
-				break;
-			});
+				this.monsters_cycle = 0;
+				sprint(this, "Resetting cycle to the beginning\n");
+				return;
+			}
+			this.monsters_cycle += 1;
+			mon = REGISTRY_GET(Monsters, this.monsters_cycle);
+			if(mon == MON_Null)
+			{
+				this.monsters_cycle = 0;
+				sprint(this, "Reached the end of the list, try again to cycle from the start\n");
+				return;
+			}
 		}
-		entity monster = horn_spawnmonster(new(monster), trace_endpos, ((cmd_name == "addmob2") ? NULL : this), mon);
-		if(monster)
-			monster.flags |= FL_CLONE; // mark as clone so it doesn't add to the monster counts
+		else if(arg != "")
+			mon = Monster_from_name(arg);
+
+		entity monster = spawn();
+		if(cmd_name == "addmob")
+			monster_charm(monster, this, true);
+		monster.flags |= FL_CLONE; // mark as clone so it doesn't add to the monster counts
+		if(spawnmonster(monster, trace_endpos, '0 1 0' * this.angles_y, mon))
+			sprint(this, strcat("Summoned ", monster.monsterdef.m_name, "\n"));
+		else
+			sprint(this, "Monster spawning failed\n");
 		return;
 	}
 

@@ -170,7 +170,13 @@ void pumpking_idlesound(entity this)
 	if(time > this.pumpking_idle_timer && random() < 0.2)
 	{
 		this.pumpking_idle_timer = time + 3 + (random() * 10);
-		sound(this, CH_VOICE, SND_MON_PUMPKING_SIGHT_RANDOM(), 1, ATTN_BOSS);
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "pumpking/laugh1.wav", 1, ATTN_BOSS);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "pumpking/laugh2.wav", 1, ATTN_BOSS);
+		else
+			_sound(this, CH_VOICE, "pumpking/laugh3.wav", 1, ATTN_BOSS);
 	}
 }
 
@@ -237,10 +243,10 @@ void pumpking_clearparts(entity this)
 	if(this.(pumpking_head)) delete(this.(pumpking_head));
 }
 
-void pumpking_die(entity this, entity inflictor, entity attacker, int deathtype)
+void pumpking_gib(entity this)
 {
 	_sound(this, CH_VOICE, "pumpking/death.wav", 1, ATTN_BOSS);
-	spawn_touchblood(this, 60, inflictor);
+	spawn_touchblood(this, 60, this.enemy);
 	ThrowGib(this, this, "progs/gib1.mdl", -100);
 	ThrowGib(this, this, "progs/gib2.mdl", -100);
 	ThrowGib(this, this, "progs/gib3.mdl", -100);
@@ -250,8 +256,27 @@ void pumpking_die(entity this, entity inflictor, entity attacker, int deathtype)
 	ThrowGib(this, this, "progs/gib1.mdl", -100);
 	ThrowGib(this, this, "progs/gib2.mdl", -100);
 	ThrowGib(this, this, "progs/gib3.mdl", -100);
+}
+
+void pumpking_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	this.enemy = inflictor; // for gib effect
 
 	pumpking_clearparts(this);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			pumpking_gib(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	pumpking_gib(this);
 	delete(this);
 }
 
@@ -581,6 +606,10 @@ METHOD(Pumpking, mr_setup, bool(Pumpking this, entity actor))
 	precache_sound("weapons/grape_impact.wav");
 	precache_sound("blob/land1.wav");
 
+	precache_sound("pumpking/laugh1.wav");
+	precache_sound("pumpking/laugh2.wav");
+	precache_sound("pumpking/laugh3.wav");
+
 	actor.health = 4000;
 	actor.th_stand = pumpking_stand1;
 	actor.th_walk = pumpking_walk1;
@@ -601,7 +630,13 @@ METHOD(Pumpking, mr_sight, bool(Pumpking this, entity actor))
 	if(time <= actor.pumpking_idle_timer)
 		return true; // too soon!
 
-	sound(actor, CH_VOICE, SND_MON_PUMPKING_SIGHT_RANDOM(), 1, ATTN_BOSS);
+	float r = random();
+	if(r < 0.33)
+		_sound(actor, CH_VOICE, "pumpking/laugh1.wav", 1, ATTN_BOSS);
+	else if(r < 0.66)
+		_sound(actor, CH_VOICE, "pumpking/laugh2.wav", 1, ATTN_BOSS);
+	else
+		_sound(actor, CH_VOICE, "pumpking/laugh3.wav", 1, ATTN_BOSS);
 
 	actor.pumpking_idle_timer = time + 10;
 

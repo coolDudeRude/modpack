@@ -450,15 +450,22 @@ void gaunt_die(entity this, entity inflictor, entity attacker, int deathtype)
 		gaunt_remove_attachment(this);
 	}
 
-	if(this.health < -70 || dogib)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && dogib)
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		ThrowHead(this, inflictor, "progs/h_gaunt.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			ThrowGib(this, inflictor, "progs/h_gaunt.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
-	
 	
 	// If not gibbed, then drop to ground
 	_sound(this, CH_VOICE, "gaunt/death.wav", 1, ATTN_NORM);
@@ -558,6 +565,7 @@ METHOD(Gaunt, mr_setup, bool(Gaunt this, entity actor))
 {
     TC(Gaunt, this);
 
+	precache_model("progs/h_gaunt.mdl");
 	precache_model("progs/mon_gaunt_elec.mdl");
 	precache_model("progs/proj_gaplasma.mdl");
 
@@ -576,6 +584,7 @@ METHOD(Gaunt, mr_setup, bool(Gaunt this, entity actor))
 	precache_sound("weapons/r_exp3b.wav");
 
 	actor.health = 120;
+	actor.gibhealth = -70;
 	actor.th_pain = gaunt_pain; 
 	actor.th_die = gaunt_die;
 

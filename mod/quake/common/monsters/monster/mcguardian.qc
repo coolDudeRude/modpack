@@ -12,7 +12,17 @@ const int anim_mcguardian_swim = 1;
 void mcguardian_idlesound(entity this)
 {
 	if(random() < 0.5)
-		sound(this, CH_VOICE, SND_MON_MCGUARDIAN_IDLE_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "mcguardian/guardian_idle1.wav", 1, ATTN_IDLE);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "mcguardian/guardian_idle2.wav", 1, ATTN_IDLE);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "mcguardian/guardian_idle3.wav", 1, ATTN_IDLE);
+		else
+			_sound(this, CH_VOICE, "mcguardian/guardian_idle4.wav", 1, ATTN_IDLE);
+	}
 }
 
 void mcguardian_stand1(entity this);
@@ -131,6 +141,19 @@ void mcguardian_die(entity this, entity inflictor, entity attacker, int deathtyp
 {
 	_sound(this, CH_VOICE, "mcguardian/guardian_death.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	// regular death
 	mcguardian_death1(this, inflictor, attacker);
 }
@@ -140,7 +163,16 @@ void mcguardian_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.mcguardian_charging > 0)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_MCGUARDIAN_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "mcguardian/guardian_hit1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "mcguardian/guardian_hit2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "mcguardian/guardian_hit3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "mcguardian/guardian_hit4.wav", 1, ATTN_NORM);
+
 	this.colormod = '1 1 1';
 	mcguardian_pain1(this);
 }
@@ -157,6 +189,16 @@ METHOD(MCGuardian, mr_setup, bool(MCGuardian this, entity actor))
 
 	precache_sound("mcguardian/attack_loop.wav");
 	precache_sound("mcguardian/guardian_death.wav");
+
+	precache_sound("mcguardian/guardian_hit1.wav");
+	precache_sound("mcguardian/guardian_hit2.wav");
+	precache_sound("mcguardian/guardian_hit3.wav");
+	precache_sound("mcguardian/guardian_hit4.wav");
+
+	precache_sound("mcguardian/guardian_idle1.wav");
+	precache_sound("mcguardian/guardian_idle2.wav");
+	precache_sound("mcguardian/guardian_idle3.wav");
+	precache_sound("mcguardian/guardian_idle4.wav");
 
     actor.health = 75;
     actor.th_stand = mcguardian_stand1;

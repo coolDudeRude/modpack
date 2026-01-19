@@ -35,7 +35,15 @@ void warden_idlesound(entity this)
 	if(time >= this.warden_heartbeat)
 	{
 		this.warden_heartbeat = time + 2 + random();
-		sound(this, CH_VOICE, SND_MON_WARDEN_HEARTBEAT_RANDOM(), 1, 0.2);
+		int r = floor(random() * 4) + 1;
+		switch(r)
+		{
+			default:
+			case 1: _sound(this, CH_VOICE, "warden/heartbeat_1.wav", 1, 0.2); break;
+			case 2: _sound(this, CH_VOICE, "warden/heartbeat_2.wav", 1, 0.2); break;
+			case 3: _sound(this, CH_VOICE, "warden/heartbeat_3.wav", 1, 0.2); break;
+			case 4: _sound(this, CH_VOICE, "warden/heartbeat_4.wav", 1, 0.2); break;
+		}
 	}
 
 	if(time < this.pain_finished)
@@ -45,11 +53,45 @@ void warden_idlesound(entity this)
 	{
 		this.idle_finished = time + 2 + (random() * 2);
 		if(this.enemy)
-			sound(this, CH_VOICE, SND_MON_WARDEN_IDLE_ANGRY_RANDOM(), 1, ATTN_WARDEN);
+		{
+			int r = floor(random() * 5) + 1;
+			switch(r)
+			{
+				default:
+				case 1: _sound(this, CH_VOICE, "warden/angry_1.wav", 1, ATTN_WARDEN); break;
+				case 2: _sound(this, CH_VOICE, "warden/angry_2.wav", 1, ATTN_WARDEN); break;
+				case 3: _sound(this, CH_VOICE, "warden/angry_3.wav", 1, ATTN_WARDEN); break;
+				case 4: _sound(this, CH_VOICE, "warden/angry_4.wav", 1, ATTN_WARDEN); break;
+				case 5: _sound(this, CH_VOICE, "warden/angry_5.wav", 1, ATTN_WARDEN); break;
+			}
+		}
 		else if(random() < 0.5)
-			sound(this, CH_VOICE, SND_MON_WARDEN_IDLE_RANDOM(), 1, ATTN_WARDEN);
+		{
+			int r = floor(random() * 5) + 1;
+			switch(r)
+			{
+				default:
+				case 1: _sound(this, CH_VOICE, "warden/listening_1.wav", 1, ATTN_WARDEN); break;
+				case 2: _sound(this, CH_VOICE, "warden/listening_2.wav", 1, ATTN_WARDEN); break;
+				case 3: _sound(this, CH_VOICE, "warden/listening_3.wav", 1, ATTN_WARDEN); break;
+				case 4: _sound(this, CH_VOICE, "warden/listening_4.wav", 1, ATTN_WARDEN); break;
+				case 5: _sound(this, CH_VOICE, "warden/listening_5.wav", 1, ATTN_WARDEN); break;
+			}
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_WARDEN_CLICK_RANDOM(), 1, ATTN_WARDEN);
+		{
+			int r = floor(random() * 6) + 1;
+			switch(r)
+			{
+				default:
+				case 1: _sound(this, CH_VOICE, "warden/tendril_clicks_1.wav", 1, ATTN_WARDEN); break;
+				case 2: _sound(this, CH_VOICE, "warden/tendril_clicks_2.wav", 1, ATTN_WARDEN); break;
+				case 3: _sound(this, CH_VOICE, "warden/tendril_clicks_3.wav", 1, ATTN_WARDEN); break;
+				case 4: _sound(this, CH_VOICE, "warden/tendril_clicks_4.wav", 1, ATTN_WARDEN); break;
+				case 5: _sound(this, CH_VOICE, "warden/tendril_clicks_5.wav", 1, ATTN_WARDEN); break;
+				case 6: _sound(this, CH_VOICE, "warden/tendril_clicks_6.wav", 1, ATTN_WARDEN); break;
+			}
+		}
 	}
 }
 
@@ -77,7 +119,15 @@ void warden_moveframe(entity this)
 	if(time >= this.footstep && IS_ONGROUND(this))
 	{
 		this.footstep = time + 1 + random();
-		sound(this, CH_VOICE, SND_MON_WARDEN_STEP_RANDOM(), 1, ATTN_WARDEN);
+		int r = floor(random() * 4) + 1;
+		switch(r)
+		{
+			default:
+			case 1: _sound(this, CH_VOICE, "warden/step_1.wav", 1, ATTN_WARDEN); break;
+			case 2: _sound(this, CH_VOICE, "warden/step_2.wav", 1, ATTN_WARDEN); break;
+			case 3: _sound(this, CH_VOICE, "warden/step_3.wav", 1, ATTN_WARDEN); break;
+			case 4: _sound(this, CH_VOICE, "warden/step_4.wav", 1, ATTN_WARDEN); break;
+		}
 	}
 
 	warden_idlesound(this);
@@ -214,7 +264,15 @@ void warden_sonicboom(entity this)
 	if(!this.enemy)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_WARDEN_BOOM_RANDOM(), 1, ATTN_WARDEN);
+	int r = floor(random() * 4) + 1;
+	switch(r)
+	{
+		default:
+		case 1: _sound(this, CH_VOICE, "warden/sonic_boom1.wav", 1, ATTN_WARDEN); break;
+		case 2: _sound(this, CH_VOICE, "warden/sonic_boom2.wav", 1, ATTN_WARDEN); break;
+		case 3: _sound(this, CH_VOICE, "warden/sonic_boom3.wav", 1, ATTN_WARDEN); break;
+		case 4: _sound(this, CH_VOICE, "warden/sonic_boom4.wav", 1, ATTN_WARDEN); break;
+	}
 
 	vector org = this.origin + '0 0 32';
 	vector dir = normalize(this.enemy.origin - this.origin);
@@ -242,7 +300,15 @@ void warden_sonic(entity this)
 {
 	this.walkframe = anim_warden_sonic;
 	set_anim(this, this.walkframe, warden_sonicframe);
-	sound(this, CH_VOICE, SND_MON_WARDEN_CHARGE_RANDOM(), 1, ATTN_WARDEN);
+	int r = floor(random() * 4) + 1;
+	switch(r)
+	{
+		default:
+		case 1: _sound(this, CH_VOICE, "warden/sonic_charge1.wav", 1, ATTN_WARDEN); break;
+		case 2: _sound(this, CH_VOICE, "warden/sonic_charge2.wav", 1, ATTN_WARDEN); break;
+		case 3: _sound(this, CH_VOICE, "warden/sonic_charge3.wav", 1, ATTN_WARDEN); break;
+		case 4: _sound(this, CH_VOICE, "warden/sonic_charge4.wav", 1, ATTN_WARDEN); break;
+	}
 }
 
 /*
@@ -319,7 +385,15 @@ void warden_pain(entity this, entity attacker, float damage, int deathtype)
 	if(random()*400 > damage)
 		return;		// didn't flinch
 
-	sound(this, CH_VOICE, SND_MON_WARDEN_PAIN_RANDOM(), 1, ATTN_WARDEN);
+	int r = floor(random() * 4) + 1;
+	switch(r)
+	{
+		default:
+		case 1: _sound(this, CH_VOICE, "warden/hurt_1.wav", 1, ATTN_WARDEN); break;
+		case 2: _sound(this, CH_VOICE, "warden/hurt_2.wav", 1, ATTN_WARDEN); break;
+		case 3: _sound(this, CH_VOICE, "warden/hurt_3.wav", 1, ATTN_WARDEN); break;
+		case 4: _sound(this, CH_VOICE, "warden/hurt_4.wav", 1, ATTN_WARDEN); break;
+	}
 
 	this.pain_finished = time + 2;
 	this.colormod = '1 0.9 0.9';
@@ -349,6 +423,19 @@ void warden_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "warden/death_2.wav", 1, ATTN_WARDEN);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
 	warden_die1(this);
@@ -370,6 +457,55 @@ METHOD(Warden, mr_setup, bool(Warden this, entity actor))
 	precache_sound("warden/attack_impact_1.wav");
 	precache_sound("warden/attack_impact_2.wav");
 
+	precache_sound("warden/hurt_1.wav");
+	precache_sound("warden/hurt_2.wav");
+	precache_sound("warden/hurt_3.wav");
+	precache_sound("warden/hurt_4.wav");
+
+	precache_sound("warden/listening_1.wav");
+	precache_sound("warden/listening_2.wav");
+	precache_sound("warden/listening_3.wav");
+	precache_sound("warden/listening_4.wav");
+	precache_sound("warden/listening_5.wav");
+
+	precache_sound("warden/angry_1.wav");
+	precache_sound("warden/angry_2.wav");
+	precache_sound("warden/angry_3.wav");
+	precache_sound("warden/angry_4.wav");
+	precache_sound("warden/angry_5.wav");
+
+	precache_sound("warden/tendril_clicks_1.wav");
+	precache_sound("warden/tendril_clicks_2.wav");
+	precache_sound("warden/tendril_clicks_3.wav");
+	precache_sound("warden/tendril_clicks_4.wav");
+	precache_sound("warden/tendril_clicks_5.wav");
+	precache_sound("warden/tendril_clicks_6.wav");
+
+	precache_sound("warden/step_1.wav");
+	precache_sound("warden/step_2.wav");
+	precache_sound("warden/step_3.wav");
+	precache_sound("warden/step_4.wav");
+	precache_sound("warden/roar_1.wav");
+	precache_sound("warden/roar_2.wav");
+	precache_sound("warden/roar_3.wav");
+	precache_sound("warden/roar_4.wav");
+	precache_sound("warden/roar_5.wav");
+
+	precache_sound("warden/heartbeat_1.wav");
+	precache_sound("warden/heartbeat_2.wav");
+	precache_sound("warden/heartbeat_3.wav");
+	precache_sound("warden/heartbeat_4.wav");
+
+	precache_sound("warden/sonic_charge1.wav");
+	precache_sound("warden/sonic_charge2.wav");
+	precache_sound("warden/sonic_charge3.wav");
+	precache_sound("warden/sonic_charge4.wav");
+
+	precache_sound("warden/sonic_boom1.wav");
+	precache_sound("warden/sonic_boom2.wav");
+	precache_sound("warden/sonic_boom3.wav");
+	precache_sound("warden/sonic_boom4.wav");
+
 	actor.yaw_speed = 70;
 
     actor.health = 600;
@@ -389,7 +525,16 @@ METHOD(Warden, mr_sight, bool(Warden this, entity actor))
 {
     TC(Warden, this);
 
-    sound(actor, CH_VOICE, SND_MON_WARDEN_SIGHT_RANDOM(), 1, ATTN_WARDEN);
+    int r = floor(random() * 5) + 1;
+	switch(r)
+	{
+		default:
+		case 1: _sound(actor, CH_VOICE, "warden/roar_1.wav", 1, ATTN_WARDEN); break;
+		case 2: _sound(actor, CH_VOICE, "warden/roar_2.wav", 1, ATTN_WARDEN); break;
+		case 3: _sound(actor, CH_VOICE, "warden/roar_3.wav", 1, ATTN_WARDEN); break;
+		case 4: _sound(actor, CH_VOICE, "warden/roar_4.wav", 1, ATTN_WARDEN); break;
+		case 5: _sound(actor, CH_VOICE, "warden/roar_5.wav", 1, ATTN_WARDEN); break;
+	}
 
     return true;
 }

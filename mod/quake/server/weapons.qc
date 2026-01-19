@@ -638,9 +638,7 @@ vector VelocityForJump(entity this, entity targ, float dm)
 {
 	vector v;
 
-	if(targ.classname == "spark")
-		return '0 0 0';
-	else if(targ.classname == "missile" || targ.classname == "vore_ball")
+	if(targ.classname == "spark" || targ.classname == "vore_ball")
 		return '0 0 0';
 	else if(((targ.monsterdef.spawnflags & MONSTER_TYPE_BOSS) || (targ.monsterdef.spawnflags & MON_FLAG_EXPLOSIONRESISTANT)) && targ.health > 16)
 		return '0 0 0';
@@ -687,6 +685,7 @@ void SpawnMeatBounce(entity this, entity targ, float dm)
 void SpawnDischarge(entity this, float dm)
 {
 	entity missile = spawn();
+	missile.classname = "missile";
 	missile.owner = this;
 	set_movetype(missile, MOVETYPE_FLYMISSILE);
 	missile.solid = SOLID_NOT;
@@ -697,7 +696,7 @@ void SpawnDischarge(entity this, float dm)
 	setthink(missile, SUB_Remove);
 	_setmodel(missile, "progs/bolt.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
-	setorigin(missile, this.origin);
+	setorigin(missile, (this.absmin + this.absmax) * 0.5);
 }
 
 .float modelindex_elec;
@@ -726,9 +725,8 @@ void gibhim(entity this)
 			}
 		}
 		this.modelindex = modelindex_bolt;
-		this.frame = 0;
 		this.elec = true;
-		this.exptime = this.exptime + 0.1;
+		this.exptime += 0.1;
 		spawn_touchspark(this, 10);
 	}
 	else if(this.elec)
@@ -738,22 +736,6 @@ void gibhim(entity this)
 			r = random();
 			this.modelindex = this.modelindex_player;
 			//_setmodel(this, "progs/player.mdl");
-			.entity priwep = weaponentities[0];
-			if(this.(priwep).m_weapon == WEP_AXE)
-			{
-				if(r < 0.3)
-					this.frame = 31;
-				else if(r < 0.6)
-					this.frame = 35;
-				else
-					this.frame = 42;
-			}
-			else if(r < 0.3)
-				this.frame = 61;
-			else if(r < 0.6)
-				this.frame = 71;
-			else
-				this.frame = 87;
 		}
 		else if(this.modelindex_elec)
 		{
@@ -767,18 +749,14 @@ void gibhim(entity this)
 		}
 		this.effects = EF_DIMLIGHT;
 		this.elec = false;
-		this.exptime = this.exptime + 0.1;
+		this.exptime += 0.1;
 	}
 	if(this.exptime >= 1.6)
 	{
 		this.effects &= ~EF_DIMLIGHT;
 		this.effects &= ~EF_MUZZLEFLASH;
-		this.takedamage = DAMAGE_AIM;
-		set_movetype(this, MOVETYPE_STEP);
-		if(!IS_PLAYER(this))
-			T_RadiusDamage(this, this.owner, 120, WEP_LIGHTME.m_id, NULL);
-		else
-			T_RadiusDamage(this, this.enemy, 120, WEP_LIGHTME.m_id, NULL);
+		//T_RadiusDamage(this, this.enemy, 120, WEP_LIGHTME.m_id, this);
+
 		SpawnDischarge(this, 120);
 		SpawnDischarge(this, 120);
 		SpawnDischarge(this, 120);
@@ -790,6 +768,8 @@ void gibhim(entity this)
 		else
 			_sound(this, CH_WEAPON_SINGLE, "weapons/light2/lgdis3.wav", 1, ATTN_NORM);
 		this.exptime = 0;
+		setthink(this, SUB_VanishOrRemove);
+		this.nextthink = time;
 		return;
 	}
 	this.nextthink = time + 0.1;

@@ -2,7 +2,7 @@
 
 // main file for the rogue mission pack
 
-STATIC_INIT(rogue_fixguardian)
+STATIC_INIT_LATE(rogue_fixguardian)
 {
 	cvar_settemp("sv_gameplayfix_q1bsptracelinereportstexture", "0"); // fixes a collision bug in Xonotic
 

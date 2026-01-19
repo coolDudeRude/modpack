@@ -9,8 +9,20 @@
 #include "../common/music.qh"
 #include "../common/stats.qh"
 #include "../common/sui_sys.qh"
+#include "../common/util.qh"
 #include "../common/weapons/all.qh"
 #include <common/checkextension.qh>
+
+STATIC_INIT_LATE(rogue_fixguardian)
+{
+	cvar_settemp("sv_gameplayfix_q1bsptracelinereportstexture", "0"); // fixes a collision bug in Xonotic
+
+	// copied fix from darkplaces, which disables this setting when rogue game is detected
+	if(IsRogueMap())
+		cvar_settemp("sv_gameplayfix_findradiusdistancetobox", "0");
+	else
+		cvar_settemp("sv_gameplayfix_findradiusdistancetobox", "1");
+}
 
 STATIC_INIT_LATE(mod_cvars_override)
 {
@@ -348,6 +360,23 @@ void GameCommand(string command)
 	if(s == "find")
 	{
 		FOREACH_ENTITY_CLASS_ORDERED(argv(1), true, LOG_INFOF("%i (%s)\n", it, it.classname));
+		return;
+	}
+
+	if(s == "findentnum")
+	{
+		int ednum = stoi(argv(1));
+		FOREACH_ENTITY_FLOAT_ORDERED(entnum, ednum, LOG_INFOF("%i (%s)\n", it, it.classname));
+		return;
+	}
+
+	if(s == "tracer")
+	{
+		makevectors(view_angles);
+		traceline(view_origin, view_origin + v_forward * 300, MOVE_NORMAL, csqcplayer);
+		LOG_INFO("Texture: ", trace_dphittexturename, "\n");
+		LOG_INFO("Texture flag: ", ftos(trace_dphitq3surfaceflags), "\n");
+		LOG_INFOF("Entity: %s (%d)\n", trace_ent.classname, etof(trace_ent));
 		return;
 	}
 

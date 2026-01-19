@@ -16,7 +16,6 @@ CLASS(IceQueen, Monster)
     ATTRIB(IceQueen, m_maxs, vector, '24 24 128');
 #ifdef GAMEQC
     ATTRIB(IceQueen, m_model, Model, MDL_MON_ICE_QUEEN);
-    ATTRIB(IceQueen, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(IceQueen, netname, string, "ice_queen");
     ATTRIB(IceQueen, m_name, string, _("Ice queen"));

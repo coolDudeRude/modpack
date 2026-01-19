@@ -30,9 +30,29 @@ void enderman_idlesound(entity this)
 	{
 		this.idle_finished = time + 2;
 		if(this.enemy)
-			sound(this, CH_VOICE, SND_MON_ENDERMAN_SCREAM_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "enderman/scream1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "enderman/scream2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "enderman/scream3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "enderman/scream4.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_ENDERMAN_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "enderman/idle1.wav", 1, ATTN_IDLE);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "enderman/idle2.wav", 1, ATTN_IDLE);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "enderman/idle3.wav", 1, ATTN_IDLE);
+			else
+				_sound(this, CH_VOICE, "enderman/idle4.wav", 1, ATTN_IDLE);
+		}
 	}
 }
 
@@ -119,7 +139,15 @@ void enderman_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_ENDERMAN_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "enderman/hit1.wav", 1, ATTN_NORM);
+	else if(r < 0.5)
+		_sound(this, CH_VOICE, "enderman/hit2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "enderman/hit3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "enderman/hit4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1;
 	this.colormod = '1 0.9 0.9';
@@ -150,11 +178,17 @@ void enderman_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "enderman/death.wav", 1, ATTN_NORM);
 
-	if(this.health < -55)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.colormod = '1 1 1';
-		ThrowHead(this, inflictor, MDL_MON_ENDERMAN_HEAD.model_str(), this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			ThrowGib(this, inflictor, "progs/h_enderman.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -171,15 +205,32 @@ METHOD(Enderman, mr_setup, bool(Enderman this, entity actor))
 {
     TC(Enderman, this);
 
+    precache_model("progs/h_enderman.mdl");
 	precache_sound("enderman/death.wav");
 	precache_sound("enderman/portal.wav");
 	precache_sound("enderman/portal2.wav");
+
+	precache_sound("enderman/hit1.wav");
+	precache_sound("enderman/hit2.wav");
+	precache_sound("enderman/hit3.wav");
+	precache_sound("enderman/hit4.wav");
+
+	precache_sound("enderman/scream1.wav");
+	precache_sound("enderman/scream2.wav");
+	precache_sound("enderman/scream3.wav");
+	precache_sound("enderman/scream4.wav");
+
+	precache_sound("enderman/idle1.wav");
+	precache_sound("enderman/idle2.wav");
+	precache_sound("enderman/idle3.wav");
+	precache_sound("enderman/idle4.wav");
 
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 
 	actor.yaw_speed = 90;
 
     actor.health = 200;
+    actor.gibhealth = -55;
     actor.th_stand = enderman_stand;
 	actor.th_walk = enderman_walk;
 	actor.th_run = enderman_run;

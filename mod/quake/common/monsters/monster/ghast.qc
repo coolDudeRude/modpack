@@ -144,17 +144,23 @@ void ghast_fireball_touch(entity this, entity toucher)
 		if(toucher.monsterdef == MON_GHAST && toucher.owner.monsterdef != MON_GHAST)
 			damg *= 10;
 		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
-
-		sound(this, CH_WEAPON_SINGLE, SND_MON_GHAST_EXPLODE_RANDOM(), 1, ATTN_NORM);
-		T_RadiusDamage(this, this.owner, 60, this.projectiledeathtype, toucher); // tonedown
-		te_explosion2(this.origin, 3, 10);
 	}
+	
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_SHOTS, "ghast/explode1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_SHOTS, "ghast/explode2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_SHOTS, "ghast/explode3.wav", 1, ATTN_NORM);
 	else
-	{
-		sound(this, CH_WEAPON_SINGLE, SND_MON_GHAST_EXPLODE_RANDOM(), 1, ATTN_NORM);
-		T_RadiusDamage(this, this.owner, 60, this.projectiledeathtype, this.owner); // tonedown
-		te_explosion2(this.origin, 3, 10);
-	}
+		_sound(this, CH_SHOTS, "ghast/explode4.wav", 1, ATTN_NORM);
+
+	// our explosions are pretty big, try not to blow ourselves up!
+	entity ignore = (toucher) ? toucher : this.owner;
+
+	T_RadiusDamage(this, this.owner, 60, this.projectiledeathtype, ignore); // tonedown
+	te_explosion2(this.origin, 3, 10);
 
 	delete(this);
 }
@@ -206,7 +212,19 @@ void Ghast_idle_sound(entity this)
 	if(this.waitmin < time)
 	{
 	 	this.waitmin = time + 2 + (random() * 3);
-	 	sound(this, CH_VOICE, SND_MON_GHAST_IDLE_RANDOM(), 1, 0.5);
+
+	 	int r = floor(random() * 7) + 1;
+	 	switch(r)
+	 	{
+	 		default:
+	 		case 1: _sound(this, CH_VOICE, "ghast/moan1.wav", 1, 0.5); break;
+	 		case 2: _sound(this, CH_VOICE, "ghast/moan2.wav", 1, 0.5); break;
+	 		case 3: _sound(this, CH_VOICE, "ghast/moan3.wav", 1, 0.5); break;
+	 		case 4: _sound(this, CH_VOICE, "ghast/moan4.wav", 1, 0.5); break;
+	 		case 5: _sound(this, CH_VOICE, "ghast/moan5.wav", 1, 0.5); break;
+	 		case 6: _sound(this, CH_VOICE, "ghast/moan6.wav", 1, 0.5); break;
+	 		case 7: _sound(this, CH_VOICE, "ghast/moan7.wav", 1, 0.5); break;
+	 	}
 	}
 }
 
@@ -302,6 +320,19 @@ void ghast_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "ghast/death.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	ghast_death1(this);
 }
 
@@ -311,7 +342,18 @@ void Ghast_Pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 	//if(random()*70 > damage)
 		//return;		// didn't flinch
-	sound(this, CH_VOICE, SND_MON_GHAST_PAIN_RANDOM(), 1, ATTN_NORM);
+
+	float r = random();
+	if(r < 0.2)
+		_sound(this, CH_VOICE, "ghast/scream1.wav", 1, ATTN_NORM);
+	else if(r < 0.4)
+		_sound(this, CH_VOICE, "ghast/scream2.wav", 1, ATTN_NORM);
+	else if(r < 0.6)
+		_sound(this, CH_VOICE, "ghast/scream3.wav", 1, ATTN_NORM);
+	else if(r < 0.8)
+		_sound(this, CH_VOICE, "ghast/scream4.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "ghast/scream5.wav", 1, ATTN_NORM);
 
 	this.colormod = '1 0.9 0.9';
 	this.pain_finished = time + 1;
@@ -337,6 +379,25 @@ METHOD(Ghast, mr_setup, bool(Ghast this, entity actor))
 	precache_sound("ghast/charge.wav");
 
 	precache_sound("ghast/fireball4.wav");
+
+	precache_sound("ghast/scream1.wav");
+	precache_sound("ghast/scream2.wav");
+	precache_sound("ghast/scream3.wav");
+	precache_sound("ghast/scream4.wav");
+	precache_sound("ghast/scream5.wav");
+
+	precache_sound("ghast/moan1.wav");
+	precache_sound("ghast/moan2.wav");
+	precache_sound("ghast/moan3.wav");
+	precache_sound("ghast/moan4.wav");
+	precache_sound("ghast/moan5.wav");
+	precache_sound("ghast/moan6.wav");
+	precache_sound("ghast/moan7.wav");
+
+	precache_sound("ghast/explode1.wav");
+	precache_sound("ghast/explode2.wav");
+	precache_sound("ghast/explode3.wav");
+	precache_sound("ghast/explode4.wav");
 
 	actor.skin = 0;
     actor.health = 80;

@@ -398,10 +398,10 @@ void gib_blud(entity this)
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 	ThrowGib(this, this, "progs/gib3.mdl", this.health);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
-void blud_die46(entity this) { set_anim(this, 65, blud_die46); gib_blud(this); }
+void blud_die46(entity this) { set_anim(this, 65, blud_die46); gib_blud(this); delete(this); }
 void blud_die45(entity this) { set_anim(this, 64, blud_die46); }
 void blud_die44(entity this)
 {
@@ -492,10 +492,16 @@ void blud_die1(entity this)
 }
 void blud_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		gib_blud(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_blud(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 	blud_die1(this);
 }
@@ -514,6 +520,7 @@ METHOD(Blud, mr_setup, bool(Blud this, entity actor))
 	precache_model("progs/xtragib.mdl");
 	precache_model("progs/bone.mdl");
 	precache_model("progs/bone2.mdl");
+	precache_model("progs/rawbone.mdl");
 	precache_model("progs/rawbone2.mdl");
 	precache_sound("monsters/blud/blatt1.wav");
 	precache_sound("monsters/blud/blatt2.wav");
@@ -531,6 +538,7 @@ METHOD(Blud, mr_setup, bool(Blud this, entity actor))
 	precache_sound("monsters/blud/blsight.wav");
 
     actor.health = 3000;
+    actor.gibhealth = -150;
 	actor.th_stand = blud_stand1;
 	actor.th_walk = blud_walk1;
 	actor.th_run = blud_run1;

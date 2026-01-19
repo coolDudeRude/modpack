@@ -329,7 +329,6 @@ void scourge_die1(entity this) { set_animofs(this, anim_scourge_death, 1, scourg
 
 void scourge_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	// check for gib
 	// stop sound
 	if(this.lastvictim)
 	{
@@ -338,14 +337,21 @@ void scourge_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 	this.spawnsilent = 0;
 	scourge_think(this);
-	if(this.health < -35)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_scourg.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_scourg.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -432,8 +438,8 @@ METHOD(Centroid, mr_setup, bool(Centroid this, entity actor))
 {
     TC(Centroid, this);
 
+	precache_model("progs/h_scourg.mdl");
 	precache_model("progs/s_light.mdl");
-	precache_model("progs/spike.mdl");
 
 	precache_sound("scourge/idle.wav");
 	precache_sound("scourge/pain.wav");
@@ -449,6 +455,7 @@ METHOD(Centroid, mr_setup, bool(Centroid this, entity actor))
 	actor.state = 0;
 
     actor.health = 300;
+    actor.gibhealth = -35;
     actor.th_stand = scourge_stand1;
 	actor.th_walk = scourge_walk1;
 	actor.th_run = scourge_run1;

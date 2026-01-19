@@ -312,24 +312,29 @@ string dog_getmodel(int num)
 
 void dog_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		if(this.mdl_head != "")
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			ThrowHead(this, inflictor, this.mdl_head, this.health);
-			this.skin = this.skin_head;
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			if(this.mdl_head != "")
+			{
+				ThrowGib(this, inflictor, this.mdl_head, this.health);
+				this.skin = this.skin_head;
+			}
+			else
+				ThrowGib(this, inflictor, dog_headmodel(this.variant), this.health);
+			// fall through to special handling
 		}
-		else
-			ThrowHead(this, inflictor, dog_headmodel(this.variant), this.health);
-		return;
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -433,6 +438,7 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 {
 	TC(Rottweiler, this);
 
+	precache_model("progs/h_dog.mdl");
 	precache_model("progs/grenbone.mdl");
 	precache_sound("dog/dattack1.wav");
 	precache_sound("dog/ddeath.wav");
@@ -483,6 +489,7 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 
 	if(!actor.health)
 		actor.health = 25;
+	actor.gibhealth = -35;
 	actor.th_stand = dog_stand1;
 	actor.th_walk = dog_walk1;
 	actor.th_run = dog_run1;

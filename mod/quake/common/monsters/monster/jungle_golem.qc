@@ -99,17 +99,37 @@ void jungle_golem_clearparts(entity this)
 {
 	if(this.golem_fistl) delete(this.golem_fistl);
 	if(this.golem_fistr) delete(this.golem_fistr);
+
+	this.golem_fistl = NULL;
+	this.golem_fistr = NULL;
+}
+
+void jungle_golem_explode(entity this)
+{
+	_sound(this, CH_VOICE, "jungle_golem/explode.wav", 1, 0.5);
+	Send_Effect(EFFECT_EXPLOSION_MEDIUM, CENTER_OR_VIEWOFS(this), '0 0 0', 1);
 }
 
 void jungle_golem_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	_sound(this, CH_VOICE, "jungle_golem/explode.wav", 1, 0.5);
-	Send_Effect(EFFECT_EXPLOSION_MEDIUM, CENTER_OR_VIEWOFS(this), '0 0 0', 1);
 	if(this.golem_head && this.golem_head.health > 0)
 		T_Damage(this.golem_head, this, this, this.golem_head.max_health, DEATH_GENERIC.m_id);
 
 	jungle_golem_clearparts(this);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			jungle_golem_explode(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	jungle_golem_explode(this);
 	delete(this);
 }
 

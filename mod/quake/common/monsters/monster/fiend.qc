@@ -193,20 +193,25 @@ void demon1_die1(entity this)
 
 void demon_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -80)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(season == SEASON_XMAS)
-			ThrowHead(this, inflictor, "progs/h_demon_xmas.mdl", this.health);
-		else if(IsQBJ3Map())
-			ThrowHead(this, inflictor, "progs/gibs/gibhead_demon.mdl", this.health);
-		else
-			ThrowHead(this, inflictor, "progs/h_demon.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(season == SEASON_XMAS)
+				ThrowGib(this, inflictor, "progs/h_demon_xmas.mdl", this.health);
+			else if(IsQBJ3Map())
+				ThrowGib(this, inflictor, "progs/gibs/gibhead_demon.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/h_demon.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -390,6 +395,7 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 	}
 	else
 	{
+		precache_model("progs/h_demon.mdl");
 		precache_sound("demon/ddeath.wav");
 		precache_sound("demon/dhit2.wav");
 		precache_sound("demon/djump.wav");
@@ -408,6 +414,7 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 	}
 
 	actor.health = 300;
+	actor.gibhealth = -80;
 	actor.th_stand = demon1_stand1;
 	actor.th_walk = demon1_walk1;
 	actor.th_run = demon1_run1;

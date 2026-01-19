@@ -292,22 +292,27 @@ void hogremac_dieB1(entity this) { set_animofs(this, anim_hogremac_deathB, 1, ho
 void hogremac_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	DropBackpack(this);
-	
-// check for gib
-	if(this.health < -80)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_hogre.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_ogfoot1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_ogfoot2.mdl", this.health);
-		if(random() < 0.5)
-			ThrowGib(this, inflictor, "progs/w_ogregl.mdl", this.health);
-		else
-			ThrowGib(this, inflictor, "progs/w_ogremac.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_hogre.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_ogfoot1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_ogfoot2.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/w_ogregl.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/w_ogremac.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	_sound(this, CH_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
@@ -351,6 +356,7 @@ METHOD(MaceOgre, mr_setup, bool(MaceOgre this, entity actor))
 {
 	TC(MaceOgre, this);
 
+	precache_model("progs/h_hogre.mdl");
 	precache_model("progs/w_ogremac.mdl");
 	precache_model("progs/gib_ogfoot1.mdl");
 	precache_model("progs/gib_ogfoot2.mdl");
@@ -383,6 +389,7 @@ METHOD(MaceOgre, mr_setup, bool(MaceOgre this, entity actor))
 		actor.skin = 1;
 	}
 
+	actor.gibhealth = -80;
 	actor.th_stand = hogremac_stand1;
 	actor.th_walk = hogremac_walk1;
 	actor.th_run = hogremac_run1;

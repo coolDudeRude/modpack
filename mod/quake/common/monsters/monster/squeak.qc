@@ -80,6 +80,20 @@ void squeak_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	if(inflictor == this)
 		return; // bomber mode
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "squeak/die.wav", 1, ATTN_NORM);
+			te_wizspike(this.origin);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CH_VOICE, "squeak/die.wav", 1, ATTN_NORM);
 	squeak_die1(this);
 }

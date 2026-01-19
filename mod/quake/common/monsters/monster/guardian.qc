@@ -364,7 +364,7 @@ void morph_die13(entity this) { set_animofs(this, anim_morph_mfdth01, 13, morph_
 void morph_die12(entity this) { set_animofs(this, anim_morph_mfdth01, 12, morph_die13); }		// 132
 void morph_die11(entity this) { set_animofs(this, anim_morph_mfdth01, 11, morph_die12); }
 void morph_die10(entity this) { set_animofs(this, anim_morph_mfdth01, 10, morph_die11); }
-void morph_die9(entity this) { set_animofs(this, anim_morph_mfdth01, 9, morph_die10); this.skin = this.skin + 1; }
+void morph_die9(entity this) { set_animofs(this, anim_morph_mfdth01, 9, morph_die10); this.skin += 1; }
 void morph_die8(entity this) { set_animofs(this, anim_morph_mfdth01, 8, morph_die9); }		// 129
 void morph_die7(entity this) { set_animofs(this, anim_morph_mfdth01, 7, morph_die8); }
 void morph_die6(entity this) { set_animofs(this, anim_morph_mfdth01, 6, morph_die7); }
@@ -376,6 +376,19 @@ void morph_die1(entity this) { set_animofs(this, anim_morph_mfdth01, 1, morph_di
 
 void morph_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "guard/death.wav", 1, ATTN_NORM);
+			Send_Effect(EFFECT_SMOKE_LARGE, this.origin, '0 0 0', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CH_VOICE, "guard/death.wav", 1, ATTN_NORM);
 	this.solid = SOLID_NOT;
 	setthink(this, morph_die1);
@@ -442,7 +455,7 @@ void morph_wake1(entity this)
 
 		//monsters_total += 1;
   
-		this.guardian_owner.childrenSpawned = this.guardian_owner.childrenSpawned + 1;
+		this.guardian_owner.childrenSpawned += 1;
 	}
 }
 
@@ -485,6 +498,7 @@ void morph_setup(entity this)
 		this.effects |= EF_DIMLIGHT;
 		this.health = 2000;
 	}
+	this.gibhealth = -120;
 	this.max_health = this.health;
 
 	this.skin = 2;

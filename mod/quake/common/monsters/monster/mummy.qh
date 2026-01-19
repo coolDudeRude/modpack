@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_MUMMY,           DEATH_SELF_MON_MUMMY,           DEAT
 
 #ifdef GAMEQC
 MODEL(MON_MUMMY, "progs/mummy.mdl");
-MODEL(MON_MUMMY_HEAD, "progs/h_zombie.mdl");
 #endif
 
 CLASS(Mummy, Monster)
@@ -17,7 +16,6 @@ CLASS(Mummy, Monster)
     ATTRIB(Mummy, m_maxs, vector, VEC_HULL_MAX);
 #ifdef GAMEQC
     ATTRIB(Mummy, m_model, Model, MDL_MON_MUMMY);
-    ATTRIB(Mummy, m_model_head, Model, MDL_MON_MUMMY_HEAD);
 #endif
     ATTRIB(Mummy, netname, string, "mummy");
     ATTRIB(Mummy, m_name, string, _("Mummy"));

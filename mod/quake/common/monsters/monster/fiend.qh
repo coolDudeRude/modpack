@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_FIEND,           DEATH_SELF_MON_FIEND,           DEAT
 
 #ifdef GAMEQC
 MODEL(MON_FIEND, "progs/demon.mdl");
-MODEL(MON_FIEND_HEAD, "progs/h_demon.mdl");
 #endif
 
 CLASS(Fiend, Monster)
@@ -17,7 +16,6 @@ CLASS(Fiend, Monster)
     ATTRIB(Fiend, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Fiend, m_model, Model, MDL_MON_FIEND);
-    ATTRIB(Fiend, m_model_head, Model, MDL_MON_FIEND_HEAD);
 #endif
     ATTRIB(Fiend, netname, string, "demon");
     ATTRIB(Fiend, m_name, string, _("Fiend"));

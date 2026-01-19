@@ -238,15 +238,22 @@ void dknight_dieb1(entity this) { set_anim(this, 86, dknight_dieb2); this.solid 
 
 void dknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -40)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CHAN_ITEM, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_dkni.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CHAN_ITEM, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_dkni.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	float r = random();
 	if(r <= 0.5)
 		_sound(this, CHAN_ITEM, "monsters/dknight/dkdeath1.wav", 1, ATTN_NORM);
@@ -283,6 +290,7 @@ METHOD(DarkKnight, mr_setup, bool(DarkKnight this, entity actor))
 {
     TC(DarkKnight, this);
 
+    precache_model("progs/h_dkni.mdl");
 	precache_sound("monsters/dknight/dklight.wav");
 	precache_sound("monsters/dknight/dkidle1.wav");
 	precache_sound("monsters/dknight/dkidle2.wav");
@@ -296,7 +304,12 @@ METHOD(DarkKnight, mr_setup, bool(DarkKnight this, entity actor))
 	precache_sound("monsters/dknight/dkswzap2.wav");
 	precache_sound("shalrath/attack2.wav");
 
+	precache_sound("monsters/dknight/dksight1.wav");
+	precache_sound("monsters/dknight/dksight2.wav");
+	precache_sound("monsters/dknight/dksight3.wav");
+
     actor.health = 200;
+    actor.gibhealth = -40;
 	actor.th_stand = dknight_stand1;
 	actor.th_walk = dknight_walk1;
 	actor.th_run = dknight_run1;
@@ -312,7 +325,13 @@ METHOD(DarkKnight, mr_sight, bool(DarkKnight this, entity actor))
 {
     TC(DarkKnight, this);
 
-	sound(actor, CH_VOICE, SND_MON_DARK_KNIGHT_SIGHT_RANDOM(), 1, ATTN_NORM);
+    float r = random();
+	if(r < 0.33)
+		_sound(actor, CH_VOICE, "monsters/dknight/dksight1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(actor, CH_VOICE, "monsters/dknight/dksight2.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "monsters/dknight/dksight3.wav", 1, ATTN_NORM);
 
     return true;
 }

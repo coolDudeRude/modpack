@@ -100,15 +100,33 @@ void roo_run(entity this, float dist)
 	this.nextthink = time + 0.05;
 }
 
-void roo_die(entity this, entity inflictor, entity attacker, int deathtype)
+void roo_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-	ThrowHead(this, inflictor, "progs/gib1.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+}
+
+void roo_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			roo_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	roo_gib(this, inflictor);
+	delete(this);
 }
 
 void roo_touch(entity this, entity toucher)
@@ -133,6 +151,10 @@ spawnfunc(monster_kangaroo) { monster_start(this, true, MON_KANGAROO); }
 METHOD(Kangaroo, mr_setup, bool(Kangaroo this, entity actor))
 {
     TC(Kangaroo, this);
+
+    precache_model("progs/gib1.mdl");
+    precache_model("progs/gib2.mdl");
+    precache_model("progs/gib3.mdl");
 
 	actor.health = 120;
 	actor.th_stand = roo_stand1;

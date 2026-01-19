@@ -73,31 +73,40 @@ void juggernaut_death1(entity this) { set_anim(this, 96, juggernaut_death2); thi
 
 void juggernaut_die2(entity this)
 {
-	DropBackpack(this);
 	if(this.mdl == "progs/jugg.mdl")
 	{
-		ThrowHead(this, this, "progs/h_jugg.mdl", this.health);
+		ThrowGib(this, this, "progs/h_jugg.mdl", this.health);
 		ThrowGib(this, this, "progs/a_jugg.mdl", this.health);
 	}
 	else if(this.mdl == "progs/jugg2.mdl")
 	{
-		ThrowHead(this, this, "progs/h_jugg2.mdl", this.health);
+		ThrowGib(this, this, "progs/h_jugg2.mdl", this.health);
 		ThrowGib(this, this, "progs/a_jugg2.mdl", this.health);
 	}
 	T_RadiusDamage(this, this, 120, DEATH_MONSTER_JUGGERNAUT.m_id, this);
 	_sound(this, CHAN_ITEM, "monsters/juggers/jgib.wav", 1, ATTN_NORM);
 	setorigin(this, this.origin + '0 0 24');
 	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
+	delete(this);
 }
 
 void juggernaut_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -50)
+	DropBackpack(this);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		setthink(this, juggernaut_die2);
-		this.nextthink = time;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, juggernaut_die2);
+			this.nextthink = time;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	juggernaut_death1(this);
 }
 
@@ -543,7 +552,7 @@ void juggernaut_fire(entity this)
 	{
 		if(random() < 0.65 && this.ammo_rockets > 0)
 		{
-			if(this.health < (this.max_health / 2))
+			if(this.health < (this.max_health * 0.5))
 				_sound(this, CHAN_BODY, "monsters/juggers/jhydro2.wav", 1, ATTN_NORM);
 			else
 				_sound(this, CHAN_BODY, "monsters/juggers/jhydro3.wav", 1, ATTN_NORM);
@@ -691,6 +700,9 @@ METHOD(Juggernaut, mr_setup, bool(Juggernaut this, entity actor))
 {
     TC(Juggernaut, this);
 
+	precache_model("progs/h_jugg.mdl");
+	precache_model("progs/jugg2.mdl");
+	precache_model("progs/h_jugg2.mdl");
 	precache_model("progs/a_jugg.mdl");
 	precache_model("progs/a_jugg2.mdl");
 	precache_sound("enforcer/enfstop.wav");
@@ -727,6 +739,7 @@ METHOD(Juggernaut, mr_setup, bool(Juggernaut this, entity actor))
 	setsize(actor, this.m_mins, this.m_maxs);
 
     actor.health = 1000;
+    actor.gibhealth = -50;
 	actor.th_stand = juggernaut_idle;
 	actor.th_walk = juggernaut_walk1;
 	actor.th_run = juggernaut_run1;

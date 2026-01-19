@@ -421,18 +421,23 @@ void ogre_die(entity this, entity inflictor, entity attacker, int deathtype)
 		Inventory_add(WEP_CHAINSAW, this, ITEM_OWNED);
 	DropBackpack(this);
 
-// check for gib
-	if(this.health < -80)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(IsQBJ3Map())
-			ThrowHead(this, inflictor, "progs/gibs/gibhead_ogre.mdl", this.health);
-		else
-			ThrowHead(this, inflictor, "progs/h_ogre.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(IsQBJ3Map())
+				ThrowGib(this, inflictor, "progs/gibs/gibhead_ogre.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/h_ogre.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	if(IsQBJ3Map())
@@ -634,6 +639,7 @@ METHOD(Ogre, mr_setup, bool(Ogre this, entity actor))
 {
     TC(Ogre, this);
 
+	precache_model("progs/h_ogre.mdl");
 	precache_sound("ogre/ogdrag.wav");
 	precache_sound("ogre/ogdth.wav");
 	precache_sound("ogre/ogidle.wav");
@@ -689,6 +695,7 @@ METHOD(Ogre, mr_setup, bool(Ogre this, entity actor))
 		actor.skin = 1;
 
     actor.health = 200;
+    actor.gibhealth = -80;
     actor.th_stand = ogre_stand1;
 	actor.th_walk = ogre_walk1;
 	actor.th_run = ogre_run1;

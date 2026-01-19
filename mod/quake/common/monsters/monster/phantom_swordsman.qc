@@ -82,6 +82,20 @@ void sword_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 // regular death
 	this.effects = 0;
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+	
 	if(random() < 0.5)
 		sword_die1(this);
 	else

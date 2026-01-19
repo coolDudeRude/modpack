@@ -282,29 +282,6 @@ void swarmer_pain(entity this, entity attacker, float damage, int deathtype)
 
 //===========================================================================
 
-bool swarmer_checkgib(entity this, entity inflictor)
-{
-	if(this.health < -40)
-	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/gibs/gibhead_swarmer.mdl", this.health);
-		GibBloodBath(this, 1);
-		ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
-		if(random() > 0.5)
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_3.mdl", this.health);
-		else
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_4.mdl", this.health);
-
-		if(random() > 0.5)
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_5.mdl", this.health);
-		else
-			ThrowGib(this, inflictor, "progs/gibs/gib_gen_6.mdl", this.health);
-		return true;
-	}
-	return false;
-}
-
 void swarmer_deathA11(entity this) { set_anim(this, 83, swarmer_deathA11); CorpseThink(this); }
 void swarmer_deathA10(entity this) { set_anim(this, 82, swarmer_deathA11); }
 void swarmer_deathA9(entity this) { set_anim(this, 81, swarmer_deathA10); ai_pain(this, 2); }
@@ -313,9 +290,9 @@ void swarmer_deathA7(entity this) { set_anim(this, 79, swarmer_deathA8); ai_pain
 void swarmer_deathA6(entity this) { set_anim(this, 78, swarmer_deathA7); ai_pain(this, 2); }
 void swarmer_deathA5(entity this) { set_anim(this, 77, swarmer_deathA6); ai_pain(this, 1); }
 void swarmer_deathA4(entity this) { set_anim(this, 76, swarmer_deathA5); ai_pain(this, 3); }
-void swarmer_deathA3(entity this) { set_anim(this, 75, swarmer_deathA4); if(swarmer_checkgib(this, this)) return; ai_pain(this, 5); this.takedamage = DAMAGE_NO; }
-void swarmer_deathA2(entity this) { set_anim(this, 74, swarmer_deathA3); if(swarmer_checkgib(this, this)) return; ai_pain(this, 8); }
-void swarmer_deathA1(entity this) { set_anim(this, 73, swarmer_deathA2); if(swarmer_checkgib(this, this)) return; }
+void swarmer_deathA3(entity this) { set_anim(this, 75, swarmer_deathA4); ai_pain(this, 5); }
+void swarmer_deathA2(entity this) { set_anim(this, 74, swarmer_deathA3); ai_pain(this, 8); }
+void swarmer_deathA1(entity this) { set_anim(this, 73, swarmer_deathA2); }
 
 void swarmer_deathB9(entity this) { set_anim(this, 92, swarmer_deathB9); CorpseThink(this); }
 void swarmer_deathB8(entity this) { set_anim(this, 91, swarmer_deathB9); }
@@ -323,9 +300,9 @@ void swarmer_deathB7(entity this) { set_anim(this, 90, swarmer_deathB8); }
 void swarmer_deathB6(entity this) { set_anim(this, 89, swarmer_deathB7); }
 void swarmer_deathB5(entity this) { set_anim(this, 88, swarmer_deathB6); ai_pain(this, 4); }
 void swarmer_deathB4(entity this) { set_anim(this, 87, swarmer_deathB5); ai_pain(this, 8); }
-void swarmer_deathB3(entity this) { set_anim(this, 86, swarmer_deathB4); if(swarmer_checkgib(this, this)) return; ai_pain(this, 16 + random() * 8); this.takedamage = DAMAGE_NO; }
-void swarmer_deathB2(entity this) { set_anim(this, 85, swarmer_deathB3); if(swarmer_checkgib(this, this)) return; ai_pain(this, 16 + random() * 8); }
-void swarmer_deathB1(entity this) { set_anim(this, 84, swarmer_deathB2); if(swarmer_checkgib(this, this)) return; ai_pain(this, 16 + random() * 8); }
+void swarmer_deathB3(entity this) { set_anim(this, 86, swarmer_deathB4); ai_pain(this, 16 + random() * 8); }
+void swarmer_deathB2(entity this) { set_anim(this, 85, swarmer_deathB3); ai_pain(this, 16 + random() * 8); }
+void swarmer_deathB1(entity this) { set_anim(this, 84, swarmer_deathB2); ai_pain(this, 16 + random() * 8); }
 
 void swarmer_deathC11(entity this) { set_anim(this, 103, swarmer_deathC11); CorpseThink(this); }
 void swarmer_deathC10(entity this) { set_anim(this, 102, swarmer_deathC11); t_walkmove(this, this.angles_y + 90, 6); }
@@ -335,9 +312,9 @@ void swarmer_deathC7(entity this) { set_anim(this, 99, swarmer_deathC8); }
 void swarmer_deathC6(entity this) { set_anim(this, 98, swarmer_deathC7); }
 void swarmer_deathC5(entity this) { set_anim(this, 97, swarmer_deathC6); }
 void swarmer_deathC4(entity this) { set_anim(this, 96, swarmer_deathC5); }
-void swarmer_deathC3(entity this) { set_anim(this, 95, swarmer_deathC4); if(swarmer_checkgib(this, this)) return; this.takedamage = DAMAGE_NO; }
-void swarmer_deathC2(entity this) { set_anim(this, 94, swarmer_deathC3); if(swarmer_checkgib(this, this)) return; }
-void swarmer_deathC1(entity this) { set_anim(this, 93, swarmer_deathC2); if(swarmer_checkgib(this, this)) return; }
+void swarmer_deathC3(entity this) { set_anim(this, 95, swarmer_deathC4); this.takedamage = DAMAGE_NO; }
+void swarmer_deathC2(entity this) { set_anim(this, 94, swarmer_deathC3); }
+void swarmer_deathC1(entity this) { set_anim(this, 93, swarmer_deathC2); }
 
 void swarmer_deathD10(entity this) { set_anim(this, 113, swarmer_deathD10); CorpseThink(this); }
 void swarmer_deathD9(entity this) { set_anim(this, 112, swarmer_deathD10); }
@@ -346,16 +323,37 @@ void swarmer_deathD7(entity this) { set_anim(this, 110, swarmer_deathD8); }
 void swarmer_deathD6(entity this) { set_anim(this, 109, swarmer_deathD7); ai_forward(this, 4); }
 void swarmer_deathD5(entity this) { set_anim(this, 108, swarmer_deathD6); ai_forward(this, 8); }
 void swarmer_deathD4(entity this) { set_anim(this, 107, swarmer_deathD5); ai_forward(this, 14); }
-void swarmer_deathD3(entity this) { set_anim(this, 106, swarmer_deathD4); if(swarmer_checkgib(this, this)) return; ai_swarmer_charge(this, 16); this.takedamage = DAMAGE_NO; }
-void swarmer_deathD2(entity this) { set_anim(this, 105, swarmer_deathD3); if(swarmer_checkgib(this, this)) return; ai_swarmer_charge(this, 20); }
-void swarmer_deathD1(entity this) { set_anim(this, 104, swarmer_deathD2); if(swarmer_checkgib(this, this)) return; ai_swarmer_charge(this, 24); }
+void swarmer_deathD3(entity this) { set_anim(this, 106, swarmer_deathD4); ai_swarmer_charge(this, 16); }
+void swarmer_deathD2(entity this) { set_anim(this, 105, swarmer_deathD3); ai_swarmer_charge(this, 20); }
+void swarmer_deathD1(entity this) { set_anim(this, 104, swarmer_deathD2); ai_swarmer_charge(this, 24); }
 
 void GibBloodBath(entity this, float bloodsize);
 void swarmer_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(swarmer_checkgib(this, inflictor))
-		return;
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gibs/gibhead_swarmer.mdl", this.health);
+			GibBloodBath(this, 1);
+			ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
+			if(random() > 0.5)
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_3.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_4.mdl", this.health);
+
+			if(random() > 0.5)
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_5.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/gibs/gib_gen_6.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	if(autocvar_skill >= 2)
 		this.alpha = 1.0;
@@ -374,13 +372,14 @@ void swarmer_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 	r = random();
 	if(r <= 0.25)
-		swarmer_deathA1(this);
+		setthink(this, swarmer_deathA1);
 	else if(r <= 0.5)
-		swarmer_deathB1(this);
+		setthink(this, swarmer_deathB1);
 	else if(r <= 0.75)
-		swarmer_deathC1(this);
+		setthink(this, swarmer_deathC1);
 	else
-		swarmer_deathD1(this);
+		setthink(this, swarmer_deathD1);
+	this.nextthink = time;
 }
 
 /*QUAKED monster_swarmer (1 0 0) (-16 -16 -24) (16 16 32) AMBUSH ? ? ? TRIGGERED NOTFOG NOTELEFRAG INSTAWAKE
@@ -454,6 +453,7 @@ METHOD(Swarmer, mr_setup, bool(Swarmer this, entity actor))
 	actor.steptype = FS_TYPEMEDIUM;
 
 	actor.health = 10;
+	actor.gibhealth = -40;
 	actor.th_stand = swarmer_stand1;
 	actor.th_walk = swarmer_walk1;
 	actor.th_run = swarmer_run1;

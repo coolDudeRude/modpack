@@ -19,5 +19,7 @@ REGISTER_WEAPON(INVOKER, NEW(Invoker));
 SPAWNFUNC_WEAPON(weapon_invoker, WEP_INVOKER)
 
 #ifdef SVQC
+void FX_Invoked(entity targ);
+
 void W_FireInvoker(entity this, .entity weaponentity);
 #endif

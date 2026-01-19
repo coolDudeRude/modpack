@@ -11,12 +11,11 @@ MODEL(MON_RETINAZER, "progs/eoc.mdl");
 #endif
 
 CLASS(Retinazer, Monster)
-    ATTRIB(Retinazer, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY | MON_FLAG_HIDDEN);
+    ATTRIB(Retinazer, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY | MON_FLAG_HIDDEN | MON_FLAG_PART);
     ATTRIB(Retinazer, m_mins, vector, '-32 -32 -24');
     ATTRIB(Retinazer, m_maxs, vector, '32 32 48');
 #ifdef GAMEQC
     ATTRIB(Retinazer, m_model, Model, MDL_MON_RETINAZER);
-    ATTRIB(Retinazer, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Retinazer, netname, string, "retinazer");
     ATTRIB(Retinazer, m_name, string, _("Retinazer"));

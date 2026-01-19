@@ -31,7 +31,20 @@ void shulker_frame(entity this)
 		case 26:
 		{
 			if(this.enemy)
-				sound(this, CH_WEAPON_SINGLE, SND_MON_SHULKER_CHARGE_RANDOM(), 1, ATTN_NORM);
+			{
+				int r = floor(random() * 7) + 1;
+				switch(r)
+				{
+					default:
+					case 1: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient1.wav", 1, ATTN_NORM); break;
+					case 2: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient2.wav", 1, ATTN_NORM); break;
+					case 3: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient3.wav", 1, ATTN_NORM); break;
+					case 4: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient4.wav", 1, ATTN_NORM); break;
+					case 5: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient5.wav", 1, ATTN_NORM); break;
+					case 6: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient6.wav", 1, ATTN_NORM); break;
+					case 7: _sound(this, CH_WEAPON_SINGLE, "shulker/ambient7.wav", 1, ATTN_NORM); break;
+				}
+			}
 			break;
 		}
 		case 32:
@@ -124,7 +137,16 @@ void ShulkerMissileTouch(entity this, entity toucher)
 	if(toucher.monsterdef && (toucher.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
 		T_Damage(toucher, this, this, 110, this.projectiledeathtype);	
 	T_RadiusDamage(this, this.owner, 15, this.projectiledeathtype, NULL);
-	sound(this, CH_WEAPON_SINGLE, SND_MON_SHULKER_EXPLODE_RANDOM(), 1, ATTN_NORM);
+
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_SHOTS, "shulker/hit1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_SHOTS, "shulker/hit2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_SHOTS, "shulker/hit3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_SHOTS, "shulker/hit4.wav", 1, ATTN_NORM);
 
 	te_explosion2(this.origin, 10, 5);
 
@@ -133,7 +155,15 @@ void ShulkerMissileTouch(entity this, entity toucher)
 
 void shulker_shoot(entity this)
 {
-	sound(this, CH_VOICE, SND_MON_SHULKER_SHOOT_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "shulker/shoot1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "shulker/shoot2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "shulker/shoot3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "shulker/shoot4.wav", 1, ATTN_NORM);
 
 	ShulkerMissile(this);
 }
@@ -151,8 +181,8 @@ void shulker_teleport(entity this)
 		// no special treatment needed, we're just using it as a position!
 		this.mangle = '0 1 0' * this.angles_y;
 		this.angles = '0 0 0';
-		soundat(NULL, from, CH_TRIGGER, "shulker/portal.wav", 1, ATTEN_NORM);
-		soundat(NULL, this.origin, CH_TRIGGER, "shulker/portal2.wav", 1, ATTEN_NORM);
+		soundat(NULL, from, CH_TRIGGER, "shulker/portal.wav", 1, ATTN_NORM);
+		soundat(NULL, this.origin, CH_TRIGGER, "shulker/portal2.wav", 1, ATTN_NORM);
 		te_teleport(this.origin);
 		te_teleport(from);
 		UNSET_ONGROUND(this);
@@ -174,9 +204,29 @@ void shulker_pain(entity this, entity attacker, float damage, int deathtype)
 	bool is_closed = (this.walkframe > 64 || this.walkframe < 10);
 
 	if(is_closed)
-		sound(this, CH_VOICE, SND_MON_SHULKER_PAIN_CLOSED_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "shulker/hurt_closed1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "shulker/hurt_closed2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "shulker/hurt_closed3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "shulker/hurt_closed4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "shulker/hurt_closed5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_SHULKER_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.33)
+			_sound(this, CH_VOICE, "shulker/hurt1.wav", 1, ATTN_NORM);
+		else if(r < 0.66)
+			_sound(this, CH_VOICE, "shulker/hurt2.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "shulker/hurt3.wav", 1, ATTN_NORM);
+	}
 
 	this.pain_finished = time + 0.6;
 	this.colormod = '1 0.9 0.9';
@@ -205,7 +255,28 @@ void shulker_die1(entity this) { set_anim(this, this.walkframe, shulker_die2); t
 
 void shulker_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	sound(this, CH_VOICE, SND_MON_SHULKER_DEATH_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "shulker/death1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "shulker/death2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "shulker/death3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "shulker/death4.wav", 1, ATTN_NORM);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
@@ -224,6 +295,38 @@ METHOD(Shulker, mr_setup, bool(Shulker this, entity actor))
 
     precache_sound("shulker/portal.wav");
 	precache_sound("shulker/portal2.wav");
+
+	precache_sound("shulker/hurt1.wav");
+	precache_sound("shulker/hurt2.wav");
+	precache_sound("shulker/hurt3.wav");
+
+	precache_sound("shulker/hurt_closed1.wav");
+	precache_sound("shulker/hurt_closed2.wav");
+	precache_sound("shulker/hurt_closed3.wav");
+	precache_sound("shulker/hurt_closed4.wav");
+	precache_sound("shulker/hurt_closed5.wav");
+
+	precache_sound("shulker/death1.wav");
+	precache_sound("shulker/death2.wav");
+	precache_sound("shulker/death3.wav");
+	precache_sound("shulker/death4.wav");
+	precache_sound("shulker/shoot1.wav");
+	precache_sound("shulker/shoot2.wav");
+	precache_sound("shulker/shoot3.wav");
+	precache_sound("shulker/shoot4.wav");
+
+	precache_sound("shulker/hit1.wav");
+	precache_sound("shulker/hit2.wav");
+	precache_sound("shulker/hit3.wav");
+	precache_sound("shulker/hit4.wav");
+
+	precache_sound("shulker/ambient1.wav");
+	precache_sound("shulker/ambient2.wav");
+	precache_sound("shulker/ambient3.wav");
+	precache_sound("shulker/ambient4.wav");
+	precache_sound("shulker/ambient5.wav");
+	precache_sound("shulker/ambient6.wav");
+	precache_sound("shulker/ambient7.wav");
 
 	actor.yaw_speed = 90;
 

@@ -160,10 +160,30 @@ void tbaby_die2(entity this)
 	this.origin = this.origin - 8 * normalize(this.velocity);
 
 	te_tarexplosion(this.origin);
-	
-	BecomeExplosion(this);
+
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	delete(this);
 }
-void tbaby_die1(entity this, entity inflictor, entity attacker, int deathtype) { set_anim(this, anim_tbaby_exp, tbaby_die2); this.takedamage = DAMAGE_NO; }
+void tbaby_die1(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED: break; // let the thing explode!
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	set_anim(this, anim_tbaby_exp, tbaby_die2);
+	this.takedamage = DAMAGE_NO;
+	this.solid = SOLID_NOT;
+}
 
 void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype);
 void tbaby_checknew(entity this)
@@ -217,7 +237,6 @@ void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
 		newSpawn.flags = FL_CLONE;
 		newSpawn.classname = targ.classname;
 		set_movetype(newSpawn, MOVETYPE_STEP);
-		setsize(newSpawn, '-16 -16 -24', '16 16 40');
 		newSpawn.health = 80;
 		if(targ.skin == 1)
 			newSpawn.health = 60;
@@ -227,7 +246,8 @@ void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
 		newSpawn.owner = targ;
 		targ.th_pain = func_null;
 		
-		_setmodel(newSpawn, "progs/tarbaby.mdl");
+		_setmodel(newSpawn, targ.model);
+		setsize(newSpawn, targ.mins, targ.maxs);
 		newSpawn.solid = SOLID_SLIDEBOX;
 		newSpawn.skin = targ.skin;
 		

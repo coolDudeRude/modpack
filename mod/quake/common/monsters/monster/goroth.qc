@@ -459,12 +459,12 @@ void gor_gib(entity this, entity inflictor)
 	WriteShort(channel, compressShortVector(inflictor.velocity));
 
 	te_lavasplash(this.origin - '320 0 256');
-	delete(this);
 }
 
 void gor_gibthink(entity this)
 {
 	gor_gib(this, this);
+	delete(this);
 }
 
 void gor_death21(entity this) { set_animofs(this, anim_goroth_death, 21, gor_gibthink); }
@@ -491,10 +491,16 @@ void gor_death1(entity this) { set_animofs(this, anim_goroth_death, 1, gor_death
 
 void gor_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		gor_gib(this, inflictor);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gor_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	gor_death1(this);
@@ -533,6 +539,7 @@ METHOD(Goroth, mr_setup, bool(Goroth this, entity actor))
 	precache_sound("goroth/gorwake.wav");
 
     actor.health = 2000;
+    actor.gibhealth = -150;
     if(horde_ent || actor.charmed)
     	actor.scale = 0.18;
     else if(!actor.scale)

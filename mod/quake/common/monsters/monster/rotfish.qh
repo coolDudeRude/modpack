@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_ROTFISH,         DEATH_SELF_MON_ROTFISH,         DEAT
 
 #ifdef GAMEQC
 MODEL(MON_ROTFISH, "progs/fish.mdl");
-MODEL(MON_ROTFISH_HEAD, "progs/gib1.mdl");
 #endif
 
 CLASS(Rotfish, Monster)
@@ -17,7 +16,6 @@ CLASS(Rotfish, Monster)
     ATTRIB(Rotfish, m_maxs, vector, '16 16 24');
 #ifdef GAMEQC
     ATTRIB(Rotfish, m_model, Model, MDL_MON_ROTFISH);
-    ATTRIB(Rotfish, m_model_head, Model, MDL_MON_ROTFISH_HEAD);
 #endif
     ATTRIB(Rotfish, netname, string, "rotfish");
     ATTRIB(Rotfish, m_name, string, _("Rotfish"));

@@ -182,9 +182,9 @@ void Explode_Egg(entity this)
 	this.nextthink = time + 0.1;
 }
 
-entity minion_spawn(entity own, vector org, entity monster, Monster mon)
+entity minion_spawn(entity actor, vector org, entity monster, Monster mon)
 {
-	entity targ = own.enemy;
+	entity targ = actor.enemy;
 
 	if(!mon || mon == MON_Null || (mon.spawnflags & MONSTER_TYPE_DECOY))
 	{
@@ -192,70 +192,36 @@ entity minion_spawn(entity own, vector org, entity monster, Monster mon)
 		return NULL;
 	}
 
-	if(IS_MONSTER(own))
-		update_minioncount(own, 1);
-
-	//entity monster = new(monster);
-	monster.monsterdef = mon;
-	monster.spawnfunc_checked = true;
-	//monster.angles = own.angles;
-	monster.enemy = targ;
 	monster.minion_active = true;
-	monster.solid = SOLID_SLIDEBOX;
-	monster.charmed = own.charmed;
-	monster.charmer = own.charmer;
-	monster.colormod = own.colormod;
+	monster.enemy = targ;
 	monster.flags = FL_MONSTER | FL_CLONE | FL_MINION; // TODO: clone is temporary to prevent monster counts being affected!
-	monster.clipgroup = own.clipgroup;
-	monster.category = own.category; // count the monster in horde too
+	monster.category = actor.category;
+	monster.charmed = actor.charmed;
+	monster.colormod = actor.colormod;
+	monster.charmer = actor.charmer;
+	monster.clipgroup = actor.clipgroup;
 
-	if(mon.spawnflags & MONSTER_TYPE_SWIM) { monster.flags |= FL_SWIM; }
-	if(mon.spawnflags & MONSTER_TYPE_FLY) { monster.flags |= FL_FLY; }
+	monster.owner = actor;
 
-	if(monster.flags & FL_FLY)
-		set_movetype(monster, MOVETYPE_QCENTITY);
-	else
-		set_movetype(monster, MOVETYPE_STEP);
+	monster = spawnmonster(monster, org, '0 1 0 ' * actor.angles_y, mon);
 
-	if(!(monster.flags & FL_SWIM))
-	{
-		IL_PUSH(g_damagedbycontents, monster);
-		monster.damagedbycontents	= true;
-	}
-	//setup_minionsupport(monster);
+	if(!monster)
+		return NULL;
 
-	// perform enemy-type specific loading
-	// TODO: copy model from existing monster?
-	setmodel(monster, mon.m_model);
-	setsize(monster, mon.m_mins, mon.m_maxs);
-
-	monster_setup(monster, mon);
-
-	org.z += -mon.m_mins.z; // offset based on size
-	setorigin(monster, org + '0 0 1'); // offset SHOULDN'T be needed, but let's be safe!
-
-	setcefc(monster, monster_customize);
+	if(IS_MONSTER(actor))
+		update_minioncount(actor, 1);
 
 	if(monster.charmed)
 	{
 		monster.health = max(monster.health, 1000);
-		monster.health = min(monster.health, own.health);
+		monster.health = min(monster.health, actor.health);
+		monster.max_health = monster.health;
+		if(monster.sprite)
+		{
+			WaypointSprite_UpdateMaxHealth(monster.sprite, monster.max_health);
+			WaypointSprite_UpdateHealth(monster.sprite, monster.health);
+		}
 	}
-
-	//if(!(mon.spawnflags & MONSTER_TYPE_FLY))
-		//DropToFloor_QC_DelayedInit(monster);
-
-	monster.takedamage = DAMAGE_AIM;
-	monster.ideal_yaw = monster.angles * '0 1 0';
-	if(!monster.yaw_speed)
-		monster.yaw_speed = 20;
-	monster.view_ofs = '0 0 25';
-	monster.use = monster_use;
-	monster.max_health = monster.health;
-
-	monster.nextthink = time;
-	setthink(monster, FoundTarget);
-	monster.owner = own;
 
 	return monster;
 }

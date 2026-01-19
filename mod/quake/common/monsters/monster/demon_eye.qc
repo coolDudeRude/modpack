@@ -187,14 +187,32 @@ void demon_eye_pain3(entity this) { demon_eye_anim(this, demon_eye_pain4); }
 void demon_eye_pain2(entity this) { demon_eye_anim(this, demon_eye_pain3); }
 void demon_eye_pain1(entity this) { demon_eye_anim(this, demon_eye_pain2); }
 
-void demon_eye_die(entity this, entity inflictor, entity attacker, int deathtype)
+void demon_eye_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "demon_eye/death.wav", 1, ATTN_NORM);
 
-	ThrowHead(this, inflictor, "progs/gib1.mdl", this.health);
+	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 	ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+}
+
+void demon_eye_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			demon_eye_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	demon_eye_gib(this, inflictor);
+	delete(this);
 }
 
 void demon_eye_pain(entity this, entity attacker, float damage, int deathtype)

@@ -726,7 +726,21 @@ void jim_is_dead_touch(entity this, entity toucher)
 
 void jim_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	_sound(this, CHAN_BODY, "", 1, ATTN_NORM);
+	stopsound(this, CHAN_BODY);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, jim_is_dead);
+			this.nextthink = time;
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	// Special explosive death event 
 	// First function creates the upward spiral (negative avelocity)
@@ -753,7 +767,8 @@ void jim_die(entity this, entity inflictor, entity attacker, int deathtype)
 	SpawnExplosion(EXPLODE_BIG, this.origin, "jim/explode_minor.wav");
 	SpawnProjectileSmoke(this.origin, 150, 50, 150);
 
-	jim_dying1(this);
+	setthink(this, jim_dying1);
+	this.nextthink = time;
 }
 
 //======================================================================
@@ -783,7 +798,10 @@ METHOD(Jim, mr_setup, bool(Jim this, entity actor))
     	_setmodel(actor, actor.mdl);
     }
     else if(actor.spawnflags & MON_JIM_ROCKET)
+    {
+    	precache_model("progs/mon_jimrock.mdl");
     	_setmodel(actor, "progs/mon_jimrock.mdl");
+    }
     setsize(actor, this.m_mins, this.m_maxs);
 
     precache_sound("jim/death1.wav");

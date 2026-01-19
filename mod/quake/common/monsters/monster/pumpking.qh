@@ -10,13 +10,6 @@ REGISTER_DEATHTYPE(MONSTER_PUMPKING,           DEATH_SELF_MON_PUMPKING,         
 MODEL(MON_PUMPKING, "progs/pumpking_body.mdl");
 
 SOUND(MON_PUMPKING_PAIN, "pumpking/pain");
-
-SOUND(MON_PUMPKING_SIGHT1, "pumpking/laugh1");
-SOUND(MON_PUMPKING_SIGHT2, "pumpking/laugh2");
-SOUND(MON_PUMPKING_SIGHT3, "pumpking/laugh3");
-Sound SND_MON_PUMPKING_SIGHT_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_PUMPKING_SIGHT1.m_id + floor(prandom() * 3));
-}
 #endif
 
 CLASS(Pumpking, Monster)
@@ -25,7 +18,6 @@ CLASS(Pumpking, Monster)
     ATTRIB(Pumpking, m_maxs, vector, '64 64 150');
 #ifdef GAMEQC
     ATTRIB(Pumpking, m_model, Model, MDL_MON_PUMPKING);
-    ATTRIB(Pumpking, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Pumpking, netname, string, "pumpking");
     ATTRIB(Pumpking, m_name, string, _("Pumpking"));

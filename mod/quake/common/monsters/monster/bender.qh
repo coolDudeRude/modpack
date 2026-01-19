@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_BENDER,           DEATH_SELF_MON_BENDER,           DE
 
 #ifdef GAMEQC
 MODEL(MON_BENDER, "progs/bender.mdl");
-MODEL(MON_BENDER_HEAD, "progs/h_bender.mdl");
 #endif
 
 CLASS(Bender, Monster)
@@ -17,7 +16,6 @@ CLASS(Bender, Monster)
     ATTRIB(Bender, m_maxs, vector, '12 14 26');
 #ifdef GAMEQC
     ATTRIB(Bender, m_model, Model, MDL_MON_BENDER);
-    ATTRIB(Bender, m_model_head, Model, MDL_MON_BENDER_HEAD);
 #endif
     ATTRIB(Bender, netname, string, "bender");
     ATTRIB(Bender, m_name, string, _("Bender"));

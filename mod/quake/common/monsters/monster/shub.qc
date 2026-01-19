@@ -184,7 +184,7 @@ void finale_1(entity this, entity inflictor, entity attacker, int deathtype)
 	// players to the intermission spot
 
 	// used later to tell if a telefragging player should appear
-	this.count = (!this.charmed && ((this.target && this.target != "") || no_end) && deathtype == DEATH_TELEFRAG.m_id);
+	this.count = (!this.charmed && ((this.target && this.target != "") || no_end) && DEATH_IS(deathtype, DEATH_TELEFRAG));
 	
 	// wait for 1 second
 	entity timer = spawn();

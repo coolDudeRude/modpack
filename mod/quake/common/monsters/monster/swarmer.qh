@@ -16,7 +16,6 @@ CLASS(Swarmer, Monster)
     ATTRIB(Swarmer, m_maxs, vector, '6 6 32');
 #ifdef GAMEQC
     ATTRIB(Swarmer, m_model, Model, MDL_MON_SWARMER);
-    ATTRIB(Swarmer, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Swarmer, netname, string, "swarmer");
     ATTRIB(Swarmer, m_name, string, _("Swarmer"));

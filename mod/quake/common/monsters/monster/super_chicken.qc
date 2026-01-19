@@ -18,6 +18,21 @@ void ai_face_reverse(entity this)
 	changeyaw(this);
 }
 
+void chicken_idlesound(entity this)
+{
+	int r = floor(random() * 6) + 1;
+	switch(r)
+	{
+		default:
+		case 1: _sound(this, CH_VOICE, "chicken/fire.wav", 1, ATTEN_MIN); break;
+		case 2: _sound(this, CH_VOICE, "chicken/random1.wav", 1, ATTEN_MIN); break;
+		case 3: _sound(this, CH_VOICE, "chicken/random2.wav", 1, ATTEN_MIN); break;
+		case 4: _sound(this, CH_VOICE, "chicken/random3.wav", 1, ATTEN_MIN); break;
+		case 5: _sound(this, CH_VOICE, "chicken/sight.wav", 1, ATTEN_MIN); break;
+		case 6: _sound(this, CH_VOICE, "chicken/pickup.wav", 1, ATTEN_MIN); break;
+	}
+}
+
 void superchicken_stand(entity this) { set_anim(this, 0, superchicken_stand); ai_stand(this); }
 
 void superchicken_walk7(entity this) { set_anim(this, 17, superchicken_walk1); ai_walk(this, 8); }
@@ -51,11 +66,11 @@ void superchicken_layegg3(entity this) { set_anim(this, 3, superchicken_layegg4)
 void superchicken_layegg2(entity this) { set_anim(this, 2, superchicken_layegg3); ai_face_reverse(this); }
 void superchicken_layegg1(entity this) { set_anim(this, 1, superchicken_layegg2); ai_face_reverse(this); }
 
-void superchicken_die(entity this, entity inflictor, entity attacker, int deathtype)
+void superchicken_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "chicken/chickdie.wav", 1, ATTEN_MIN);
 	float dm = -50;
-	ThrowHead(this, inflictor, "progs/gib1.mdl", dm);
+	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
 	ThrowGib(this, inflictor, "progs/mangib1.mdl", dm);
 	ThrowGib(this, inflictor, "progs/mangib2.mdl", dm);
 	ThrowGib(this, inflictor, "progs/mangib3.mdl", dm);
@@ -74,13 +89,32 @@ void superchicken_die(entity this, entity inflictor, entity attacker, int deatht
 	Send_Effect(EFFECT_SUPERCHICKEN_DIE, this.origin + '0 0 24', '0 0 0', 1);
 }
 
+void superchicken_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			superchicken_gib(this, inflictor);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	superchicken_gib(this, inflictor);
+
+	delete(this);
+}
+
 void superchicken_run7(entity this) { set_anim(this, 17, superchicken_run1); ai_run(this, 32); }
 void superchicken_run6(entity this) { set_anim(this, 16, superchicken_run7); ai_run(this, 32); }
 void superchicken_run5(entity this) { set_anim(this, 15, superchicken_run6); ai_run(this, 32); }
 void superchicken_run4(entity this) { set_anim(this, 14, superchicken_run5); ai_run(this, 32); }
 void superchicken_run3(entity this) { set_anim(this, 13, superchicken_run4); ai_run(this, 32); }
 void superchicken_run2(entity this) { set_anim(this, 12, superchicken_run3); ai_run(this, 32); }
-void superchicken_run1(entity this) { set_anim(this, 11, superchicken_run2); ai_run(this, 32); if(random() < 0.2) sound(this, CH_VOICE, SND_MON_SUPER_CHICKEN_BOCK_RANDOM(), 1, ATTEN_MIN); }
+void superchicken_run1(entity this) { set_anim(this, 11, superchicken_run2); ai_run(this, 32); if(random() < 0.2) chicken_idlesound(this); }
 
 void LaunchLaserbeam(entity this)
 {
@@ -133,7 +167,7 @@ void superchicken_laser1(entity this)
 
 	set_anim(this, 0, superchicken_laser2);
 	if(random() < 0.2)
-		sound(this, CH_VOICE, SND_MON_SUPER_CHICKEN_BOCK_RANDOM(), 1, ATTEN_MIN);
+		chicken_idlesound(this);
 	ai_face(this);
 	superchicken_laser(this);
 }
@@ -263,6 +297,12 @@ METHOD(SuperChicken, mr_setup, bool(SuperChicken this, entity actor))
     precache_sound("chicken/chickdie.wav");
     precache_sound("chicken/peck.wav");
     precache_sound("chicken/sight.wav");
+
+	precache_sound("chicken/fire.wav");
+	precache_sound("chicken/random1.wav");
+	precache_sound("chicken/random2.wav");
+	precache_sound("chicken/random3.wav");
+	precache_sound("chicken/pickup.wav");
 
     actor.yaw_speed = 45;
 

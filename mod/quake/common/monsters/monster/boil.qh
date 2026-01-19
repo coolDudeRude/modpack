@@ -16,7 +16,6 @@ CLASS(Boil, Monster)
     ATTRIB(Boil, m_maxs, vector, '16 16 32');
 #ifdef GAMEQC
     ATTRIB(Boil, m_model, Model, MDL_MON_BOIL);
-    ATTRIB(Boil, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Boil, netname, string, "boil");
     ATTRIB(Boil, m_name, string, _("Boil"));

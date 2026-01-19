@@ -14,7 +14,15 @@ void blaze_idlesound(entity this)
 	if(random() < 0.1 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_BLAZE_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "blaze/breathe1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "blaze/breathe2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "blaze/breathe3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "blaze/breathe4.wav", 1, ATTN_NORM);
 	}
 }
 
@@ -107,7 +115,15 @@ void blaze_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_BLAZE_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "blaze/hit1.wav", 1, ATTN_NORM);
+	else if(r < 0.5)
+		_sound(this, CH_VOICE, "blaze/hit2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "blaze/hit3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "blaze/hit4.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 0.5;
 	this.colormod = '1 0.9 0.9';
@@ -201,16 +217,31 @@ void blaze_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "blaze/death.wav", 1, ATTN_NORM);
 
-	if(this.health < -55)
+	this.effects &= ~EF_FLAME;
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.effects &= ~EF_FLAME;
-		if(this.blaze_body)
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			delete(this.blaze_body);
-			this.blaze_body = NULL;
+			ThrowGib(this, inflictor, "progs/h_blaze.mdl", this.health);
+			// fall through to special handling
 		}
-		ThrowHead(this, inflictor, MDL_MON_BLAZE_HEAD.model_str(), this.health);
-		return;
+		default:
+		{
+			entity body = this.blaze_body;
+			this.blaze_body = NULL;
+			Death_SpecialHandle(this, killed_type);
+			if(body)
+			{
+				// unattach the body so we have an actual location for effects
+				setattachment(body, NULL, "");
+				setorigin(body, this.origin);
+				Death_SpecialHandle(body, killed_type);
+			}
+			return;
+		}
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -237,7 +268,7 @@ void blaze_body_create(entity this)
 	body.classname = "blaze_body";
 	body.owner = this;
 	body.solid = SOLID_NOT; // main monster handles hitbox
-	setmodel(body, MDL_MON_BLAZE_BODY);
+	_setmodel(body, "progs/blaze_body.mdl");
 	setsize(body, '0 0 0', '0 0 0');
 	set_movetype(body, MOVETYPE_NONE);
 	setattachment(body, this, "");
@@ -271,12 +302,25 @@ METHOD(Blaze, mr_setup, bool(Blaze this, entity actor))
 {
     TC(Blaze, this);
 
+    precache_model("progs/h_blaze.mdl");
+    precache_model("progs/blaze_body.mdl");
 	precache_sound("blaze/death.wav");
 	precache_sound("blaze/fireball4.wav");
+
+	precache_sound("blaze/breathe1.wav");
+	precache_sound("blaze/breathe2.wav");
+	precache_sound("blaze/breathe3.wav");
+	precache_sound("blaze/breathe4.wav");
+
+	precache_sound("blaze/hit1.wav");
+	precache_sound("blaze/hit2.wav");
+	precache_sound("blaze/hit3.wav");
+	precache_sound("blaze/hit4.wav");
 
 	actor.yaw_speed = 180;
 
     actor.health = 200;
+    actor.gibhealth = -55;
     actor.th_stand = blaze_stand;
 	actor.th_walk = blaze_walk;
 	actor.th_run = blaze_run;

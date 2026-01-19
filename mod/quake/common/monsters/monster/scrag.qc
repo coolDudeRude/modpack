@@ -317,21 +317,26 @@ void wiz_death1(entity this)
 
 void wiz_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -40)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(IsQBJ3Map())
-			ThrowHead(this, inflictor, "progs/gibs/gibhead_scrag.mdl", this.health);
-		else
-			ThrowHead(this, inflictor, MDL_MON_SCRAG_HEAD.model_str(), this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(IsQBJ3Map())
+				ThrowGib(this, inflictor, "progs/gibs/gibhead_scrag.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/h_wizard.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	wiz_death1(this);
@@ -389,6 +394,7 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 {
     TC(Scrag, this);
 
+	precache_model("progs/h_wizard.mdl");
 	precache_model("progs/grenbone.mdl");
 	precache_sound("wizard/hit.wav");		// used by c code
 	precache_sound("wizard/wattack.wav");
@@ -410,6 +416,7 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 	}
 
     actor.health = 80;
+    actor.gibhealth = -40;
     actor.th_stand = wiz_stand1;
 	actor.th_walk = wiz_walk1;
 	actor.th_run = wiz_run1;

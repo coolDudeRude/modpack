@@ -271,18 +271,23 @@ void caco_death1(entity this)
 
 void caco_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -40)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, MDL_MON_CACODEMON_HEAD.model_str(), this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_cacodemon.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/grenbone.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	caco_death1(this);
@@ -315,6 +320,7 @@ METHOD(Cacodemon, mr_setup, bool(Cacodemon this, entity actor))
 {
     TC(Cacodemon, this);
 
+    precache_model("progs/h_cacodemon.mdl");
     precache_model("progs/grenbone.mdl");
 	precache_sound("cacodemon/hit.wav");
 	precache_sound("cacodemon/attack.wav");
@@ -325,6 +331,7 @@ METHOD(Cacodemon, mr_setup, bool(Cacodemon this, entity actor))
 	precache_sound("cacodemon/sight.wav");
 
     actor.health = 120;
+    actor.gibhealth = -40;
     actor.th_stand = caco_stand1;
 	actor.th_walk = caco_walk1;
 	actor.th_run = caco_run1;

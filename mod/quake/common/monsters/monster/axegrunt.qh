@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_AXEGRUNT,           DEATH_SELF_MON_AXEGRUNT,         
 
 #ifdef GAMEQC
 MODEL(MON_AXEGRUNT, "progs/axegrunt.mdl");
-MODEL(MON_AXEGRUNT_HEAD, "progs/h_guard.mdl");
 #endif
 
 CLASS(AxeGrunt, Monster)
@@ -17,7 +16,6 @@ CLASS(AxeGrunt, Monster)
     ATTRIB(AxeGrunt, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(AxeGrunt, m_model, Model, MDL_MON_AXEGRUNT);
-    ATTRIB(AxeGrunt, m_model_head, Model, MDL_MON_AXEGRUNT_HEAD);
 #endif
     ATTRIB(AxeGrunt, netname, string, "axegrunt");
     ATTRIB(AxeGrunt, m_name, string, _("Axe Grunt"));

@@ -130,17 +130,21 @@ void tentacle_pain(entity this, entity attacker, float damage, int deathtype)
 
 void tentacle_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -135)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		delete(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -158,7 +162,7 @@ void tentacle_riseshake(entity this)
 	});
 }
 
-void tentacle_rise6(entity this) { set_animofs(this, anim_tentacle_death, 12, tentacle_aim1); if(!this.enemy) setthink(this, tentacle_stand1); }
+void tentacle_rise6(entity this) { set_animofs(this, anim_tentacle_death, 12, monster_start_go); }
 void tentacle_rise5(entity this) { set_animofs(this, anim_tentacle_death, 13, tentacle_rise6); }
 void tentacle_rise4(entity this) { set_animofs(this, anim_tentacle_death, 14, tentacle_rise5); }
 void tentacle_rise3(entity this) { set_animofs(this, anim_tentacle_death, 15, tentacle_rise4); }
@@ -191,6 +195,7 @@ METHOD(Tentacle, mr_setup, bool(Tentacle this, entity actor))
 	set_movetype(actor, MOVETYPE_NONE);
 
 	actor.health = 135;
+	actor.gibhealth = -135;
 	actor.scale = 0.5;
 
 	actor.th_run = tentacle_aim1;

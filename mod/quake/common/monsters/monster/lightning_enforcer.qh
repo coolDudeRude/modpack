@@ -8,15 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_LENFORCER,       DEATH_SELF_MON_LENFORCER,       DEAT
 
 #ifdef GAMEQC
 MODEL(MON_LIGHTNING_ENFORCER, "progs/enforcer.mdl");
-MODEL(MON_LIGHTNING_ENFORCER_HEAD, "progs/h_mega.mdl");
-
-SOUND(MON_LENFORCER_SIGHT1, "monsters/lenforce/lesight1");
-SOUND(MON_LENFORCER_SIGHT2, "monsters/lenforce/lesight2");
-SOUND(MON_LENFORCER_SIGHT3, "monsters/lenforce/lesight3");
-SOUND(MON_LENFORCER_SIGHT4, "monsters/lenforce/lesight4");
-Sound SND_MON_LENFORCER_SIGHT_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_LENFORCER_SIGHT1.m_id + floor(prandom() * 4));
-}
 #endif
 
 CLASS(LightningEnforcer, Monster)
@@ -25,7 +16,6 @@ CLASS(LightningEnforcer, Monster)
     ATTRIB(LightningEnforcer, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(LightningEnforcer, m_model, Model, MDL_MON_LIGHTNING_ENFORCER);
-    ATTRIB(LightningEnforcer, m_model_head, Model, MDL_MON_LIGHTNING_ENFORCER_HEAD);
 #endif
     ATTRIB(LightningEnforcer, netname, string, "lenforcer");
     ATTRIB(LightningEnforcer, m_name, string, _("Lightning Enforcer"));

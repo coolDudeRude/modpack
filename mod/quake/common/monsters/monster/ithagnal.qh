@@ -17,7 +17,6 @@ CLASS(Ithagnal, Monster)
     ATTRIB(Ithagnal, view_ofs, vector, '0 0 436');
 #ifdef GAMEQC
     ATTRIB(Ithagnal, m_model, Model, MDL_MON_ITHAGNAL);
-    ATTRIB(Ithagnal, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Ithagnal, netname, string, "ithagnal");
     ATTRIB(Ithagnal, m_name, string, _("Ithagnal"));

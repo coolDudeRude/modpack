@@ -16,7 +16,6 @@ CLASS(Thomas, Monster)
     ATTRIB(Thomas, m_maxs, vector, '16 16 16');
 #ifdef GAMEQC
     ATTRIB(Thomas, m_model, Model, MDL_MON_THOMAS);
-    ATTRIB(Thomas, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Thomas, netname, string, "thomas");
     ATTRIB(Thomas, m_name, string, _("Thomas"));

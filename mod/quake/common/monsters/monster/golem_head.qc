@@ -156,12 +156,30 @@ void golem_head_fast3(entity this) { set_anim(this, anim_golem_head, golem_head_
 void golem_head_fast2(entity this) { set_anim(this, anim_golem_head, golem_head_fast3); ai_face(this); GolemHead_StartFast(this); }
 void golem_head_fast1(entity this) { set_anim(this, anim_golem_head, golem_head_fast2); ai_face(this); }
 
-void golem_head_die(entity this, entity inflictor, entity attacker, int deathtype)
+void golem_head_explode(entity this)
 {
 	_sound(this, CH_VOICE, "jungle_golem/explode.wav", 1, 0.5);
 	Send_Effect(EFFECT_EXPLOSION_SMALL, CENTER_OR_VIEWOFS(this), '0 0 0', 1);
+}
+
+void golem_head_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
 	if(this.charmer && this.charmer.monsterdef == MON_JUNGLE_GOLEM && this.charmer.golem_head == this)
 		this.charmer.golem_head = NULL;
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			golem_head_explode(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	golem_head_explode(this);
 	delete(this);
 }
 

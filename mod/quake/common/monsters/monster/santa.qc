@@ -343,15 +343,21 @@ void santa_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	if(this.spawnflags & MON_SANTA_GOOD)
 		return; // TODO: maybe we do need a CorpseThink here to keep stuff from breaking?
-// check for gib
-	if(this.health < -60)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/xmas/h_santa.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/xmas/gib_santagun.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/xmas/gib_santasack.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/xmas/gib_snowball.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/xmas/h_santa.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/xmas/gib_santagun.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/xmas/gib_santasack.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/xmas/gib_snowball.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -437,6 +443,7 @@ METHOD(Santa, mr_setup, bool(Santa this, entity actor))
 {
     TC(Santa, this);
 
+	precache_model("progs/xmas/h_santa.mdl");
 	precache_model("progs/xmas/gib_santagun.mdl");
 	precache_model("progs/xmas/gib_santasack.mdl");
 	precache_model("progs/xmas/gib_snowball.mdl");
@@ -459,6 +466,7 @@ METHOD(Santa, mr_setup, bool(Santa this, entity actor))
 	actor.reflectplasma = true;
 
     actor.health = 600;
+    actor.gibhealth = -60;
 	actor.th_pain = santa_pain;
 	actor.th_die = santa_die;
 

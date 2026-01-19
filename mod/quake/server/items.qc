@@ -425,6 +425,8 @@ int armortype_fromlegacy(float armor_type)
 .bool armor_simple; // TODO: shouldn't be needed
 void armor_touch(entity this, entity toucher)
 {
+	if(this.m_transform)
+		return; // gets reset when transforming back
 	if(!CanTouchItem(this, toucher))
 		return;
 
@@ -2249,6 +2251,8 @@ entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster 
 				continue;
 			if((it.spawnflags & MON_FLAG_XMAS) && season != SEASON_XMAS)
 				continue;
+			if(it.spawnflags & MON_FLAG_PART)
+				continue;
 			RandomSelection_AddEnt(it, 1, 1);
 		});
 		mon = RandomSelection_chosen_ent;
@@ -2265,20 +2269,25 @@ entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster 
 	monster.flags |= FL_MONSTER;
 	//monster.owner = actor;
 	monster.spawnfunc_checked = true;
-	monster.solid = SOLID_SLIDEBOX;
-	setmodel(monster, mon.m_model);
-	setsize(monster, mon.m_mins, mon.m_maxs);
 	if(mon.spawnflags & MONSTER_TYPE_SWIM) { monster.flags |= FL_SWIM; }
 	if(mon.spawnflags & MONSTER_TYPE_FLY) { monster.flags |= FL_FLY; }
-	if(monster.flags & FL_FLY)
-		set_movetype(monster, MOVETYPE_QCENTITY);
-	else
-		set_movetype(monster, MOVETYPE_STEP);
 
-	if(!(monster.flags & FL_SWIM) && !(mon.spawnflags & MONSTER_TYPE_BOSS))
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
 	{
-		IL_PUSH(g_damagedbycontents, monster);
-		monster.damagedbycontents	= true;
+		monster.solid = SOLID_SLIDEBOX;
+		setmodel(monster, mon.m_model);
+		setsize(monster, mon.m_mins, mon.m_maxs);
+
+		if(monster.flags & FL_FLY)
+			set_movetype(monster, MOVETYPE_QCENTITY);
+		else
+			set_movetype(monster, MOVETYPE_STEP);
+
+		if(!(monster.flags & FL_SWIM) && !(mon.spawnflags & MONSTER_TYPE_BOSS))
+		{
+			IL_PUSH(g_damagedbycontents, monster);
+			monster.damagedbycontents	= true;
+		}
 	}
 
 	if(actor)
@@ -2292,29 +2301,45 @@ entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster 
 	// will be corrected later, just need this for spawning
 	setorigin(monster, spawnpos);
 
-	setthink(monster, monster_start_go);
-	monster.nextthink = time + 0.1;
+	monster.angles = '0 0 0';
+	if(actor)
+		monster.angles_y = actor.angles_y;
+
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
+	{
+		setthink(monster, monster_start_go);
+		monster.nextthink = time + 0.1;
+	}
+	else
+	{
+		//monster.health = monster.max_health = 1; // give it an initial health so it isn't instantly killed
+		setthink(monster, controller_think);
+		monster.nextthink = time;
+	}
+
 	monster_setup(monster, mon);
 	if(monster.charmed)
 		monster.health = max(monster.health, 1000);
 
 	monster.max_health = monster.health;
-	monster.angles = '0 0 0';
-	if(actor)
-		monster.angles_y = actor.angles_y;
-	vector org = spawnpos;
-	org.z += -mon.m_mins.z; // offset based on size
-	setorigin(monster, org + '0 0 1');
-	setcefc(monster, monster_customize);
-	setup_minionsupport(monster);
 
-	if(!(mon.spawnflags & MONSTER_TYPE_FLY))
-		DropToFloor_QC_DelayedInit(monster);
-	
-	tracebox(monster.origin, monster.mins, monster.maxs, monster.origin, MOVE_NOMONSTERS, monster);
-	if(trace_startsolid)
-		LOG_DEBUG("Monster in wall at ", vtos(monster.origin), "\n");
-	monster.takedamage = DAMAGE_AIM;
+	if(!(mon.spawnflags & MONSTER_TYPE_CONTROLLER))
+	{
+		vector org = spawnpos;
+		org.z += -mon.m_mins.z; // offset based on size
+		setorigin(monster, org + '0 0 1');
+		setcefc(monster, monster_customize);
+		setup_minionsupport(monster);
+
+		if(!(mon.spawnflags & MONSTER_TYPE_FLY))
+			DropToFloor_QC_DelayedInit(monster);
+		
+		tracebox(monster.origin, monster.mins, monster.maxs, monster.origin, MOVE_NOMONSTERS, monster);
+		if(trace_startsolid)
+			LOG_DEBUG("Monster in wall at ", vtos(monster.origin), "\n");
+		monster.takedamage = DAMAGE_AIM;
+	}
+		
 	monster.ideal_yaw = monster.angles * '0 1 0';
 	if(!monster.yaw_speed)
 		monster.yaw_speed = 20;

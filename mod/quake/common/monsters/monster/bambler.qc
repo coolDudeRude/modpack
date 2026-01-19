@@ -256,18 +256,23 @@ void bam_death1(entity this) { set_animofs(this, anim_bam_death, 1, bam_death2);
 
 void bam_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -60)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_bams.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_bams.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -287,7 +292,8 @@ spawnfunc(monster_bambler) { monster_start(this, true, MON_BAMBLER); }
 METHOD(Bambler, mr_setup, bool(Bambler this, entity actor))
 {
     TC(Bambler, this);
-	
+
+    precache_model("progs/h_bams.mdl");
 	precache_sound("bambler/sdeath.wav");
 	precache_sound("bambler/shurt2.wav");
 	precache_sound("bambler/sidle.wav");
@@ -302,17 +308,18 @@ METHOD(Bambler, mr_setup, bool(Bambler this, entity actor))
 
 	if(actor.spawnflags & MON_BAMBLER_ELMO)
 	{
+		precache_model("progs/bambler_elmo.mdl");
 		precache_sound("bambler/elmo_idle.wav");
 		precache_sound("bambler/elmo_hurt.wav");
 		precache_sound("bambler/elmo_die.wav");
 		precache_sound("bambler/elmo_sight.wav");
 		precache_sound("bambler/elmo_smack.wav");
-		precache_model("progs/bambler_elmo.mdl");
 		_setmodel(actor, "progs/bambler_elmo.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
 
     actor.health = 450;
+    actor.gibhealth = -60;
     actor.th_stand = bam_stand1;
 	actor.th_walk = bam_walk1;
 	actor.th_run = bam_run1;

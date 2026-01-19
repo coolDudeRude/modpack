@@ -110,7 +110,7 @@ void LightningTouch(entity this, entity toucher)
 		this.nextthink = time + 0.1;
 		return;
 	}
-	if(toucher.takedamage && !(toucher.monsterdef.spawnflags & MON_FLAG_METAL) && !toucher.tank)
+	if(toucher.takedamage && !(toucher.monsterdef.spawnflags & MON_FLAG_METAL) && !(toucher.monsterdef.spawnflags & MON_FLAG_PART) && !toucher.tank)
 	{
 		if(toucher.takedamage == DAMAGE_AIM)
 			spawn_extrablood(this, toucher, 1000); // TODO: toucher?
@@ -142,47 +142,12 @@ void LightningTouch(entity this, entity toucher)
 			toucher.nextthink = time;
 			return;
 		}
-		if(toucher.health <= damg)
-		{
-			if(toucher.move_movetype == MOVETYPE_PUSH)
-			{
-				T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
-				return;
-			}
-			if(toucher.classname == "door")
-			{
-				T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
-				return;
-			}
-			if(toucher.move_movetype == MOVETYPE_NONE)
-			{
-				T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
-				return;
-			}
-			// TODO: generic way of telling if a target can actually be hurt
-			if(toucher.charmed && (IS_PLAYER(this.owner) || this.owner == toucher.charmer || this.owner.charmer == toucher.charmer))
-				return; // no hurting our pets!
 
-			if(this.owner.charmed && (IS_PLAYER(toucher) || toucher == this.owner.charmer || toucher.charmer == this.owner.charmer))
-				return; // no hurting us either!
-
-			if(!IS_PLAYER(toucher))
-				toucher.owner = this.owner;
-			else
-				toucher.enemy = this.owner;
-			delete(this);
-			toucher.takedamage = DAMAGE_NO;
-			setthink(toucher, gibhim);
-			toucher.nextthink = time;
-			return;
-		}
-		else
-		{
-			T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
-			if(toucher.takedamage == DAMAGE_AIM)
-				SpawnMeatBounce(this, toucher, damg);
-			delete(this);
-		}
+		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
+		if(toucher.takedamage == DAMAGE_AIM)
+			SpawnMeatBounce(this, toucher, damg);
+		delete(this);
+		return;
 	}
 	else
 	{

@@ -1229,7 +1229,9 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.velocity_z < 10)
 		this.velocity_z = this.velocity_z + random()*300;
 
-	if(this.health < -40 || STAT(SKATING, this) || horde_ent || STAT(FROZEN, this) > time)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+
+	if(killed_type == KILLED_GIBBED || STAT(SKATING, this) || horde_ent || STAT(FROZEN, this) > time)
 	{
 		GibPlayer(this, inflictor, attacker);
 		if(horde_ent)
@@ -1248,6 +1250,18 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 			setmodel(this, MDL_Null);
 		}
 		return;
+	}
+
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED: break; // handled above
+		default:
+		{
+			this.deadflag = DEAD_DEAD;
+			Death_SpecialHandle(this, killed_type);
+			return;
+		}
 	}
 
 	DeathSound(this);

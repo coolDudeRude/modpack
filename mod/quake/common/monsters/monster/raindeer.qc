@@ -213,17 +213,32 @@ void raind_explode(entity this)
 	SpawnProjectileSmoke(this.origin, 200, 250, 100);
 
 	// No blood or guts!
-	ThrowHead(this, this, "progs/xmas/h_raindeer.mdl", this.health);
+	ThrowGib(this, this, "progs/xmas/h_raindeer.mdl", this.health);
 	ThrowGib(this, this, "progs/xmas/gib_rdleg1.mdl", this.health);
 	ThrowGib(this, this, "progs/xmas/gib_rdrockpack.mdl", this.health);
 	for(int j = 0; j < floor(random() * 8); ++j)
 	{
 		ThrowGib(this, this, "progs/xmas/gib_snowball.mdl", this.health);
 	}
+	delete(this);
 }
 
 void raind_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, raind_explode);
+			this.nextthink = time;
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	_sound(this, CHAN_BODY, "xmas/raindeer/death.wav", 1, ATTN_NORM);
 	// slight delay to avoid recursive explosions
 	setthink(this, raind_explode);
@@ -297,6 +312,7 @@ METHOD(Raindeer, mr_setup, bool(Raindeer this, entity actor))
 {
     TC(Raindeer, this);
 
+	precache_model("progs/xmas/h_raindeer.mdl");
 	precache_model("progs/xmas/gib_rdleg1.mdl");
 	precache_model("progs/xmas/gib_rdrockpack.mdl");
 

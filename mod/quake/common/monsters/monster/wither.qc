@@ -156,17 +156,22 @@ void wither_skull_touch(entity this, entity toucher)
 		float curtime = StatusEffects_gettime(STATUSEFFECT_Withering, toucher);
 		if((time + withertime) > curtime)
 			StatusEffects_apply(STATUSEFFECT_Withering, toucher, time + withertime, 0);
+	}
 
-		sound(this, CH_WEAPON_SINGLE, SND_MON_WITHER_EXPLODE_RANDOM(), 1, ATTN_NORM);
-		T_RadiusDamage(this, this.owner, 40, this.projectiledeathtype, toucher); // tonedown
-		te_explosion2(this.origin, 3, 10);
-	}
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_SHOTS, "wither/explode1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_SHOTS, "wither/explode2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_SHOTS, "wither/explode3.wav", 1, ATTN_NORM);
 	else
-	{
-		sound(this, CH_WEAPON_SINGLE, SND_MON_WITHER_EXPLODE_RANDOM(), 1, ATTN_NORM);
-		T_RadiusDamage(this, this.owner, 40, this.projectiledeathtype, this.owner); // tonedown
-		te_explosion2(this.origin, 3, 10);
-	}
+		_sound(this, CH_SHOTS, "wither/explode4.wav", 1, ATTN_NORM);
+
+	entity own = (toucher) ? toucher : this.owner; // try to prevent self-damage!
+
+	T_RadiusDamage(this, this.owner, 40, this.projectiledeathtype, own); // tonedown
+	te_explosion2(this.origin, 3, 10);
 
 	delete(this);
 }
@@ -196,7 +201,8 @@ void Wither_FastFire(entity this)
 		newmis.owner = this.owner;
 		settouch(newmis, wither_skull_touch);
 		newmis.classname = "wizard_spike";
-		setmodel(newmis, MDL_MON_WITHER_HEAD);
+		//setmodel(newmis, MDL_MON_WITHER_HEAD);
+		_setmodel(newmis, "progs/wither_skull.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');		
 	}
 
@@ -247,8 +253,16 @@ void Wither_idle_sound(entity this)
 {
 	if(this.waitmin < time)
 	{
-	 	this.waitmin = time + 2 + (random() * 3);
-	 	sound(this, CH_VOICE, SND_MON_WITHER_IDLE_RANDOM(), 1, 0.5);
+		this.waitmin = time + 2 + (random() * 3);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "wither/idle1.wav", 1, 0.5);
+		else if(r < 0.50)
+			_sound(this, CH_VOICE, "wither/idle2.wav", 1, 0.5);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "wither/idle3.wav", 1, 0.5);
+		else
+			_sound(this, CH_VOICE, "wither/idle4.wav", 1, 0.5);
 	}
 
 	bool is_low = (this.health <= (this.max_health * 0.5));
@@ -351,6 +365,19 @@ void wither_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	_sound(this, CH_VOICE, "wither/death.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	wither_death1(this);
 }
 
@@ -360,7 +387,15 @@ void wither_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 	//if(random()*70 > damage)
 		//return;		// didn't flinch
-	sound(this, CH_VOICE, SND_MON_WITHER_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "wither/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "wither/hurt2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "wither/hurt3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "wither/hurt4.wav", 1, ATTN_NORM);
 
 	this.colormod = '1 0.9 0.9';
 	this.pain_finished = time + 1;
@@ -396,8 +431,24 @@ METHOD(Wither, mr_setup, bool(Wither this, entity actor))
 {
     TC(Wither, this);
 
+    precache_model("progs/wither_skull.mdl");
 	precache_sound("wither/death.wav");
 	precache_sound("wither/shoot.wav");
+
+	precache_sound("wither/explode1.wav");
+	precache_sound("wither/explode2.wav");
+	precache_sound("wither/explode3.wav");
+	precache_sound("wither/explode4.wav");
+
+	precache_sound("wither/idle1.wav");
+	precache_sound("wither/idle2.wav");
+	precache_sound("wither/idle3.wav");
+	precache_sound("wither/idle4.wav");
+
+	precache_sound("wither/hurt1.wav");
+	precache_sound("wither/hurt2.wav");
+	precache_sound("wither/hurt3.wav");
+	precache_sound("wither/hurt4.wav");
 
 	if(random() < 0.2)
 		actor.spawnflags |= MON_WITHER_FRIENDLY;

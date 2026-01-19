@@ -1366,15 +1366,20 @@ void justice_die(entity this, entity inflictor, entity attacker, int deathtype)
 	justice_finish_attachment(this);
 	justice_remove_attachment(this);
 
-// check for gib
-	if(this.health < -60)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_justice.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/w_justicesword.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_justiceboot.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_justiceshould.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_justice.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/w_justicesword.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_justiceboot.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_justiceshould.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -1475,6 +1480,7 @@ METHOD(Justice, mr_setup, bool(Justice this, entity actor))
 {
     TC(Justice, this);
 
+	precache_model("progs/h_justice.mdl");
 	precache_model("progs/w_justicesword.mdl");
 	precache_model("progs/gib_justiceboot.mdl");
 	precache_model("progs/gib_justiceshould.mdl");
@@ -1521,6 +1527,7 @@ METHOD(Justice, mr_setup, bool(Justice this, entity actor))
 	precache_sound("ambience/flames4.wav");
 
     actor.health = 600;
+    actor.gibhealth = -60;
     actor.th_stand = justice_stand;
 	actor.th_walk = justice_walk;
 	actor.th_run = justice_run;

@@ -8,22 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_MCGUARDIAN,         DEATH_SELF_MON_MCGUARDIAN,       
 
 #ifdef GAMEQC
 MODEL(MON_MCGUARDIAN, "progs/mcguardian.mdl");
-
-SOUND(MON_MCGUARDIAN_PAIN1, "mcguardian/guardian_hit1");
-SOUND(MON_MCGUARDIAN_PAIN2, "mcguardian/guardian_hit2");
-SOUND(MON_MCGUARDIAN_PAIN3, "mcguardian/guardian_hit3");
-SOUND(MON_MCGUARDIAN_PAIN4, "mcguardian/guardian_hit4");
-Sound SND_MON_MCGUARDIAN_PAIN_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_MCGUARDIAN_PAIN1.m_id + floor(prandom() * 4));
-}
-
-SOUND(MON_MCGUARDIAN_IDLE1, "mcguardian/guardian_idle1");
-SOUND(MON_MCGUARDIAN_IDLE2, "mcguardian/guardian_idle2");
-SOUND(MON_MCGUARDIAN_IDLE3, "mcguardian/guardian_idle3");
-SOUND(MON_MCGUARDIAN_IDLE4, "mcguardian/guardian_idle4");
-Sound SND_MON_MCGUARDIAN_IDLE_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_MCGUARDIAN_IDLE1.m_id + floor(prandom() * 4));
-}
 #endif
 
 CLASS(MCGuardian, Monster)
@@ -32,7 +16,6 @@ CLASS(MCGuardian, Monster)
     ATTRIB(MCGuardian, m_maxs, vector, '16 16 24');
 #ifdef GAMEQC
     ATTRIB(MCGuardian, m_model, Model, MDL_MON_MCGUARDIAN);
-    ATTRIB(MCGuardian, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(MCGuardian, netname, string, "mcguardian");
     ATTRIB(MCGuardian, m_name, string, _("Guardian"));

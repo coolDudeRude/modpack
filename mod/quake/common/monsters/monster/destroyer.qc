@@ -273,8 +273,9 @@ void des_spawn_body(entity this)
 
 	//this.effects |= EF_NODEPTHTEST;
 
-	setthink(this, des_move_loop);
-	this.nextthink = time + 0.1;
+	// will be triggered by move logic
+	//setthink(this, des_move_loop);
+	//this.nextthink = time + 0.1;
 }
 
 void des_part_explode(entity this)
@@ -286,23 +287,30 @@ void des_part_explode(entity this)
 
 void des_death(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	// instead of blowing up, get invoked
-	if(DEATH_ISWEAPON(deathtype, WEP_INVOKER))
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+
+	switch(killed_type)
 	{
-		for(entity ent = this; ent; ent = ent.des_next)
+		case KILLED_INVOKED:
 		{
-			FX_Invoked(ent.model, ent.frame, ent.origin, ent.angles, ent.mins, ent.maxs, ent.scale, attacker.origin);
-			setthink(ent, SUB_Remove);
-			ent.nextthink = time;
-			ent.solid = SOLID_NOT;
-			ent.takedamage = DAMAGE_NO;
-			ent.velocity = '0 0 0';
+			for(entity ent = this; ent; ent = ent.des_next)
+			{
+				FX_Invoked(ent);
+				setthink(ent, SUB_Remove);
+				ent.nextthink = time;
+				ent.solid = SOLID_NOT;
+				ent.takedamage = DAMAGE_NO;
+				ent.velocity = '0 0 0';
+			}
+			return; // handled
 		}
-		return;
 	}
 
+	// unique death cutscene (slowly kills all parts)
+	// no special death effects apply here! (yet)
+
 	int segments = 1;
-	for(entity ent = this.des_next; ent; ent = ent.des_next)
+	for(entity ent = this; ent; ent = ent.des_next)
 	{
 		ent.velocity = '0 0 0';
 		setthink(ent, des_part_explode);
@@ -313,7 +321,6 @@ void des_death(entity this, entity inflictor, entity attacker, int deathtype)
 		ent.skin = 1;
 		segments += 1;
 	}
-	des_part_explode(this);
 }
 
 /*QUAKED monster_destroyer(1 0 0)(-32 -32 -24)(32 32 48) Ambush
@@ -342,6 +349,7 @@ METHOD(Destroyer, mr_setup, bool(Destroyer this, entity actor))
 		actor.scale = 1;
 
     actor.health = 20000;
+    actor.gibhealth = 0; // no gibbing
     set_movetype(actor, MOVETYPE_NOCLIP);
 
     // give it a unique clipgroup to prevent intersecting with projectiles and such

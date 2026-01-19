@@ -709,10 +709,22 @@ void armagon_die1(entity this) { set_animofs(this, anim_armagon_tranl, 1, armago
 
 void armagon_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		armagon_die14(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			armagon_die14(this);
+			return; // handled
+		}
+		default:
+		{
+			Death_SpecialHandle(this, killed_type);
+			// also apply any effects to our lower half
+			Death_SpecialHandle(this.attachment, killed_type);
+			return;
+		}
 	}
 	armagon_die1(this);
 }
@@ -977,6 +989,7 @@ METHOD(Armagon, mr_setup, bool(Armagon this, entity actor))
 		actor.health = 4500;
 		actor.worldtype = 0.75;
 	}
+	actor.gibhealth = -150;
 	actor.state = 0;
 	actor.armagon_super_time = 0;
 	actor.endtime = 0;

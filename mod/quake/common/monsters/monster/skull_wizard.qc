@@ -598,7 +598,7 @@ void skullw_summon7(entity this)
 	this.pos1 = this.origin + this.view_ofs + v_forward*64 + v_up*16;
 	this.skullwizard_summonflag = find_minionspace(this.pos1);
 	
-	// If the spawn locaiton all clear, spawn something!
+	// If the spawn location all clear, spawn something!
 	if(this.skullwizard_summonflag)
 	{
 		minion_spawn(this, this.pos1, new(monster), MON_LOSTSOUL);
@@ -795,16 +795,24 @@ void skullw_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 	// Special death, Instantly vaporize cloak
 	// This is really a gib death without the gibs!
-	if(this.health < -40)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		// Typical Grenade explosion
-		te_explosion(this.origin);
-		SpawnExplosion(EXPLODE_MED, this.origin, "weapons/r_exp3b.wav");
-		ThrowHead(this, inflictor, "progs/h_skullwiz.mdl", -1);
-		entity gib = ThrowGib(this, inflictor, "progs/w_skullbook.mdl", -1);
-		gib.skin = this.skin;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			// Typical Grenade explosion
+			te_explosion(this.origin);
+			SpawnExplosion(EXPLODE_MED, this.origin, "weapons/r_exp3b.wav");
+			ThrowGib(this, inflictor, "progs/h_skullwiz.mdl", -1);
+			entity gib = ThrowGib(this, inflictor, "progs/w_skullbook.mdl", -1);
+			gib.skin = this.skin;
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 	// Regular death, collapse and fade away
 	// Large particle explosion upwards
 	//particle_explode(this.origin, 100, 3, this.part_style, PARTICLE_BURST_SKULLUP);
@@ -886,6 +894,7 @@ METHOD(SkullWizard, mr_setup, bool(SkullWizard this, entity actor))
 {
     TC(SkullWizard, this);
 
+    precache_model("progs/h_skullwiz.mdl");
     precache_model("progs/w_skullbook.mdl");		// Unique book item
     precache_model("progs/proj_skullwiz.mdl");
     precache_model("progs/proj_skullwizp.mdl");
@@ -917,6 +926,7 @@ METHOD(SkullWizard, mr_setup, bool(SkullWizard this, entity actor))
 		actor.bodyphased = MONAI_SKULLWINVIS;
 
     actor.health = 120;
+    actor.gibhealth = -40;
 	actor.th_pain = skullw_pain;
 	actor.th_die = skullw_die;
 

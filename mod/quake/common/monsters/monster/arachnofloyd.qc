@@ -165,14 +165,21 @@ void arf_pain(entity this, entity attacker, float damage, int deathtype)
 void arf_explode(entity this)
 {
 	_sound(this, CH_VOICE, "arachnofloyd/death1.wav", 1, ATTN_NORM);
-	ThrowHead(this, this, "progs/h_arach.mdl", this.health);
+	ThrowGib(this, this, "progs/h_arach.mdl", this.health);
 	ThrowGib(this, this, "progs/fgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/fgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/fgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/fgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/fgib1.mdl", this.health);
 
-	BecomeExplosion(this);
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	delete(this);
 }
 
 void arf_die23(entity this) { set_animofs(this, anim_arachnofloyd_death, 23, arf_die23); arf_explode(this); }
@@ -201,11 +208,16 @@ void arf_die1(entity this) { set_animofs(this, anim_arachnofloyd_death, 1, arf_d
 
 void arf_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -60)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		arf_explode(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			arf_explode(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -417,6 +429,7 @@ METHOD(Arachnofloyd, mr_setup, bool(Arachnofloyd this, entity actor))
     TC(Arachnofloyd, this);
 
 	precache_model("progs/fgib1.mdl");
+	precache_model("progs/h_arach.mdl");
 
 	precache_model("progs/s_light.mdl");
 	precache_sound("misc/power.wav");
@@ -434,6 +447,7 @@ METHOD(Arachnofloyd, mr_setup, bool(Arachnofloyd this, entity actor))
 	precache_sound("arachnofloyd/sight.wav");
 
     actor.health = 600;
+    actor.gibhealth = -60;
     actor.th_stand = arf_stand1;
 	actor.th_walk = arf_walk1;
 	actor.th_run = arf_run1;

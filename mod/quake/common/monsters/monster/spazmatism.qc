@@ -168,11 +168,12 @@ void spaz_atkc1(entity this)
 	if(this.health <= 0)
 	{
 		settouch(this, func_null);
-		setthink(this, gib_spaz);
+		gib_spaz(this);
+		delete(this);
 		return;
 	}
 	if(this.bosswave >= 1)
-		_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
+		_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, Spaz_JumpTouch);
 	this.attack_finished = time + 2 + (random() * 2);
@@ -199,10 +200,11 @@ void spaz_atkd1(entity this)
 	if(this.health <= 0)
 	{
 		settouch(this, func_null);
-		setthink(this, gib_spaz);
+		gib_spaz(this);
+		delete(this);
 		return;
 	}
-	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_BOSS);
 	ai_face(this);
 	settouch(this, Spaz_JumpTouch);
 	this.attack_finished = time + 5 + (random() * 2);
@@ -285,7 +287,7 @@ void spaz_transform(entity this)
 	_setmodel(this, "progs/spazmatism.mdl");
 	setsize(this, oldmin, oldmax);
 
-	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_BOSS);
 
 	this.th_missile = spaz_attack_phase2;
 	this.bosswave += 1;
@@ -489,12 +491,25 @@ void gib_spaz(entity this)
 	settouch(this, func_null);
 
 	Send_Effect(EFFECT_EXPLOSION_SMALL, CENTER_OR_VIEWOFS(this), '0 0 0', 1);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
 void spaz_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_spaz(this);
+			// fall back to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	gib_spaz(this);
+	delete(this);
 }
 
 //spawnfunc(monster_spazmatism) { monster_start(this, true, MON_SPAZMATISM); }

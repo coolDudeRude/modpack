@@ -160,7 +160,7 @@ void ret_transform(entity this)
 	_setmodel(this, "progs/retinazer.mdl");
 	setsize(this, oldmin, oldmax);
 
-	_sound(this, CH_VOICE, "eoc/sight.wave", 1, ATTN_BOSS);
+	_sound(this, CH_VOICE, "eoc/sight.wav", 1, ATTN_BOSS);
 
 	this.th_missile = ret_atkd1; // speedy attacks!
 	this.bosswave += 1;
@@ -319,12 +319,25 @@ void gib_ret(entity this)
 	settouch(this, func_null);
 
 	Send_Effect(EFFECT_EXPLOSION_SMALL, CENTER_OR_VIEWOFS(this), '0 0 0', 1);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 }
 
 void ret_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			gib_ret(this);
+			// fall back to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	gib_ret(this);
+	delete(this);
 }
 
 //spawnfunc(monster_retinazer) { monster_start(this, true, MON_RETINAZER); }

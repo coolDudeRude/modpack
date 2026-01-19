@@ -326,18 +326,23 @@ void enf_die(entity this, entity inflictor, entity attacker, int deathtype)
 	this.ammo_cells = 5;
 	DropBackpack(this);
 
-// check for gib
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if(IsQBJ3Map())
-			ThrowHead(this, inflictor, "progs/gibs/gibhead_enforcer.mdl", this.health);
-		else
-			ThrowHead(this, inflictor, "progs/h_mega.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			if(IsQBJ3Map())
+				ThrowGib(this, inflictor, "progs/gibs/gibhead_enforcer.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/h_mega.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -450,13 +455,21 @@ METHOD(Enforcer, mr_setup, bool(Enforcer this, entity actor))
 	}
 	else
 	{
+		precache_model("progs/h_mega.mdl");
+
 		precache_sound("enforcer/death1.wav");
 		precache_sound("enforcer/idle1.wav");
 		precache_sound("enforcer/pain1.wav");
 		precache_sound("enforcer/pain2.wav");
+
+		precache_sound("enforcer/sight1.wav");
+		precache_sound("enforcer/sight2.wav");
+		precache_sound("enforcer/sight3.wav");
+		precache_sound("enforcer/sight4.wav");
 	}
 
 	actor.health = 80;
+	actor.gibhealth = -35;
 	actor.th_stand = enf_stand1;
 	actor.th_walk = enf_walk1;
 	actor.th_run = enf_run1;
@@ -485,7 +498,16 @@ METHOD(Enforcer, mr_sight, bool(Enforcer this, entity actor))
 		}
 		return true;
 	}
-	sound(actor, CH_VOICE, SND_MON_ENFORCER_SIGHT_RANDOM(), 1, ATTN_NORM);
+
+	float r = random();
+	if(r < 0.25)
+		_sound(actor, CH_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(actor, CH_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(actor, CH_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
 
 	return true;
 }

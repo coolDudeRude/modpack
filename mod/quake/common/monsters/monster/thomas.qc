@@ -119,13 +119,26 @@ void thomas1_pain(entity this, entity attacker, float damage, int deathtype)
 void thomas_explode(entity this)
 {
 	sound(this, CH_TRIGGER_SINGLE, SND_ROCKET_EXPLOSION, 1, ATTN_NORM);
-	setthink(this, BecomeExplosion);
-	this.nextthink = time;
+
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
+}
+
+void thomas_gibthink(entity this)
+{
+	thomas_explode(this);
+	delete(this);
 }
 
 void thomas1_die9(entity this) 
 {
-	set_animofs(this, anim_thomas_death, 9, thomas_explode);
+	set_animofs(this, anim_thomas_death, 9, thomas_gibthink);
 	this.nextthink = time + 1.5;
 }
 void thomas1_die8(entity this) { set_animofs(this, anim_thomas_death, 8, thomas1_die9); }
@@ -147,11 +160,18 @@ void thomas1_die1(entity this)
 
 void thomas_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -150)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		thomas_explode(this);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			thomas_explode(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
+
 // regular death
 	thomas1_die1(this);
 }
@@ -258,6 +278,7 @@ METHOD(Thomas, mr_setup, bool(Thomas this, entity actor))
 	precache_sound("thomas/whistle.wav");
 
 	actor.health = 2000;
+	actor.gibhealth = -150;
 	actor.scale = 3;
 	setsize(actor, this.m_mins * actor.scale, this.m_maxs * actor.scale);
 	actor.th_stand = thomas1_stand1;

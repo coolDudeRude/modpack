@@ -312,16 +312,22 @@ void elf_dieb1(entity this) { set_animofs(this, anim_elf_bdeath, 1, elf_dieb2); 
 
 void elf_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	if(this.health < -20)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/xmas/h_elf.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/xmas/gib_elfcane.mdl", this.health);
-		for(int j = 0; j < floor(random() * 6); ++j)
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
 		{
-			ThrowGib(this, inflictor, "progs/xmas/gib_snowball.mdl", this.health);
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/xmas/h_elf.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/xmas/gib_elfcane.mdl", this.health);
+			for(int j = 0; j < floor(random() * 6); ++j)
+			{
+				ThrowGib(this, inflictor, "progs/xmas/gib_snowball.mdl", this.health);
+			}
+			// fall through to special handling
 		}
-		return;
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	if(random() < 0.5)
@@ -439,6 +445,7 @@ METHOD(Elf, mr_setup, bool(Elf this, entity actor))
 {
     TC(Elf, this);
 
+	precache_model("progs/xmas/h_elf.mdl");
 	precache_model("progs/xmas/gib_elfcane.mdl");
 	precache_model("progs/xmas/gib_snowball.mdl");
 
@@ -484,6 +491,7 @@ METHOD(Elf, mr_setup, bool(Elf this, entity actor))
 			actor.skin = 0;
 	}
 
+	actor.gibhealth = -20;
 	actor.checkattack = ElfCheckAttack;
 	actor.th_stand = elf_stand1;
 	actor.th_walk = elf_walk1;
@@ -500,7 +508,15 @@ METHOD(Elf, mr_sight, bool(Elf this, entity actor))
 {
     TC(Elf, this);
 
-	sound(actor, CH_VOICE, SND_MON_ELF_SIGHT_RANDOM(), 1, ATTN_NORM);
+    float r = random();
+	if(r < 0.25)
+		_sound(actor, CH_VOICE, "xmas/elf/sight1.wav", 1, ATTN_NORM);
+	else if(r < 0.5)
+		_sound(actor, CH_VOICE, "xmas/elf/sight2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(actor, CH_VOICE, "xmas/elf/sight3.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "xmas/elf/sight4.wav", 1, ATTN_NORM);
 
     return true;
 }

@@ -391,15 +391,20 @@ void mancubus_ThrowGib(entity this, string gibmdl)
 
 void mancubus_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -80)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_mancubus.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1_mancubus.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2_mancubus.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3_mancubus.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_mancubus.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1_mancubus.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2_mancubus.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3_mancubus.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	if(this.spawnflags & MANCUBUS_BOSS)
@@ -498,6 +503,7 @@ METHOD(Mancubus, mr_setup, bool(Mancubus this, entity actor))
 {
     TC(Mancubus, this);
 
+    precache_model("progs/h_mancubus.mdl");
     precache_model("progs/gib1.mdl");
     precache_model("progs/gib2.mdl");
     precache_model("progs/gib1_mancubus.mdl");
@@ -538,6 +544,7 @@ METHOD(Mancubus, mr_setup, bool(Mancubus this, entity actor))
 	}
 
     actor.health = 300;
+    actor.gibhealth = -80;
     actor.th_stand = mancubus_stand1;
 	actor.th_walk = mancubus_walk1;
 	actor.th_run = mancubus_run1;

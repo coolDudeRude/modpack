@@ -328,22 +328,27 @@ void hogreham_die(entity this, entity inflictor, entity attacker, int deathtype)
 		Inventory_add(WEP_HAMMER, this, ITEM_OWNED);
 	}
 	DropBackpack(this);
-	
-// check for gib
-	if(this.health < -80)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_hogreham.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_ogfoot1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_ogfoot2.mdl", this.health);
-		if(random() < 0.5)
-			ThrowGib(this, inflictor, "progs/w_ogregl.mdl", this.health);
-		else
-			ThrowGib(this, inflictor, "progs/w_ogreham.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_hogreham.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_ogfoot1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_ogfoot2.mdl", this.health);
+			if(random() < 0.5)
+				ThrowGib(this, inflictor, "progs/w_ogregl.mdl", this.health);
+			else
+				ThrowGib(this, inflictor, "progs/w_ogreham.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	_sound(this, CH_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
@@ -435,6 +440,7 @@ METHOD(HammerOgre, mr_setup, bool(HammerOgre this, entity actor))
 {
 	TC(HammerOgre, this);
 
+	precache_model("progs/h_hogreham.mdl");
 	precache_model("progs/w_ogreham.mdl");
 	precache_model("progs/gib_ogfoot1.mdl");
 	precache_model("progs/gib_ogfoot2.mdl");
@@ -469,6 +475,7 @@ METHOD(HammerOgre, mr_setup, bool(HammerOgre this, entity actor))
 		actor.skin = 1;
 	}
 
+	actor.gibhealth = -80;
 	actor.th_stand = hogreham_stand1;
 	actor.th_walk = hogreham_walk1;
 	actor.th_run = hogreham_run1;

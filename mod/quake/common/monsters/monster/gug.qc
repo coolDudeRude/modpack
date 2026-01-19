@@ -726,25 +726,27 @@ void gug_death1(entity this) { set_anim(this, 200, gug_death2); this.solid = SOL
 
 void gug_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -80 || this.dmg_take > (this.max_health * 0.6))
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	if(killed_type == KILLED_NORMAL && this.dmg_take > (this.max_health * 0.6))
+		killed_type = KILLED_GIBBED;
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		this.solid = SOLID_NOT;
-		this.takedamage = DAMAGE_NO;
-		settouch(this, func_null);
-		setthink(this, SUB_Remove);
-		this.nextthink = time;
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -829,6 +831,7 @@ METHOD(Gug, mr_setup, bool(Gug this, entity actor))
 {
     TC(Gug, this);
 
+    precache_model("progs/gib1.mdl");
 	precache_model("progs/greenexp.spr");
 	precache_sound("gug/step1.wav");
 	precache_sound("gug/step2.wav");
@@ -848,6 +851,7 @@ METHOD(Gug, mr_setup, bool(Gug this, entity actor))
 
 	actor.yaw_speed = 15;
     actor.health = 800;
+    actor.gibhealth = -80;
     actor.th_stand = gug_stand1;
 	actor.th_walk = gug_walk1;
 	actor.th_run = gug_run1;

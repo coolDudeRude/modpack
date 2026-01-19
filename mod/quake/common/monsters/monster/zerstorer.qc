@@ -304,15 +304,20 @@ void zer_dieb1(entity this) { set_animofs(this, anim_zer_dieb, 1, zer_dieb2); th
 
 void zer_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-// check for gib
-	if(this.health < -150 && deathtype != DEATH_VOID.m_id)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_zer.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_zer.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -602,10 +607,13 @@ METHOD(Zerstorer, mr_setup, bool(Zerstorer this, entity actor))
 {
     TC(Zerstorer, this);
 
+	precache_model("progs/h_zer.mdl");
 	precache_model("progs/q1_zers_star.mdl");
 	precache_model("progs/vortex.mdl");
 	precache_model("progs/proj_drole.mdl");
 
+	precache_sound("zer/sight1.wav");
+	precache_sound("zer/sight2.wav");
 	precache_sound("zer/death1.wav");
 	precache_sound("zer/death2.wav");
 	precache_sound("zer/idle1.wav");
@@ -622,6 +630,7 @@ METHOD(Zerstorer, mr_setup, bool(Zerstorer this, entity actor))
 	precache_sound("boss2/pop2.wav");
 
     actor.health = 1500;
+    actor.gibhealth = -150;
     actor.th_stand = zer_stand1;
 	actor.th_walk = zer_walk1;
 	actor.th_run = zer_run1;
@@ -638,7 +647,10 @@ METHOD(Zerstorer, mr_sight, bool(Zerstorer this, entity actor))
 {
     TC(Zerstorer, this);
 
-	sound(actor, CH_VOICE, SND_MON_ZERSTORER_SIGHT_RANDOM(), 1, ATTN_NORM);
+	if(random() > 0.5)
+		_sound(this, CH_VOICE, "zer/sight1.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "zer/sight2.wav", 1, ATTN_NORM);
 
     return true;
 }

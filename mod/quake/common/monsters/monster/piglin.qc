@@ -18,7 +18,15 @@ void piglin_idlesound(entity this)
 	if(random() < 0.2 && time >= this.idle_finished)
 	{
 		this.idle_finished = time + 2;
-		sound(this, CH_VOICE, SND_MON_PIGLIN_IDLE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "piglin/idle1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "piglin/idle2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "piglin/idle3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "piglin/idle4.wav", 1, ATTN_NORM);
 	}
 }
 
@@ -43,7 +51,17 @@ void piglin_moveframe(entity this, int startframe, int endframe)
 	if(time >= this.footstep && IS_ONGROUND(this))
 	{
 		this.footstep = time + 0.6 + random();
-		sound(this, CH_VOICE, SND_MON_PIGLIN_STEP_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "piglin/step1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "piglin/step2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "piglin/step3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "piglin/step4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "piglin/step5.wav", 1, ATTN_NORM);
 	}
 
 	piglin_idlesound(this);
@@ -157,7 +175,15 @@ void piglin_shoot(entity this)
 {
 	if(this.walkframe <= anim_piglin_shoot)
 	{
-		sound(this, CH_VOICE, SND_MON_PIGLIN_CHARGE_RANDOM(), 1, ATTN_NORM);
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "piglin/retreat1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "piglin/retreat2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "piglin/retreat3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "piglin/retreat4.wav", 1, ATTN_NORM);
 		this.walkframe = anim_piglin_shoot;
 	}
 
@@ -202,7 +228,13 @@ void piglin_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.attack_finished > time)
 		return;
 
-	sound(this, CH_VOICE, SND_MON_PIGLIN_PAIN_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.33)
+		_sound(this, CH_VOICE, "piglin/hurt1.wav", 1, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(this, CH_VOICE, "piglin/hurt2.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "piglin/hurt3.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1;
 	this.colormod = '1 0.9 0.9';
@@ -228,7 +260,28 @@ void piglin_die1(entity this) { set_anim(this, anim_piglin_death, piglin_die2); 
 
 void piglin_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
-	sound(this, CH_VOICE, SND_MON_PIGLIN_DEATH_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_VOICE, "piglin/death1.wav", 1, ATTN_NORM);
+	else if(r < 0.50)
+		_sound(this, CH_VOICE, "piglin/death2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_VOICE, "piglin/death3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_VOICE, "piglin/death4.wav", 1, ATTN_NORM);
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
 
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
@@ -244,6 +297,36 @@ spawnfunc(monster_piglin) { monster_start(this, true, MON_PIGLIN); }
 METHOD(Piglin, mr_setup, bool(Piglin this, entity actor))
 {
     TC(Piglin, this);
+
+	precache_sound("piglin/hurt1.wav");
+	precache_sound("piglin/hurt2.wav");
+	precache_sound("piglin/hurt3.wav");
+
+	precache_sound("piglin/death1.wav");
+	precache_sound("piglin/death2.wav");
+	precache_sound("piglin/death3.wav");
+	precache_sound("piglin/death4.wav");
+
+	precache_sound("piglin/idle1.wav");
+	precache_sound("piglin/idle2.wav");
+	precache_sound("piglin/idle3.wav");
+	precache_sound("piglin/idle4.wav");
+
+	precache_sound("piglin/angry1.wav");
+	precache_sound("piglin/angry2.wav");
+	precache_sound("piglin/angry3.wav");
+	precache_sound("piglin/angry4.wav");
+
+	precache_sound("piglin/step1.wav");
+	precache_sound("piglin/step2.wav");
+	precache_sound("piglin/step3.wav");
+	precache_sound("piglin/step4.wav");
+	precache_sound("piglin/step5.wav");
+
+	precache_sound("piglin/retreat1.wav");
+	precache_sound("piglin/retreat2.wav");
+	precache_sound("piglin/retreat3.wav");
+	precache_sound("piglin/retreat4.wav");
 
 	actor.yaw_speed = 180;
 
@@ -262,7 +345,15 @@ METHOD(Piglin, mr_sight, bool(Piglin this, entity actor))
 {
     TC(Piglin, this);
 
-    sound(actor, CH_VOICE, SND_MON_PIGLIN_SIGHT_RANDOM(), 1, ATTN_NORM);
+    float r = random();
+	if(r < 0.25)
+		_sound(actor, CH_VOICE, "piglin/angry1.wav", 1, ATTN_NORM);
+	else if(r < 0.5)
+		_sound(actor, CH_VOICE, "piglin/angry2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(actor, CH_VOICE, "piglin/angry3.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "piglin/angry4.wav", 1, ATTN_NORM);
 
     return true;
 }

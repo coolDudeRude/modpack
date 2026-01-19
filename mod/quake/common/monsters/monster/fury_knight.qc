@@ -915,15 +915,21 @@ void dfury_die(entity this, entity inflictor, entity attacker, int deathtype)
 	if(this.attachment)
 		delete(this.attachment);
 	this.attachment = NULL;
-// check for gib
-	if(this.health < -40)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_dfury.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/w_dfurysword1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/w_dfurysword2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_knfoot_r.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_dfury.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/w_dfurysword1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/w_dfurysword2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_knfoot_r.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -1074,6 +1080,7 @@ METHOD(FuryKnight, mr_setup, bool(FuryKnight this, entity actor))
 {
     TC(FuryKnight, this);
 
+	precache_model("progs/h_dfury.mdl");
 	precache_model("progs/w_dfurysword1.mdl");
 	precache_model("progs/w_dfurysword2.mdl");
 	precache_model("progs/gib_knfoot_r.mdl");
@@ -1122,6 +1129,7 @@ METHOD(FuryKnight, mr_setup, bool(FuryKnight this, entity actor))
 	setorigin(actor.attachment, actor.origin);
 
     actor.health = 400;
+    actor.gibhealth = -40;
     actor.th_stand = dfury_standL1;
 	actor.th_walk = dfury_walk1;
 	actor.th_run = dfury_run1;

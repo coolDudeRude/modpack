@@ -16,7 +16,6 @@ CLASS(Amalgam, Monster)
     ATTRIB(Amalgam, m_maxs, vector, '32 32 72');
 #ifdef GAMEQC
     ATTRIB(Amalgam, m_model, Model, MDL_MON_AMALGAM);
-    ATTRIB(Amalgam, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Amalgam, netname, string, "amalgam");
     ATTRIB(Amalgam, m_name, string, _("Amalgam"));

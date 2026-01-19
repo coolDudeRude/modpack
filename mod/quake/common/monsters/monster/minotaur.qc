@@ -634,7 +634,7 @@ void mino_summon7(entity this)
 	this.pos1 = this.origin + this.view_ofs + v_forward*64 + v_up*32;
 	this.minotaur_summonflag = find_minionspace(this.pos1);
 	
-	// If the spawn locaiton all clear, spawn something!
+	// If the spawn location all clear, spawn something!
 	if(this.minotaur_summonflag)
 	{
 		minion_spawn(this, this.pos1, new(monster), MON_GARGOYLE);
@@ -800,19 +800,25 @@ void mino_death1(entity this) { set_animofs(this, anim_minotaur_death, 1, mino_d
 void mino_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	minotaur_remove_attachment(this);
-// check for gib
-	if(this.health < -60)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_minotaur.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_minoclaw1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_minoclaw2.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_minoleg1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib_minoleg2.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_minotaur.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_minoclaw1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_minoclaw2.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_minoleg1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib_minoleg2.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 // regular death
@@ -962,6 +968,7 @@ METHOD(Minotaur, mr_setup, bool(Minotaur this, entity actor))
 {
     TC(Minotaur, this);
 
+	precache_model("progs/h_minotaur.mdl");
 	precache_model("progs/gib_minoclaw1.mdl");
 	precache_model("progs/gib_minoclaw2.mdl");
 	precache_model("progs/gib_minoleg1.mdl");
@@ -989,6 +996,7 @@ METHOD(Minotaur, mr_setup, bool(Minotaur this, entity actor))
 	precache_sound("minotaur/sight1.wav");
 
     actor.health = 500;
+    actor.gibhealth = -60;
 	actor.th_stand = mino_stand1;
 	actor.th_walk = mino_walk1;
 	actor.th_run = mino_run;

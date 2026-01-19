@@ -163,21 +163,28 @@ void eel_death1(entity this)
 void eel_death(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	this.flags |= FL_SWIM;
-	setsize(this, '0 0 0', '0 0 0');
+	setsize(this, '0 0 0', '0 0 0'); // why?
 	
 //	this.skin = 1;		// change to bloody eel skin!
-	if(this.health < -12)
+
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		this.skin = 0;
-		this.effects = 0;
-		ThrowHead(this, inflictor, "progs/eelgib.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.skin = 0;
+			this.effects = 0;
+			ThrowGib(this, inflictor, "progs/eelgib.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
-	else
-		eel_death1(this);
+
+	eel_death1(this);
 }
 
 void eel_pain7(entity this) { set_animofs(this, anim_eel_eeldth1, 1, eel_run1); }
@@ -211,6 +218,7 @@ METHOD(Eel, mr_setup, bool(Eel this, entity actor))
 {
     TC(Eel, this);
 
+	precache_model("progs/eelgib.mdl");
 	precache_model("progs/gib1.mdl");
 	
 	precache_sound("eel/edie3r.wav");
@@ -223,6 +231,7 @@ METHOD(Eel, mr_setup, bool(Eel this, entity actor))
 	actor.weapon = 0;
 
 	actor.health = 60;
+	actor.gibhealth = -12;
     actor.th_stand = eel_stand1;
 	actor.th_walk = eel_walk1;
 	actor.th_run = eel_run1;

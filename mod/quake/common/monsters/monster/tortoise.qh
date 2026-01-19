@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_TORTOISE,           DEATH_SELF_MON_TORTOISE,         
 
 #ifdef GAMEQC
 MODEL(MON_TORTOISE, "progs/tortoise.mdl");
-MODEL(MON_TORTOISE_HEAD, "progs/h_tortoise.mdl");
 #endif
 
 CLASS(Tortoise, Monster)
@@ -17,7 +16,6 @@ CLASS(Tortoise, Monster)
     ATTRIB(Tortoise, m_maxs, vector, '32 32 64');
 #ifdef GAMEQC
     ATTRIB(Tortoise, m_model, Model, MDL_MON_TORTOISE);
-    ATTRIB(Tortoise, m_model_head, Model, MDL_MON_TORTOISE_HEAD);
 #endif
     ATTRIB(Tortoise, netname, string, "tortoise");
     ATTRIB(Tortoise, m_name, string, _("Tortoise"));

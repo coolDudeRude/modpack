@@ -694,6 +694,7 @@ METHOD(Dragon, mr_setup, bool(Dragon this, entity actor))
 	precache_sound("dragon/attack.wav");
 	precache_sound("dragon/pain.wav");
 	precache_sound("dragon/death.wav");
+	precache_sound("dragon/see.wav");
 
 	actor.classname = "monster_dragon"; // needed for dying state
 	actor.dragonInRoom = DT_ROOM_A;

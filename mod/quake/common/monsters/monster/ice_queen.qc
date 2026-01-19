@@ -285,7 +285,7 @@ void ice_queen_spin1(entity this)
 	}
 }
 
-void ice_queen_die(entity this, entity inflictor, entity attacker, int deathtype)
+void ice_queen_gib(entity this)
 {
 	_sound(this, CH_VOICE, "ice_queen/death.wav", 1, ATTN_BOSS);
 	
@@ -301,7 +301,25 @@ void ice_queen_die(entity this, entity inflictor, entity attacker, int deathtype
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
 	ThrowGib(this, this, "progs/gib3.mdl", this.health);
-	ThrowHead(this, this, "progs/rawbone.mdl", this.health);
+	ThrowGib(this, this, "progs/rawbone.mdl", this.health);
+}
+
+void ice_queen_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			ice_queen_gib(this);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
+	ice_queen_gib(this);
+	delete(this);
 }
 
 void IceQueen_Pain(entity this, entity attacker, float damage, int deathtype)

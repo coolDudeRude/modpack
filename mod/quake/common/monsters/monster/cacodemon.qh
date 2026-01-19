@@ -8,7 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_CACODEMON,           DEATH_SELF_MON_CACODEMON,       
 
 #ifdef GAMEQC
 MODEL(MON_CACODEMON, "progs/cacodemon.mdl");
-MODEL(MON_CACODEMON_HEAD, "progs/h_cacodemon.mdl");
 #endif
 
 CLASS(Cacodemon, Monster)
@@ -17,7 +16,6 @@ CLASS(Cacodemon, Monster)
     ATTRIB(Cacodemon, m_maxs, vector, '16 16 40');
 #ifdef GAMEQC
     ATTRIB(Cacodemon, m_model, Model, MDL_MON_CACODEMON);
-    ATTRIB(Cacodemon, m_model_head, Model, MDL_MON_CACODEMON_HEAD);
 #endif
     ATTRIB(Cacodemon, netname, string, "cacodemon");
     ATTRIB(Cacodemon, m_name, string, _("Cacodemon"));

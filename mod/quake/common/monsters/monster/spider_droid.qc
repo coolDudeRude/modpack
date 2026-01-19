@@ -77,13 +77,35 @@ void spider_die2(entity this)
 	T_RadiusDamage(this, this, 80, DEATH_MONSTER_SPIDER_DROID.m_id, this);
 	ThrowGib(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
 	ThrowGib(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
-	ThrowHead(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
+	ThrowGib(this, this, "progs/spidgib.mdl", ((this.health - 40) - (random () * 40)));
 	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
-	BecomeExplosion(this);
+	
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	delete(this);
 }
 
 void spider_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, spider_die2);
+			this.nextthink = time;
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	setthink(this, spider_die2);
 	this.nextthink = time;
 }

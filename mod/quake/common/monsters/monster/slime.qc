@@ -14,9 +14,31 @@ void slime_hop(entity this, float dist, float distz)
 	this.velocity = dir;
 
 	if(this.slime_size >= 3)
-		sound(this, CH_VOICE, SND_MON_SLIME_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "slime/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "slime/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "slime/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "slime/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_SLIME_BIG_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "slime/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "slime/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "slime/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/big4.wav", 1, ATTN_NORM);
+	}
 }
 
 void slime_stand(entity this) { set_anim(this, anim_slime, slime_stand); ai_stand(this); }
@@ -46,9 +68,31 @@ void slime_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 
 	if(this.slime_size >= 3)
-		sound(this, CH_VOICE, SND_MON_SLIME_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "slime/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "slime/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "slime/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "slime/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_SLIME_BIG_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "slime/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "slime/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "slime/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/big4.wav", 1, ATTN_NORM);
+	}
 
 	this.pain_finished = time + 0.5;
 	this.colormod = '1 0.9 0.9';
@@ -102,10 +146,34 @@ void slime_die1(entity this) { set_anim(this, anim_slime, slime_die2); this.soli
 void slime_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	if(this.slime_size >= 3)
-		sound(this, CH_VOICE, SND_MON_SLIME_SMALL_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.2)
+			_sound(this, CH_VOICE, "slime/small1.wav", 1, ATTN_NORM);
+		else if(r < 0.4)
+			_sound(this, CH_VOICE, "slime/small2.wav", 1, ATTN_NORM);
+		else if(r < 0.6)
+			_sound(this, CH_VOICE, "slime/small3.wav", 1, ATTN_NORM);
+		else if(r < 0.8)
+			_sound(this, CH_VOICE, "slime/small4.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/small5.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_SLIME_BIG_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "slime/big1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "slime/big2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "slime/big3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "slime/big4.wav", 1, ATTN_NORM);
+	}
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	// ensure it gets gibbed by non-player sources (TODO?)
 	switch(deathtype)
 	{
 		case DEATH_VOID.m_id:
@@ -115,10 +183,21 @@ void slime_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case DEATH_LAVA.m_id:
 		case DEATH_CHECKPOINT.m_id:
 		{
-			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
-			delete(this);
-			return;
+			if(killed_type == KILLED_NORMAL)
+				killed_type = KILLED_GIBBED;
+			break;
 		}
+	}
+
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
 	this.colormod = '1 0.6 0.6';
@@ -161,6 +240,17 @@ METHOD(Slime, mr_setup, bool(Slime this, entity actor))
 
 	precache_sound("slime/attack1.wav");
 	precache_sound("slime/attack2.wav");
+
+	precache_sound("slime/big1.wav");
+	precache_sound("slime/big2.wav");
+	precache_sound("slime/big3.wav");
+	precache_sound("slime/big4.wav");
+
+	precache_sound("slime/small1.wav");
+	precache_sound("slime/small2.wav");
+	precache_sound("slime/small3.wav");
+	precache_sound("slime/small4.wav");
+	precache_sound("slime/small5.wav");
 
 	actor.yaw_speed = 90;
 

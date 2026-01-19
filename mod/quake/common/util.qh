@@ -1,6 +1,14 @@
 #pragma once
 
 #ifdef GAMEQC
+string getworldbasename();
+
+bool IsRogueMap();
+
+bool IsQBJ3Map();
+#endif
+
+#ifdef GAMEQC
 /*
 ==================
 findbetterlocation

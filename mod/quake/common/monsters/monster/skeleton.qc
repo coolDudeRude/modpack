@@ -21,11 +21,39 @@ void skeleton_idlesound(entity this)
 	{
 		this.idle_finished = time + 2 + (random() * 2);
 		if(this.skin == 1)
-			sound(this, CH_VOICE, SND_MON_STRAY_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "stray/idle1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "stray/idle2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "stray/idle3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "stray/idle4.wav", 1, ATTN_NORM);
+		}
 		else if(this.skin == 2)
-			sound(this, CH_VOICE, SND_MON_BOGGED_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "bogged/ambient1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "bogged/ambient2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "bogged/ambient3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "bogged/ambient4.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_SKELETON_IDLE_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.33)
+				_sound(this, CH_VOICE, "skeleton/say1.wav", 1, ATTN_NORM);
+			else if(r < 0.66)
+				_sound(this, CH_VOICE, "skeleton/say2.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "skeleton/say3.wav", 1, ATTN_NORM);
+		}
 	}
 }
 
@@ -49,11 +77,41 @@ void skeleton_moveframe(entity this, int startframe, int endframe)
 	{
 		this.footstep = time + 0.6 + random();
 		if(this.skin == 1)
-			sound(this, CH_VOICE, SND_MON_STRAY_STEP_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "stray/step1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "stray/step2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "stray/step3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "stray/step4.wav", 1, ATTN_NORM);
+		}
 		else if(this.skin == 2)
-			sound(this, CH_VOICE, SND_MON_BOGGED_STEP_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "bogged/step1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "bogged/step2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "bogged/step3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "bogged/step4.wav", 1, ATTN_NORM);
+		}
 		else
-			sound(this, CH_VOICE, SND_MON_SKELETON_STEP_RANDOM(), 1, ATTN_NORM);
+		{
+			float r = random();
+			if(r < 0.25)
+				_sound(this, CH_VOICE, "skeleton/step1.wav", 1, ATTN_NORM);
+			else if(r < 0.5)
+				_sound(this, CH_VOICE, "skeleton/step2.wav", 1, ATTN_NORM);
+			else if(r < 0.75)
+				_sound(this, CH_VOICE, "skeleton/step3.wav", 1, ATTN_NORM);
+			else
+				_sound(this, CH_VOICE, "skeleton/step4.wav", 1, ATTN_NORM);
+		}
 	}
 
 	skeleton_idlesound(this);
@@ -133,7 +191,15 @@ void skeleton_arrow_touch(entity this, entity toucher)
 		}
 	}
 
-	sound(this, CH_TRIGGER_SINGLE, SND_MON_SKELETON_ARROWHIT_RANDOM(), 1, ATTN_NORM);
+	float r = random();
+	if(r < 0.25)
+		_sound(this, CH_SHOTS, "skeleton/bowhit1.wav", 1, ATTN_NORM);
+	else if(r < 0.5)
+		_sound(this, CH_SHOTS, "skeleton/bowhit2.wav", 1, ATTN_NORM);
+	else if(r < 0.75)
+		_sound(this, CH_SHOTS, "skeleton/bowhit3.wav", 1, ATTN_NORM);
+	else
+		_sound(this, CH_SHOTS, "skeleton/bowhit4.wav", 1, ATTN_NORM);
 
 	skeleton_arrow_stick(this, toucher);
 }
@@ -201,11 +267,41 @@ void skeleton_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 
 	if(this.skin == 1)
-		sound(this, CH_VOICE, SND_MON_STRAY_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "stray/hurt1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "stray/hurt2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "stray/hurt3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "stray/hurt4.wav", 1, ATTN_NORM);
+	}
 	else if(this.skin == 2)
-		sound(this, CH_VOICE, SND_MON_BOGGED_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "bogged/hurt1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "bogged/hurt2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "bogged/hurt3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "bogged/hurt4.wav", 1, ATTN_NORM);
+	}
 	else
-		sound(this, CH_VOICE, SND_MON_SKELETON_PAIN_RANDOM(), 1, ATTN_NORM);
+	{
+		float r = random();
+		if(r < 0.25)
+			_sound(this, CH_VOICE, "skeleton/hurt1.wav", 1, ATTN_NORM);
+		else if(r < 0.5)
+			_sound(this, CH_VOICE, "skeleton/hurt2.wav", 1, ATTN_NORM);
+		else if(r < 0.75)
+			_sound(this, CH_VOICE, "skeleton/hurt3.wav", 1, ATTN_NORM);
+		else
+			_sound(this, CH_VOICE, "skeleton/hurt4.wav", 1, ATTN_NORM);
+	}
 
 	this.pain_finished = time + 1;
 	this.colormod = '1 0.9 0.9';
@@ -243,6 +339,19 @@ void skeleton_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "skeleton/death.wav", 1, ATTN_NORM);
 
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			this.colormod = '1 1 1';
+			Send_Effect(EFFECT_SMOKE_RING, this.origin, '0 0 80', 1);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	this.colormod = '1 0.6 0.6';
 	this.angles_z = 0;
 	skeleton_die1(this);
@@ -262,6 +371,11 @@ METHOD(Skeleton, mr_setup, bool(Skeleton this, entity actor))
 	precache_sound("skeleton/death.wav");
 	precache_sound("skeleton/bow.wav");
 
+	precache_sound("skeleton/bowhit1.wav");
+	precache_sound("skeleton/bowhit2.wav");
+	precache_sound("skeleton/bowhit3.wav");
+	precache_sound("skeleton/bowhit4.wav");
+
 	float r = random();
 	if(r < 0.33)
 		actor.spawnflags |= SKELETON_STRAY;
@@ -270,18 +384,64 @@ METHOD(Skeleton, mr_setup, bool(Skeleton this, entity actor))
 	// otherwise normal
 
 	actor.yaw_speed = 180;
-		actor.skin = 0;
+	actor.skin = 0;
 
 	if(actor.spawnflags & SKELETON_STRAY)
 	{
 		precache_sound("stray/death1.wav");
 		precache_sound("stray/death2.wav");
+
+		precache_sound("stray/hurt1.wav");
+		precache_sound("stray/hurt2.wav");
+		precache_sound("stray/hurt3.wav");
+		precache_sound("stray/hurt4.wav");
+
+		precache_sound("stray/idle1.wav");
+		precache_sound("stray/idle2.wav");
+		precache_sound("stray/idle3.wav");
+		precache_sound("stray/idle4.wav");
+
+		precache_sound("stray/step1.wav");
+		precache_sound("stray/step2.wav");
+		precache_sound("stray/step3.wav");
+		precache_sound("stray/step4.wav");
 		actor.skin = 1;
 	}
 	else if(actor.spawnflags & SKELETON_BOGGED)
 	{
 		precache_sound("bogged/death.wav");
+
+		precache_sound("bogged/hurt1.wav");
+		precache_sound("bogged/hurt2.wav");
+		precache_sound("bogged/hurt3.wav");
+		precache_sound("bogged/hurt4.wav");
+
+		precache_sound("bogged/ambient1.wav");
+		precache_sound("bogged/ambient2.wav");
+		precache_sound("bogged/ambient3.wav");
+		precache_sound("bogged/ambient4.wav");
+
+		precache_sound("bogged/step1.wav");
+		precache_sound("bogged/step2.wav");
+		precache_sound("bogged/step3.wav");
+		precache_sound("bogged/step4.wav");
 		actor.skin = 2;
+	}
+	else
+	{
+		precache_sound("skeleton/hurt1.wav");
+		precache_sound("skeleton/hurt2.wav");
+		precache_sound("skeleton/hurt3.wav");
+		precache_sound("skeleton/hurt4.wav");
+
+		precache_sound("skeleton/say1.wav");
+		precache_sound("skeleton/say2.wav");
+		precache_sound("skeleton/say3.wav");
+
+		precache_sound("skeleton/step1.wav");
+		precache_sound("skeleton/step2.wav");
+		precache_sound("skeleton/step3.wav");
+		precache_sound("skeleton/step4.wav");
 	}
 
     actor.health = 100;

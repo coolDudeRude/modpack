@@ -11,12 +11,11 @@ MODEL(MON_SPAZMATISM, "progs/eoc.mdl");
 #endif
 
 CLASS(Spazmatism, Monster)
-    ATTRIB(Spazmatism, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY | MON_FLAG_HIDDEN);
+    ATTRIB(Spazmatism, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY | MON_FLAG_HIDDEN | MON_FLAG_PART);
     ATTRIB(Spazmatism, m_mins, vector, '-32 -32 -24');
     ATTRIB(Spazmatism, m_maxs, vector, '32 32 48');
 #ifdef GAMEQC
     ATTRIB(Spazmatism, m_model, Model, MDL_MON_SPAZMATISM);
-    ATTRIB(Spazmatism, m_model_head, Model, MDL_Null);
 #endif
     ATTRIB(Spazmatism, netname, string, "spazmatism");
     ATTRIB(Spazmatism, m_name, string, _("Spazmatism"));

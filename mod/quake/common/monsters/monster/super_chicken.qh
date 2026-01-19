@@ -8,16 +8,6 @@ REGISTER_DEATHTYPE(MONSTER_SUPER_CHICKEN,        DEATH_SELF_MON_SUPER_CHICKEN,  
 
 #ifdef GAMEQC
 MODEL(MON_SUPER_CHICKEN, "progs/chcknbig.mdl");
-
-SOUND(MON_SUPER_CHICKEN_BOCK1, "chicken/fire");
-SOUND(MON_SUPER_CHICKEN_BOCK2, "chicken/random1");
-SOUND(MON_SUPER_CHICKEN_BOCK3, "chicken/random2");
-SOUND(MON_SUPER_CHICKEN_BOCK4, "chicken/random3");
-SOUND(MON_SUPER_CHICKEN_BOCK5, "chicken/sight");
-SOUND(MON_SUPER_CHICKEN_BOCK6, "chicken/pickup");
-Sound SND_MON_SUPER_CHICKEN_BOCK_RANDOM() {
-    return REGISTRY_GET(Sounds, SND_MON_SUPER_CHICKEN_BOCK1.m_id + floor(prandom() * 6));
-}
 #endif
 
 CLASS(SuperChicken, Monster)

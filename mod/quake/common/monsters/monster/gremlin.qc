@@ -888,16 +888,23 @@ void gremlin_die(entity this, entity inflictor, entity attacker, int deathtype)
 	vector vec = normalize(attacker.origin - this.origin);
 	float dot = vec * v_forward;
 
-	if(this.health < -35)
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
 	{
-		_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead(this, inflictor, "progs/h_grem.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
-		return;
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowGib(this, inflictor, "progs/h_grem.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			ThrowGib(this, inflictor, "progs/gib1.mdl", this.health);
+			// fall through to special handling
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
 	}
-	else if(dot > 0.7 && (random() < 0.5) && IS_ONGROUND(this))
+
+	if(dot > 0.7 && (random() < 0.5) && IS_ONGROUND(this))
 	{
 		gremlin_flip1(this);
 		return;
@@ -1370,13 +1377,14 @@ void Gremlin_Melee(entity this, float side)
 }
 
 //===========================================================================
-void Gremlin_ThrowHead(entity this, float dm)
+void Gremlin_Eviscerate(entity this, entity targ, float dm)
 {
-	string gibname = "progs/h_player.mdl";
-	Monster mon = this.monsterdef;
-	if(mon.m_model_head)
-		gibname = mon.m_model_head.model_str();
-	ThrowHead(this, this, gibname, dm);
+	setthink(targ, SUB_VanishOrRemove);
+	targ.nextthink = time;
+
+	ThrowGib(targ, this, "progs/gib1.mdl", dm);
+	ThrowGib(targ, this, "progs/gib2.mdl", dm);
+	ThrowGib(targ, this, "progs/gib3.mdl", dm);
 }
 
 /*
@@ -1488,11 +1496,11 @@ void Gremlin_Gorge(entity this, float side)
 	SpawnMeatSpray(this, this.origin + v_forward * 16, side * v_right);
 	if(this.enemy.health < -200.0)
 	{
-		if(this.enemy.gorging==false)
+		if(!this.enemy.gorging)
 		{
 			this.enemy.gorging = true;
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			Gremlin_ThrowHead(this.enemy, -15);
+			Gremlin_Eviscerate(this, this.enemy, -15);
 			ldmg = 150 + 100 * random();
 			T_Heal(this, ldmg, false);
 //         if(this.health >= this.max_health)
@@ -1560,6 +1568,7 @@ METHOD(Gremlin, mr_setup, bool(Gremlin this, entity actor))
 {
     TC(Gremlin, this);
 
+    precache_model("progs/h_grem.mdl");
 	precache_sound("grem/death.wav");
 	precache_sound("grem/attack.wav");
 	precache_sound("demon/djump.wav");
@@ -1584,6 +1593,7 @@ METHOD(Gremlin, mr_setup, bool(Gremlin this, entity actor))
 	STAT(MANA, actor) = 100; // magical weapons?!!
 
     actor.health = 100;
+    actor.gibhealth = -35;
     actor.yaw_speed = 40;
     actor.th_stand = gremlin_stand1;
 	actor.th_walk = gremlin_walk1;

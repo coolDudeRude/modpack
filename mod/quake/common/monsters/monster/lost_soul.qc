@@ -128,7 +128,7 @@ void lost_update(entity this, float fstate)
 		if(this.lostenemy && this.losttimer < time && this.losttimer != -1)
 		{
 			this.losttimer = -1;
-			if(this.lostenemy.health < 0)
+			if(this.lostenemy.health < 1)
 				this.lostenemy = NULL;
 			else
 			{
@@ -555,28 +555,48 @@ void lost_pain(entity this, entity attacker, float damage, int deathtype)
 	lost_inpain(this);
 }
 
-void lost_die2(entity this)
+void lost_explode(entity this)
 {
-	set_animofs(this, anim_lost_pain, 2, lost_die2);
 	// Lost souls explode when they die
-	T_RadiusDamage(this, this, 40, DEATH_MONSTER_LOSTSOUL.m_id, NULL);
+	T_RadiusDamage(this, this, 40, DEATH_MONSTER_LOSTSOUL.m_id, this);
 	int expl = EXPLODE_BIG;
 	if(random() < 0.5)
 		expl = EXPLODE_SMALL;
 	else if(random() < 0.9)
 		expl = EXPLODE_MED;
 	SpawnExplosion(expl, this.origin, "lostsoul/death.wav");
-	// Goto final resting place
+
 	delete(this);
+}
+
+void lost_die2(entity this)
+{
+	lost_explode(this);
 }
 void lost_die1(entity this) { set_animofs(this, anim_lost_pain, 1, lost_die2); }
 
 void lost_die(entity this, entity inflictor, entity attacker, int deathtype)
 {
+	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
+	switch(killed_type)
+	{
+		case KILLED_NORMAL: break; // normal death
+		case KILLED_GIBBED:
+		{
+			setthink(this, lost_explode);
+			this.nextthink = time;
+			this.solid = SOLID_NOT;
+			return; // handled
+		}
+		default: Death_SpecialHandle(this, killed_type); return;
+	}
+
 	// Make sure body does not drop to the ground
 	this.flags |= FL_FLY;
 	this.takedamage = DAMAGE_NO;
-	lost_die1(this);
+	this.solid = SOLID_NOT;
+	setthink(this, lost_die1);
+	this.nextthink = time;
 }
 
 /*======================================================================
