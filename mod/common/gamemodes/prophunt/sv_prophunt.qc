@@ -340,7 +340,7 @@ MUTATOR_HOOKFUNCTION(ph, PlayerPreThink)
 			}
 		}
 		if(!found)
-			PlayerSound(player, playersound_taunt, CH_VOICE, VOL_BASEVOICE, VOICETYPE_TAUNT);
+			PlayerSound(player, playersound_taunt, CH_VOICE, VOL_BASEVOICE, VOICETYPE_TAUNT, 1);
 		player.prophunt_lasttaunt = time + max(1, autocvar_g_prophunt_prop_taunt_delay) + max(0, random() * autocvar_g_prophunt_prop_taunt_delay_random);
 	}
 

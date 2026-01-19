@@ -96,7 +96,7 @@ bool newrecord_override(entity this)
 {
 	if(!autocvar_sv_newrecord_permodel)
 		return false;
-	PlayerSound(this, playersound_newrecord, CH_INFO, VOL_BASEVOICE, VOICETYPE_RADIO);
+	PlayerSound(this, playersound_newrecord, CH_INFO, VOL_BASEVOICE, VOICETYPE_RADIO, 1);
 	return true;
 }
 
@@ -322,7 +322,7 @@ MUTATOR_HOOKFUNCTION(cpmodels, PlayerJump, CBC_ORDER_LAST)
 		player.velocity -= forward * autocvar_sv_jumpvelocity_backflip_backspeed; // NOTE: hardcoded backflip value? needs fixing!
 	#ifdef SVQC
 		if(!autocvar_g_jump_grunt)
-			PlayerSound(player, playersound_cjump, CH_PLAYER, VOL_BASE, VOICETYPE_PLAYERSOUND);
+			PlayerSound(player, playersound_cjump, CH_PLAYER, VOL_BASE, VOICETYPE_PLAYERSOUND, 1);
 	#endif
 	}
 }

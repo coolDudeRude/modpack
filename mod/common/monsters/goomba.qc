@@ -11,9 +11,11 @@ REGISTER_DEATHTYPE(MONSTER_GOOMBA,            				DEATH_SELF_MON_GOOMBA,        
 #endif
 
 CLASS(Goomba, Monster)
+#ifdef SVQC
     ATTRIB(Goomba, spawnflags, int, MON_FLAG_CRUSH | MON_FLAG_HIDDEN | MONSTER_TYPE_PASSIVE);
     ATTRIB(Goomba, m_mins, vector, '-15 -15 -32');
     ATTRIB(Goomba, m_maxs, vector, '15 15 -10');
+#endif
 #ifdef GAMEQC
     ATTRIB(Goomba, m_model, Model, MDL_MON_GOOMBA);
 #endif

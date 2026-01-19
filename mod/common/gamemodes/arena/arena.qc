@@ -267,11 +267,6 @@ MUTATOR_HOOKFUNCTION(arena, PlayerSpawn)
 	return true; // true?
 }
 
-MUTATOR_HOOKFUNCTION(arena, ForbidPlayerScore_Clear)
-{
-	return true;
-}
-
 MUTATOR_HOOKFUNCTION(arena, GiveFragsForKill)
 {
 	if(arena_roundbased)
