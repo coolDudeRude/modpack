@@ -100,6 +100,8 @@
     MSG_INFO_NOTIF(CONNECTING,                              N_CONSOLE,  1, 0, "s1", "",        "",                     _("^BG%s^BG is connecting..."), "")
     MSG_INFO_NOTIF(JOIN_CONNECT,                            N_CHATCON,  1, 0, "s1", "",        "",                     _("^BG%s^F3 entered the game"), "")
 
+    MSG_INFO_NOTIF(DADJOKE,                                 N_CHATCON,  1, 0, "s1", "",        "",                     _("^F2[Dad Joke] ^BG%s"), "")
+
     MSG_INFO_NOTIF(DEATH_MURDER_BONETROUSLE,                N_CONSOLE,  2, 0, "s1 s2", "",     "",                     _("^BG%s^K1 was boned by ^BG%s"), "")
     MSG_INFO_NOTIF(DEATH_MURDER_CRUSH,                      N_CONSOLE,  2, 0, "s1 s2", "",     "",                     _("^BG%s^K1 was pushed under something heavy by ^BG%s"), "")
     MSG_INFO_NOTIF(DEATH_MURDER_DISCHARGE,                  N_CONSOLE,  2, 0, "s1 s2", "",     "",                     _("^BG%s^K1 had a taste of ^BG%s^K1's discharge"), "")
