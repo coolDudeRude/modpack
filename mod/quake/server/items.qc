@@ -3251,6 +3251,8 @@ void DropBackpack(entity this)
 #endif
 	setsize(item, mi, ma);
 	settouch(item, BackpackTouch);
+
+	float backpack_lifetime = 360;
 	if(autocvar_sv_quake_instance_backpacks && IS_PLAYER(this) && IS_REAL_CLIENT(this))
 	{
 		item.realowner = this;
@@ -3259,12 +3261,12 @@ void DropBackpack(entity this)
 		setcefc(item, BackpackCustomize);
 
 		if(autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent))
-			WaypointSprite_Spawn(WP_SkillIssue, 240, 16384, item, '0 0 32', this, 0, item, sprite, false, NULL);
+			WaypointSprite_Spawn(WP_SkillIssue, backpack_lifetime, 16384, item, '0 0 32', this, 0, item, sprite, false, NULL);
 		else
-			WaypointSprite_Spawn(WP_Death, 240, 8192, item, '0 0 32', this, 0, item, sprite, false, NULL);
+			WaypointSprite_Spawn(WP_Death, backpack_lifetime, 8192, item, '0 0 32', this, 0, item, sprite, false, NULL);
 	}
 	
-	item.nextthink = time + 240;
+	item.nextthink = time + backpack_lifetime;
 	setthink(item, SUB_Remove);
 }
 

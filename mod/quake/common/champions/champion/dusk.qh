@@ -61,7 +61,7 @@ PRECACHE(Dusk)
 #define DUSK_STATS \
 "Special ability: Reap\n" \
 "Press %ABILITY%, costs 25 health\n" \
-"Revives nearby fallen enemies\n" \
+"Players revive near Dusk\n" \
 "Sets spawn point of dead players\n" \
 "Respawns nearby non-health items"
 
@@ -86,8 +86,6 @@ REGISTER_CHAMPION(Dusk, NEW(Dusk));
 
 #ifdef SVQC
 .bool dusk_revived;
-.vector dusk_spawnpoint;
-.vector dusk_spawnangle;
 
 void Dusk_PlayerSpawn(entity actor);
 
