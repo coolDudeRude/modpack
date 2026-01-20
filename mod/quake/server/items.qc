@@ -3103,6 +3103,9 @@ void BackpackTouch(entity this, entity toucher)
 	}
 	bound_other_ammo(toucher);
 
+	if(this.sprite)
+		WaypointSprite_Kill(this.sprite);
+
 	// continue as normal?
 // remove the backpack
 	strfree(this.crypto_idfp);
@@ -3254,6 +3257,11 @@ void DropBackpack(entity this)
 		if(this.crypto_idfp)
 			strcpy(item.crypto_idfp, this.crypto_idfp);
 		setcefc(item, BackpackCustomize);
+
+		if(autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent))
+			WaypointSprite_Spawn(WP_SkillIssue, 240, 16384, item, '0 0 32', this, 0, item, sprite, false, NULL);
+		else
+			WaypointSprite_Spawn(WP_Death, 240, 8192, item, '0 0 32', this, 0, item, sprite, false, NULL);
 	}
 	
 	item.nextthink = time + 240;

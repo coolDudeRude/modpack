@@ -65,6 +65,10 @@ bool WaypointSprite_SendEntity(entity this, entity to, float sendflags)
 
     if (sendflags & 32)
     {
+        WriteByte(MSG_ENTITY, this.colormod.x * 255.0);
+        WriteByte(MSG_ENTITY, this.colormod.y * 255.0);
+        WriteByte(MSG_ENTITY, this.colormod.z * 255.0);
+
         if (WaypointSprite_isteammate(this.owner, WaypointSprite_getviewentity(to)))
         {
             float dt = bound(0, (this.waypointsprite_helpmetime - time) / 0.1, 255);
@@ -171,6 +175,10 @@ void Ent_WaypointSprite(entity this, bool isnew)
 
     if (sendflags & 32)
     {
+        this.colormod_x = ReadByte() / 255.0;
+        this.colormod_y = ReadByte() / 255.0;
+        this.colormod_z = ReadByte() / 255.0;
+
         this.helpme = ReadByte() * 0.1;
         if (this.helpme > 0)
             this.helpme += servertime;
@@ -468,7 +476,7 @@ void Draw_WaypointSprite(entity this)
         a *= (bound(0, (this.maxdistance - dist) / (this.maxdistance - maxnormdistance), 1) ** waypointsprite_distancealphaexponent);
     }
 
-    vector rgb = spritelookupcolor(this, spriteimage, '1 0 0');
+    vector rgb = spritelookupcolor(this, spriteimage, this.colormod);
     if (rgb == '0 0 0')
     {
         LOG_INFOF("WARNING: sprite of name %s has no color, using pink so you notice it", spriteimage);

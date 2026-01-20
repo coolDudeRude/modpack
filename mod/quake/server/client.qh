@@ -13,6 +13,8 @@ bool autocvar_sv_quake_globalkeys = true;
 
 bool autocvar_sv_quake_itemdatabase = true; // NOTE: doesn't work when turned off anymore
 
+string autocvar_sv_allow_customplayermodels_silent = "";
+
 const int CLIPGROUP_PLAYER = 1;
 bool autocvar_g_player_collisions;
 
@@ -138,6 +140,8 @@ void SendCDTrack(entity to, int numb);
 void PutPlayerInServer(entity this);
 
 void PutObserverInServer(entity this);
+
+bool PlayerInList(entity player, string list);
 
 float intermission_exittime;
 
