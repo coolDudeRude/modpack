@@ -138,7 +138,7 @@ void hknight_pain1(entity this)
 	set_animofs(this, anim_hknight_pain, 1, hknight_pain2);
 	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		float r = random() * 4;
 		if(r < 1)
@@ -196,7 +196,7 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(!(this.spawnflags & 2) && IsQBJ3Map())
+			if(!(this.spawnflags & 2) && IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_hellknight.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_hellkn.mdl", this.health);
@@ -220,7 +220,7 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 // regular death
 	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/death.wav", 1, ATTN_NORM);
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		float r = random() * 4;
 		if(r < 1)
@@ -288,7 +288,7 @@ void hknight_magicc3(entity this)
 {
 	set_animofs(this, anim_hknight_magicc, 3, hknight_magicc4);
 	ai_face(this);
-	if(!(this.spawnflags & 2) && IsQBJ3Map())
+	if(!(this.spawnflags & 2) && IsQBJMap())
 		_sound(this, CH_WEAPON_SINGLE, "hknight/sword_ignite.wav", 0.5, ATTN_NORM);
 }
 void hknight_magicc2(entity this) { set_animofs(this, anim_hknight_magicc, 2, hknight_magicc3); ai_face(this); }
@@ -383,7 +383,7 @@ void hk_idle_sound(entity this)
 	{
 		if((this.spawnflags & 2)) // statue
 			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
-		else if(IsQBJ3Map())
+		else if(IsQBJMap())
 		{
 			float r = random() * 4;
 			if(r < 1)
@@ -410,7 +410,7 @@ void hknight_pain(entity this, entity attacker, float damage, int deathtype)
 
 	if(this.spawnflags & 2) // statue
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		float r = random() * 4;
 		if(r < 1)
@@ -442,7 +442,7 @@ void hknight_melee(entity this)
 {
 	this.hknight_type = this.hknight_type + 1;
 
-	if(!(this.spawnflags & 2) && IsQBJ3Map())
+	if(!(this.spawnflags & 2) && IsQBJMap())
 	{
 		float r = random() * 4;
 		if(r < 1)
@@ -552,7 +552,7 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 		precache_sound("statue/pain.wav");
 		precache_sound("statue/death.wav");
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		precache_model("progs/hknight_qbj.mdl");
 		precache_model("progs/gibs/gibhead_hellknight.mdl");
@@ -641,7 +641,7 @@ METHOD(HellKnight, mr_sight, bool(HellKnight this, entity actor))
 
 	if(!actor.skin)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 		{
 			float r = random() * 4;
 			if(r < 1)

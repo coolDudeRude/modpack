@@ -30,7 +30,7 @@ void shal_walk1(entity this)
 	set_animofs(this, anim_shal_walk, 2, shal_walk2);
 	if(random() < 0.2)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "shalrath/shalrath_idle.wav", 1, ATTN_IDLE);
 		else
 			_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
@@ -55,7 +55,7 @@ void shal_run1(entity this)
 	set_animofs(this, anim_shal_walk, 2, shal_run2);
 	if(random() < 0.2)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "shalrath/shalrath_idle.wav", 1, ATTN_IDLE);
 		else
 			_sound(this, CH_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
@@ -76,7 +76,7 @@ void shal_attack2(entity this) { set_animofs(this, anim_shal_attack, 2, shal_att
 void shal_attack1(entity this)
 {
 	set_animofs(this, anim_shal_attack, 1, shal_attack2);
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(this, CH_VOICE, "shalrath/shalrath_attack.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
@@ -106,7 +106,7 @@ void shalrath_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(this, CH_VOICE, "shalrath/shalrath_pain.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
@@ -123,7 +123,7 @@ void shalrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(IsQBJ3Map())
+			if(IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_vore.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_shal.mdl", this.health);
@@ -135,7 +135,7 @@ void shalrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(this, CH_VOICE, "shalrath/shalrath_death.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
@@ -253,7 +253,7 @@ METHOD(Vore, mr_setup, bool(Vore this, entity actor))
 
 	precache_sound("shalrath/attack2.wav");
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/shalrath_qbj.mdl");
 		precache_model("progs/gibs/gibhead_vore.mdl");
@@ -293,7 +293,7 @@ METHOD(Vore, mr_sight, bool(Vore this, entity actor))
 {
 	TC(Vore, this);
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(actor, CH_VOICE, "shalrath/shalrath_sight.wav", 1, ATTN_NORM);
 	else
 		_sound(actor, CH_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);

@@ -292,7 +292,7 @@ void ZombieFireGrenade(entity this, vector st)
 {
 	_sound(this, CH_WEAPON_SINGLE, "zombie/z_shot1.wav", 1, ATTN_NORM);
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		ZombieFireRebar(this, st);
 		return;
@@ -545,7 +545,7 @@ void zombie_paine1(entity this)
 void zombie_gib(entity this, entity inflictor)
 {
 	_sound(this, CH_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		ThrowGib(this, inflictor, "progs/gibs/gibhead_zombie.mdl", this.health);
 	else
 		ThrowGib(this, inflictor, "progs/h_zombie.mdl", this.health);
@@ -802,7 +802,7 @@ METHOD(Zombie, mr_setup, bool(Zombie this, entity actor))
 
 	actor.steptype = FS_TYPESLOW;
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/zombie_qbj.mdl");
 		precache_model("progs/zombienm_qbj.mdl");

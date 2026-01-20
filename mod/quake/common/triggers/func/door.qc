@@ -677,7 +677,7 @@ float BoundsAngleSize(vector v, vector s)
 
 bool door_iscopper(entity this)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		return true;
 	return ((this.spawnflags & SPAWN_ALT_TARG) && (this.target2 != "" || this.target3 != "" || this.target4 != ""));
 }
@@ -796,7 +796,7 @@ void func_door_init(entity this, entity actor, entity trigger)
 
 	if(!this.distance)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			this.distance = BoundsAngleSize(this.movedir, this.size) - this.lip;
 		else
 			this.distance = (fabs(this.movedir * this.size) - this.lip);

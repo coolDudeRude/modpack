@@ -19,7 +19,7 @@ void kn_idle_sound(entity this)
 	{
 		if((this.spawnflags & 2)) // statue)
 			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
-		else if(IsQBJ3Map())
+		else if(IsQBJMap())
 		{
 			float r = random();
 			if(r < 0.33)
@@ -39,7 +39,7 @@ void kn_aggro_sound(entity this)
 	if(random() > 0.2)
 		return;
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		if(random() > 0.5)
 			return; // less dying for this ass
@@ -173,7 +173,7 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 	
 	if((this.spawnflags & 2)) // statue)
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		float r = random();
 		if(r < 0.33)
@@ -251,7 +251,7 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(!(this.spawnflags & 2) && IsQBJ3Map())
+			if(!(this.spawnflags & 2) && IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_knight.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_knight.mdl", this.health);
@@ -275,7 +275,7 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 // regular death
 	if((this.spawnflags & 2)) // statue
 		_sound(this, CH_VOICE, "statue/death.wav", 1, ATTN_NORM);
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		if(random() > 0.5)
 			_sound(this, CH_VOICE, "knight/knight_death_1.wav", 1, ATTN_NORM);
@@ -365,7 +365,7 @@ METHOD(Knight, mr_setup, bool(Knight this, entity actor))
 		precache_sound("statue/pain.wav");
 		precache_sound("statue/death.wav");
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		precache_model("progs/knight_qbj.mdl");
 		precache_model("progs/gibs/gibhead_knight.mdl");
@@ -445,7 +445,7 @@ METHOD(Knight, mr_sight, bool(Knight this, entity actor))
 
 	if(!actor.skin)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 		{
 			float r = random();
 			if(r < 0.33)

@@ -113,7 +113,7 @@ void dog_walk1(entity this)
 	set_animofs(this, anim_dog_walk, 1, dog_walk2);
 	if(random() < 0.2)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "dog/dog_idle.wav", 1, ATTN_IDLE);
 		else
 			_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
@@ -138,7 +138,7 @@ void dog_run1(entity this)
 	set_animofs(this, anim_dog_run, 1, dog_run2);
 	if(random() < 0.2)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "dog/dog_idle.wav", 1, ATTN_IDLE);
 		else
 			_sound(this, CH_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
@@ -224,7 +224,7 @@ void dog_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(this, CH_VOICE, "dog/dog_dpain1.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "dog/dpain1.wav", 1, ATTN_NORM);
@@ -338,7 +338,7 @@ void dog_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(this, CH_VOICE, "dog/dog_ddeath.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "dog/ddeath.wav", 1, ATTN_NORM);
@@ -446,7 +446,7 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 	precache_sound("dog/idle.wav");
 	precache_sound("dog/dsight.wav");
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		// renamed overlapping sounds
 		precache_sound("dog/dog_dattack1.wav");
@@ -508,7 +508,7 @@ METHOD(Rottweiler, mr_sight, bool(Rottweiler this, entity actor))
 {
 	TC(Rottweiler, this);
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		_sound(actor, CH_VOICE, "dog/dog_dsight.wav", 1, ATTN_NORM);
 	else
 		_sound(actor, CH_VOICE, "dog/dsight.wav", 1, ATTN_NORM);

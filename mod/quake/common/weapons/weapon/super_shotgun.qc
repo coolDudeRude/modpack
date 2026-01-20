@@ -3,7 +3,7 @@
 #ifdef SVQC
 PRECACHE(SuperShotgun)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_sound("flak/shotgun3.wav");
 		precache_sound("flak/volley_fire1.wav");
@@ -43,7 +43,7 @@ void W_FireSuperShotgun(entity this, .entity weaponentity)
 		return;
 	}
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		_sound(this, CH_WEAPON_SINGLE, "flak/shotgun3.wav", 1, ATTN_NORM);
 		float r = random();
@@ -72,7 +72,7 @@ METHOD(SuperShotgun, wr_think, void(entity thiswep, entity actor, .entity weapon
 	{
 		if(IS_PLAYER(actor))
 			player_shot1(actor);
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 		{
 			actor.(weaponentity).m_frame = 10;
 			wep_supershotgun_anim(actor.(weaponentity));
@@ -101,7 +101,7 @@ METHOD(SuperShotgun, wr_killmessage, Notification(entity thiswep))
 #ifdef CSQC
 PRECACHE(SuperShotgun)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		WEP_SUPER_SHOTGUN.m_delta = 0.05;
 		precache_model("progs/v_flakshotgun.mdl");
@@ -110,7 +110,7 @@ PRECACHE(SuperShotgun)
 
 METHOD(SuperShotgun, wr_viewmodel, string(entity this, entity wep))
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		return "flakshotgun";
 	return this.mdl;
 }

@@ -3,7 +3,7 @@
 #ifdef SVQC
 PRECACHE(GrenadeLauncher)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_sound("grenade/grenade_reload.wav");
 		precache_sound("grenade/grenade_fire1.wav");
@@ -57,7 +57,7 @@ void W_FireGrenade(entity this, .entity weaponentity)
 	W_TakeAmmo(this, IT_ROCKETS, 1);
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/grenade.wav", 1, ATTN_NORM);
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		float r = random();
 		if(r < 0.33)
@@ -118,7 +118,7 @@ METHOD(GrenadeLauncher, wr_think, void(entity thiswep, entity actor, .entity wea
 	{
 		if(IS_PLAYER(actor))
 			player_rocket1(actor);
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 		{
 			actor.(weaponentity).m_frame = 10;
 			wep_grenade_anim(actor.(weaponentity));
@@ -147,7 +147,7 @@ METHOD(GrenadeLauncher, wr_killmessage, Notification(entity thiswep))
 #ifdef CSQC
 PRECACHE(GrenadeLauncher)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		WEP_GRENADE_LAUNCHER.m_delta = 0.05;
 		precache_model("progs/v_grenlauncher.mdl");
@@ -156,7 +156,7 @@ PRECACHE(GrenadeLauncher)
 
 METHOD(GrenadeLauncher, wr_viewmodel, string(entity this, entity wep))
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		return "grenlauncher";
 	return this.mdl;
 }

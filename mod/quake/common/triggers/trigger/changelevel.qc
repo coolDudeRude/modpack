@@ -189,7 +189,7 @@ spawnfunc(trigger_changelevel)
 
 	this.killstring = " tried to leave";
 
-	if(this.targetname && this.targetname != "" && !IsMGMap() && !IsQBJ3Map())
+	if(this.targetname && this.targetname != "" && !IsMGMap() && !IsQBJMap())
 	{
 		this.use = changelevel_use;
 		this.active = ACTIVE_NOT;

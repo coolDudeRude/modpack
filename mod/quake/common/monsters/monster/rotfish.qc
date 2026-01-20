@@ -206,7 +206,7 @@ METHOD(Rotfish, mr_setup, bool(Rotfish this, entity actor))
 		_setmodel(actor, "progs/dopefish.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		precache_model("progs/fish_qbj.mdl");
 		_setmodel(actor, "progs/fish_qbj.mdl");

@@ -202,7 +202,7 @@ void demon_die(entity this, entity inflictor, entity attacker, int deathtype)
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 			if(season == SEASON_XMAS)
 				ThrowGib(this, inflictor, "progs/h_demon_xmas.mdl", this.health);
-			else if(IsQBJ3Map())
+			else if(IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_demon.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_demon.mdl", this.health);
@@ -403,7 +403,7 @@ METHOD(Fiend, mr_setup, bool(Fiend this, entity actor))
 		precache_sound("demon/idle1.wav");
 		precache_sound("demon/sight2.wav");
 
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 		{
 			precache_model("progs/demon_qbj.mdl");
 			precache_model("progs/gibs/gibhead_demon.mdl");

@@ -1027,10 +1027,10 @@ void weapon_touch(entity this, entity toucher)
 // map-specific hacks
 SPAWNFUNC_WEAPON_COND(weapon_supershotgun, (world.model == "maps/aop2m3.bsp"), WEP_GRENADE_LAUNCHER, WEP_SUPER_SHOTGUN);
 
-SPAWNFUNC_WEAPON(weapon_lightning, ((world.model == "maps/aop2m2.bsp") ? WEP_LIGHTME : ((IsQBJ3Map()) ? WEP_INVOKER : WEP_LIGHTNING)));
-SPAWNFUNC_WEAPON_COND(weapon_rocketlauncher, (IsQBJ3Map()), WEP_MMML, WEP_ROCKET_LAUNCHER);
-SPAWNFUNC_WEAPON_COND(weapon_supernailgun, (IsQBJ3Map()), WEP_REBAR_CANNON, WEP_SUPER_NAILGUN);
-SPAWNFUNC_WEAPON_COND(weapon_shotgun, (IsQBJ3Map()), WEP_PISTOL, WEP_SHOTGUN);
+SPAWNFUNC_WEAPON(weapon_lightning, ((world.model == "maps/aop2m2.bsp") ? WEP_LIGHTME : ((IsQBJMap()) ? WEP_INVOKER : WEP_LIGHTNING)));
+SPAWNFUNC_WEAPON_COND(weapon_rocketlauncher, (IsQBJMap()), WEP_MMML, WEP_ROCKET_LAUNCHER);
+SPAWNFUNC_WEAPON_COND(weapon_supernailgun, (IsQBJMap()), WEP_REBAR_CANNON, WEP_SUPER_NAILGUN);
+SPAWNFUNC_WEAPON_COND(weapon_shotgun, (IsQBJMap()), WEP_PISTOL, WEP_SHOTGUN);
 
 Weapon W_RandomizeWeapon(Weapon wpn)
 {
@@ -1116,7 +1116,7 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 
 void weapon_defaultspawnfunc(entity this, Weapon wpn)
 {
-	if((autocvar_skill == 3 && !IsQBJ3Map()) || deathmatch)
+	if((autocvar_skill == 3 && !IsQBJMap()) || deathmatch)
 		wpn = W_RandomizeWeapon(wpn);
 
 	string simplemdl = strcat("progs/g_", wpn.mdl, "_simple.mdl");
@@ -1132,7 +1132,7 @@ void weapon_defaultspawnfunc(entity this, Weapon wpn)
 		this.hammer_skin = bound(1, floor(random() * SKIN_LAST), SKIN_LAST);
 		mymdl = strcat("progs/g_", hammer_getskin(this.hammer_skin), ".mdl");
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		switch(wpn)
 		{
@@ -1609,7 +1609,7 @@ spawnfunc(item_cells)
 		return;
 	}
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		spawnfunc_item_spikes(this);
 		return;

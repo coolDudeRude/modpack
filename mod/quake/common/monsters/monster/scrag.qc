@@ -324,7 +324,7 @@ void wiz_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(IsQBJ3Map())
+			if(IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_scrag.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_wizard.mdl", this.health);
@@ -404,7 +404,7 @@ METHOD(Scrag, mr_setup, bool(Scrag this, entity actor))
 	precache_sound("wizard/wpain.wav");
 	precache_sound("wizard/wsight.wav");
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/wizard_qbj.mdl");
 		precache_model("progs/gibs/gibhead_scrag.mdl");

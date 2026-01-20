@@ -303,7 +303,7 @@ METHOD(Spawn, mr_setup, bool(Spawn this, entity actor))
 	precache_sound("blob/land1.wav");
 	precache_sound("blob/sight1.wav");
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/spawn_qbj.mdl");
 		_setmodel(actor, "progs/spawn_qbj.mdl");

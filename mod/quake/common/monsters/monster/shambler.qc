@@ -266,7 +266,7 @@ void sham_magic6(entity this)
 		delete(this.attachment);
 	this.attachment = NULL;
 	CastLightning(this);
-	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map())
+	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJMap())
 		_sound(this, CH_WEAPON_SINGLE, "shambler/shambler_sboom.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_WEAPON_SINGLE, "shambler/sboom.wav", 1, ATTN_NORM);
@@ -304,7 +304,7 @@ void sham_magic1(entity this)
 {
 	set_animofs(this, anim_sham_magic, 1, sham_magic2);
 	ai_face(this);
-	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map())
+	if(season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJMap())
 		_sound(this, CH_WEAPON_SINGLE, "shambler/shambler_sattck1.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_WEAPON_SINGLE, "shambler/sattck1.wav", 1, ATTN_NORM);
@@ -367,7 +367,7 @@ void sham_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_NORMAL: break; // normal death
 		case KILLED_GIBBED:
 		{
-			bool is_qbj3sham = (season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJ3Map());
+			bool is_qbj3sham = (season != SEASON_XMAS && !(this.spawnflags & MON_SHAMBLER_COOKIE) && IsQBJMap());
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 			if(season == SEASON_XMAS)
 				ThrowGib(this, inflictor, "progs/h_shams_xmas.mdl", this.health);
@@ -531,7 +531,7 @@ METHOD(Shambler, mr_setup, bool(Shambler this, entity actor))
 		_setmodel(actor, "progs/shambler_cookie_creature.mdl");
 		setsize(actor, this.m_mins, this.m_maxs);
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		precache_model("progs/shambler_qbj.mdl");
 		precache_model("progs/gibs/gib_shambler_1.mdl");

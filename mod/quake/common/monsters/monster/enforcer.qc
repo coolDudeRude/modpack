@@ -47,7 +47,7 @@ entity LaunchLaser(entity this, vector org, vector vec)
 {
 	if(this.monsterdef == MON_ENFORCER)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_WEAPON_SINGLE, "enforcer/enf_enfire.wav", 1, ATTN_NORM);
 		else
 			_sound(this, CH_WEAPON_SINGLE, "enforcer/enfire.wav", 1, ATTN_NORM);
@@ -97,7 +97,7 @@ void enforcer_fire(entity this)
 .int lmg_rof;
 void enf_idle_sound(entity this)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		this.lmg_rof += 1;
 		if(this.lmg_rof	 < 3)
@@ -241,7 +241,7 @@ void enf_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.pain_finished > time)
 		return;
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		int rs = rint((random() * 5) + 1);
 		switch(rs)
@@ -333,7 +333,7 @@ void enf_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(IsQBJ3Map())
+			if(IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_enforcer.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_mega.mdl", this.health);
@@ -346,7 +346,7 @@ void enf_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		int rs = rint((random() * 5) + 1);
 		switch(rs)
@@ -415,7 +415,7 @@ METHOD(Enforcer, mr_setup, bool(Enforcer this, entity actor))
 	precache_sound("enforcer/enfire.wav");
 	precache_sound("enforcer/enfstop.wav");
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/enforcer_qbj.mdl");
 		precache_model("progs/gibs/gibhead_enforcer.mdl");
@@ -485,7 +485,7 @@ METHOD(Enforcer, mr_sight, bool(Enforcer this, entity actor))
 {
 	TC(Enforcer, this);
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		int rs = rint((random() * 4) + 1);
 		switch(rs)

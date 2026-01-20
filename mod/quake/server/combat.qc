@@ -911,7 +911,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	}
 
 	// qbj3 specific hack: trigger on react
-	if(IS_MONSTER(targ) && attacker && !targ.is_frozen && (targ.spawnflags & SPAWN_ALT_TARG) && IsQBJ3Map())
+	if(IS_MONSTER(targ) && attacker && !targ.is_frozen && (targ.spawnflags & SPAWN_ALT_TARG) && IsQBJMap())
 	{
 		int bits = BIT(1) | BIT(3) | BIT(4);
 		if(IS_PLAYER(attacker) || IS_MONSTER(attacker))

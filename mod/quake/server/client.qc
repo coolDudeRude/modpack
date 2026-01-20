@@ -109,7 +109,7 @@ void parms_read(entity this)
 		if(wepent == WEP_Null)
 			continue;
 		// TODO: special exclusion list?
-		if(wepent == WEP_INVOKER && IsQBJ3Map())
+		if(wepent == WEP_INVOKER && IsQBJMap())
 			continue;
 		Inventory_add(wepent, this, ITEM_OWNED);
 	});
@@ -233,7 +233,7 @@ void parms_reset(entity this)
 		prev_weapon = WEP_HAMMER;
 		fallback_weapon = WEP_HAMMER;
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		start_weapon = WEP_WRENCH;
 		prev_weapon = WEP_PISTOL;
@@ -365,7 +365,7 @@ void SetNewParms()
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
 	}
-	else if(IsQBJ3Map())
+	else if(IsQBJMap())
 	{
 		start_weapon = WEP_WRENCH;
 		prev_weapon = WEP_PISTOL;
@@ -2256,7 +2256,7 @@ void coop_enable(entity this, entity actor, entity trigger)
 {
 	this.classname = "info_player_coop";
 	this.use = func_null;
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		this.state = COOP_SPAWN_ACTIVE; // TODO?
 }
 
@@ -2270,7 +2270,7 @@ spawnfunc(info_player_coop)
 		delete(this);
 		return;
 	}
-	if((this.spawnflags & COOP_SPAWN_START_ACTIVE) || (!this.targetname || this.targetname == "") || IsQBJ3Map())
+	if((this.spawnflags & COOP_SPAWN_START_ACTIVE) || (!this.targetname || this.targetname == "") || IsQBJMap())
 		this.state = COOP_SPAWN_ACTIVE;
 
 	Inventory_new(this);

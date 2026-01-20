@@ -82,7 +82,7 @@ REGISTRY_CHECK(Weapons)
 STATIC_INIT(register_weapons_done)
 {
     // too early for this!
-    //IsQBJ3Map()
+    //IsQBJMap()
     bool nodual = false;
     string wname = substring(world.model, 0, 10);
     if(wname == "maps/qbj3_" || wname == "maps/qbjr_")

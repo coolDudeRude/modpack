@@ -5,7 +5,7 @@ string getworldbasename();
 
 bool IsRogueMap();
 
-bool IsQBJ3Map();
+bool IsQBJMap();
 #endif
 
 #ifdef GAMEQC

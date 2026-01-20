@@ -22,7 +22,7 @@ const int GRUNT_ROCKET = 2;
 
 void army_idlesound(entity this)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		if(random() < 0.08)
 		{
@@ -40,7 +40,7 @@ void army_idlesound(entity this)
 
 void army_aggrosound(entity this)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		if(random() < 0.05 && time > this.show_hostile)
 		{
@@ -184,7 +184,7 @@ void army_pain(entity this, entity attacker, float damage, int deathtype)
 	{
 		this.pain_finished = time + 0.6;
 		army_pain1(this);
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "grunt/soldier_pain1.wav", 1, ATTN_NORM);
 		else
 			_sound(this, CH_VOICE, "soldier/pain1.wav", 1, ATTN_NORM);
@@ -193,7 +193,7 @@ void army_pain(entity this, entity attacker, float damage, int deathtype)
 	{
 		this.pain_finished = time + 1.1;
 		army_painb1(this);
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "grunt/soldier_pain2.wav", 1, ATTN_NORM);
 		else
 			_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
@@ -202,7 +202,7 @@ void army_pain(entity this, entity attacker, float damage, int deathtype)
 	{
 		this.pain_finished = time + 1.1;
 		army_painc1(this);
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			_sound(this, CH_VOICE, "grunt/soldier_pain3.wav", 1, ATTN_NORM);
 		else
 			_sound(this, CH_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
@@ -227,7 +227,7 @@ void army_fire(entity this)
 		default:
 		case GRUNT_SHOTGUN:
 		{
-			if(IsQBJ3Map())
+			if(IsQBJMap())
 				_sound(this, CH_WEAPON_SINGLE, "weapons/shotgn2.wav", 1, ATTN_NORM);
 			else
 				_sound(this, CH_WEAPON_SINGLE, "soldier/sattck1.wav", 1, ATTN_NORM);
@@ -339,7 +339,7 @@ void army_die(entity this, entity inflictor, entity attacker, int deathtype)
 				ThrowGib(this, inflictor, this.mdl_head, this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_guard.mdl", this.health);
-			if(IsQBJ3Map())
+			if(IsQBJMap())
 			{
 				ThrowGib(this, inflictor, "progs/gibs/gib_gen_1.mdl", this.health);
 				ThrowGib(this, inflictor, "progs/gibs/gib_gen_2.mdl", this.health);
@@ -364,7 +364,7 @@ void army_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		if(random() < 0.5)
 			_sound(this, CH_VOICE, "grunt/soldier_death1.wav", 1, ATTN_NORM);
@@ -474,7 +474,7 @@ METHOD(Grunt, mr_setup, bool(Grunt this, entity actor))
 
 	precache_sound("player/udeath.wav");		// gib death
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_model("progs/gibs/gib_gen_1.mdl");
 		precache_model("progs/gibs/gib_gen_2.mdl");
@@ -565,7 +565,7 @@ METHOD(Grunt, mr_sight, bool(Grunt this, entity actor))
 {
 	TC(Grunt, this);
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		float rs = (random() * 3);
 

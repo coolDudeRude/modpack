@@ -3,7 +3,7 @@
 #ifdef SVQC
 PRECACHE(Nailgun)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		precache_sound("nail/airpuff.wav");
 		precache_sound("nail/nailgun1.wav");
@@ -40,14 +40,14 @@ void W_Nailgun_Attack(entity this)
 	}
 	if(!actor.button0)
 	{
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			wep_nailgun_anim_end(this);
 		else
 			w_ready(this);
 		return;
 	}
 
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		if(this.m_frame >= 18)
 			this.m_frame = 11;
@@ -61,9 +61,9 @@ void W_Nailgun_Attack(entity this)
 			this.m_frame = 1;
 	}
 	wep_set_anim(this, this.m_frame, W_Nailgun_Attack);
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		this.weapon_nextthink = time + 0.02;
-	if(!IsQBJ3Map() || ((this.m_frame == 11 || this.m_frame == 15)))
+	if(!IsQBJMap() || ((this.m_frame == 11 || this.m_frame == 15)))
 	{
 		if(IS_PLAYER(actor))
 			player_nail1(actor);
@@ -73,7 +73,7 @@ void W_Nailgun_Attack(entity this)
 		this.misc_bulletcounter += 1;
 
 		SuperDamageSound(actor);
-		float offset = (IsQBJ3Map()) ? 4 : 3;
+		float offset = (IsQBJMap()) ? 4 : 3;
 		W_FireSpikes(actor, ((this.misc_bulletcounter % 2) ? offset : -offset), weaponentity);
 	}
 	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
@@ -84,7 +84,7 @@ void W_FireSpikes(entity this, float ox, .entity weaponentity)
 	makevectors(this.v_angle);
 
 	float vol = (this.silencer) ? 0.2 : 1;
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		vol = (this.silencer) ? 0.2 : 0.8;
 		_sound(this, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", vol, ATTN_NORM);
@@ -121,7 +121,7 @@ METHOD(Nailgun, wr_think, void(entity thiswep, entity actor, .entity weaponentit
 	if(thiswep.wr_checkammo1(thiswep, actor, weaponentity))
 	{
 		actor.(weaponentity).misc_bulletcounter = 0;
-		if(IsQBJ3Map())
+		if(IsQBJMap())
 			actor.(weaponentity).m_frame = 10;
 		W_Nailgun_Attack(actor.(weaponentity));
 	}
@@ -144,7 +144,7 @@ METHOD(Nailgun, wr_killmessage, Notification(entity thiswep))
 #ifdef CSQC
 PRECACHE(Nailgun)
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 	{
 		WEP_NAILGUN.m_delta = 0.02;
 		precache_model("progs/v_tnailgun.mdl");
@@ -153,7 +153,7 @@ PRECACHE(Nailgun)
 
 METHOD(Nailgun, wr_viewmodel, string(entity this, entity wep))
 {
-	if(IsQBJ3Map())
+	if(IsQBJMap())
 		return "tnailgun";
 	return this.mdl;
 }
