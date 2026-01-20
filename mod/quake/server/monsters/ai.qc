@@ -102,7 +102,7 @@ bool t_checkbottom(entity this)
 	start.x = stop.x = (minz.x + maxz.x) * 0.5;
 	start.y = stop.y = (minz.y + maxz.y) * 0.5;
 	//start = stop = vec2((minz + maxz) * 0.5);
-	stop.z = start.z - 2 * PHYS_STEPHEIGHT(NULL);
+	stop.z = start.z - 2 * autocvar_sv_stepheight;
 
 	traceline(start, stop, MOVE_NOMONSTERS, this);
 	if(trace_fraction == 1.0)
@@ -122,7 +122,7 @@ bool t_checkbottom(entity this)
 
 			if(trace_fraction != 1.0 && trace_endpos.z > bottom)
 				bottom = trace_endpos.z;
-			if(trace_fraction == 1.0 || mid - trace_endpos.z > PHYS_STEPHEIGHT(NULL))
+			if(trace_fraction == 1.0 || mid - trace_endpos.z > autocvar_sv_stepheight)
 				return false;
 		}
 	}
@@ -197,14 +197,14 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 	}
 
 	// push down from a step height above the desired position
-	neworg.z += PHYS_STEPHEIGHT(NULL);
+	neworg.z += autocvar_sv_stepheight;
 	vector end = neworg;
-	end.z -= PHYS_STEPHEIGHT(NULL) * 2;
+	end.z -= autocvar_sv_stepheight * 2;
 
 	tracebox(neworg, this.mins, this.maxs, end, MOVE_NORMAL, this);
 	if(trace_startsolid)
 	{
-		neworg.z -= PHYS_STEPHEIGHT(NULL);
+		neworg.z -= autocvar_sv_stepheight;
 		tracebox(neworg, this.mins, this.maxs, end, MOVE_NORMAL, this);
 		if(trace_startsolid)
 			return false;
