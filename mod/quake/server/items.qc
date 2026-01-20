@@ -3261,9 +3261,9 @@ void DropBackpack(entity this)
 		setcefc(item, BackpackCustomize);
 
 		if(autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent))
-			WaypointSprite_Spawn(WP_SkillIssue, backpack_lifetime, 16384, item, '0 0 32', this, 0, item, sprite, false, NULL);
+			WaypointSprite_Spawn(WP_SkillIssue, backpack_lifetime, 0, item, '0 0 32', this, 0, item, sprite, false, NULL);
 		else
-			WaypointSprite_Spawn(WP_Death, backpack_lifetime, 8192, item, '0 0 32', this, 0, item, sprite, false, NULL);
+			WaypointSprite_Spawn(WP_Death, backpack_lifetime, 0, item, '0 0 32', this, 0, item, sprite, false, NULL);
 	}
 	
 	item.nextthink = time + backpack_lifetime;
