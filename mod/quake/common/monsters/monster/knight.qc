@@ -188,12 +188,14 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 	if(r < 0.85)
 	{
 		this.pain_finished = time + 1;
-		knight_pain1(this);
+		setthink(this, knight_pain1);
+		this.nextthink = time;
 	}
 	else
 	{
 		this.pain_finished = time + 1;
-		knight_painb1(this);
+		setthink(this, knight_painb1);
+		this.nextthink = time;
 	}
 	
 }
