@@ -550,10 +550,11 @@ void amalg_pain(entity this, entity attacker, float damage, int deathtype)
 	{
 		this.pain_finished = time + 3;
 		AmalGoop_Spam(this, 5);
+		this.nextthink = time;
 		if(r > 0.5)
-			amalg_pain1(this);
+			setthink(this, amalg_pain1);
 		else
-			amalg_painb1(this);
+			setthink(this, amalg_painb1);
 	}
 	else
 		this.pain_finished = time; // prevent spam anyway

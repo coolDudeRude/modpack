@@ -137,8 +137,6 @@ void snowm_pain1(entity this) { set_animofs(this, anim_snowman_claw, 4, snowm_pa
 
 void snowm_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if(this.spawnflags & MON_SANTA_GOOD)
-		return;
 	if(this.pain_finished > time)
 		return;
 	if(random()*100 > damage)

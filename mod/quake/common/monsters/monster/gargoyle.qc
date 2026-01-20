@@ -337,10 +337,10 @@ void garg_pain(entity this, entity attacker, float damage, int deathtype)
 {
 	if(this.health <= 0)
 		return;
-	if(random() * 200 > damage)
-		return; // ddin't flinch
 	if(this.pain_finished > time)
 		return;
+	if(random() * 200 > damage)
+		return; // ddin't flinch
 
 	// Check for perching gargoyles, need special wakeup
 	if(this.spawnflags & MON_GARGOYLE_PERCH)

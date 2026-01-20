@@ -305,11 +305,11 @@ void scourge_pain1(entity this) { set_animofs(this, anim_scourge_pain, 1, scourg
 
 void scourge_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if(random() * 50 > damage)
-		return;		// didn't flinch
-
 	if(this.pain_finished > time)
 		return;
+
+	if(random() * 50 > damage)
+		return;		// didn't flinch
 
 	//float r = random ();
 	_sound(this, CH_VOICE, "scourge/pain.wav", 1, ATTN_NORM);

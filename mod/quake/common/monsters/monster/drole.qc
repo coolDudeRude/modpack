@@ -437,10 +437,10 @@ void drole_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.health <= 0)
 		return;
 
-	if(random() * 60 > damage)
+	if(this.pain_finished > time)
 		return;
 
-	if(this.pain_finished > time)
+	if(random() * 60 > damage)
 		return;
 
 	this.pain_finished = time + 0.6;

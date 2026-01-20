@@ -535,6 +535,10 @@ void lost_inpain(entity this)
 //----------------------------------------------------------------------
 void lost_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time;
+
 	if(this.state != LOST_STATE_PAIN)
 	{
 		// Stop all velocity and reset movetype

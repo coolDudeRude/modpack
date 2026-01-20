@@ -711,11 +711,9 @@ void skullw_pain(entity this, entity attacker, float damage, int deathtype)
 	// Cannot feel pain when phased out
 	if(this.bodyphased == MONAI_SKULLWINVIS)
 		return;
-
-	if(random() * 100 > damage)
-		return;
-
 	if(this.pain_finished > time)
+		return;
+	if(random() * 100 > damage)
 		return;
 
 	this.pain_finished = time + 2;

@@ -751,13 +751,12 @@ void mino_pain(entity this, entity attacker, float damage, int deathtype)
 {
 	// Check all pain conditions and set up what to do next
 	if(this.health <= 0)
-		return;		// allready dying, don't go into pain frame
+		return;		// already dying, don't go into pain frame
+	if(this.pain_finished > time)
+		return;
 
 	if(random()*200 > damage)
 		return;		// didn't flinch
-
-	if(this.pain_finished > time)
-		return;
 
 	this.pain_finished = time + 2;
 	minotaur_finish_attachment(this);

@@ -481,6 +481,10 @@ void bogl_pain1(entity this) { set_animofs(this, anim_boglord_pain, 1, bogl_pain
 
 void bogl_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(this.pain_finished > time)
+		return;
+	this.pain_finished = time + 1;
+
 	// Finish with all attachments
 	bogl_finish_attachment(this);
 
@@ -495,10 +499,6 @@ void bogl_pain(entity this, entity attacker, float damage, int deathtype)
 	if(random()*400 > damage)
 		return;		// didn't flinch
 
-	if(this.pain_finished > time)
-		return;
-	this.pain_finished = time + 2;
-		
 	bogl_pain1(this);
 }
 

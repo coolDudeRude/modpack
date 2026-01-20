@@ -216,6 +216,9 @@ void kslime_makebaby(entity this)
 
 void kslime_mitosis(entity targ, entity attacker, float damage, int deathtype)
 {
+	if(time < targ.pain_finished)
+		return;
+	targ.pain_finished = time; // prevent spam
 	if(query_minionactive(targ) <= 0)
 		return;
 

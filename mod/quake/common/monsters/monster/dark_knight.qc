@@ -17,7 +17,6 @@ void dknight_walk14(entity this)
 {
 	set_anim(this, 66, dknight_walk1);
 	ai_walk(this, 3);
-	this.oldorigin = this.origin;
 }
 void dknight_walk13(entity this) { set_anim(this, 65, dknight_walk14); ai_walk(this, 4); }
 void dknight_walk12(entity this) { set_anim(this, 64, dknight_walk13); ai_walk(this, 3); }
@@ -108,7 +107,6 @@ void dknight_startfire(entity this)
 	//te_lightning2(NULL, org, trace_endpos); // should be this
 	SendCSQCLightningBeam(org, trace_endpos);
 	LightningDamage(org, trace_endpos, this, 3, DEATH_MONSTER_DARK_KNIGHT.m_id);
-	this.oldorigin = this.origin;
 }
 
 void dknight_shoot12(entity this) { set_anim(this, 53, dknight_run1); ai_face(this); }
@@ -193,7 +191,6 @@ void dknight_painb1(entity this) { set_anim(this, 31, dknight_painb2); ai_painfo
 
 void dknight_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	this.oldorigin = this.origin;
 	if(this.pain_finished > time)
 		return;
 	float r = random();

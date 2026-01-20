@@ -114,12 +114,19 @@ void sword_pain_parry(entity this, entity attacker, float damage, int deathtype)
 {
 	if(deathtype != DEATH_GENERIC.m_id)
 		return;
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time;
 
 	sword_parry1(this);
 }
 
 void sword_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time;
+
 	this.th_run = sword_run1; 
 	setthink(this, sword_run1);
 	this.nextthink = time + 0.1;

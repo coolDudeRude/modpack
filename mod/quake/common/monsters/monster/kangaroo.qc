@@ -74,9 +74,12 @@ void roo_stand(entity this)
 
 void roo_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
 	SpawnBlood(this.origin, '0 0 -5', 100, this);
 	if(random() > 0.6)
 		return; // chance to not be stunned
+	this.pain_finished = time + 0.5;
 	roo_hurt1(this);
 }
 

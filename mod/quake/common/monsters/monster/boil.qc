@@ -202,6 +202,10 @@ void boil_HexpB1(entity this) { set_animofs(this, anim_boil_hobB, 2, boil_HexpB2
 
 void boil_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time; // prevent spam
+
 	// Spawn some grey particles and chunk of meat
 	SpawnProjectileSmoke(this.origin, this.brkvelbase_x, this.brkvelbase_y, this.brkvelbase_z);
 	SpawnProjectileMeat(this,this.origin, this.brkvelbase_x, this.brkvelbase_y, this.brkvelbase_z);

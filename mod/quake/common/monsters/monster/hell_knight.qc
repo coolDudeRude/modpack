@@ -402,10 +402,9 @@ void hk_idle_sound(entity this)
 
 void hknight_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if(deathtype != DEATH_GENERIC.m_id && (random() * 30) > damage)
-		return;
-
 	if(this.pain_finished > time)
+		return;
+	if(deathtype != DEATH_GENERIC.m_id && (random() * 30) > damage)
 		return;
 
 	if(this.spawnflags & 2) // statue

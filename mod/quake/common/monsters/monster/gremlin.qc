@@ -750,17 +750,17 @@ void gremlin_gunpain1(entity this) { set_animofs(this, anim_gremlin_gpain, 1, gr
 
 void gremlin_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(this.pain_finished > time)
+		return;
+	if(gettouch(this) == Gremlin_JumpTouch)
+		return;
+
 	if(random() < 0.8)
 	{
 		this.gorging = false;
 		this.enemy = attacker;
 		FoundTarget(this);
 	}
-	if(gettouch(this) == Gremlin_JumpTouch)
-		return;
-
-	if(this.pain_finished > time)
-		return;
 
 	this.pain_finished = time + 1;
 //   if(random()<0.5)

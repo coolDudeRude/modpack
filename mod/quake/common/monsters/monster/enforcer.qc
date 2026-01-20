@@ -237,9 +237,9 @@ void enf_paind1(entity this) { set_animofs(this, anim_enf_paind, 1, enf_paind2);
 
 void enf_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	float r = random();
 	if(this.pain_finished > time)
 		return;
+	float r = random();
 
 	if(IsQBJMap())
 	{

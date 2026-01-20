@@ -954,6 +954,10 @@ void iceg_pain(entity this, entity attacker, float damage, int deathtype)
 		return;
 	}
 
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time; // prevent spam
+
 	// Any pain animation/sound required?
 	if(random() < 0.5)
 		_sound(this, CH_VOICE, "golem/pain1.wav", 1, ATTN_NORM);

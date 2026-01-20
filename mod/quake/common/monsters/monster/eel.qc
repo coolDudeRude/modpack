@@ -195,11 +195,11 @@ void eel_pain3(entity this) { set_animofs(this, anim_eel_eeldth1, 3, eel_pain4);
 void eel_pain2(entity this) { set_animofs(this, anim_eel_eeldth1, 2, eel_pain3); }
 void eel_pain1(entity this, entity attacker, float damage, int deathtype)
 {
-	set_animofs(this, anim_eel_eeldth1, 1, eel_pain2);
-
 	if(this.pain_finished > time)
 		return;
-	
+
+	set_animofs(this, anim_eel_eeldth1, 1, eel_pain2);
+
 	this.pain_finished = time + 1;
 	_sound(this, CH_VOICE, "eel/epain3.wav", 1, ATTN_NORM); 
 	this.skin = 0;

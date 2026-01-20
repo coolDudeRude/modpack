@@ -151,13 +151,15 @@ void arf_pain(entity this, entity attacker, float damage, int deathtype)
 	this.pain_finished = time + 2;
 
 	if(random() < 0.5)
-	{	
-		arf_paina1(this);
+	{
+		this.nextthink = time;
+		setthink(this, arf_paina1);
 		_sound(this, CH_VOICE, "arachnofloyd/pain1.wav", 1, ATTN_NORM);
 	}
 	else
 	{
-		arf_painb1(this);
+		this.nextthink = time;
+		setthink(this, arf_painb1);
 		_sound(this, CH_VOICE, "arachnofloyd/pain2.wav", 1, ATTN_NORM);
 	}
 }

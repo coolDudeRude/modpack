@@ -446,11 +446,11 @@ void legond_pain1(entity this) { set_anim(this, 88, legond_pain2); ai_painforwar
 
 void Legond_Pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if((random() * 275) > damage)
-		return;
 	if(this.health <= 0)
 		return;
 	if(this.pain_finished > time)
+		return;
+	if((random() * 275) > damage)
 		return;
 	if(random() <= 0.5)
 		_sound(this, CHAN_VOICE, "monsters/legond/lpain1.wav", 1, ATTN_NORM);

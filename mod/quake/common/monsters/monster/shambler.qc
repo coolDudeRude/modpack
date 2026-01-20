@@ -319,19 +319,20 @@ void sham_pain1(entity this) { set_animofs(this, anim_sham_pain, 1, sham_pain2);
 
 void sham_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(this.health <= 0)
+		return;		// already dying, don't go into pain frame
+	if(this.pain_finished > time)
+		return;
+	this.pain_finished = time; // incase we return early, prevent same-frame spam
+
 	if(this.spawnflags & MON_SHAMBLER_COOKIE)
 		_sound(this, CH_VOICE, "shambler/cookie_hurt.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "shambler/shurt2.wav", 1, ATTN_NORM);
 
-	if(this.health <= 0)
-		return;		// allready dying, don't go into pain frame
-
 	if(random()*400 > damage)
 		return;		// didn't flinch
 
-	if(this.pain_finished > time)
-		return;
 	this.pain_finished = time + 2;
 		
 	sham_pain1(this);

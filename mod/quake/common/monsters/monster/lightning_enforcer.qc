@@ -132,9 +132,9 @@ void lenf_paind1(entity this) { set_anim(this, 83, lenf_paind2); }
 
 void lenf_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	float r = random();
 	if(this.pain_finished > time)
 		return;
+	float r = random();
 	if(r < 0.2)
 	{
 		_sound(this, CHAN_BODY, "monsters/lenforce/lepain1.wav", 1, ATTN_NORM);

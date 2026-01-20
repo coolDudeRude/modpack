@@ -125,6 +125,9 @@ void tentacle_die1(entity this) { set_animofs(this, anim_tentacle_death, 1, tent
 //----------------------------------------------------------------------
 void tentacle_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time; // prevent spam
 	_sound(this, CH_VOICE, "boss1/pain.wav", 1, ATTN_NORM);
 }
 

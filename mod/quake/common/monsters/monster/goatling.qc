@@ -108,13 +108,14 @@ void goatling_pain1(entity this) { set_animofs(this, anim_goatling_pain, 1, goat
 
 void goatling_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	//if(time < this.pain_finished)
-		//return;
+	if(time < this.pain_finished)
+		return;
 	// Any pain animation/sound required?
 	_sound(this, CH_VOICE, "goatling/pain.wav", 1, ATTN_NORM);
-	this.pain_finished = time + 1;
+	this.pain_finished = time + 0.2;
 
-	goatling_pain1(this);
+	setthink(this, goatling_pain1);
+	this.nextthink = time;
 }
 
 void goatling_die6(entity this) { set_animofs(this, anim_goatling_death, 6, goatling_die6); this.health = 0; delete(this); }

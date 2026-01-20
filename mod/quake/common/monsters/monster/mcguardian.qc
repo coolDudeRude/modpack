@@ -162,6 +162,9 @@ void mcguardian_pain(entity this, entity attacker, float damage, int deathtype)
 {
 	if(this.mcguardian_charging > 0)
 		return;
+	if(time < this.pain_finished)
+		return;
+	this.pain_finished = time; // prevent spam
 
 	float r = random();
 	if(r < 0.25)

@@ -615,7 +615,8 @@ void zombie_pain(entity this, entity attacker, float take, int deathtype)
 	if(take >= 25)
 	{
 		this.inpain = 2;
-		zombie_paine1(this);
+		setthink(this, zombie_paine1);
+		this.nextthink = time;
 		return;
 	}
 	
@@ -630,7 +631,8 @@ void zombie_pain(entity this, entity attacker, float take, int deathtype)
 	{
 // hit again, so drop down
 		this.inpain = 2;
-		zombie_paine1(this);
+		setthink(this, zombie_paine1);
+		this.nextthink = time;
 		return;
 	}
 

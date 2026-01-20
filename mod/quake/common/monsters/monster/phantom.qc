@@ -282,9 +282,9 @@ void phantom_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 void phantom_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if((random() * 70) > damage)
-		return;
 	if(this.pain_finished > time)
+		return;
+	if((random() * 70) > damage)
 		return;
 	float r = random();
 	if(r < 0.33)

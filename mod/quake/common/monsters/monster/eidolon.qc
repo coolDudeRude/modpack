@@ -726,9 +726,6 @@ void eidolon_painB1(entity this) { set_animofs(this, anim_eidolon_painB, 1, eido
 
 void eidolon_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	// Finish with all attachments
-	eidolon_finish_attachment(this);
-
 	// Check for boss wave trigger events
 	if(eidolon_WaveCheck(this))
 		return;
@@ -739,10 +736,16 @@ void eidolon_pain(entity this, entity attacker, float damage, int deathtype)
 	if(random()*400 > damage)
 		return;		// didn't flinch
 
+	// Finish with all attachments
+	eidolon_finish_attachment(this);
+
 	_sound(this, CH_VOICE, "eidolon/pain.wav", 1, ATTN_NORM);
 
 	if(random() < 0.7)
+	{
+		this.pain_finished = time;
 		eidolon_painA1(this);
+	}
 	else
 	{
 		this.pain_finished = time + 2;

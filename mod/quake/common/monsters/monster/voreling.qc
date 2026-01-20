@@ -231,8 +231,8 @@ void voreling_pain1(entity this) { set_animofs(this, anim_voreling_pain, 1, vore
 
 void voreling_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	//if(time < this.pain_finished)
-		//return;
+	if(time < this.pain_finished)
+		return;
 	// Any pain animation/sound required?
 	_sound(this, CH_VOICE, "voreling/pain.wav", 1, ATTN_NORM);
 	this.pain_finished = time + 1;

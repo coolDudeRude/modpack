@@ -231,6 +231,10 @@ void tbaby_checknew(entity this)
 
 void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
 {
+	if(time < targ.pain_finished)
+		return;
+	targ.pain_finished = time; // prevent spam
+
     if(random() < 0.35)
 	{
 		entity newSpawn = spawn();

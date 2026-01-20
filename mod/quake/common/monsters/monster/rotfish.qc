@@ -163,9 +163,9 @@ void fish_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 void fish_pain(entity this, entity attacker, float damage, int deathtype)
 {
-
 // fish allways do pain frames
-	f_pain1(this);
+	setthink(this, f_pain1);
+	this.nextthink = time;
 }
 
 /*QUAKED monster_fish(1 0 0)(-16 -16 -24)(16 16 24) Ambush

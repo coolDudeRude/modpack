@@ -324,17 +324,17 @@ void morph_painB1(entity this) { set_animofs(this, anim_morph_mfpbin01, 1, morph
 
 void morph_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if(autocvar_skill == 3)
+	if(this.pain_finished > time)
+		return;
+	if(autocvar_skill >= 2)
 	{
 		if(random() > 0.5)
 			morph_teleport(this);
 		return;
 	}
-	
-	if(this.pain_finished > time)
-		return;
+
 	if(random() > 0.25)
-		return;
+		return; // didn't flinch
 	
 	float painChoice = random();
 	this.pain_finished = time + 2;

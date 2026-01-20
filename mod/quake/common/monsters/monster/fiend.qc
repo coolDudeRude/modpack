@@ -151,10 +151,9 @@ void demon1_pain1(entity this) { set_animofs(this, anim_demon_pain, 1, demon1_pa
 
 void demon1_pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if(gettouch(this) == Demon_JumpTouch)
-		return;
-
 	if(this.pain_finished > time)
+		return;
+	if(gettouch(this) == Demon_JumpTouch)
 		return;
 
 	this.pain_finished = time + 1;

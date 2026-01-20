@@ -286,9 +286,9 @@ void gren_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 void Gren_Pain(entity this, entity attacker, float damage, int deathtype)
 {
-	if((random() * 70) > damage)
-		return;
 	if(this.pain_finished > time)
+		return;
+	if((random() * 70) > damage)
 		return;
 	if(random() > 0.5)
 	{

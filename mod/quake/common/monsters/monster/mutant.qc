@@ -134,10 +134,9 @@ void mutant_pain(entity this, entity attacker, float damage, int deathtype)
 	if(this.health < this.max_health * 0.6)
 		this.skin = 1;
 
-	if(gettouch(this) == Mutant_JumpTouch)
-		return;
-
 	if(this.pain_finished > time)
+		return;
+	if(gettouch(this) == Mutant_JumpTouch)
 		return;
 
 	this.pain_finished = time + 1;

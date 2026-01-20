@@ -11,15 +11,18 @@ void juggernaut_pain1(entity this) { set_anim(this, 90, juggernaut_pain2); ai_pa
 
 void juggernaut_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(time < this.pain_finished)
+		return;
+
 	float r = random();
 	if(r <= 0.3)
-		_sound(this, CHAN_AUTO, "monsters/juggers/jshort2.wav", 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "monsters/juggers/jshort2.wav", 1, ATTN_NORM);
 	else if(r <= 0.6)
-		_sound(this, CHAN_AUTO, "monsters/juggers/jshort3.wav", 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "monsters/juggers/jshort3.wav", 1, ATTN_NORM);
 	else if(r <= 0.9)
-		_sound(this, CHAN_AUTO, "monsters/juggers/jshort4.wav", 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "monsters/juggers/jshort4.wav", 1, ATTN_NORM);
 	else
-		_sound(this, CHAN_AUTO, "monsters/juggers/jshort1.wav", 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "monsters/juggers/jshort1.wav", 1, ATTN_NORM);
 	if(random() < 0.2)
 		_sound(this, CHAN_BODY, "monsters/juggers/jbent.wav", 1, ATTN_NORM);
 	if(damage < ((this.health + damage) * 0.2))

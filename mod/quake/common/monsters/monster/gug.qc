@@ -657,12 +657,12 @@ void gug_pain(entity this, entity attacker, float damage, int deathtype)
 {
 	if(this.health <= 0)
 		return;		// allready dying, don't go into pain frame
+	if(this.pain_finished > time)
+		return;
 
 	if(random()*400 > damage && damage > 55)
 		return;		// didn't flinch
 
-	if(this.pain_finished > time)
-		return;
 	this.pain_finished = time + 3;
 
 	// only roars when really hurt?
