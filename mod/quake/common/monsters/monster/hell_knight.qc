@@ -19,6 +19,7 @@ const int anim_hknight_w_attack = 133; //'133 154 0'
 const int anim_hknight_magicc = 155; //'155 165 0'
 
 void hknight_char_a1(entity this);
+void hknight_char_b1(entity this);
 void hknight_run1(entity this);
 void hk_idle_sound(entity this);
 
@@ -45,6 +46,179 @@ void hknight_shot(entity this, float offset)
 	CSQCProjectile(newmis, true, PROJECTILE_KNIGHT_SPIKE, true);
 }
 
+void hknight_bigshot_touch(entity this, entity toucher)
+{
+	if(toucher.solid == SOLID_TRIGGER)
+		return;
+	if(toucher == this.owner)
+		return;
+
+	if(pointcontents(this.origin) == CONTENT_SKY)
+	{
+		delete(this);
+		return;
+	}
+
+	if(toucher && toucher.solid != SOLID_BSP)
+	{
+		// handled by hack
+	}
+	else
+	{
+		vector org = findbetterlocation(this.origin, 8);
+		particle(org, '0 0 0', 16, 64);
+		te_gunshot(org);
+		delete(this);
+		return;
+	}
+}
+
+.float hknight_bigshot_dmgtime;
+void hknight_bigshot_think(entity this)
+{
+	if(this.count < time)
+	{
+		delete(this);
+		return;
+	}
+
+	this.nextthink = time;
+
+	if(time <= this.hknight_bigshot_dmgtime)
+		return; // cooldown to prevent damage spam
+
+	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it.takedamage && it != this.owner,
+	{
+		if(it.clipgroup && it.clipgroup == this.clipgroup)
+			continue;
+		float damg = ((this.dmg) ? this.dmg : 40);
+		if(it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD)
+			damg = 120;
+		spawn_touchblood(this, damg, it);
+		T_Damage(it, this, this.owner, damg, this.projectiledeathtype);
+
+		this.hknight_bigshot_dmgtime = time + 0.33; // prevent instant death
+	});
+}
+
+void hknight_bigshot(entity this)
+{
+	fixedmakevectors(this.angles);
+
+	//vector org = this.origin + this.mins + this.size*0.75 + v_forward * 20;
+	vector org = this.origin + '0 0 0.75' * this.maxs_z + v_forward * 20;
+	// shot leading makes this attack really hard to dodge for its high damage
+	//vector dir = normalize(ai_shotlead(org, this.enemy.origin, this.enemy.velocity, 700) - org);
+	vector dir = normalize(this.enemy.origin - org);
+	
+	entity newmis = launch_spike(this, org, dir);
+	set_movetype(newmis, MOVETYPE_FLYMISSILE);
+	newmis.solid = SOLID_TRIGGER;
+	newmis.dphitcontentsmask = DPCONTENTS_SOLID;
+	settouch(newmis, hknight_bigshot_touch);
+	newmis.projectiledeathtype = DEATH_MONSTER_HELL_KNIGHT.m_id;
+	newmis.classname = "knight_spike";
+	setsize(newmis, '0 0 0', '0 0 0');
+	newmis.cnt = 32; // rough area of effect during travel
+	newmis.count = time + 10;
+	newmis.dmg = 60;
+	newmis.velocity = dir * 700;
+	setthink(newmis, hknight_bigshot_think);
+	newmis.nextthink = time;
+	_sound(this, CH_WEAPON_SINGLE, "hknight/sword_ignite.wav", 1, ATTN_NORM);
+
+	CSQCProjectile(newmis, true, PROJECTILE_HELLKNIGHT_BIGSHOT, true);
+}
+
+void hknight_spinner_stick(entity this, vector org, vector dir)
+{
+	entity newmis = spawn();
+	newmis.flags = FL_PROJECTILE;
+	newmis.classname = "hknight_spinner_stick";
+	newmis.owner = this.owner;
+	newmis.realowner = this.realowner;
+	newmis.projectiledeathtype = this.projectiledeathtype;
+	newmis.clipgroup = this.clipgroup;
+	newmis.effects = EF_NOMODELFLAGS;
+	newmis.scale = 2;
+
+	// make it not solid and stop it
+	set_movetype(newmis, MOVETYPE_NONE);
+	newmis.solid = SOLID_NOT;
+
+	// set angle of rest based on direction it came in from
+	newmis.angles = vectoangles(dir);
+
+	// back out spike a little to show more of it
+	vector facing = (-32)*normalize(dir);
+	vector neworg = org + facing;
+
+	newmis.nextthink = time + 3;
+	setthink(newmis, SUB_Remove);
+	//end blitzcode
+	
+	_setmodel(newmis, "progs/k_spike_cold.mdl");
+	setsize(newmis, '0 0 0', '0 0 0');		
+	setorigin(newmis, neworg);
+
+	// no velocities
+	newmis.avelocity = '0 0 0';
+	newmis.velocity = '0 0 0';
+
+	//IL_PUSH(g_projectiles, newmis);
+}
+
+void hknight_spinner_touch(entity this, entity toucher)
+{
+	if(toucher.solid == SOLID_TRIGGER)
+		return;
+	if(toucher == this.owner)
+		return;
+
+	if(pointcontents(this.origin) == CONTENT_SKY)
+	{
+		delete(this);
+		return;
+	}
+
+	if(toucher.takedamage)
+	{
+		float damg = ((this.dmg) ? this.dmg : 20);
+		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
+
+		te_spike(this.origin);
+		delete(this);
+		return;
+	}
+
+	hknight_spinner_stick(this, this.origin, this.velocity);
+	te_spike(this.origin);
+	_sound(this, CH_WEAPON_SINGLE, "enviro/physics/axemet1.wav", 1, ATTN_NORM);
+	delete(this);
+}
+
+void hknight_spinner(entity this)
+{
+	fixedmakevectors(this.angles);
+
+	//vector org = this.origin + this.mins + this.size*0.75 + v_forward * 20;
+	vector org = this.origin + '0 0 1' * this.maxs_z + v_forward * 10;
+	vector dir = normalize(this.enemy.origin - org);
+	
+	entity newmis = launch_spike(this, org, dir);
+	set_movetype(newmis, MOVETYPE_TOSS);
+	settouch(newmis, hknight_spinner_touch);
+	newmis.projectiledeathtype = DEATH_MONSTER_HELL_KNIGHT.m_id;
+	newmis.classname = "hknight_spinner";
+	setsize(newmis, '0 0 0', '0 0 0');
+	newmis.velocity = dir * 1300 + v_up * 200;
+	newmis.dmg = 30;
+	newmis.gravity = 0.85;
+	_sound(this, CH_WEAPON_SINGLE, "knight/sword1.wav", 1, ATTN_NORM);
+
+	CSQCProjectile(newmis, true, PROJECTILE_HELLKNIGHT_SPINNER, true);
+}
+
 void CheckForCharge(entity this)
 {
 	// check for mad charge
@@ -59,8 +233,10 @@ void CheckForCharge(entity this)
 
 // charge		
 	this.attack_finished = time + 2;
-	hknight_char_a1(this);
-
+	if(autocvar_skill >= 2 && (random() > 0.5 || vdist(this.origin - this.enemy.origin, >, 256)))
+		hknight_char_b1(this);
+	else
+		hknight_char_a1(this);
 }
 
 void hknight_run1(entity this);
@@ -245,12 +421,12 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 
 void hknight_magica14(entity this) { set_animofs(this, anim_hknight_magica, 14, hknight_run1); ai_face(this); }
 void hknight_magica13(entity this) { set_animofs(this, anim_hknight_magica, 13, hknight_magica14); ai_face(this); }
-void hknight_magica12(entity this) { set_animofs(this, anim_hknight_magica, 12, hknight_magica13); hknight_shot(this, 3); }
-void hknight_magica11(entity this) { set_animofs(this, anim_hknight_magica, 11, hknight_magica12); hknight_shot(this, 2); }
-void hknight_magica10(entity this) { set_animofs(this, anim_hknight_magica, 10, hknight_magica11); hknight_shot(this, 1); }
-void hknight_magica9(entity this) { set_animofs(this, anim_hknight_magica, 9, hknight_magica10); hknight_shot(this, 0); }
-void hknight_magica8(entity this) { set_animofs(this, anim_hknight_magica, 8, hknight_magica9); hknight_shot(this, -1); }
-void hknight_magica7(entity this) { set_animofs(this, anim_hknight_magica, 7, hknight_magica8); hknight_shot(this, -2); }
+void hknight_magica12(entity this) { set_animofs(this, anim_hknight_magica, 12, hknight_magica13); ai_face(this); }
+void hknight_magica11(entity this) { set_animofs(this, anim_hknight_magica, 11, hknight_magica12); ai_face(this); }
+void hknight_magica10(entity this) { set_animofs(this, anim_hknight_magica, 10, hknight_magica11); ai_face(this); }
+void hknight_magica9(entity this) { set_animofs(this, anim_hknight_magica, 9, hknight_magica10); hknight_spinner(this); }
+void hknight_magica8(entity this) { set_animofs(this, anim_hknight_magica, 8, hknight_magica9); ai_face(this); }
+void hknight_magica7(entity this) { set_animofs(this, anim_hknight_magica, 7, hknight_magica8); ai_face(this); }
 void hknight_magica6(entity this) { set_animofs(this, anim_hknight_magica, 6, hknight_magica7); ai_face(this); }
 void hknight_magica5(entity this) { set_animofs(this, anim_hknight_magica, 5, hknight_magica6); ai_face(this); }
 void hknight_magica4(entity this) { set_animofs(this, anim_hknight_magica, 4, hknight_magica5); ai_face(this); }
@@ -261,12 +437,12 @@ void hknight_magica1(entity this) { set_animofs(this, anim_hknight_magica, 1, hk
 //============================================================================
 
 void hknight_magicb13(entity this) { set_animofs(this, anim_hknight_magicb, 13, hknight_run1); ai_face(this); }
-void hknight_magicb12(entity this) { set_animofs(this, anim_hknight_magicb, 12, hknight_magicb13); hknight_shot(this, 3); }
-void hknight_magicb11(entity this) { set_animofs(this, anim_hknight_magicb, 11, hknight_magicb12); hknight_shot(this, 2); }
-void hknight_magicb10(entity this) { set_animofs(this, anim_hknight_magicb, 10, hknight_magicb11); hknight_shot(this, 1); }
-void hknight_magicb9(entity this) { set_animofs(this, anim_hknight_magicb, 9, hknight_magicb10); hknight_shot(this, 0); }
-void hknight_magicb8(entity this) { set_animofs(this, anim_hknight_magicb, 8, hknight_magicb9); hknight_shot(this, -1); }
-void hknight_magicb7(entity this) { set_animofs(this, anim_hknight_magicb, 7, hknight_magicb8); hknight_shot(this, -2); }
+void hknight_magicb12(entity this) { set_animofs(this, anim_hknight_magicb, 12, hknight_magicb13); }
+void hknight_magicb11(entity this) { set_animofs(this, anim_hknight_magicb, 11, hknight_magicb12); }
+void hknight_magicb10(entity this) { set_animofs(this, anim_hknight_magicb, 10, hknight_magicb11); }
+void hknight_magicb9(entity this) { set_animofs(this, anim_hknight_magicb, 9, hknight_magicb10); hknight_bigshot(this); }
+void hknight_magicb8(entity this) { set_animofs(this, anim_hknight_magicb, 8, hknight_magicb9); ai_face(this); }
+void hknight_magicb7(entity this) { set_animofs(this, anim_hknight_magicb, 7, hknight_magicb8); ai_face(this); }
 void hknight_magicb6(entity this) { set_animofs(this, anim_hknight_magicb, 6, hknight_magicb7); ai_face(this); }
 void hknight_magicb5(entity this) { set_animofs(this, anim_hknight_magicb, 5, hknight_magicb6); ai_face(this); }
 void hknight_magicb4(entity this) { set_animofs(this, anim_hknight_magicb, 4, hknight_magicb5); ai_face(this); }
@@ -294,6 +470,19 @@ void hknight_magicc3(entity this)
 void hknight_magicc2(entity this) { set_animofs(this, anim_hknight_magicc, 2, hknight_magicc3); ai_face(this); }
 void hknight_magicc1(entity this) { set_animofs(this, anim_hknight_magicc, 1, hknight_magicc2); ai_face(this); }
 
+void hknight_magic(entity this)
+{
+	if(autocvar_skill >= 2 && random() > 0.2)
+	{
+		if(random() > 0.5)
+			hknight_magicb1(this); // single big piercing shot
+		else
+			hknight_magica1(this); // ???
+	}
+	else
+		hknight_magicc1(this); // spreading fire swords (classic attack)
+}
+
 //===========================================================================
 
 void hknight_char_a16(entity this) { set_animofs(this, anim_hknight_char_a, 16, hknight_run1); ai_charge(this, 13); }
@@ -315,13 +504,12 @@ void hknight_char_a1(entity this) { set_animofs(this, anim_hknight_char_a, 1, hk
 
 //===========================================================================
 
-void hknight_char_b1(entity this);
-void hknight_char_b6(entity this) { set_animofs(this, anim_hknight_char_b, 6, hknight_char_b1); ai_charge(this, 8); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
-void hknight_char_b5(entity this) { set_animofs(this, anim_hknight_char_b, 5, hknight_char_b6); ai_charge(this, 18); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
-void hknight_char_b4(entity this) { set_animofs(this, anim_hknight_char_b, 4, hknight_char_b5); ai_charge(this, 22); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
-void hknight_char_b3(entity this) { set_animofs(this, anim_hknight_char_b, 3, hknight_char_b4); ai_charge(this, 12); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
-void hknight_char_b2(entity this) { set_animofs(this, anim_hknight_char_b, 2, hknight_char_b3); ai_charge(this, 17); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
-void hknight_char_b1(entity this) { set_animofs(this, anim_hknight_char_b, 1, hknight_char_b2); W_Parry_Trigger(this, 0); CheckContinueCharge(this); ai_charge(this, 23); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b6(entity this) { set_animofs(this, anim_hknight_char_b, 6, hknight_char_b1); ai_charge(this, 28); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b5(entity this) { set_animofs(this, anim_hknight_char_b, 5, hknight_char_b6); ai_charge(this, 38); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b4(entity this) { set_animofs(this, anim_hknight_char_b, 4, hknight_char_b5); ai_charge(this, 42); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b3(entity this) { set_animofs(this, anim_hknight_char_b, 3, hknight_char_b4); ai_charge(this, 32); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b2(entity this) { set_animofs(this, anim_hknight_char_b, 2, hknight_char_b3); ai_charge(this, 37); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
+void hknight_char_b1(entity this) { set_animofs(this, anim_hknight_char_b, 1, hknight_char_b2); W_Parry_Trigger(this, 0); CheckContinueCharge(this); ai_charge(this, 33); ai_melee(this, DEATH_MONSTER_HELL_KNIGHT.m_id, 60, true); }
 
 //===========================================================================
 
@@ -475,7 +663,7 @@ void hknight_pause(entity this, entity actor, entity trigger)
 	this.th_walk = hknight_walk1;
 	this.th_run = hknight_run1;
 	this.th_melee = hknight_melee;
-	this.th_missile = hknight_magicc1;
+	this.th_missile = hknight_magic;
 	this.th_pain = hknight_pain;
 	this.th_die = hknight_die;
 	this.use = func_null;
@@ -540,6 +728,10 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
     }
 
     precache_model("progs/h_hellkn.mdl");
+    precache_model("progs/k_spike_cold.mdl");
+
+    precache_sound("hknight/sword_ignite.wav");
+    precache_sound("enviro/physics/axemet1.wav");
 
 	if(actor.spawnflags & 2) // statue
 	{
@@ -573,7 +765,6 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 		precache_sound("hknight/hknight_sight_3.wav");
 		precache_sound("hknight/hknight_sight_4.wav");
 
-		precache_sound("hknight/sword_ignite.wav");
 		precache_sound("hknight/sword_woosh1.wav");
 		precache_sound("hknight/sword_woosh2.wav");
 		precache_sound("hknight/sword_woosh3.wav");
@@ -619,7 +810,9 @@ METHOD(HellKnight, mr_setup, bool(HellKnight this, entity actor))
 		actor.th_walk = hknight_walk1;
 		actor.th_run = hknight_run1;
 		actor.th_melee = hknight_melee;
-		actor.th_missile = hknight_magicc1;
+		// no ranged attacks at all on easy?
+		if(autocvar_skill > 0)
+			actor.th_missile = hknight_magic;
 		actor.th_pain = hknight_pain;
 		actor.th_die = hknight_die;
 	}

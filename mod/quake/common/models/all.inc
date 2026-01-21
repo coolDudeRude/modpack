@@ -75,6 +75,8 @@ MODEL(PROJECTILE_CACODEMON_FIREBALL,        "progs/cacodemon_fireball.mdl");
 MODEL(PROJECTILE_MISSILE,                   "progs/proj_missile.mdl");
 MODEL(PROJECTILE_MANCUBUS_BOLT,             "progs/proj_mancubus.mdl");
 MODEL(PROJECTILE_BULLETKIN_SHOT,            "progs/proj_bulletkin.mdl");
+MODEL(PROJECTILE_HELLKNIGHT_BIGSHOT,        "progs/k_spike2.mdl");
+MODEL(PROJECTILE_HELLKNIGHT_SPINNER,        "progs/k_spike_cold.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

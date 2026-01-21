@@ -412,6 +412,8 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(MISSILE)            this.traileffect = EFFECT_TR_ROCKET.m_id; this.avelocity = '0 0 -540'; break;
 			HANDLE(MANCUBUS_BOLT)      this.traileffect = EFFECT_Null.m_id; this.avelocity = '0 0 -540'; break;
 			HANDLE(BULLETKIN_SHOT)     this.traileffect = EFFECT_Null.m_id; this.avelocity = '200 100 300'; break;
+			HANDLE(HELLKNIGHT_BIGSHOT) this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; this.avelocity = '0 0 1' * ((random() * 500) + 150); break;
+			HANDLE(HELLKNIGHT_SPINNER) this.traileffect = EFFECT_Null.m_id; this.avelocity = '720 0 0'; this.scale = 2; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -538,7 +540,14 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				break;
 			case PROJECTILE_KNIGHT_SPIKE:
 			case PROJECTILE_BULLETKIN_SHOT:
+			case PROJECTILE_HELLKNIGHT_SPINNER:
 				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_HELLKNIGHT_BIGSHOT:
+				this.dphitcontentsmask = DPCONTENTS_SOLID;
+				this.effects |= EF_FULLBRIGHT;
+				//this.effects |= EF_ADDITIVE;
+				this.solid = SOLID_TRIGGER;
 				break;
 			default:
 				break;
