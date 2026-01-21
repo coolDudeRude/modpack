@@ -94,6 +94,7 @@
 #include "retinazer.qc"
 #include "rotfish.qc"
 #include "rottweiler.qc"
+#include "sam.qc"
 #include "santa.qc"
 #include "scrag.qc"
 #include "skaarj.qc"

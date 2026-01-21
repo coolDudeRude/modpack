@@ -13,11 +13,13 @@ const int anim_knight_standing = 71; //'71 74 0'
 const int anim_knight_death = 75; //'75 84 0'
 const int anim_knight_deathb = 85; //'85 95 0'
 
+const int MON_KNIGHT_STATUE = BIT(1);
+
 void kn_idle_sound(entity this)
 {
 	if(random() < 0.2)
 	{
-		if((this.spawnflags & 2)) // statue)
+		if(this.spawnflags & MON_KNIGHT_STATUE) // statue)
 			_sound(this, CH_VOICE, "statue/idle.wav", 1, ATTN_IDLE);
 		else if(IsQBJMap())
 		{
@@ -171,7 +173,7 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 
 	float r = random();
 	
-	if((this.spawnflags & 2)) // statue)
+	if(this.spawnflags & MON_KNIGHT_STATUE) // statue)
 		_sound(this, CH_VOICE, "statue/pain.wav", 1, ATTN_NORM);
 	else if(IsQBJMap())
 	{
@@ -202,16 +204,18 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 
 //===========================================================================
 
-void knight_bow10(entity this) { set_animofs(this, anim_knight_walk, 1, knight_walk1); ai_turn(this); }
-void knight_bow9(entity this) { set_animofs(this, anim_knight_kneel, 1, knight_bow10); ai_turn(this); }
-void knight_bow8(entity this) { set_animofs(this, anim_knight_kneel, 2, knight_bow9); ai_turn(this); }
-void knight_bow7(entity this) { set_animofs(this, anim_knight_kneel, 3, knight_bow8); ai_turn(this); }
-void knight_bow6(entity this) { set_animofs(this, anim_knight_kneel, 4, knight_bow7); ai_turn(this); }
-void knight_bow5(entity this) { set_animofs(this, anim_knight_kneel, 5, knight_bow5); ai_turn(this); }
-void knight_bow4(entity this) { set_animofs(this, anim_knight_kneel, 4, knight_bow5); ai_turn(this); }
-void knight_bow3(entity this) { set_animofs(this, anim_knight_kneel, 3, knight_bow4); ai_turn(this); }
-void knight_bow2(entity this) { set_animofs(this, anim_knight_kneel, 2, knight_bow3); ai_turn(this); }
-void knight_bow1(entity this) { set_animofs(this, anim_knight_kneel, 1, knight_bow2); ai_turn(this); }
+void knight_bowend(entity this)
+{
+	minion_spawn(this, this.origin, new(monster), MON_PHANTOM_SWORDSMAN);
+
+	SUB_SetFade(this, time, 0.25);
+}
+
+void knight_bow5(entity this) { set_animofs(this, anim_knight_kneel, 5, knight_bowend); }
+void knight_bow4(entity this) { set_animofs(this, anim_knight_kneel, 4, knight_bow5); }
+void knight_bow3(entity this) { set_animofs(this, anim_knight_kneel, 3, knight_bow4); }
+void knight_bow2(entity this) { set_animofs(this, anim_knight_kneel, 2, knight_bow3); }
+void knight_bow1(entity this) { set_animofs(this, anim_knight_kneel, 1, knight_bow2); this.solid = SOLID_NOT; }
 
 void knight_die10(entity this)
 {
@@ -253,11 +257,11 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_GIBBED:
 		{
 			_sound(this, CH_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-			if(!(this.spawnflags & 2) && IsQBJMap())
+			if(!(this.spawnflags & MON_KNIGHT_STATUE) && IsQBJMap())
 				ThrowGib(this, inflictor, "progs/gibs/gibhead_knight.mdl", this.health);
 			else
 				ThrowGib(this, inflictor, "progs/h_knight.mdl", this.health);
-			if((this.spawnflags & 2)) // statue)
+			if((this.spawnflags & MON_KNIGHT_STATUE)) // statue)
 			{
 				ThrowGib(this, inflictor, "progs/statgib1.mdl", this.health);
 				ThrowGib(this, inflictor, "progs/statgib2.mdl", this.health);
@@ -275,7 +279,7 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 
 // regular death
-	if((this.spawnflags & 2)) // statue
+	if(this.spawnflags & MON_KNIGHT_STATUE) // statue
 		_sound(this, CH_VOICE, "statue/death.wav", 1, ATTN_NORM);
 	else if(IsQBJMap())
 	{
@@ -286,7 +290,9 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 	else
 		_sound(this, CH_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
-	if(random() < 0.5)
+	if(autocvar_skill >= 2)
+		knight_bow1(this);
+	else if(random() < 0.5)
 		knight_die1(this);
 	else
 		knight_dieb1(this);
@@ -349,15 +355,15 @@ METHOD(Knight, mr_setup, bool(Knight this, entity actor))
 {
     TC(Knight, this);
 
-    if((actor.spawnflags & 2) && !IsRogueMap())
+    if((actor.spawnflags & MON_KNIGHT_STATUE) && !IsRogueMap())
     {
     	actor.skin = 0;
-    	actor.spawnflags &= ~2; // TODO: why would mg be setting this?
+    	actor.spawnflags &= ~MON_KNIGHT_STATUE; // TODO: why would mg be setting this?
     }
 
     precache_model("progs/h_knight.mdl");
 
-	if(actor.spawnflags & 2) // statue
+	if(actor.spawnflags & MON_KNIGHT_STATUE) // statue
 	{
 		precache_model("progs/statgib1.mdl");
 		precache_model("progs/statgib2.mdl");

@@ -1,0 +1,24 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_SAM,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was hooked like ham by Sam"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_SAM,               1,  NULL,           INFO_DEATH_SELF_MON_SAM,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_SAM,           DEATH_SELF_MON_SAM,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_SAM, "progs/mon_sam.mdl");
+#endif
+
+CLASS(Sam, Monster)
+    ATTRIB(Sam, spawnflags, int, 0);
+    ATTRIB(Sam, m_mins, vector, '-32 -32 -24');
+    ATTRIB(Sam, m_maxs, vector, '32 32 64');
+#ifdef GAMEQC
+    ATTRIB(Sam, m_model, Model, MDL_MON_SAM);
+#endif
+    ATTRIB(Sam, netname, string, "sam");
+    ATTRIB(Sam, m_name, string, _("Sam"));
+ENDCLASS(Sam)
+
+REGISTER_MONSTER(SAM, NEW(Sam));

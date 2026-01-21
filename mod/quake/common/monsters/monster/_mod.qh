@@ -94,6 +94,7 @@
 #include "rotfish.qh"
 #include "rottweiler.qh"
 #include "queen_bee.qh"
+#include "sam.qh"
 #include "santa.qh"
 #include "scrag.qh"
 #include "skaarj.qh"

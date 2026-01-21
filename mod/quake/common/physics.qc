@@ -31,6 +31,8 @@ void Physics_UpdateStats(entity this)
 
 	STAT(MOVEVARS_WALLCLIP, this) = autocvar_sv_wallclip;
 
+	STAT(MOVEVARS_GRAVITY, this) = autocvar_sv_gravity;
+
 	Tank_UpdateStats(this);
 
 	slide_UpdateStats(this);
