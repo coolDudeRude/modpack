@@ -120,8 +120,8 @@ void multi_exploder_use(entity this, entity actor, entity trigger)
 	else
 	{
 		setthink(this, multi_exploder_fire);
+		this.nextthink = time;
 		this.enemy = trigger;
-		multi_exploder_fire(this);
 	}
 }
 
