@@ -1391,3 +1391,38 @@ STATIC_INIT(Effect_TR_SICKLE)
 	registercvar("cl_particle_TR_SICKLE_sparks_velocityjitter", "8 8 8");
 }
 #endif
+
+EFFECT(1, TR_STAR,             "TR_STAR")
+#ifdef CSQC
+STATIC_INIT(Effect_TR_STAR)
+{
+	registercvar("cl_particle_TR_STAR", "sparks trail");
+
+	registercvar("cl_particle_TR_STAR_sparks_type", "static");
+	registercvar("cl_particle_TR_STAR_sparks_alpha", "256 256 968");
+	registercvar("cl_particle_TR_STAR_sparks_color", "0xFFFF0F 0xFFFF0F");
+	registercvar("cl_particle_TR_STAR_sparks_lightcolor", "1.5 3 6");
+	registercvar("cl_particle_TR_STAR_sparks_lightradius", "90");
+	registercvar("cl_particle_TR_STAR_sparks_size", "10 10");
+	registercvar("cl_particle_TR_STAR_sparks_sizeincrease", "-30");
+	registercvar("cl_particle_TR_STAR_sparks_tex", "38 38");
+	registercvar("cl_particle_TR_STAR_sparks_trailspacing", "2");
+	registercvar("cl_particle_TR_STAR_sparks_velocitymultiplier", "-0.100000");
+
+	registercvar("cl_particle_TR_STAR_trail_type", "snow");
+	registercvar("cl_particle_TR_STAR_trail_airfriction", "12");
+	registercvar("cl_particle_TR_STAR_trail_alpha", "444 512 1866");
+	registercvar("cl_particle_TR_STAR_trail_bounce", "1");
+	registercvar("cl_particle_TR_STAR_trail_color", "0xFFFF0F 0xFFFF0F");
+	registercvar("cl_particle_TR_STAR_trail_count", "1.500000");
+	registercvar("cl_particle_TR_STAR_trail_originjitter", "1 1 1");
+	registercvar("cl_particle_TR_STAR_trail_sizeincrease", "-20");
+	registercvar("cl_particle_TR_STAR_trail_size", "2 4");
+	registercvar("cl_particle_TR_STAR_trail_tex", "42 42");
+	registercvar("cl_particle_TR_STAR_trail_trailspacing", "12");
+	registercvar("cl_particle_TR_STAR_trail_velocityjitter", "50 50 50");
+	registercvar("cl_particle_TR_STAR_trail_velocityoffset", "0 0 15");
+}
+#endif
+
+EFFECT(0, CRASH_EXPLOSION,       "hagar_explode")

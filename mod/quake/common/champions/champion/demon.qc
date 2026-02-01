@@ -42,7 +42,7 @@ void demon_melee(entity this, float side)
     _sound(this, CH_WEAPON_SINGLE, "demon/dhit2.wav", 1, ATTN_NORM);
 	float ldmg = 30 + 5*random();
 	trace_ent.axhitme = true;
-	T_Damage(trace_ent, this, this, ldmg, DEATH_MONSTER_FIEND.m_id);	
+	T_Damage(trace_ent, this, this, ldmg, DEATH_MONSTER_FIEND.m_id);
 
 	SpawnMeatSpray(this, this.origin + v_forward*16, side * v_right);
 }

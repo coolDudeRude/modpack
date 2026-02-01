@@ -852,3 +852,13 @@ METHOD(HellKnight, mr_sight, bool(HellKnight this, entity actor))
     return true;
 }
 #endif
+
+// kirby power
+#ifdef SVQC
+METHOD(HellKnight, star_fire, void(HellKnight this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_KNIGHT; // use knight's attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
+}
+#endif

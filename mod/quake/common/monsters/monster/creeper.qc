@@ -259,3 +259,13 @@ METHOD(Creeper, mr_setup, bool(Creeper this, entity actor))
     return true;
 }
 #endif
+
+// kirby power
+#ifdef SVQC
+METHOD(Creeper, star_fire, void(Creeper this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_BOIL; // shared attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
+}
+#endif

@@ -19,6 +19,9 @@ CLASS(Creeper, Monster)
 #endif
     ATTRIB(Creeper, netname, string, "creeper");
     ATTRIB(Creeper, m_name, string, _("Creeper"));
+    /* kirby power */
+    ATTRIB(Creeper, star_valid, bool, true);
+    ATTRIB(Creeper, star_viewmodel, string, "star_boil");
 ENDCLASS(Creeper)
 
 REGISTER_MONSTER(CREEPER, NEW(Creeper));

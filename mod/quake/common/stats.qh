@@ -315,3 +315,10 @@ REGISTER_STAT(GOATSTUFF, FLOAT, autocvar_sv_quake_goatstuff)
 bool have_setskill;
 #endif
 REGISTER_STAT(HAVE_SETSKILL, BOOL, have_setskill)
+
+REGISTER_STAT(KIRBY_TYPE, INT)
+REGISTER_STAT(KIRBY_STATE, INT)
+REGISTER_STAT(KIRBY_JUMPS, INT)
+REGISTER_STAT(KIRBY_DISCARD, FLOAT)
+// abilities (TODO: overlap them so we're not wasting slots!)
+REGISTER_STAT(KIRBY_ZAPTIME, FLOAT)

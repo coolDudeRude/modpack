@@ -65,10 +65,20 @@ void SpawnMeatUndConcreteBurst(entity this, vector org, vector vel, int scount, 
 void GoopBlood(entity this, bool forcebig);
 void AmalGoop_Touch(entity this, entity toucher)
 {
+	if(toucher == this.owner)
+		return;
+
 	if(!this.cnt)
 	{
 		_sound(this, CHAN_BODY, "weapons/tink1.wav", 1, ATTN_STATIC);
 		this.cnt = true;
+	}
+
+	// TODO
+	if(IS_PLAYER(this.owner) && (!toucher || toucher.solid == SOLID_BSP))
+	{
+		this.solid = SOLID_TRIGGER;
+		setorigin(this, this.origin);
 	}
 
 	// NOTE: in the original they prevented all non-player damage
@@ -204,6 +214,8 @@ void GoopBlood(entity this, bool forcebig)
 
 void amalgamNightmareBoom(entity this, entity toucher)
 {
+	if(toucher == this.owner)
+		return;
 	if(!toucher.takedamage)
 		return;
 	if(this.attack_finished > time)
@@ -645,5 +657,208 @@ METHOD(Amalgam, mr_sight, bool(Amalgam this, entity actor))
 		_sound(actor, CH_VOICE, "amalg/amalgsight.wav", 1, ATTN_NORM);
 
 	return true;
+}
+#endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Amalgam)
+{
+	precache_model("progs/v_star_amalgam.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Amalgam)
+{
+	precache_model("progs/star_amalgam_plat.mdl");
+	precache_sound("break/rock_impact.wav");
+
+	// there might not have been an amalgam in the stage
+	// (we can take abilities between levels)
+	// so cache what's used
+	precache_sound("amalg/amalgshoot.wav");
+	precache_model("progs/proj_amalgoop.mdl");
+	precache_model("progs/proj_amalgoop_pop.mdl");
+
+	precache_sound("weapons/tink1.wav");
+	precache_sound("amalg/amalg_goop1.wav");
+	precache_sound("amalg/amalg_goop2.wav");
+
+	precache_sound("amalg/slab.wav");
+
+	precache_model("progs/s_blood_128x.spr");
+	precache_model("progs/s_blood_96x.spr");
+	precache_model("progs/s_blood_64x.spr");
+}
+
+void star_amalgam_spit_fire(entity actor, .entity weaponentity)
+{
+	makevectors(actor.v_angle);
+
+	float bullet_speed = 1000;
+	vector org = CENTER_OR_VIEWOFS(actor);
+	vector dir = qc_aim_fromorg(actor, org, bullet_speed);
+
+	vector spread = '0.04 0.04 0';
+	vector spread_dir = dir + (crandom() * spread.x) * v_right + (crandom() * spread.y) * v_up;
+
+	entity goop = launch_spike(actor, org, spread_dir);
+	goop.solid = SOLID_BBOX;
+	set_movetype(goop, MOVETYPE_TOSS);
+	goop.classname = "AmalGoop";
+	goop.projectiledeathtype = WEP_STAR.m_id;
+	goop.velocity = dir * bullet_speed;
+
+	settouch(goop, AmalGoop_Touch);
+	_setmodel(goop, "progs/proj_amalgoop.mdl");
+	goop.dmg = 24;
+
+	goop.colormod = '0.2 1 0.5'; // green? TODO: custom texture
+
+	setsize(goop, '0 0 0', '0 0 0');
+	//goop.angles_y = (random() * (random() * 256));
+	//goop.avelocity = '10 150 10';
+	
+	vector goop_spin = '0 0 0';
+	goop_spin.y = (300 + random() * 600);
+
+	goop.avelocity = goop_spin;
+
+	//goop.think = SUB_Remove;
+	setthink(goop, AmalGoop_Die);
+	
+	//goop.nextthink = time + 15;
+	float r = 5 + (random() * 3);
+	goop.nextthink = time + r;
+}
+
+void star_amalgam_spit(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "amalg/amalgshoot.wav", 1, ATTN_NORM);
+
+	star_amalgam_spit_fire(actor, weaponentity);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_generic_shot1(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, random() * 0.5);
+}
+
+void star_amalgam_plat_break(entity this)
+{
+	_sound(this, CH_TRIGGER_SINGLE, "break/rock_impact.wav", 1, ATTN_NORM);
+	te_explosion2(this.origin, 4, 5);
+
+	setthink(this, SUB_Remove);
+	this.nextthink = time;
+	this.solid = SOLID_NOT;
+}
+
+void star_amalgam_plat_think(entity this)
+{
+	this.nextthink = time;
+
+	// extend duration while standing on it
+	if(this.realowner.groundentity == this)
+		this.count = max(time + 3, this.count);
+
+	if(time >= this.count)
+	{
+		star_amalgam_plat_break(this);
+		return;
+	}
+
+	CSQCMODEL_AUTOUPDATE(this);
+}
+
+void star_amalgam_plat_die(entity this, entity inflictor, entity attacker, int deathtype)
+{
+	star_amalgam_plat_break(this);
+}
+
+void star_amalgam_plat_place(entity actor, vector org)
+{
+	entity block = new(amalgam_plat);
+	block.realowner = actor;
+	block.solid = SOLID_BBOX;
+	setorigin(block, org);
+	_setmodel(block, "progs/star_amalgam_plat.mdl");
+	setsize(block, '-16 -16 -24', '16 16 16');
+	set_movetype(block, MOVETYPE_NONE);
+	block.takedamage = DAMAGE_AIM;
+	block.health = 75;
+	block.count = time + 5;
+	setthink(block, star_amalgam_plat_think);
+	block.nextthink = time;
+	block.th_die = star_amalgam_plat_die;
+	block.candrag = true;
+	//block.avelocity = '0 96 0';
+	block.modelflags = MF_ROTATE;
+	block.angles_y = random() * 360; // initially offset it
+
+	CSQCMODEL_AUTOINIT(block);
+}
+
+bool star_amalgam_plat(entity actor, .entity weaponentity)
+{
+	tracebox(actor.origin, '-16 -16 -24', '16 16 16', actor.origin - '0 0 48', MOVE_NORMAL, actor);
+	if(trace_fraction != 1.0 || trace_startsolid)
+	{
+		// falls through to regular attack
+		return false;
+	}
+
+	_sound(actor, CH_WEAPON_SINGLE, "break/rock_impact.wav", 1, ATTN_NORM);
+
+	star_amalgam_plat_place(actor, trace_endpos);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_generic_shot1(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 0.5);
+	return true;
+}
+
+.float star_lastslab;
+void Star_Amalgam_Frame(entity actor, .entity weaponentity, int fire)
+{
+	if(!(fire & 1) && time >= actor.star_lastslab && !(time < ATTACK_FINISHED(actor, weaponentity)))
+	{
+		Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, actor));
+		if(mon == MON_AMALGAM && actor.groundentity.classname == "amalgam_plat")
+		{
+			if(random() < 0.8)
+			{
+				actor.star_lastslab = time + 1;
+				return;
+			}
+
+			wep_generic_shot1(actor.(weaponentity));
+			_sound(actor, CH_WEAPON_B, "amalg/slab.wav", 1, ATTN_NORM);
+			actor.star_lastslab = time + 10 + (random() * 4);
+		}
+	}
+}
+
+METHOD(Amalgam, star_fire, void(Amalgam this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	bool swimming = (actor.waterlevel > 1);
+
+	// looking down and in the air!
+	if(!IS_ONGROUND(actor) && !swimming && actor.v_angle_x >= 55 && actor.v_angle_x <= 110)
+	{
+		if(star_amalgam_plat(actor, weaponentity))
+			return;
+	}
+
+	// regular slice attack
+	star_amalgam_spit(actor, weaponentity);
 }
 #endif

@@ -351,6 +351,9 @@ void champions_PlayerDies(entity this)
 
 	if(this.m_champion && this.m_champion.m_clear)
 		this.m_champion.m_clear(this.m_champion, this);
+
+	// TODO: generic handler
+	W_Star_Clear(this);
 }
 
 void champions_RemovePlayer(entity this)

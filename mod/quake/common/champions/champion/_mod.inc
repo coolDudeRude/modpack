@@ -20,6 +20,7 @@
 #include "katria.qc"
 #include "keen.qc"
 #include "keyleth.qc"
+#include "kirby.qc"
 #include "mario.qc"
 #include "mermaid.qc"
 #include "mime.qc"

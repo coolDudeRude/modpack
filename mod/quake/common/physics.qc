@@ -222,8 +222,6 @@ void PlayerJump(entity this, float maxspd_mod, float dt)
 
 	SET_JUMP_HELD(this);
 
-	UNSET_ONGROUND(this);
-
 	if(STAT(CLOCKWORK, this))
 		mjumpheight *= 0.75;
 	if(this.m_champion && !forcedheight)
@@ -244,6 +242,8 @@ void PlayerJump(entity this, float maxspd_mod, float dt)
 
 	if(mjumpheight <= 0)
 		return;
+
+	UNSET_ONGROUND(this);
 
 	if(PHYS_SKATING(this))
 	{
@@ -626,11 +626,20 @@ void PM_Main(entity this, float dt)
 		this.movement_y *= -1;
 	}
 
+	if(STAT(QCC_STUNNED, this) > time)
+		this.movement = '0 0 0';
+
 	viewloc_PlayerPhysics(this);
 
 	SV_check_punch(this, dt);
 
-	if(STAT(QCC_STUNNED, this) > time || PHYS_EXPTIME(this) != 0 || STAT(CANNON, this))
+	if(STAT(KIRBY_ZAPTIME, this) > time)
+	{
+		this.velocity_z = 0; // cancel out gravity?
+		return;
+	}
+
+	if(PHYS_EXPTIME(this) != 0 || STAT(CANNON, this))
 	{
 		this.velocity = '0 0 0';
 		return;
@@ -671,6 +680,8 @@ void PM_Main(entity this, float dt)
 		Duke_PreJump(this);
 	if(this.m_champion == CHAMPION_BanjoKazooie)
 		Banjo_PreJump(this);
+	if(this.m_champion == CHAMPION_Kirby)
+		Kirby_PreJump(this);
 
 	if(IS_ONGROUND(this))
 		UNSET_DOUBLEJUMPED(this);

@@ -20,6 +20,9 @@ CLASS(Chthon, Monster)
     ATTRIB(Chthon, netname, string, "chthon");
     ATTRIB(Chthon, m_name, string, _("Chthon"));
     ATTRIB(Chthon, m_description, string, _("Demon lord of the underworld"));
+    /* kirby power */
+    ATTRIB(Chthon, star_valid, bool, true);
+    ATTRIB(Chthon, star_viewmodel, string, "star_chthon");
 ENDCLASS(Chthon)
 
 REGISTER_MONSTER(CHTHON, NEW(Chthon));

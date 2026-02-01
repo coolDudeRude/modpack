@@ -1,0 +1,35 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(STAR_MUSICNOTE, "kirby/star_music");
+#endif
+
+CLASS(Star, Weapon)
+/* ammotype  */ ATTRIB(Star, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Star, impulse, int, 2);
+/* spawnflags*/ ATTRIB(Star, spawnflags, int, WEP_FLAG_CHAMPION | WEP_FLAG_HUDFALLBACK | WEP_FLAG_NOSTEAL | WEP_FLAG_MUSIC | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(Star, aflag, int, 0);
+/* modelname */ ATTRIB(Star, mdl, string, "star");
+/* crosshair */ ATTRIB(Star, w_crosshair, string, "gfx/crosshairdot");
+/* crosshair */ ATTRIB(Star, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Star, w_crosshair_color, vector, '1 1 0');
+/* wepimg    */ ATTRIB(Star, model2, string, "star");
+/* refname   */ ATTRIB(Star, netname, string, "star");
+/* wepname   */ ATTRIB(Star, m_name, string, _("Star"));
+#ifdef GAMEQC
+/* music     */ ATTRIB(Star, m_musicnote, Sound, SND_STAR_MUSICNOTE);
+#endif
+
+ENDCLASS(Star)
+REGISTER_WEAPON(STAR, NEW(Star));
+
+//SPAWNFUNC_WEAPON(weapon_star, WEP_STAR)
+
+#ifdef SVQC
+.entity star_twister;
+.entity star_power;
+.int star_consumed;
+
+.bool star_knight_inair;
+.bool star_kangaroo_inair;
+#endif

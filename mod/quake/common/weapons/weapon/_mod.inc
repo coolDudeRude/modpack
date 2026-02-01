@@ -74,3 +74,4 @@
 #include "pistol.qc"
 #include "wrench.qc"
 #include "berserker_fists.qc"
+#include "star.qc"

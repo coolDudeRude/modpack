@@ -157,6 +157,15 @@ void Poop_Attack(entity this)
 	ent.cnt = autocvar_sv_quake_poop_count;
 }
 
+METHOD(Poop, m_footsteps, bool(Champions this, entity actor))
+{
+	if(random() < 0.5)
+		player_sound(actor, CH_VOICE, "gasp1.wav", ATTN_NORM);
+	else
+		player_sound(actor, CH_VOICE, "gasp2.wav", ATTN_NORM);
+	return true;
+}
+
 METHOD(Poop, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))

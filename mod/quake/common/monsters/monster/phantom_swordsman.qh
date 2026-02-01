@@ -19,6 +19,9 @@ CLASS(PhantomSwordsman, Monster)
 #endif
     ATTRIB(PhantomSwordsman, netname, string, "sword");
     ATTRIB(PhantomSwordsman, m_name, string, _("Phantom Swordsman"));
+    /* kirby power */
+    ATTRIB(PhantomSwordsman, star_valid, bool, true);
+    ATTRIB(PhantomSwordsman, star_viewmodel, string, "star_knight");
 ENDCLASS(PhantomSwordsman)
 
 REGISTER_MONSTER(PHANTOM_SWORDSMAN, NEW(PhantomSwordsman));

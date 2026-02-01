@@ -1,5 +1,10 @@
 #include "v1.qh"
 
+METHOD(V1, m_footsteps, bool(Champions this, entity actor))
+{
+	return V1_Sliding(actor);
+}
+
 METHOD(V1, m_friction, float(Champions this, entity actor))
 {
 	if(V1_Sliding(actor))

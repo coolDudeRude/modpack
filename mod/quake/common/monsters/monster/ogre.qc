@@ -47,6 +47,88 @@ void OgreGrenadeTouch(entity this, entity toucher)
 		this.avelocity = '0 0 0';
 }
 
+// ================================
+//	Z-Aware Projectile Maths
+// ================================
+const float BAD_THETA = -666;
+
+float BallisticTheta(vector dest, float pspeed, float th)
+{
+	float oldtheta = 0;
+	float theta = th;
+	
+	//calculate how far we are firing
+	float dz = dest.z;
+	dest.z = 0;
+	float dy = vlen(dest);
+
+	//find the coefficients of the quadratic in tan(theta)
+	float a = 0.5 * autocvar_sv_gravity * dy * dy / (pspeed * pspeed);
+	float b = -dy;
+	float c = a + dz;
+	
+	if(b * b >= 4 * a * c) // check if the destination is too far to reach
+	{
+		dy = 0;
+		// newton raphson to within 1 degree, no more than 4x
+		while(fabs(oldtheta - theta) > 1 && dy < 4)
+		{
+			oldtheta = theta;
+			float tan_theta = tan(theta);
+			theta = atan2(a * tan_theta * tan_theta - c, 2 * a * tan_theta + b);
+			dy += 1;
+		}
+
+		//constrain the values to stop anything too mad happening
+		while(theta > 90)
+			theta = theta - 180;
+	}
+	else
+		theta = BAD_THETA;
+	
+	return theta;
+}
+
+/*
+================
+OgreAimGrenade
+original OP aim code by Preach
+
+the best solution seemed to be to average the perfect aim and the old 
+one-vector-fits-all. ogres now aim within -20 and 40 degrees pitch, making 
+them appear as ineffective as they used to be but providing more flexibility 
+in placement, so rooms don't have to be designed around how high the ogres 
+have to be
+================
+*/
+vector OgreAimGrenade(vector dest, float pspeed)
+{
+	float theta = BallisticTheta(dest, pspeed, 18); // stock ogre firing angle is 18
+	if(theta == BAD_THETA)
+		theta = 18;
+
+	float a = vectoyaw(dest);
+	vector angs = '0 0 0';
+	angs.y = a;
+
+	// clamp the perfect terminator-aim to limit deadon shots to the face, then average with 
+	// old dumb aim for "z-only-slightly-aware"ness(tm)
+	if(vdist(dest, <, 160))
+		theta = bound(-80, theta, 70);
+	else
+		theta = bound(-60, theta, 60);
+
+	//if(autocvar_skill >= 2)
+		theta = (theta + theta + 18) / 3; // hard: 66% z-awareness
+	//else
+		//theta = (theta + 180) * 0.5; // otherwise: 50% z-awareness
+
+	angs.x = -theta;
+	makevectors(angs);
+
+	return v_forward * pspeed;
+}
+
 /*
 ================
 OgreFireGrenade
@@ -76,9 +158,14 @@ void OgreFireGrenade(entity this)
 
 	fixedmakevectors(this.angles);
 
+#if 0
 	missile.velocity = normalize(this.enemy.origin - this.origin);
 	missile.velocity = missile.velocity * 600;
 	missile.velocity_z = 200;
+#else
+	vector myorg = this.origin + '0 0 16';
+	missile.velocity = OgreAimGrenade(this.enemy.origin - myorg, 632);
+#endif
 
 	missile.avelocity = '300 300 300';
 

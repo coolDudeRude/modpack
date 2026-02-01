@@ -677,8 +677,23 @@ void horde_health_touch(entity this, entity toucher)
 		return;
 	if(toucher.m_champion && toucher.m_champion.qcc_health_nopickup && this.healtype != 2)
 		return;
-	
-	if(!T_Heal(toucher, this.healamount, 0))
+
+	bool pickedup = false;
+	if(this.healamount)
+	{
+		if(this.healtype == 2) // Megahealth?  Ignore max_health...
+		{
+			if(toucher.health < 250 && T_Heal(toucher, this.healamount, true))
+				pickedup = true;
+		}
+		else
+		{
+			if(T_Heal(toucher, this.healamount, false))
+				pickedup = true;
+		}
+	}
+
+	if(!pickedup)
 		return;
 	
 	// NOTE: disabling spammy message as you already know from the HUD that you got it!

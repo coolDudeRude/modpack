@@ -7,6 +7,7 @@
 #ifdef GAMEQC
 #include <common/physics/movetypes/movetypes.qh>
 #include <common/physics/movetypes/all.inc>
+#include <common/physics/movelib.qc>
 
 #include <common/checkextension.qc>
 

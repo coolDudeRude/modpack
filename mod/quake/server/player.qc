@@ -184,26 +184,7 @@ const int anim_player_axattd5 = 141;
 const int anim_player_axattd6 = 142;
 #endif
 
-const int anim_player_axrun1 = 0; //'0 5 0';
-const int anim_player_rockrun1 = 6; //'6 11 0';
-const int anim_player_stand1 = 12; //'12 16 0';
-const int anim_player_axstnd1 = 17; //'17 28 0';
-const int anim_player_axpain1 = 29; //'29 34 0';
-const int anim_player_pain1 = 35; //'35 40 0';
-const int anim_player_axdeth1 = 41; //'41 49 0';
-const int anim_player_deatha1 = 50; //'50 60 0';
-const int anim_player_deathb1 = 61; //'61 69 0';
-const int anim_player_deathc1 = 70; //'70 84 0';
-const int anim_player_deathd1 = 85; //'85 93 0';
-const int anim_player_deathe1 = 94; //'94 102 0';
-const int anim_player_nailatt1 = 103; //'103 104 0';
-const int anim_player_light1 = 105; //'105 106 0';
-const int anim_player_rockatt1 = 107; //'107 112 0';
-const int anim_player_shotatt1 = 113; //'113 118 0';
-const int anim_player_axatt1 = 119; //'119 124 0';
-const int anim_player_axattb1 = 125; //'125 130 0';
-const int anim_player_axattc1 = 131; //'131 136 0';
-const int anim_player_axattd1 = 137; //'137 142 0';
+// animations defined in header
 
 
 /*
@@ -283,6 +264,8 @@ void squeaker_frame(entity this, .entity weaponentity)
 	if(this.(weaponentity).m_frame > 102)
 		this.(weaponentity).m_frame = 31;
 }
+
+void wep_star_frame(entity this, .entity weaponentity);
 
 void player_stand1(entity this)
 {
@@ -383,10 +366,18 @@ void player_stand1(entity this)
 				this.(weaponentity).m_frame = 81;
 			this.(weaponentity).weapon_nextthink = time + 0.05;
 		}
+		else if(wep == WEP_STAR)
+			wep_star_frame(this, weaponentity);
 	}
 
+	bool animoverride = false;
+	if(this.m_champion && this.m_champion.m_playerstand)
+		animoverride = this.m_champion.m_playerstand(this.m_champion, this);
+
 	.entity priwep = weaponentities[0];
-	if(this.(priwep).m_weapon.spawnflags & WEP_FLAG_MELEE)
+	if(animoverride)
+	{ /* do nothing */ }
+	else if(this.(priwep).m_weapon.spawnflags & WEP_FLAG_MELEE)
 	{
 		vector anim = vec3(anim_player_axstnd1, 0, 12);
 
@@ -408,10 +399,12 @@ void player_stand1(entity this)
 			this.walkframe = anim.y;
 		this.frame = anim.x + this.walkframe;
 	}
+
 	this.walkframe = this.walkframe + 1;	
 }
 
 .float footstep;
+.vector footsteps_oldorigin;
 void player_run(entity this)
 {
 	if(IsJumpsDoneWell())
@@ -505,7 +498,13 @@ void player_run(entity this)
 				this.(weaponentity).m_frame = 81;
 			this.(weaponentity).weapon_nextthink = time + 0.05;
 		}
+		else if(wep == WEP_STAR)
+			wep_star_frame(this, weaponentity);
 	}
+
+	bool animoverride = false;
+	if(this.m_champion && this.m_champion.m_playerrun)
+		animoverride = this.m_champion.m_playerrun(this.m_champion, this);
 
 	.entity priwep = weaponentities[0];
 	if(this.model == "progs/clockwork.mdl")
@@ -515,6 +514,8 @@ void player_run(entity this)
 			this.walkframe = 0;
 		this.frame = this.walkframe;
 	}
+	else if(animoverride)
+	{ /* do nothing */ }
 	else if(this.(priwep).m_weapon.spawnflags & WEP_FLAG_MELEE)
 	{
 		vector anim = vec3(anim_player_axrun1, 0, 6);
@@ -538,10 +539,10 @@ void player_run(entity this)
 		this.frame = anim.x + this.walkframe;
 	}
 
-	if(autocvar_g_footsteps == 1 && !gameover && !STAT(SKATING, this) && !STAT(SLIDE_ON, this) && this.move_movetype == MOVETYPE_WALK && !this.tank && !this.m_transform && !Keen_PogoActive(this) && !V1_Sliding(this))
+	if(autocvar_g_footsteps && !gameover && !STAT(SKATING, this) && !STAT(SLIDE_ON, this) && this.move_movetype == MOVETYPE_WALK && !this.tank && !this.m_transform)
 	{
-		this.footstep = this.footstep + vlen(this.origin - this.old_velocity);
-		this.old_velocity = this.origin;
+		this.footstep += vlen(this.origin - this.footsteps_oldorigin);
+		this.footsteps_oldorigin = this.origin;
 		if(IS_ONGROUND(this) && this.waterlevel <= 1)
 		{
 			if(this.footstep > 95)
@@ -552,45 +553,13 @@ void player_run(entity this)
 					this.footstep = 0.5 * (this.footstep - 95);
 
 				float r = random();
+
 				if(this.clockwork)
 				{
 					if(r > 0.5)
 						_sound(this, CH_VOICE, "misc/clockwork_footstep1.wav", 0.5, ATTN_NORM);
 					else
 						_sound(this, CH_VOICE, "misc/clockwork_footstep2.wav", 0.5, ATTN_NORM);
-				}
-				else if(this.m_champion == CHAMPION_Pepsiman) // TODO: allow champions to customise footsteps
-				{
-					if(r < 0.33)
-						_sound(this, CH_VOICE, "player_pepsiman/foot1.wav", 0.5, ATTN_NORM);
-					else if(r < 0.66)
-						_sound(this, CH_VOICE, "player_pepsiman/foot2.wav", 0.5, ATTN_NORM);
-					else
-						_sound(this, CH_VOICE, "player_pepsiman/foot3.wav", 0.5, ATTN_NORM);
-				}
-				else if(this.m_champion == CHAMPION_Enyo)
-				{
-					if(r < 0.14)
-						_sound(this, CH_VOICE, "player_enyo/foot1.wav", 0.5, ATTN_NORM);
-					else if(r < 0.29)
-					   _sound(this, CH_VOICE, "player_enyo/foot2.wav", 0.5, ATTN_NORM);
-					else if(r < 0.43)
-					   _sound(this, CH_VOICE, "player_enyo/foot3.wav", 0.5, ATTN_NORM);
-					else if(r < 0.58)
-					   _sound(this, CH_VOICE, "player_enyo/foot4.wav", 0.5, ATTN_NORM);
-					else if(r < 0.72)
-					   _sound(this, CH_VOICE, "player_enyo/foot5.wav", 0.5, ATTN_NORM);
-					else if(r < 0.86)
-					   _sound(this, CH_VOICE, "player_enyo/foot6.wav", 0.5, ATTN_NORM);
-					else
-					   _sound(this, CH_VOICE, "player_enyo/foot7.wav", 0.5, ATTN_NORM);
-				}
-				else if(this.m_champion == CHAMPION_Poop)
-				{
-					if(r < 0.5)
-						_sound(this, CH_VOICE, "player_poop/gasp1.wav", 1, ATTN_NORM);
-					else
-						_sound(this, CH_VOICE, "player_poop/gasp2.wav", 1, ATTN_NORM);
 				}
 				else if(this.waterlevel == 1)
 				{
@@ -599,6 +568,8 @@ void player_run(entity this)
 					else
 						_sound(this, CH_VOICE, "player/walkh2o2.wav", 1, ATTN_NORM);
 				}
+				else if(this.m_champion && this.m_champion.m_footsteps && this.m_champion.m_footsteps(this.m_champion, this))
+					{ /* do nothing */ }
 				else
 				{
 					if(r < 0.14)
@@ -619,58 +590,8 @@ void player_run(entity this)
 			}
 		}
 	}
-	this.walkframe = this.walkframe + 1;
 
-	if(autocvar_g_footsteps == 2 && !gameover && !STAT(SKATING, this) && !STAT(SLIDE_ON, this) && !this.clockwork && this.move_movetype == MOVETYPE_WALK && !this.tank && !this.m_transform && !Keen_PogoActive(this) && !V1_Sliding(this))
-	{
-		if(this.waterlevel == 0)
-		{
-			if(this.walkframe == 1 || this.walkframe == 4)
-			{
-				if(t_checkbottom(this))
-				{
-					float rand = random();
-					if(rand < 0.3)
-					{
-						if(random() < 0.5)
-							_sound(this, CH_VOICE, "player/walk1.wav", 1, ATTN_NORM);
-						else
-							_sound(this, CH_VOICE, "player/walk4.wav", 1, ATTN_NORM);
-					}
-					else if(rand < 0.6)
-					{
-						if(random() < 0.5)
-							_sound(this, CH_VOICE, "player/walk2.wav", 1, ATTN_NORM);
-						else
-							_sound(this, CH_VOICE, "player/walk5.wav", 1, ATTN_NORM);
-					}
-					else if(rand < 0.9)
-					{
-						if(random() < 0.5)
-							_sound(this, CH_VOICE, "player/walk3.wav", 1, ATTN_NORM);
-						else
-							_sound(this, CH_VOICE, "player/walk6.wav", 1, ATTN_NORM);
-					}
-				}
-			}
-		}
-		else if(this.waterlevel == 1)
-		{
-			if(this.walkframe == 1 || this.walkframe == 4)
-			{
-				if(t_checkbottom(this))
-				{
-					if(random() < 0.3)
-					{
-						if(random() < 0.5)
-							_sound(this, CH_VOICE, "player/walkh2o1.wav", 1, ATTN_NORM);
-						else
-							_sound(this, CH_VOICE, "player/walkh2o2.wav", 1, ATTN_NORM);
-					}
-				}
-			}
-		}
-	}
+	this.walkframe += 1;
 }
 
 // player animations shared among multiple weapons

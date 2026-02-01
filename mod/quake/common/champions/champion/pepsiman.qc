@@ -56,6 +56,18 @@ void Pepsiman_ThrowCan(entity this)
 	_sound(can, CH_TRIGGER_SINGLE, "player_pepsiman/can_roll.wav", 1, 0.5);
 }
 
+METHOD(Pepsiman, m_footsteps, bool(Champions this, entity actor))
+{
+	float r = random();
+	if(r < 0.33)
+		_sound(actor, CH_VOICE, "player_pepsiman/foot1.wav", 0.5, ATTN_NORM);
+	else if(r < 0.66)
+		_sound(actor, CH_VOICE, "player_pepsiman/foot2.wav", 0.5, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "player_pepsiman/foot3.wav", 0.5, ATTN_NORM);
+	return true;
+}
+
 METHOD(Pepsiman, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);

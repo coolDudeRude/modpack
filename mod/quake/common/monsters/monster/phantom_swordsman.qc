@@ -1,5 +1,7 @@
 #include "phantom_swordsman.qh"
 
+#include "knight.qh"
+
 #ifdef SVQC
 const int anim_sword_stand1 = 0;
 const int anim_sword_runb1 = 1;
@@ -166,5 +168,15 @@ METHOD(PhantomSwordsman, mr_setup, bool(PhantomSwordsman this, entity actor))
 	actor.th_pain = sword_pain;
 
     return true;
+}
+#endif
+
+// kirby power
+#ifdef SVQC
+METHOD(PhantomSwordsman, star_fire, void(PhantomSwordsman this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_KNIGHT; // use knight's attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
 }
 #endif

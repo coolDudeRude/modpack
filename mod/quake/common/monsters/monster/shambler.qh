@@ -19,6 +19,9 @@ CLASS(Shambler, Monster)
 #endif
     ATTRIB(Shambler, netname, string, "shambler");
     ATTRIB(Shambler, m_name, string, _("Shambler"));
+    /* kirby power */
+    ATTRIB(Shambler, star_valid, bool, true);
+    ATTRIB(Shambler, star_viewmodel, string, "star_shambler");
 ENDCLASS(Shambler)
 
 REGISTER_MONSTER(SHAMBLER, NEW(Shambler));

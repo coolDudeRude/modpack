@@ -88,6 +88,7 @@
 #include "phantom.qc"
 #include "phantom_swordsman.qc"
 #include "piglin.qc"
+#include "plantera.qc"
 #include "pumpking.qc"
 #include "queen_bee.qc"
 #include "raindeer.qc"

@@ -180,12 +180,6 @@ PRECACHE(Impel)
 	precache_sound("weapons/field/genhit1.wav");
 	precache_sound("weapons/field/genhit2.wav");
 	precache_sound("weapons/field/genhit3.wav");
-	precache_sound("player/walk1.wav");
-	precache_sound("player/walk2.wav");
-	precache_sound("player/walk3.wav");
-	precache_sound("player/walk4.wav");
-	precache_sound("player/walk5.wav");
-	precache_sound("player/walk6.wav");
 	precache_sound("player/walkh2o1.wav");
 	precache_sound("player/walkh2o2.wav");
 	precache_sound("misc/h2ohit1.wav");

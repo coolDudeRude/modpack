@@ -17,6 +17,12 @@ void enyo_WingCharge(entity this, float charge)
 	}
 }
 
+METHOD(Enyo, m_footsteps, bool(Champions this, entity actor))
+{
+	sound(actor, CH_VOICE, SND_Enyo_Step_Random(), 0.5, ATTN_NORM);
+	return true;
+}
+
 METHOD(Enyo, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && STAT(WINGCHARGE, actor) >= 100 && QCC_CanCastAbility(actor))

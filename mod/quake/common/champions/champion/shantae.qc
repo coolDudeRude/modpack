@@ -1,7 +1,7 @@
 #include "shantae.qh"
 
 #ifdef SVQC
-METHOD(Shantae, m_activate, void(Shantae this, entity actor))
+METHOD(Shantae, m_activate, void(Champions this, entity actor))
 {
 	// don't play sound if we're swapping from an attack
 	if(time >= actor.shantae_transformtime)

@@ -34,6 +34,9 @@ PRECACHE(Monkey)
 
     precache_sound("shantae/death.wav");
     precache_sound("shantae/monkey_start.wav");
+    precache_sound("shantae/monkey_jump1.wav");
+    precache_sound("shantae/monkey_jump2.wav");
+    precache_sound("shantae/monkey_jump3.wav");
 
     precache_model("progs/v_sorclaw.mdl");
 #endif
@@ -63,7 +66,6 @@ CLASS(Monkey, Champions)
     ATTRIB(Monkey, m_soundpath, string, "shantae/");
     METHOD(Monkey, m_sound_pain, string()) { return SND(Monkey_Pain_Random()); }
     METHOD(Monkey, m_sound_death, string()) { return "shantae/death.wav"; }
-    METHOD(Monkey, m_sound_jump, string()) { return "shantae/plyrjmp8.wav"; }
 #endif
 #ifdef CSQC
     ATTRIB(Monkey, message, string, "You are transformed!");

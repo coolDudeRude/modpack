@@ -216,19 +216,21 @@ void bam_pain1(entity this) { set_animofs(this, anim_bam_pain, 1, bam_pain2); }
 
 void bam_pain(entity this, entity attacker, float damage, int deathtype)
 {
+	if(this.health <= 0)
+		return;		// allready dying, don't go into pain frame
+	if(this.pain_finished > time)
+		return;
+
+	this.pain_finished = time; // prevent spam
+
 	if(this.spawnflags & MON_BAMBLER_ELMO)
 		_sound(this, CH_VOICE, "bambler/elmo_hurt.wav", 1, ATTN_NORM);
 	else
 		_sound(this, CH_VOICE, "bambler/shurt2.wav", 1, ATTN_NORM);
 
-	if(this.health <= 0)
-		return;		// allready dying, don't go into pain frame
-
 	if(random()*400 > damage)
 		return;		// didn't flinch
 
-	if(this.pain_finished > time)
-		return;
 	this.pain_finished = time + 2;
 		
 	bam_pain1(this);

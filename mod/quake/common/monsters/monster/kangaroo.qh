@@ -19,6 +19,9 @@ CLASS(Kangaroo, Monster)
 #endif
     ATTRIB(Kangaroo, netname, string, "kangaroo");
     ATTRIB(Kangaroo, m_name, string, _("Kangaroo"));
+    /* kirby power */
+    ATTRIB(Kangaroo, star_valid, bool, true);
+    ATTRIB(Kangaroo, star_viewmodel, string, "star_kangaroo");
 ENDCLASS(Kangaroo)
 
 REGISTER_MONSTER(KANGAROO, NEW(Kangaroo));

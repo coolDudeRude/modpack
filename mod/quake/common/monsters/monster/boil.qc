@@ -424,3 +424,110 @@ METHOD(Boil, mr_sight, bool(Boil this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Boil)
+{
+	precache_model("progs/v_star_boil.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Boil)
+{
+	precache_model("maps/ad_brk/rock01.bsp");
+	precache_model("maps/ad_brk/rock02.bsp");
+	precache_model("maps/ad_brk/rock03.bsp");
+	precache_model("maps/ad_brk/rock04.bsp");
+
+	precache_sound("kirby/crash_charge.wav");
+	precache_sound("kirby/crash_boom.wav");
+}
+
+void star_boil_crash_boom(entity this)
+{
+	T_RadiusDamage(this, this.owner, 120, WEP_STAR.m_id, this.owner);
+
+	Send_Effect(EFFECT_CRASH_EXPLOSION, this.origin, '0 0 0', 1);
+
+	delete(this);
+}
+
+void boomer_boom(entity this)
+{
+	_sound(this, CH_WEAPON_SINGLE, "kirby/crash_boom.wav", 1, 0.5);
+
+	delete(this);
+}
+
+void star_boil_crash_fire(entity actor, .entity weaponentity)
+{
+	float boom_time = 2;
+	float boom_range = 256;
+	int boom_limit = 32;
+	int boom_min = 12;
+	int maxbooms = max(boom_min, floor(random() * boom_limit));
+	for(int j = 0; j < maxbooms; ++j)
+	{
+		vector org = actor.origin + randomvec() * boom_range;
+
+		entity boom = new(crash_rubble);
+		boom.owner = actor;
+		boom.realowner = actor;
+		set_movetype(boom, MOVETYPE_NOCLIP); // noclip so they'll spin
+		boom.solid = SOLID_NOT;
+		setorigin(boom, org);
+		boom.angles = randomvec() * 360;
+		boom.avelocity = randomvec() * (random() * 512);
+		boom.effects = EF_FULLBRIGHT | EF_LOWPRECISION;
+
+		float r = random();
+		if(r < 0.25)
+			_setmodel(boom, "maps/ad_brk/rock01.bsp");
+		else if(r < 0.50)
+			_setmodel(boom, "maps/ad_brk/rock02.bsp");
+		else if(r < 0.75)
+			_setmodel(boom, "maps/ad_brk/rock03.bsp");
+		else
+			_setmodel(boom, "maps/ad_brk/rock04.bsp");
+		setsize(boom, '0 0 0', '0 0 0');
+
+		setthink(boom, star_boil_crash_boom);
+		boom.nextthink = time + boom_time; // randomise maybe?
+	}
+
+	// use an intermediary entity so the explosion sound occurs at the center of the explosion
+	entity boomer = new(boomer);
+	set_movetype(boomer, MOVETYPE_NONE);
+	boomer.solid = SOLID_NOT;
+	setmodel(boomer, MDL_Null);
+	setsize(boomer, '0 0 0', '0 0 0');
+	setorigin(boomer, CENTER_OR_VIEWOFS(actor));
+	setthink(boomer, boomer_boom);
+	boomer.nextthink = time + boom_time;
+
+	_sound(boomer, CH_WEAPON_SINGLE, "kirby/crash_charge.wav", 1, 0.5);
+}
+
+void star_boil_crash(entity actor, .entity weaponentity)
+{
+	star_boil_crash_fire(actor, weaponentity);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_generic_shot1(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 3);
+}
+
+METHOD(Boil, star_fire, void(Boil this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// delayed boom
+	star_boil_crash(actor, weaponentity);
+}
+#endif

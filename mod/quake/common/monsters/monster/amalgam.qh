@@ -19,6 +19,9 @@ CLASS(Amalgam, Monster)
 #endif
     ATTRIB(Amalgam, netname, string, "amalgam");
     ATTRIB(Amalgam, m_name, string, _("Amalgam"));
+    /* kirby power */
+    ATTRIB(Amalgam, star_valid, bool, true);
+    ATTRIB(Amalgam, star_viewmodel, string, "star_amalgam");
 ENDCLASS(Amalgam)
 
 REGISTER_MONSTER(AMALGAM, NEW(Amalgam));

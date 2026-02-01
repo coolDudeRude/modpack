@@ -19,6 +19,9 @@ CLASS(Cook, Monster)
 #endif
     ATTRIB(Cook, netname, string, "cook");
     ATTRIB(Cook, m_name, string, _("Cook"));
+    /* kirby power */
+    ATTRIB(Cook, star_valid, bool, true);
+    ATTRIB(Cook, star_viewmodel, string, "star_cook");
 ENDCLASS(Cook)
 
 REGISTER_MONSTER(COOK, NEW(Cook));

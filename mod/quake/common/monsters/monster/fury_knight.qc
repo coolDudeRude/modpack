@@ -1,5 +1,7 @@
 #include "fury_knight.qh"
 
+#include "knight.qh"
+
 #ifdef SVQC
 
 const int anim_dfury_standL = 0;
@@ -1151,5 +1153,15 @@ METHOD(FuryKnight, mr_sight, bool(FuryKnight this, entity actor))
 	_sound(actor, CH_VOICE, "dknight/dfury_sight.wav", 1, ATTN_NORM);
 
 	return true;
+}
+#endif
+
+// kirby power
+#ifdef SVQC
+METHOD(FuryKnight, star_fire, void(FuryKnight this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_KNIGHT; // use knight's attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
 }
 #endif

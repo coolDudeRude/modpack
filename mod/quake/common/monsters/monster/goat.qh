@@ -19,6 +19,8 @@ CLASS(MCGoat, Monster)
 #endif
     ATTRIB(MCGoat, netname, string, "goat");
     ATTRIB(MCGoat, m_name, string, _("Goat"));
+    /* kirby power (by technicality) */
+    ATTRIB(MCGoat, star_valid, bool, true);
 ENDCLASS(MCGoat)
 
 REGISTER_MONSTER(GOAT, NEW(MCGoat));

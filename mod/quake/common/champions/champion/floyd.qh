@@ -61,7 +61,7 @@ CLASS(FloydChamp, Champions)
     ATTRIB(FloydChamp, m_soundpath, string, "player/");
     METHOD(FloydChamp, m_sound_pain, string()) { return "floyd/pain.wav"; }
     METHOD(FloydChamp, m_sound_death, string()) { return "floyd/death.wav"; }
-    METHOD(FloydChamp, m_sound_jump, string()) { return "hammer/hammer_clang_floyd.wav"; }
+    METHOD(FloydChamp, m_sound_jump, string(entity actor)) { return "hammer/hammer_clang_floyd.wav"; }
 #endif
 #ifdef CSQC
     ATTRIB(FloydChamp, message, string, "You are transformed!");

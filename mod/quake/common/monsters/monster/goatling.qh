@@ -19,6 +19,8 @@ CLASS(Goatling, Monster)
 #endif
     ATTRIB(Goatling, netname, string, "goatling");
     ATTRIB(Goatling, m_name, string, _("Goatling"));
+    /* kirby power (by technicality) */
+    ATTRIB(Goatling, star_valid, bool, true);
 ENDCLASS(Goatling)
 
 REGISTER_MONSTER(GOATLING, NEW(Goatling));

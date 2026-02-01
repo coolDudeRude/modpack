@@ -86,6 +86,10 @@ void Projectile_DrawTrail(entity this, vector to)
 	}
 }
 
+// kirby stars TODO
+.float proj_laststar;
+void Star_Spawn(vector org, vector ang);
+
 void Projectile_Draw(entity this)
 {
 	vector rot;
@@ -193,6 +197,18 @@ void Projectile_Draw(entity this)
 	switch (this.csqcprojectile_type)
 	{
 		// Possibly add dlights here.
+		case PROJECTILE_STAR_SMALL:
+		case PROJECTILE_STAR_MEDIUM:
+		case PROJECTILE_STAR_LARGE:
+		case PROJECTILE_STAR_MEGA:
+		{
+			if(time >= this.proj_laststar && this.velocity != '0 0 0')
+			{
+				Star_Spawn(trailorigin, ang);
+				this.proj_laststar = time + (random() * 0.5);
+			}
+			break;
+		}
 		default:
 			break;
 	}
@@ -414,6 +430,11 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(BULLETKIN_SHOT)     this.traileffect = EFFECT_Null.m_id; this.avelocity = '200 100 300'; break;
 			HANDLE(HELLKNIGHT_BIGSHOT) this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; this.avelocity = '0 0 1' * ((random() * 500) + 150); break;
 			HANDLE(HELLKNIGHT_SPINNER) this.traileffect = EFFECT_Null.m_id; this.avelocity = '720 0 0'; this.scale = 2; break;
+			HANDLE(STAR_SMALL)         this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '256 0 0'; this.scale = 1; break;
+			HANDLE(STAR_MEDIUM)        this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '184 0 0'; this.scale = 2.5; break;
+			HANDLE(STAR_LARGE)         this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '112 0 0'; this.scale = 5; break;
+			HANDLE(STAR_MEGA)          this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '64 0 0'; this.scale = 20; break;
+			HANDLE(SPARK_UPZAP)        this.traileffect = EFFECT_TR_NEXUIZPLASMA.m_id; this.avelocity = '300 300 300'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -548,6 +569,35 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.effects |= EF_FULLBRIGHT;
 				//this.effects |= EF_ADDITIVE;
 				this.solid = SOLID_TRIGGER;
+				break;
+			case PROJECTILE_STAR_SMALL:
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_DIMLIGHT;
+				break;
+			case PROJECTILE_STAR_MEDIUM:
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_DIMLIGHT;
+				this.mins = '-4 -4 -4';
+				this.maxs = '4 4 4';
+				break;
+			case PROJECTILE_STAR_LARGE:
+				this.dphitcontentsmask = DPCONTENTS_SOLID;
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_BRIGHTLIGHT;
+				//this.effects |= EF_ADDITIVE;
+				this.solid = SOLID_TRIGGER;
+				break;
+			case PROJECTILE_STAR_MEGA:
+				set_movetype(this, MOVETYPE_NOCLIP);
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_BRIGHTLIGHT;
+				this.effects |= EF_ADDITIVE;
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_SPARK_UPZAP:
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_DIMLIGHT;
 				break;
 			default:
 				break;

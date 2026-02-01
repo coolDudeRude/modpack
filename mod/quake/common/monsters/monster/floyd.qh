@@ -19,6 +19,8 @@ CLASS(Floyd, Monster)
 #endif
     ATTRIB(Floyd, netname, string, "floyd");
     ATTRIB(Floyd, m_name, string, _("Floyd"));
+    /* kirby power (by technicality) */
+    ATTRIB(Floyd, star_valid, bool, true);
 ENDCLASS(Floyd)
 
 REGISTER_MONSTER(FLOYD, NEW(Floyd));

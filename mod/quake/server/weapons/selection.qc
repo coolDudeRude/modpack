@@ -148,6 +148,8 @@ bool W_SwitchWeapon(entity this, Weapon w, .entity weaponentity)
 		return false;
 	if(this.m_transform && this.m_transform.qcc_noselect)
 		return false; // TODO
+	if(this.m_champion && this.m_champion.qcc_noweaponswap)
+		return false;
 	if(StatusEffects_active(STATUSEFFECT_Berserk, this))
 		return false; // fisticuffs
 	if(this.(weaponentity).m_weapon != w)
@@ -213,6 +215,9 @@ void W_PreviousWeapon(entity this, float list, .entity weaponentity)
 // previously used if exists and has ammo, (second) best otherwise
 void W_LastWeapon(entity this, .entity weaponentity)
 {
+	if(this.m_champion && this.m_champion.qcc_noweaponswap)
+		return;
+
 	Weapon wep = REGISTRY_GET(Weapons, this.(weaponentity).cnt);
 	if (client_hasweapon(this, wep, weaponentity, true, false))
 		W_SwitchWeapon(this, wep, weaponentity);

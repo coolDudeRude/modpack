@@ -19,6 +19,9 @@ CLASS(Boil, Monster)
 #endif
     ATTRIB(Boil, netname, string, "boil");
     ATTRIB(Boil, m_name, string, _("Boil"));
+    /* kirby power */
+    ATTRIB(Boil, star_valid, bool, true);
+    ATTRIB(Boil, star_viewmodel, string, "star_boil");
 ENDCLASS(Boil)
 
 REGISTER_MONSTER(BOIL, NEW(Boil));

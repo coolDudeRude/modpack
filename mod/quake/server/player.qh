@@ -1,6 +1,27 @@
 #pragma once
 
-bool autocvar_g_footsteps;
+const int anim_player_axrun1 = 0; //'0 5 0';
+const int anim_player_rockrun1 = 6; //'6 11 0';
+const int anim_player_stand1 = 12; //'12 16 0';
+const int anim_player_axstnd1 = 17; //'17 28 0';
+const int anim_player_axpain1 = 29; //'29 34 0';
+const int anim_player_pain1 = 35; //'35 40 0';
+const int anim_player_axdeth1 = 41; //'41 49 0';
+const int anim_player_deatha1 = 50; //'50 60 0';
+const int anim_player_deathb1 = 61; //'61 69 0';
+const int anim_player_deathc1 = 70; //'70 84 0';
+const int anim_player_deathd1 = 85; //'85 93 0';
+const int anim_player_deathe1 = 94; //'94 102 0';
+const int anim_player_nailatt1 = 103; //'103 104 0';
+const int anim_player_light1 = 105; //'105 106 0';
+const int anim_player_rockatt1 = 107; //'107 112 0';
+const int anim_player_shotatt1 = 113; //'113 118 0';
+const int anim_player_axatt1 = 119; //'119 124 0';
+const int anim_player_axattb1 = 125; //'125 130 0';
+const int anim_player_axattc1 = 131; //'131 136 0';
+const int anim_player_axattd1 = 137; //'137 142 0';
+
+bool autocvar_g_footsteps = true;
 
 .int walkframe;
 

@@ -605,3 +605,113 @@ void boss_pain(entity this, entity attacker, float damage, int deathtype)
 	}
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Chthon)
+{
+	precache_model("progs/v_star_chthon.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Chthon)
+{
+	precache_model("progs/star_chthon_dragon.mdl");
+
+	precache_sound("kirby/dragon_fire.wav");
+	precache_sound("kirby/dragon_fly.wav");
+}
+
+.float star_dragon_dmgtime;
+void star_chthon_dragon_think(entity this)
+{
+	this.nextthink = time;
+
+	if(this.alpha == 0)
+		this.alpha = 1;
+	if(time >= this.delay)
+		this.alpha -= frametime * this.fade_rate;
+
+	if(this.alpha < 0.01 || time >= this.wait)
+	{
+		te_lavasplash(this.origin);
+		delete(this);
+		return;
+	}
+
+	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it != this.owner && it.takedamage && Damage_ValidTarget(it, this.owner),
+	{
+		if(time < it.star_dragon_dmgtime)
+			continue;
+		it.star_dragon_dmgtime = time + 0.5;
+		//if(!boxesoverlap(it.absmin, it.absmax, this.absmin, this.absmax))
+			//continue;
+		float damage = (IS_PLAYER(it) ? 40 : 100);
+		T_Damage(it, this, this.owner, damage, WEP_STAR.m_id);
+
+		float burntime = floor(1 + 2 + 2*random());
+		// only add more burn time if there isn't already a longer timer running!
+		float curtime = StatusEffects_gettime(STATUSEFFECT_Burning, it);
+		if((time + burntime) > curtime)
+			StatusEffects_apply(STATUSEFFECT_Burning, it, time + burntime, 0);
+	});
+}
+
+void star_chthon_dragon_fire(entity actor, .entity weaponentity)
+{
+	makevectors('0 1 0' * actor.angles_y);
+
+	vector org = actor.origin - v_forward * 250 + v_up * 84;
+	//org.z -= 24;
+
+	entity dragon = new(dragon);
+	dragon.owner = actor;
+	setorigin(dragon, org);
+	set_movetype(dragon, MOVETYPE_NOCLIP);
+	dragon.angles_y = actor.angles_y;
+	//dragon.avelocity = '-180 0 0';
+	_setmodel(dragon, "progs/star_chthon_dragon.mdl");
+	dragon.cnt = 144; // rough bounding box for cheaper math, update if hitbox is changed!
+	setsize(dragon, '-72 -72 0', '72 72 72');
+	//SUB_SetFade(dragon, time + 1, 0.7);
+	dragon.fade_rate = 0.4;
+	setthink(dragon, star_chthon_dragon_think);
+	dragon.nextthink = time;
+	dragon.delay = time + 1;
+	dragon.wait = time + 2;
+	dragon.velocity = v_forward * 650;
+	dragon.effects = EF_FLAME | EF_ADDITIVE;
+	dragon.colormod = '1 0 0';
+	//settouch(dragon, dragon_touch); // due to collision issues (TODO?) touch interactions don't work
+
+	_sound(dragon, CH_SHOTS, "kirby/dragon_fire.wav", 1, ATTN_NORM);
+	_sound(dragon, CH_WEAPON_SINGLE, "kirby/dragon_fly.wav", 1, ATTN_NORM);
+}
+
+void star_chthon_dragon(entity actor, .entity weaponentity)
+{
+	if(random() > 0.5)
+		_sound(actor, CH_VOICE, "player_kirby/ability_super1.wav", 1, ATTN_NORM);
+	else
+		_sound(actor, CH_VOICE, "player_kirby/ability_super2.wav", 1, ATTN_NORM);
+
+	star_chthon_dragon_fire(actor, weaponentity);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_generic_shot1(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 2);
+}
+
+METHOD(Chthon, star_fire, void(Chthon this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// launch a giant fiery dragon
+	star_chthon_dragon(actor, weaponentity);
+}
+#endif

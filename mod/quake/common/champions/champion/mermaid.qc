@@ -1,11 +1,6 @@
 #include "mermaid.qh"
 
 #ifdef SVQC
-void mermaid_bubble_think(entity this)
-{
-
-}
-
 void mermaid_bubble_shoot(entity this)
 {
 	makevectors(this.v_angle);

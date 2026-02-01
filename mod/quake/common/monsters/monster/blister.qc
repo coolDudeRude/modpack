@@ -385,3 +385,13 @@ METHOD(Blister, mr_setup, bool(Blister this, entity actor))
     return true;
 }
 #endif
+
+// kirby power
+#ifdef SVQC
+METHOD(Blister, star_fire, void(Blister this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_BOIL; // shared attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
+}
+#endif

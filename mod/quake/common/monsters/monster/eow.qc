@@ -33,13 +33,13 @@ void eow_setangle(entity this, entity targ, float angspeed)
 
 void eow_movetogoal(entity this, float movespeed)
 {
-	eow_setangle(this, this.goalentity, 5);
+	eow_setangle(this, this.goalentity, 8);
 
 	vector ang = this.angles;
 	ang.x = -ang.x;
 	makevectors(ang);
 
-	this.velocity = v_forward * movespeed + v_up * (sin(time) * movespeed);
+	this.velocity = v_forward * movespeed + v_up * (sin(time) * (movespeed * 0.5));
 }
 
 void eow_FindTarget(entity this)

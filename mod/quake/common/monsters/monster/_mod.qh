@@ -88,6 +88,7 @@
 #include "phantom.qh"
 #include "phantom_swordsman.qh"
 #include "piglin.qh"
+#include "plantera.qh"
 #include "pumpking.qh"
 #include "raindeer.qh"
 #include "retinazer.qh"

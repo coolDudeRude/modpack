@@ -12,7 +12,16 @@ STATIC_INIT_LATE(chat_grabber)
 
 	if(autocvar_chat_grabber_show_mapchange)
 	{
-		string formatted = sprintf("- *Now playing **%s**", mapname);
+		string skill_string;
+		switch(autocvar_skill)
+		{
+			default:
+			case 0: skill_string = "Easy"; break;
+			case 1: skill_string = "Normal"; break;
+			case 2: skill_string = "Hard"; break;
+			case 3: skill_string = "Nightmare"; break;
+		}
+		string formatted = sprintf("- *Now playing **%s** [%s]", mapname, skill_string);
 		if(world.message != "")
 			formatted = strcat(formatted, " (", MakeConsoleSafe(world.message), ")");
 		formatted = strcat(formatted, "*");

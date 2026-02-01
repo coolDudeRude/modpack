@@ -6,7 +6,11 @@ bool Dusk_Reap_Monster(entity this, entity targ)
 	vector org = targ.origin + (targ.mins + targ.maxs) * 0.5;
 	te_explosion2(org, 2, 7);
 	targ.dusk_revived = true;
-	entity newmon = horn_spawnmonster(new(monster), targ.origin, this, targ.monsterdef);
+	entity newmon = spawn();
+	newmon.classname = "monster";
+	newmon.variant = targ.variant;
+	newmon.spawnflags = targ.spawnflags;
+	newmon = horn_spawnmonster(newmon, targ.origin, this, targ.monsterdef);
 	if(newmon)
 	{
 		newmon.dusk_revived = true;
@@ -50,7 +54,7 @@ void Dusk_Reap(entity this)
 	{
 		if(it.flags & FL_ITEM)
 			found += Dusk_Reap_Item(this, it);
-		else if(it.classname == "dusk_wisp")
+		else if(it.classname == "dusk_wisp" && it.monsterdef)
 			found += Dusk_Reap_Monster(this, it);
 	});
 
@@ -90,7 +94,8 @@ void wisp_think(entity this)
 
 void Dusk_MakeWisp(entity targ)
 {
-	entity wisp = new(dusk_wisp);
+	entity wisp = spawn();
+	wisp.classname = "dusk_wisp";
 	_setmodel(wisp, "progs/wisp.mdl");
 	setsize(wisp, '0 0 0', '0 0 0');
 	set_movetype(wisp, MOVETYPE_NONE);
@@ -102,6 +107,8 @@ void Dusk_MakeWisp(entity targ)
 	wisp.nextthink = time;
 	wisp.avelocity = '0 45 0';
 	wisp.effects = (EF_FULLBRIGHT | EF_ADDITIVE);
+	wisp.spawnflags = targ.spawnflags;
+	wisp.variant = targ.variant;
 	setthink(wisp, wisp_think);
 	wisp.monsterdef = targ.monsterdef;
 	setcefc(wisp, wisp_customize);
@@ -136,7 +143,7 @@ METHOD(Dusk, m_clear, void(Dusk this, entity actor))
 
 void Dusk_Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 {
-	if(!IS_MONSTER(targ) || targ.monsterdef == MON_Null || (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY) || (targ.monsterdef.spawnflags & MON_FLAG_PART) || targ.charmed)
+	if(!IS_MONSTER(targ) || targ.monsterdef == MON_Null || !targ.monsterdef || (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY) || (targ.monsterdef.spawnflags & MON_FLAG_PART) || targ.charmed)
 		return;
 	if(targ.monsterdef == MON_TENTACLE)
 		return; // TODO: "can't be spawned" flag?

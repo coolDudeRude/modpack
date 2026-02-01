@@ -57,6 +57,12 @@ CLASS(Monster, Object)
     /** (SERVER) called when a monster spots a target, return false to not hunt the target */
     METHOD(Monster, mr_sight, bool(Monster this, entity actor)) { TC(Monster, this); return true; }
 
+    /** Star-specific hack */
+    ATTRIB(Monster, star_valid, bool, false);
+    ATTRIB(Monster, star_viewmodel, string, "");
+    METHOD(Monster, star_fire, void(Monster this, entity actor, .entity weaponentity)) { TC(Monster, this); }
+    METHOD(Monster, star_frame, void(Monster this, entity actor, .entity weaponentity)) { TC(Monster, this); }
+
 ENDCLASS(Monster)
 
 #ifdef SVQC

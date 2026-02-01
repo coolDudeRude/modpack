@@ -21,6 +21,10 @@ METHOD(Twins, mr_setup, bool(Twins this, entity actor))
 	entity spaz = controller_create(actor, spawn(), MON_SPAZMATISM);
 	entity ret = controller_create(actor, spawn(), MON_RETINAZER);
 
+	// for access to the tether
+	spaz.buddy = ret;
+	ret.buddy = spaz;
+
 	tether_setup(spaz, ret, TETHER_FLESH, 9);
 
 	return true;

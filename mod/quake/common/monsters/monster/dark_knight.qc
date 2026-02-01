@@ -1,5 +1,7 @@
 #include "dark_knight.qh"
 
+#include "knight.qh"
+
 #ifdef SVQC
 void dknight_stand1(entity this);
 void dknight_stand9(entity this) { set_anim(this, 8, dknight_stand1); ai_stand(this); }
@@ -331,5 +333,15 @@ METHOD(DarkKnight, mr_sight, bool(DarkKnight this, entity actor))
 		_sound(actor, CH_VOICE, "monsters/dknight/dksight3.wav", 1, ATTN_NORM);
 
     return true;
+}
+#endif
+
+// kirby power
+#ifdef SVQC
+METHOD(DarkKnight, star_fire, void(DarkKnight this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_KNIGHT; // use knight's attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
 }
 #endif

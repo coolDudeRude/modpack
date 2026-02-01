@@ -140,6 +140,13 @@ void parms_read(entity this)
 	this.ammo_plasma = stoi(parms_getdata(myid, "ammo_plasma"));
 	this.ammo_drills = stoi(parms_getdata(myid, "ammo_drills"));
 
+	// champion stuff
+	Monster mon = Monster_from_name(parms_getdata(myid, "kirby_type"));
+	if(mon != MON_Null && mon.star_valid)
+		STAT(KIRBY_TYPE, this) = mon.monsterid;
+	else
+		STAT(KIRBY_TYPE, this) = 0;
+
 	// TODO: do this elsewhere?
 	if(Challenge_Active(CHALLENGE_BONK))
 	{
@@ -198,6 +205,10 @@ void parms_write(entity this)
 	parms_putdata(myid, "ammo_multi_rockets", itos(this.ammo_multi_rockets));
 	parms_putdata(myid, "ammo_plasma", itos(this.ammo_plasma));
 	parms_putdata(myid, "ammo_drills", itos(this.ammo_drills));
+
+	// champion stuff
+	Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, this));
+	parms_putdata(myid, "kirby_type", mon.netname);
 }
 
 void SetNewParms();
@@ -264,6 +275,9 @@ void parms_reset(entity this)
 	parms_putdata(myid, "ammo_multi_rockets", "0");
 	parms_putdata(myid, "ammo_plasma", "0");
 	parms_putdata(myid, "ammo_drills", "0");
+
+	// champion stuff
+	parms_putdata(myid, "kirby_type", "");
 }
 
 void parms_clear(entity this)
@@ -602,7 +616,7 @@ string get_jumpsound(entity this)
 	if(IsJumpsDoneWell())
 		return "jump.wav";
 	if(this.m_champion && !STAT(SLIDE_ON, this) && !STAT(SKATING, this))
-		return this.m_champion.m_sound_jump();
+		return this.m_champion.m_sound_jump(this);
 
 	// never actually reached, thanks gmqcc
 	return "player/plyrjmp8.wav";
@@ -1179,7 +1193,7 @@ void intermission_moveplayers(entity spot)
 		cannon_clear(it);
 		Clockwork_Clear(it);
 		QCC_ClearTransform(it);
-		WaypointSprite_ClearPersonal(it);
+		WaypointSprite_ClearOwned(it);
 		it.nextthink = time + 0.5;
 		it.takedamage = DAMAGE_NO;
 		it.clientcamera = it;

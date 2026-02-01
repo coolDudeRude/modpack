@@ -77,6 +77,11 @@ MODEL(PROJECTILE_MANCUBUS_BOLT,             "progs/proj_mancubus.mdl");
 MODEL(PROJECTILE_BULLETKIN_SHOT,            "progs/proj_bulletkin.mdl");
 MODEL(PROJECTILE_HELLKNIGHT_BIGSHOT,        "progs/k_spike2.mdl");
 MODEL(PROJECTILE_HELLKNIGHT_SPINNER,        "progs/k_spike_cold.mdl");
+MODEL(PROJECTILE_STAR_SMALL,                "progs/kirby_star.mdl");
+MODEL(PROJECTILE_STAR_MEDIUM,               "progs/kirby_star.mdl");
+MODEL(PROJECTILE_STAR_LARGE,                "progs/kirby_star.mdl");
+MODEL(PROJECTILE_STAR_MEGA,                 "progs/kirby_star.mdl");
+MODEL(PROJECTILE_SPARK_UPZAP,               "progs/pbullet.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

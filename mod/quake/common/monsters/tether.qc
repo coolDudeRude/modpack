@@ -12,11 +12,11 @@ bool tether_send(entity this, entity to, int sf)
 	}
 	if(sf & 2)
 	{
-		WriteVector(MSG_ENTITY, this.tether_start);
+		WriteVector(MSG_ENTITY, this.pos1);
 	}
 	if(sf & 4)
 	{
-		WriteVector(MSG_ENTITY, this.tether_end);
+		WriteVector(MSG_ENTITY, this.pos2);
 	}
 	return true;
 }
@@ -25,14 +25,12 @@ void tether_remove(entity this)
 {
 	if(this.enemy.tether_ent == this)
 		this.enemy.tether_ent = NULL;
-	if(this.goalentity.tether_ent == this)
-		this.goalentity.tether_ent = NULL;
 	delete(this);
 }
 
 void tether_think(entity this)
 {
-	if(!this.enemy || this.enemy.tether_ent != this || this.enemy.health <= 0 || !this.goalentity || this.goalentity.tether_ent != this || this.goalentity.health <= 0)
+	if(!this.enemy || this.enemy.tether_ent != this || this.enemy.health <= 0 || !this.goalentity || this.goalentity.health <= 0)
 	{
 		tether_remove(this);
 		return;
@@ -40,15 +38,15 @@ void tether_think(entity this)
 
 	this.nextthink = time;
 
-	if(this.enemy.origin != this.tether_start)
+	if(this.enemy.origin != this.pos1)
 	{
 		this.SendFlags |= 2;
-		this.tether_start = this.enemy.origin;
+		this.pos1 = this.enemy.origin;
 	}
-	if(this.goalentity.origin != this.tether_end)
+	if(this.goalentity.origin != this.pos2)
 	{
 		this.SendFlags |= 4;
-		this.tether_end = this.goalentity.origin;
+		this.pos2 = this.goalentity.origin;
 	}
 }
 
@@ -62,8 +60,11 @@ void tether_setup(entity from, entity to, int tethertype, int tetherwidth)
 	tether.count = tetherwidth;
 	setthink(tether, tether_think);
 	tether.nextthink = time;
+	tether.pos1 = from.origin;
+	tether.pos2 = to.origin;
+
+	// NOTE: only the source gets a tether ent connection
 	from.tether_ent = tether;
-	to.tether_ent = tether;
 
 	Net_LinkEntity(tether, false, 0, tether_send);
 }

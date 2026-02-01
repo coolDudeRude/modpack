@@ -180,6 +180,8 @@ void ret_transform(entity this)
 
 	if(this.tether_ent)
 		tether_remove(this.tether_ent);
+	else if(this.buddy && this.buddy.tether_ent)
+		tether_remove(this.buddy.tether_ent);
 }
 
 void ret_rise32(entity this) { ret_anim(this, ret_run1); this.avelocity = '0 0 0'; this.angles_x = 0; }

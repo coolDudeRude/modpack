@@ -27,6 +27,7 @@ REGISTER_DEATHTYPE(SHIELD,                  NULL,                           DEAT
 REGISTER_DEATHTYPE(SLIME,                   DEATH_SELF_SLIME,               DEATH_MURDER_SLIME,             "")
 REGISTER_DEATHTYPE(SPHERE,                  DEATH_SELF_SPHERE,              DEATH_MURDER_SPHERE,            "")
 REGISTER_DEATHTYPE(STEAM,                   DEATH_SELF_STEAM,               DEATH_MURDER_STEAM,             "")
+REGISTER_DEATHTYPE(SWALLOW,                 DEATH_SELF_SWALLOW,             DEATH_MURDER_SWALLOW,           "")
 REGISTER_DEATHTYPE(TELEFRAG,                NULL,                           DEATH_MURDER_TELEFRAG,          "")
 REGISTER_DEATHTYPE(TRAP,                    DEATH_SELF_TRAP,                DEATH_MURDER_TRAP,              "")
 REGISTER_DEATHTYPE(VAMPIREBATS,             DEATH_SELF_VAMPIREBATS,         DEATH_MURDER_VAMPIREBATS,       "")

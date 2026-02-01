@@ -26,6 +26,17 @@ METHOD(Monkey, m_playerthink, void(Champions this, entity actor))
 	}
 }
 
+METHOD(Monkey, m_sound_jump, string(entity actor))
+{
+	float r = random();
+	if(r < 0.33)
+		return "shantae/monkey_jump1.wav";
+	else if(r < 0.66)
+		return "shantae/monkey_jump2.wav";
+	else
+		return "shantae/monkey_jump3.wav";
+}
+
 METHOD(Monkey, m_cannon_launch, void(Champions this, entity actor, entity cannon))
 {
 	_sound(actor, CH_TRIGGER_SINGLE, "shantae/h2odeath.wav", 1, ATTN_NORM);

@@ -1,6 +1,11 @@
 #include "keen.qh"
 
 #ifdef SVQC
+METHOD(Keen, m_footsteps, bool(Champions this, entity actor))
+{
+	return Keen_PogoActive(actor);
+}
+
 METHOD(Keen, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);

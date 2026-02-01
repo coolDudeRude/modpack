@@ -36,6 +36,8 @@ void ShadowbeamTrace(entity this, float arange, vector org, vector dir)
 
 		if(!trace_ent || trace_fraction == 1)
 			break;
+		if(trace_ent.railgunhit)
+			break; // thanks bones
 
 		IL_PUSH(g_railgunhit, trace_ent);
 		trace_ent.railgunhit = true;

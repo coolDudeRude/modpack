@@ -24,7 +24,8 @@ enum {
 	KILLED_IMPALED,
 	KILLED_INVOKED,
 	KILLED_HAPPY,
-	KILLED_ZAPPED
+	KILLED_ZAPPED,
+	KILLED_SWALLOWED
 };
 
 bool empathyused; // hipnotic

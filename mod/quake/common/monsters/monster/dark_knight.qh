@@ -19,6 +19,9 @@ CLASS(DarkKnight, Monster)
 #endif
     ATTRIB(DarkKnight, netname, string, "dknight");
     ATTRIB(DarkKnight, m_name, string, _("Dark Knight"));
+    /* kirby power */
+    ATTRIB(DarkKnight, star_valid, bool, true);
+    ATTRIB(DarkKnight, star_viewmodel, string, "star_knight");
 ENDCLASS(DarkKnight)
 
 REGISTER_MONSTER(DARK_KNIGHT, NEW(DarkKnight));

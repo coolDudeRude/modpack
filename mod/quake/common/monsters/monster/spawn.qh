@@ -19,6 +19,9 @@ CLASS(Spawn, Monster)
 #endif
     ATTRIB(Spawn, netname, string, "spawn");
     ATTRIB(Spawn, m_name, string, _("Spawn"));
+    /* kirby power */
+    ATTRIB(Spawn, star_valid, bool, true);
+    ATTRIB(Spawn, star_viewmodel, string, "star_boil");
 ENDCLASS(Spawn)
 
 REGISTER_MONSTER(SPAWN, NEW(Spawn));

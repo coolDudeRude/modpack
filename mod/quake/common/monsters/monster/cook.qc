@@ -747,3 +747,281 @@ METHOD(Cook, mr_sight, bool(Cook this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Cook)
+{
+	precache_model("progs/v_star_cook.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Cook)
+{
+	precache_model("progs/cauldron.mdl");
+	precache_sound("enviro/pinhead/pindef.wav");
+	precache_sound("enviro/pinhead/pinback.wav");
+	precache_sound("ambient/runwater.wav");
+
+	precache_model("progs/goofygib_burger.mdl");
+	precache_sound("kirby/bite.wav");
+}
+
+void cauldron_spawnfood(entity this, vector org, bool btype)
+{
+	entity item = spawn();
+	item.classname = "item_health";
+	settouch(item, horde_health_touch); // abuse a fellow abuser
+	setcefc(item, health_customize);
+	_setmodel(item, "progs/goofygib_burger.mdl");
+	setsize(item, '0 0 -8', '32 32 48');
+	item.noise = "kirby/bite.wav";
+	item.healamount = 25;
+	item.healtype = 2; // always heal
+	setorigin(item, org);
+	set_movetype(item, MOVETYPE_TOSS);
+	item.solid = SOLID_TRIGGER;
+	item.flags = FL_ITEM;
+	item.modelflags = MF_ROTATE;
+	item.effects = EF_FULLBRIGHT;
+
+	if(btype)
+	{
+		item.scale = 3;
+		item.healamount = 50;
+		setsize(item, '0 0 -16', '32 32 48');
+	}
+
+	item.velocity = randomvec() * 250;
+	item.velocity_z = 320;
+	setthink(item, SUB_Remove);
+	item.nextthink = time + 10;
+}
+
+.entity star_cauldron;
+void cauldron_think(entity this)
+{
+	this.nextthink = time;
+
+	if(time > this.wait || !this.owner || this.owner.star_cauldron != this || this.owner.health < 1)
+	{
+		Send_Effect(EFFECT_EXPLOSION, this.origin + '0 0 16', '0 0 0', 1);
+		stopsound(this, CH_WEAPON_SINGLE);
+		if(this.owner.star_cauldron == this)
+			this.owner.star_cauldron = NULL;
+		delete(this);
+		return;
+	}
+
+	if(!this.state)
+		return;
+
+	if(time < this.delay)
+		return;
+	this.delay = time + 0.5;
+
+	if(this.count > 0)
+	{
+		bool superburger = false;
+		if(this.count >= 10)
+		{
+			superburger = true;
+			this.count -= 10;
+		}
+		else
+			this.count -= 1;
+		// poot out a food item
+		vector org = (this.absmin + this.absmax) * 0.5;
+		cauldron_spawnfood(this, org + '0 0 12', superburger);
+
+		_sound(this, CH_SHOTS, "enviro/pinhead/pinback.wav", 1, ATTN_NORM);
+	}
+
+	FOREACH_ENTITY_RADIUS(this.origin, 200, it != this,
+	{
+		if(it.takedamage && it.health > 0 && it != this.owner && Damage_ValidTarget(it, this.owner))
+		{
+			T_Damage(it, this, this.owner, 40, WEP_STAR.m_id);
+		}
+	});
+}
+
+void cauldron_setup(entity this)
+{
+	this.owner.star_cauldron = this;
+
+	this.classname = "cauldron";
+	//set_movetype(this, MOVETYPE_NONE);
+	setthink(this, cauldron_think);
+	this.nextthink = time + 0.1;
+	this.solid = SOLID_TRIGGER;
+	settouch(this, func_null);
+	this.candrag = true;
+	setorigin(this, this.origin); // relink
+
+	this.delay = time + 0.1;
+	this.monster_attack = true;
+	this.health = 200; // just for monsters to think it's an enemy (TODO)
+	this.max_health = this.health;
+	this.takedamage = DAMAGE_NO;
+	this.count = 0;
+	this.state = 0;
+
+	this.wait = time + 10;
+}
+
+void cauldron_projectile_touch(entity this, entity toucher)
+{
+	if(toucher && toucher.solid != SOLID_BSP)
+		return;
+	if(pointcontents(this.origin) == CONTENT_SKY)
+	{
+		delete(this);
+		return;
+	}
+
+	// TODO: bumping sound?
+}
+
+void cauldron_projectile_think(entity this)
+{
+	this.nextthink = time;
+	if(time >= this.wait)
+	{
+		delete(this);
+		return;
+	}
+
+	if(!IS_ONGROUND(this))
+		return;
+
+	sound(this, CH_WEAPON_B, SND_CANNON_LAND, 1, ATTN_NORM);
+	cauldron_setup(this);
+}
+
+void star_cook_cauldron_drop(entity actor, .entity weaponentity)
+{
+	entity cauldron = spawn();
+	cauldron.classname = "cauldron_projectile";
+	cauldron.owner = actor;
+	cauldron.realowner = actor;
+	set_movetype(cauldron, MOVETYPE_TOSS);
+	cauldron.solid = SOLID_BBOX;
+	_setmodel(cauldron, "progs/cauldron.mdl");
+	//setsize(cauldron, '-8 -8 -16', '8 8 8');
+	vector cmin = actor.mins, cmax = actor.maxs;
+	// some basic sanity, but otherwise use player's hitbox to avoid exploits
+	cmin.z = 0;
+	cmax.z = 16;
+	setsize(cauldron, cmin, cmax);
+	settouch(cauldron, cauldron_projectile_touch);
+	setthink(cauldron, cauldron_projectile_think);
+	cauldron.wait = time + 3;
+	cauldron.nextthink = time;
+
+	vector org = actor.origin + (actor.view_ofs * 0.75);
+	setorigin(cauldron, org);
+	cauldron.angles = actor.angles;
+	cauldron.pos2 = cauldron.angles;
+	makevectors(actor.angles);
+	cauldron.velocity = v_forward * 200 + v_up * 20;
+}
+
+void star_cook_aggro(entity actor)
+{
+	entity this = actor.star_cauldron;
+
+	FOREACH_ENTITY_RADIUS(this.origin, 512, true,
+	{
+		if(IS_MONSTER(it) && it.health > 0 && it.enemy && !it.charmed && !(it.effects & EF_NODRAW) && !it.is_frozen && !it.elec && it.enemy.classname != this.classname && !wasfreed(it.enemy))
+		{
+			if(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
+				continue;
+			if(!checkpvs(this.origin, it))
+				continue;
+			it.aggro_time = time;
+			if(IS_PLAYER(it.enemy))
+				it.oldenemy = it.enemy;
+			it.enemy = this;
+			FoundTarget(it);
+		}
+	});
+}
+
+void star_cook_clack_frame(entity this)
+{
+	entity actor = this.owner;
+	//.entity weaponentity = this.weaponentity_fld;
+
+	if(this.m_frame == 2 && actor.star_cauldron)
+	{
+		sound7(actor.star_cauldron, CH_WEAPON_SINGLE, "ambient/runwater.wav", 1, ATTN_NORM, 75, 0);
+		actor.star_cauldron.state = 1; // enable cooking mode
+	}
+
+	switch(this.m_frame)
+	{
+		case 2:
+		case 4:
+		case 6:
+		{
+			// we may have moved, so aggro every time
+			if(actor.star_cauldron)
+				star_cook_aggro(actor);
+			_sound(actor, CH_WEAPON_A, "enviro/pinhead/pindef.wav", 1, ATTN_NORM);
+			break;
+		}
+	}
+
+	if(this.m_frame >= 8)
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	this.m_frame += 1;
+	wep_set_anim(this, this.m_frame, star_cook_clack_frame);
+}
+
+void star_cook_clack(entity actor, .entity weaponentity)
+{
+	actor.(weaponentity).m_frame = 0;
+	wep_set_anim(actor.(weaponentity), actor.(weaponentity).m_frame, star_cook_clack_frame);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 1);
+}
+
+void star_cook_throw(entity actor, .entity weaponentity)
+{
+	sound(actor, CH_WEAPON_B, SND_CANNON_DROP, 1, ATTN_NORM);
+
+	actor.(weaponentity).m_frame = 0;
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	star_cook_cauldron_drop(actor, weaponentity);
+
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 1);
+}
+
+METHOD(Cook, star_fire, void(Cook this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	if(actor.star_cauldron)
+	{
+		star_cook_clack(actor, weaponentity);
+		return;
+	}
+
+	star_cook_throw(actor, weaponentity);
+}
+#endif

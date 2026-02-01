@@ -54,7 +54,7 @@ CLASS(Valkyrie, Champions)
     ATTRIB(Valkyrie, m_soundpath, string, "player_enyo/");
     METHOD(Valkyrie, m_sound_pain, string()) { return SND(Enyo_Pain_Random()); }
     METHOD(Valkyrie, m_sound_death, string()) { return SND(Enyo_Death); }
-    METHOD(Valkyrie, m_sound_jump, string()) { return SND(Enyo_Jump_Random()); }
+    METHOD(Valkyrie, m_sound_jump, string(entity actor)) { return SND(Enyo_Jump_Random()); }
 #endif
 #ifdef CSQC
     ATTRIB(Valkyrie, message, string, "You are transformed!");

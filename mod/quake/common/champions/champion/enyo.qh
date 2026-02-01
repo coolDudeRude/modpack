@@ -23,6 +23,17 @@ Sound SND_Enyo_Jump_Random() {
 	return REGISTRY_GET(Sounds, SND_Enyo_Jump1.m_id + rint(random() * 3));
 }
 
+SOUND(Enyo_Step1, "player_enyo/foot1");
+SOUND(Enyo_Step2, "player_enyo/foot2");
+SOUND(Enyo_Step3, "player_enyo/foot3");
+SOUND(Enyo_Step4, "player_enyo/foot4");
+SOUND(Enyo_Step5, "player_enyo/foot5");
+SOUND(Enyo_Step6, "player_enyo/foot6");
+SOUND(Enyo_Step7, "player_enyo/foot7");
+Sound SND_Enyo_Step_Random() {
+	return REGISTRY_GET(Sounds, SND_Enyo_Step1.m_id + rint(random() * 6));
+}
+
 PRECACHE(Enyo)
 {
 #ifdef CSQC
@@ -99,7 +110,7 @@ CLASS(Enyo, Champions)
 	ATTRIB(Enyo, m_soundpath, string, "player_enyo/");
 	METHOD(Enyo, m_sound_pain, string()) { return SND(Enyo_Pain_Random()); }
 	METHOD(Enyo, m_sound_death, string()) { return SND(Enyo_Death); }
-	METHOD(Enyo, m_sound_jump, string()) { return SND(Enyo_Jump_Random()); }
+	METHOD(Enyo, m_sound_jump, string(entity actor)) { return SND(Enyo_Jump_Random()); }
 #endif
 #ifdef CSQC
 	ATTRIB(Enyo, message, string, ENYO_STATS);

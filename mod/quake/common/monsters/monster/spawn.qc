@@ -369,3 +369,13 @@ METHOD(Spawn, mr_sight, bool(Spawn this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef SVQC
+METHOD(Spawn, star_fire, void(Spawn this, entity actor, .entity weaponentity))
+{
+	Monster mon = MON_BOIL; // shared attack
+	if(mon.star_fire)
+		mon.star_fire(mon, actor, weaponentity);
+}
+#endif

@@ -90,7 +90,7 @@ CLASS(Grinch, Champions)
     ATTRIB(Grinch, m_soundpath, string, "player_grinch/");
     METHOD(Grinch, m_sound_pain, string()) { return SND(Grinch_Pain_Random()); }
     METHOD(Grinch, m_sound_death, string()) { return SND(Grinch_Death_Random()); }
-    METHOD(Grinch, m_sound_jump, string()) { return "player_grinch/plyrjmp8.wav"; }
+    METHOD(Grinch, m_sound_jump, string(entity actor)) { return "player_grinch/plyrjmp8.wav"; }
 #endif
 #ifdef CSQC
     ATTRIB(Grinch, m_faceprefix, string, "gfx/quake/grinch_");

@@ -471,3 +471,493 @@ METHOD(Knight, mr_sight, bool(Knight this, entity actor))
     return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Knight)
+{
+	precache_model("progs/v_star_knight.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Knight)
+{
+	// slam
+	precache_sound("kirby/slam.wav");
+	precache_sound("kirby/slam_hit.wav");
+
+	// uppercut
+	precache_sound("kirby/slice_upper.wav");
+
+	// slices
+	precache_sound("kirby/slice.wav");
+	precache_sound("kirby/slice_spam.wav");
+	precache_sound("player/axhit2.wav");
+	precache_sound("enviro/physics/axemet1.wav");
+	precache_sound("enviro/physics/axemet2.wav");
+	precache_sound("enviro/physics/axemet3.wav");
+	precache_sound("enviro/physics/axecut1.wav");
+	precache_sound("enviro/physics/axecut2.wav");
+}
+
+void star_knight_slam_trace(entity actor, .entity weaponentity)
+{
+	vector padding = '8 8 8'; // add a bit of padding for forward attacks
+	tracebox(actor.origin, actor.mins - padding, actor.maxs + padding, actor.origin - ('0 0 1' * (actor.maxs_z + 5)), MOVE_NORMAL, actor);
+
+	if(!trace_ent || !trace_ent.takedamage || !Damage_ValidTarget(trace_ent, actor))
+		return;
+
+	trace_ent.axhitme = true;
+
+	// bounce up a bit and cancel out of slam
+	actor.velocity_z = 400;
+	actor.oldvelocity_z = actor.velocity_z;
+	UNSET_ONGROUND(actor);
+
+	// also reset uppercut air state for fun
+	actor.(weaponentity).star_knight_inair = false;
+	STAT(KIRBY_JUMPS, actor) = 0;
+
+	actor.(weaponentity).m_frame = 0;
+	w_ready(actor.(weaponentity));
+
+	if(IS_PLAYER(actor))
+		player_axe1(actor);
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.5; // prevent spamming something to death
+
+	float damage = 70;
+	T_Damage(trace_ent, actor, actor, damage, WEP_STAR.m_id);
+	_sound(actor, CH_SHOTS, "kirby/slam_hit.wav", 1, ATTN_NORM);
+}
+
+void star_knight_slam_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if(IS_ONGROUND(actor) || actor.waterlevel > 1)
+	{
+		_sound(actor, CH_SHOTS, "kirby/slam_hit.wav", 1, ATTN_NORM);
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
+
+	wep_set_anim(this, 4, star_knight_slam_frame);
+	this.weapon_nextthink = time; // accurate slam tracing
+
+	// done last as it may cancel the slam
+	star_knight_slam_trace(actor, weaponentity);
+}
+
+void star_knight_slam(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/slam.wav", 1, ATTN_NORM);
+	if(actor.velocity_z > -800)
+		actor.velocity_z -= 800;
+	star_knight_slam_frame(actor.(weaponentity));
+}
+
+.bool star_knight_inair;
+.float star_knight_sliced;
+void star_knight_uppercut_trace(entity actor, .entity weaponentity)
+{
+	makevectors(actor.angles);
+	vector org = actor.origin + v_forward * 64;
+	// TODO: custom size? maybe a traceline is better?
+	tracebox(org, '-32 -32 -32', '32 32 32', org + ('0 0 1' * (actor.maxs_z + 5)), MOVE_NORMAL, actor);
+
+	if(!trace_ent || trace_ent.star_knight_sliced > time || !trace_ent.takedamage || !Damage_ValidTarget(trace_ent, actor))
+		return;
+
+	trace_ent.axhitme = true;
+	trace_ent.star_knight_sliced = time + 0.5; // no spam
+
+	// doesn't cancel out of attack!
+
+	float damage = 70;
+	T_Damage(trace_ent, actor, actor, damage, WEP_STAR.m_id);
+	// same channel as uppercut sound to override it
+	_sound(trace_ent, CH_SHOTS, "kirby/slam_hit.wav", 1, ATTN_NORM);
+}
+
+void star_knight_uppercut_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	// cancel if we land or start falling
+	// or if we start flying! no abuse thank you very much
+	if(IS_ONGROUND(actor) || actor.waterlevel > 1 || actor.velocity_z <= 0 || STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
+
+	wep_set_anim(this, 1, star_knight_uppercut_frame);
+	this.weapon_nextthink = time; // accurate uppercut tracing
+
+	// done last as it may cancel the uppercut
+	star_knight_uppercut_trace(actor, weaponentity);
+}
+
+void star_knight_uppercut(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/slice_upper.wav", 1, ATTN_NORM);
+	actor.velocity_z = max(actor.velocity_z + 600, 600);
+	UNSET_ONGROUND(actor);
+	actor.(weaponentity).star_knight_inair = true;
+	star_knight_uppercut_frame(actor.(weaponentity));
+}
+
+void star_knight_slicespam_trace(entity this, .entity weaponentity, vector offset)
+{
+	makevectors(this.v_angle);
+	vector source = W_Shotorg(this, weaponentity);
+	int oldsolid = this.dphitcontentsmask;
+	this.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
+	float arange = 64;
+	traceline(source, source + v_forward * arange + v_right * offset.y + v_up * offset.z, false, this);
+	this.dphitcontentsmask = oldsolid;
+	if(trace_fraction == 1.0)
+		return;
+	
+	vector org = trace_endpos - v_forward * 4;
+
+	if(trace_ent.takedamage) // yoder mod, Jan 05 2021
+	{
+		{
+			float r = random();
+			if(trace_ent.monsterdef == MON_JUGGERNAUT) // special case: axe attacks produce unique sound against juggernauts TODO: handle melee attacks in monster pain code
+				_sound(this, CH_WEAPON_SINGLE, "monsters/juggers/jbent.wav", 1, ATTN_NORM);
+			else if(trace_ent.monsterdef && (trace_ent.monsterdef.spawnflags & MON_FLAG_METAL))
+			{
+				if(r < 0.3)
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet1.wav", 1, ATTN_NORM);
+				else if(r < 0.6)
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet2.wav", 1, ATTN_NORM);
+				else
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet3.wav", 1, ATTN_NORM);
+			}
+			else if(IS_PLAYER(trace_ent) && trace_ent.armorvalue > 0)
+			{
+				if(r < 0.3)
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet1.wav", 1, ATTN_NORM);
+				else if(r < 0.6)
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet2.wav", 1, ATTN_NORM);
+				else
+					_sound(trace_ent, CH_SHOTS, "enviro/physics/axemet3.wav", 1, ATTN_NORM);
+			}
+			else if(r < 0.5)
+			{
+				_sound(trace_ent, CH_SHOTS, "enviro/physics/axecut1.wav", 1, ATTN_NORM);
+				SpawnBlood(org, '0 0 0', 20, trace_ent);
+				SpawnBlood(org, '0 0 0', 20, trace_ent);
+				SpawnBlood(org, '0 0 0', 20, trace_ent);
+			}
+			else
+			{
+				_sound(trace_ent, CH_SHOTS, "enviro/physics/axecut2.wav", 1, ATTN_NORM);
+				SpawnBlood(org, '0 0 0', 20, trace_ent);
+			}
+		}
+		trace_ent.axhitme = true;
+		T_Damage(trace_ent, this, this, 40, WEP_STAR.m_id);
+	}
+	else
+	{	// hit wall
+		_sound(this, CH_SHOTS, "player/axhit2.wav", 1, ATTN_NORM);
+		te_gunshot(org);
+	}
+}
+
+void star_knight_slicespam_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if(this.m_frame >= 18)
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	// doing frame here so it looks spammy!
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	this.m_frame += 1;
+
+	wep_set_anim(this, this.m_frame, star_knight_slicespam_frame);
+
+	vector offset = '0 0 0';
+	switch(this.m_frame)
+	{
+		case 14: offset = '0 4 -8'; break;
+		case 15: offset = '0 -4 0'; break;
+		case 16: offset = '0 8 -6'; break;
+		case 17: offset = '0 0 8'; break;
+		case 18: offset = '0 -8 6'; break;
+	}
+	star_knight_slicespam_trace(actor, weaponentity, offset);
+}
+
+void star_knight_slicespam(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/slice_spam.wav", 1, ATTN_NORM);
+	actor.(weaponentity).m_frame = 13; // gets increased by one
+	star_knight_slicespam_frame(actor.(weaponentity));
+	actor.(weaponentity).count = 0; // reset combo
+
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 0.8);
+}
+
+// copied from wrench code
+void star_knight_slice_hit(entity this, entity hitent, vector org, vector dir)
+{
+	if(hitent.takedamage) 
+	{		
+		hitent.axhitme = 1;
+
+		SpawnBlood(org, dir, 40, hitent);
+
+		te_gunshot(org);
+
+		T_Damage(hitent, this, this, 40, WEP_STAR.m_id);
+		
+		//johnfitz -- make clank sound when hitting brushmodels
+		if(hitent.solid == SOLID_BSP || hitent.movetype == MOVETYPE_PUSH || hitent.movetype == MOVETYPE_NONE)
+			_sound(this, CH_SHOTS, "player/axhit2.wav", 1, ATTN_NORM);
+		else
+		{	
+			if(hitent.monsterdef.spawnflags & MON_FLAG_METAL)
+			{
+				te_gunshot(org);
+				float r = random();
+				if(r < 0.3)
+					_sound(hitent, CH_SHOTS, "enviro/physics/axemet1.wav", 1, ATTN_NORM);
+				else if(r < 0.6)
+					_sound(hitent, CH_SHOTS, "enviro/physics/axemet2.wav", 1, ATTN_NORM);
+				else
+					_sound(hitent, CH_SHOTS, "enviro/physics/axemet3.wav", 1, ATTN_NORM);
+			}
+			else
+			{
+				if(random() < 0.5)
+					_sound(hitent, CH_SHOTS, "enviro/physics/axecut1.wav", 1, ATTN_NORM);
+				else
+					_sound(hitent, CH_SHOTS, "enviro/physics/axecut2.wav", 1, ATTN_NORM);
+			}
+			// enable to push enemies around
+#if 0
+			if((hitent.move_movetype == MOVETYPE_STEP || hitent.move_movetype == MOVETYPE_WALK) && 
+				// don't swat bosses or other non-standard-sized enemies around
+				hitent.maxs_x <= 32 && hitent.health > 0 && !(hitent.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
+			{
+				vector toss = v_forward;
+				toss.z = 0;
+				toss = normalize(toss) * 175;
+				toss.z = 95;
+				hitent.origin_z += 1;
+				hitent.velocity = toss;
+				UNSET_ONGROUND(hitent);
+			}
+#endif
+		}
+	}
+	else
+	{	// hit wall
+		_sound(this, CH_SHOTS, "player/axhit2.wav", 0.8, ATTN_NORM);
+
+		te_gunshot(org);
+	}
+}
+
+void star_knight_slice_trace(entity this, .entity weaponentity, float direction)
+{
+	entity hitent1 = NULL, hitent2 = NULL;
+	vector hitpos1 = '0 0 0', hitpos2 = '0 0 0';
+	float shortest_hit1 = 1000;
+	float shortest_hit2 = 1000;
+	int oldsolid = this.dphitcontentsmask;
+	this.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
+
+	makevectors(this.v_angle);
+	vector source = this.origin + this.view_ofs - v_up*0;
+
+	traceline(source, source + v_forward * 60 - v_right * (40 * direction), false, this);
+	if(trace_fraction < 1)
+	{
+		shortest_hit1 = vlen(trace_endpos - source);
+		hitent1 = trace_ent;
+		hitpos1 = trace_endpos;
+ 	}
+
+	traceline(source, source + v_forward * 72 - v_right * (20 * direction), false, this);
+	if(trace_fraction < 1)
+	{
+		if(trace_ent == hitent1 && vdist(trace_endpos - source, <, shortest_hit1))
+		{
+			shortest_hit1 = vlen(trace_endpos - source);
+			hitent1 = trace_ent;
+			hitpos1 = trace_endpos;
+		}
+		if(trace_ent != hitent1 && vdist(trace_endpos - source, <, shortest_hit2))
+		{
+			shortest_hit2 = vlen(trace_endpos - source);
+			hitent2 = trace_ent;
+			hitpos2 = trace_endpos;
+		}
+	}
+
+	traceline(source, source + v_forward * 86, false, this);
+	if(trace_fraction < 1)
+	{
+		if(trace_ent == hitent1 && vdist(trace_endpos - source, <, shortest_hit1))
+		{
+			shortest_hit1 = vlen(trace_endpos - source);
+			hitent1 = trace_ent;
+			hitpos1 = trace_endpos;
+		}
+		if(trace_ent != hitent1 && vdist(trace_endpos - source, <, shortest_hit2))
+		{
+			shortest_hit2 = vlen(trace_endpos - source);
+			hitent2 = trace_ent;
+			hitpos2 = trace_endpos;
+		}
+	}
+
+	traceline(source, source + v_forward * 72 + v_right * (20 * direction), false, this);
+	if(trace_fraction < 1)
+	{
+		if(trace_ent == hitent1 && vdist(trace_endpos - source, <, shortest_hit1))
+		{
+			shortest_hit1 = vlen(trace_endpos - source);
+			hitent1 = trace_ent;
+			hitpos1 = trace_endpos;
+		}
+		if(trace_ent != hitent1 && vdist(trace_endpos - source, <, shortest_hit2))
+		{
+			shortest_hit2 = vlen(trace_endpos - source);
+			hitent2 = trace_ent;
+			hitpos2 = trace_endpos;
+		}
+	}
+
+	traceline(source, source + v_forward * 60 + v_right * (40 * direction), false, this);
+	if(trace_fraction < 1)
+	{
+		if(trace_ent == hitent1 && vdist(trace_endpos - source, <, shortest_hit1))
+		{
+			shortest_hit1 = vlen(trace_endpos - source);
+			hitent1 = trace_ent;
+			hitpos1 = trace_endpos;
+		}
+		if(trace_ent != hitent1 && vdist(trace_endpos - source, <, shortest_hit2))
+		{
+			shortest_hit2 = vlen(trace_endpos - source);
+			hitent2 = trace_ent;
+			hitpos2 = trace_endpos;
+		}
+	}
+
+	this.dphitcontentsmask = oldsolid;
+
+	if(shortest_hit1 == 1000 && shortest_hit2 == 1000)
+		return;
+
+	this.show_hostile = time + 1; // hit something, so alert monsters
+	
+	vector dir = v_right * 20 - v_up*5; // direction for blood particles
+
+	if(shortest_hit1 < 1000)
+		star_knight_slice_hit(this, hitent1, hitpos1 - v_forward*4, dir);
+	if(shortest_hit2 < 1000 && hitent1 != hitent2)
+		star_knight_slice_hit(this, hitent2, hitpos2 - v_forward*4, dir);
+}
+
+void star_knight_slice_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if(this.m_frame == 8)
+		star_knight_slice_trace(actor, weaponentity, 1);
+	else if(this.m_frame == 11)
+		star_knight_slice_trace(actor, weaponentity, -1);
+
+	if(this.m_frame == 9 || this.m_frame >= 13)
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	this.m_frame += 1;
+	wep_set_anim(this, this.m_frame, star_knight_slice_frame);
+}
+
+void star_knight_slice(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/slice.wav", 1, ATTN_NORM);
+	actor.(weaponentity).count += 1;
+	if(actor.(weaponentity).count % 2)
+		actor.(weaponentity).m_frame = 6;
+	else
+		actor.(weaponentity).m_frame = 10;
+	wep_set_anim(actor.(weaponentity), actor.(weaponentity).m_frame, star_knight_slice_frame);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 0.4);
+}
+
+METHOD(Knight, star_fire, void(Knight this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	bool swimming = (actor.waterlevel > 1);
+
+	// looking down and in the air!
+	if(!IS_ONGROUND(actor) && !swimming && actor.v_angle_x >= 55 && actor.v_angle_x <= 110)
+	{
+		star_knight_slam(actor, weaponentity);
+		return;
+	}
+
+	// looking up!
+	if(!actor.(weaponentity).star_knight_inair && !swimming && actor.v_angle_x <= -55 && actor.v_angle_x >= -110)
+	{
+		star_knight_uppercut(actor, weaponentity);
+		return;
+	}
+
+	// spam combo
+	if(IS_ONGROUND(actor) && !swimming && actor.(weaponentity).count >= 4)
+	{
+		star_knight_slicespam(actor, weaponentity);
+		return;
+	}
+
+	// regular slice attack
+	star_knight_slice(actor, weaponentity);
+}
+#endif

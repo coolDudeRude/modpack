@@ -313,6 +313,28 @@ void ZappyDeath(entity this)
 	this.nextthink = time;
 }
 
+void SwallowThink(entity this)
+{
+	this.scale -= PHYS_INPUT_FRAMETIME * 2;
+
+	if(this.scale <= 0)
+	{
+		SUB_VanishOrRemove(this);
+		return;
+	}
+
+	this.nextthink = time;
+}
+
+void Swallow(entity this)
+{
+	setthink(this, SwallowThink);
+	this.nextthink = time;
+
+	if(this.scale == 0)
+		this.scale = 1;
+}
+
 int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deathtype)
 {
 	int killed_type = KILLED_NORMAL;
@@ -335,6 +357,12 @@ int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deatht
 		killed_type = KILLED_GIBBED; // force it!!
 	else if(DEATH_IS(deathtype, DEATH_GOAT_BONK))
 		killed_type = KILLED_HAPPY;
+
+	// override all else
+	if(DEATH_IS(deathtype, DEATH_SWALLOW))
+		killed_type = KILLED_SWALLOWED;
+	else if(inflictor.classname == "cauldron")
+		killed_type = KILLED_GIBBED;
 
 	return killed_type;
 }
@@ -359,6 +387,7 @@ void Death_SpecialHandle(entity targ, int killed_type)
 		case KILLED_IMPALED: impale(targ); break;
 		case KILLED_HAPPY: HappyDeath(targ); break;
 		case KILLED_ZAPPED: ZappyDeath(targ); break;
+		case KILLED_SWALLOWED: Swallow(targ); break;
 	}
 }
 
@@ -402,6 +431,15 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 	champions_Killed(targ, inflictor, attacker, deathtype);
 
 	vampglobe_Killed(targ, attacker);
+
+	// TODO: better place for this
+	if(inflictor.classname == "cauldron")
+	{
+		if(targ.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
+			inflictor.count += 10;
+		else
+			inflictor.count += 1;
+	}
 
 	// Yoder March04 2022, punish team killspree
 	if(horde_ent && IS_PLAYER(attacker) && IS_PLAYER(targ))

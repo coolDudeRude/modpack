@@ -20,6 +20,9 @@ CLASS(Blister, Monster)
 #endif
     ATTRIB(Blister, netname, string, "blister");
     ATTRIB(Blister, m_name, string, _("Blister"));
+    /* kirby power */
+    ATTRIB(Blister, star_valid, bool, true);
+    ATTRIB(Blister, star_viewmodel, string, "star_boil");
 ENDCLASS(Blister)
 
 REGISTER_MONSTER(BLISTER, NEW(Blister));

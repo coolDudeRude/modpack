@@ -580,3 +580,309 @@ METHOD(Shambler, mr_sight, bool(Shambler this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Shambler)
+{
+	precache_model("progs/v_star_shambler.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Shambler)
+{
+	precache_model("progs/pbullet.mdl");
+	precache_model("progs/s_plasma.spr");
+	precache_model("models/ebomb.mdl"); // NOTE: Xonotic model TODO?
+
+	precache_sound("kirby/spark_downzap.wav");
+	precache_sound("kirby/spark_upzap.wav");
+	precache_sound("kirby/spark_charge.wav");
+	precache_sound("kirby/spark_passive.wav");
+
+	precache_sound("weapons/dsfirxpl.wav");
+	precache_sound("enforcer/enfstop.wav");
+}
+
+.entity kirby_spark;
+
+void star_shambler_downzap_trace(entity actor, .entity weaponentity)
+{
+	vector myorg = CENTER_OR_VIEWOFS(actor);
+
+	traceline(myorg, myorg - '0 0 1024', true, actor);
+
+	SendCSQCLightningBeam(myorg, trace_endpos);
+
+	LightningDamage(myorg, trace_endpos, actor, 20, WEP_STAR.m_id);
+}
+
+void star_shambler_downzap_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if(IS_ONGROUND(actor) || actor.waterlevel > 1 || time > STAT(KIRBY_ZAPTIME, actor))
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_set_anim(this, 1, star_shambler_downzap_frame);
+
+	star_shambler_downzap_trace(actor, weaponentity);
+}
+
+void star_shambler_downzap(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_A, "kirby/spark_downzap.wav", 1, ATTN_NORM);
+	actor.velocity_z = 0;
+	actor.oldvelocity_z = 0;
+	STAT(KIRBY_ZAPTIME, actor) = time + 1.5; // tiny bit longer than the attack
+	ATTACK_FINISHED(actor, weaponentity) = time + 2;
+	star_shambler_downzap_frame(actor.(weaponentity));
+}
+
+void ShockExplosion(entity this);
+void spark_chargezap_watercheck(entity this)
+{
+	// The routine modified from BLAZE.QC included in the killer87 package.
+	// Basically, plasma bullets explode when hitting liquids.
+	// In this explosion, the electic charge of the plasma bullet is spread
+	// into the said liquid...
+
+	int pc = pointcontents(this.origin);
+	if((pc == CONTENT_WATER) || (pc == CONTENT_SLIME) || (pc == CONTENT_LAVA))
+	{
+		_sound(this, CH_WEAPON_SINGLE, "enforcer/enfstop.wav", 1, ATTN_NORM);
+
+		T_RadiusDamage(this, this.owner, 60, DEATH_DISCHARGE.m_id, NULL);   // Damage
+		ShockExplosion(this);                         // Explosion sprite
+		return;
+	}
+
+	this.nextthink = time;
+}
+
+void spark_chargezap_touch(entity this, entity toucher)
+{
+	if(toucher == this.owner)
+		return;   // don't explode on owner
+
+	if(pointcontents(this.origin) == CONTENT_SKY)
+	{
+		delete(this);
+		return;
+	}
+	float damg = this.dmg;
+	if(!damg)
+		damg = 10+random()*50;
+	
+	if(toucher.takedamage)
+		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
+
+	// Moves the plasma bullet backwards after hitting.. Otherwise the 
+	// explosion sprite would often be inside a wall or something. 
+	this.origin = this.origin - 8*normalize(this.velocity);
+
+	// Sound from Doom...
+	_sound(this, CH_WEAPON_SINGLE, "weapons/dsfirxpl.wav", 1, ATTN_NORM);
+
+	entity newmis = spawn();
+	set_movetype(newmis, MOVETYPE_NONE);
+	newmis.solid = SOLID_NOT;
+	setmodel(newmis, MDL_EXPLOSION);
+	setsize(newmis, '0 0 0', '0 0 0');
+	setorigin(newmis, this.origin);
+	ShockExplosion(newmis);
+
+	delete(this);
+}
+
+void star_shambler_charge_fire(entity actor, .entity weaponentity, float dmgscale)
+{
+	_sound(actor, CH_SHOTS_SINGLE, "kirby/spark_upzap.wav", 1, ATTN_NORM);
+
+	makevectors(actor.v_angle);
+
+	float bullet_speed = 1000;
+	vector org = CENTER_OR_VIEWOFS(actor);
+	vector dir = qc_aim_fromorg(actor, org, bullet_speed);
+
+	entity missile = spawn();
+	missile.flags = FL_PROJECTILE;
+	missile.owner = actor;
+	missile.realowner = actor;
+	set_movetype(missile, MOVETYPE_FLYMISSILE);    // Like a rocket
+	missile.solid = SOLID_BBOX;
+	missile.classname = "spark";
+	missile.projectiledeathtype = WEP_SHOCK_GUN.m_id;
+	missile.clipgroup = actor.clipgroup;
+
+	missile.dmg = 150 * dmgscale;
+
+	missile.velocity = dir * bullet_speed;
+	missile.angles = vectoangles(missile.velocity);
+	missile.avelocity = '300 300 300';
+
+	missile.nextthink = time;
+	setthink(missile, spark_chargezap_watercheck);        // If shot underwater -> razzp!
+	settouch(missile, spark_chargezap_touch);
+
+	missile.effects = EF_FULLBRIGHT | EF_DIMLIGHT;
+
+	setsize(missile, '0 0 0', '0 0 0');
+	setorigin(missile, org);
+
+	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_SPARK_UPZAP, true);
+}
+
+void star_spark_clear(entity actor)
+{
+	if(actor.kirby_spark)
+		delete(actor.kirby_spark);
+	actor.kirby_spark = NULL;
+}
+
+void star_spark_zapnearby(entity this)
+{
+	// TODO: water check
+
+	int hitenemy = 0;
+	FOREACH_ENTITY_RADIUS(this.origin, 200, hitenemy < 3,
+	{
+		if(!it.takedamage || it == this.owner || !Damage_ValidTarget(it, this.owner))
+			continue;
+		SendCSQCLightningBeam(this.origin, it.origin);
+		// may cause heavy lag when fired near water!
+		//LightningDamage(this.origin, it.origin, this, 10, WEP_STAR.m_id);
+		T_Damage(it, this, this.owner, 10, WEP_STAR.m_id);
+		hitenemy += 1;
+	});
+}
+
+void star_spark_think(entity this)
+{
+	entity actor = this.owner;
+	this.nextthink = time;
+
+	if(!actor || actor.kirby_spark != this || (this.wait && time >= this.wait) || actor.m_champion != CHAMPION_Kirby)
+	{
+		if(actor && actor.kirby_spark == this)
+			actor.kirby_spark = NULL;
+		delete(this);
+		return;
+	}
+
+	this.count = bound(0.01, this.count + 0.5 * PHYS_INPUT_TIMELENGTH, 1);
+	this.scale = this.count * 7;
+
+	// activate damaging bubble
+	if(this.count >= 1 && !this.state)
+	{
+		this.state = 1;
+		this.wait = time + 6;
+	}
+
+	// while active, zap nearby enemies
+	if(this.state && time >= this.delay)
+	{
+		this.delay = time + 0.1;
+
+		star_spark_zapnearby(this);
+	}
+}
+
+void star_spark_spawn(entity actor)
+{
+	entity spark = spawn();
+	spark.classname = "kirby_spark";
+	spark.owner = actor;
+	spark.realowner = actor;
+	spark.solid = SOLID_NOT;
+	_setmodel(spark, "models/ebomb.mdl");
+	setsize(spark, '0 0 0', '0 0 0');
+	setorigin(spark, actor.origin);
+	SetMovetypeFollow(spark, actor);
+	spark.effects = EF_LOWPRECISION | EF_NOSHADOW | EF_DOUBLESIDED;
+	spark.count = 0; // charge amount
+	spark.state = 0; // in active damaging mode
+	spark.wait = 0; // once activated, will be a countdown until the effect is removed
+	spark.delay = 0; // time between damage attempts
+	spark.alpha = 0.5; // don't completely obscure view!
+	setthink(spark, star_spark_think);
+	spark.nextthink = time;
+
+	actor.kirby_spark = spark;
+}
+
+void star_shambler_charge_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if((actor.kirby_spark && actor.kirby_spark.count >= 1) || !PHYS_INPUT_BUTTON_ATCK(actor))
+	{
+		if(actor.kirby_spark && actor.kirby_spark.count < 1)
+		{
+			star_shambler_charge_fire(actor, weaponentity, actor.kirby_spark.count);
+			weapon_prepareattack(WEP_STAR, actor, weaponentity, 1);
+
+			star_spark_clear(actor);
+		}
+		else
+			_sound(actor, CH_SHOTS_SINGLE, "kirby/spark_passive.wav", 0.5, ATTN_NORM);
+
+		ATTACK_FINISHED(actor, weaponentity) = time + 0.5;
+
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_set_anim(this, 4, star_shambler_charge_frame);
+}
+
+void star_shambler_charge(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_SHOTS_SINGLE, "kirby/spark_charge.wav", 1, ATTN_NORM);
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
+	star_spark_spawn(actor);
+	star_shambler_charge_frame(actor.(weaponentity));
+}
+
+METHOD(Shambler, star_fire, void(Shambler this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	bool swimming = (actor.waterlevel > 1);
+
+	if(swimming)
+		return; // kaboom?
+
+	// looking down and in the air!
+	if(!IS_ONGROUND(actor) && !swimming && actor.v_angle_x >= 55 && actor.v_angle_x <= 110)
+	{
+		star_shambler_downzap(actor, weaponentity);
+		return;
+	}
+
+	// charge electric sphere
+	if(!actor.kirby_spark)
+		star_shambler_charge(actor, weaponentity);
+}
+#endif
