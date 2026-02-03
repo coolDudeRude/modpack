@@ -5,13 +5,9 @@
 #include "util.qc"
 
 #ifdef GAMEQC
-#include <common/physics/movetypes/movetypes.qh>
-#include <common/physics/movetypes/all.inc>
-#include <common/physics/movelib.qc>
-
 #include <common/checkextension.qc>
 
-#include "physics.qc"
+#include "physics/_mod.inc"
 #include "sui_sys.qc"
 #include "viewloc.qc"
 #include "ent_cs.qc"

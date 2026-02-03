@@ -7,7 +7,7 @@ const int anim_plantera = 0; // no actual animations!
 
 .float idle_finished;
 
-void plantera_spore_attack(entity this);
+void plantera_secondary(entity this);
 
 const int PLANTERA_CLAW = 1; // grappling hook
 const int PLANTERA_GRABBER = 2; // attached mouthy thing
@@ -52,7 +52,7 @@ bool PlanteraCheckAttack(entity this)
 	{
 		// doesn't cancel out movement, just fire at will!
 		this.attack2_finished = time + 3 + (random() * 3);
-		plantera_spore_attack(this);
+		plantera_secondary(this);
 	}
 
 	if(time > this.attack_finished && this.th_missile)
@@ -65,51 +65,71 @@ bool PlanteraCheckAttack(entity this)
 	return false;
 }
 
-void plantera_spike_explode(entity this)
-{
-	Send_Effect(EFFECT_TE_WIZSPIKE, this.origin, '0 0 0', 1);
-
-	delete(this);
-}
-
 void plantera_spike_touch(entity this, entity toucher)
 {
 	if(toucher == this.owner)
-		return;		// don't explode on owner
-	if(toucher.takedamage)
-	{
-		plantera_spike_explode(this);
 		return;
-	}
-	if(time >= this.pain_finished)
+
+	if(time >= this.pain_finished && !toucher.takedamage)
 	{
-		this.pain_finished = time; // no spam?
-		_sound(this, CH_VOICE, "break/wood_i4.wav", 1, ATTN_NORM);	// bounce sound
+		this.pain_finished = time; // no spam
+		_sound(this, CH_SHOTS, "break/wood_i4.wav", 1, ATTN_NORM);
 	}
-	if(this.velocity == '0 0 0')
-		this.avelocity = '0 0 0';
 }
 
-void plantera_spore_attack(entity this)
+.float plantera_spike_dmgtime;
+void plantera_spike_think(entity this)
 {
-	_sound(this, CH_WEAPON_SINGLE, "plantera/seed_fire.wav", 1, ATTN_NORM);
+	if(time > this.count)
+	{
+		Send_Effect(EFFECT_TE_WIZSPIKE, this.origin, '0 0 0', 1);
+		delete(this);
+		return;
+	}
+
+	this.nextthink = time;
+
+	bool didhit = false;
+	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it.takedamage && it != this.owner,
+	{
+		if(it.clipgroup && it.clipgroup == this.clipgroup)
+			continue;
+		if(time < it.plantera_spike_dmgtime)
+			continue;
+		float damg = ((this.dmg) ? this.dmg : 30);
+		spawn_touchblood(this, damg, it);
+		T_Damage(it, this, this.owner, damg, this.projectiledeathtype);
+
+		didhit = true;
+		it.plantera_spike_dmgtime = time + 1; // prevent instant death
+	});
+
+	if(didhit)
+		_sound(this, CH_SHOTS, "break/wood_i3.wav", 1, ATTN_NORM);
+}
+
+void plantera_spike_attack(entity this)
+{
+	//_sound(this, CH_WEAPON_SINGLE, "plantera/seed_fire.wav", 1, ATTN_BOSS);
 
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;
 	missile.owner = this;
 	set_movetype(missile, MOVETYPE_BOUNCE);
-	missile.solid = SOLID_BBOX;
+	missile.solid = SOLID_TRIGGER;
 	missile.projectiledeathtype = DEATH_MONSTER_PLANTERA.m_id;
+	missile.cnt = 20; // rough area of effect during travel
 	missile.clipgroup = this.clipgroup;
 	missile.classname = "thornball";
-	missile.dmg = 50;
-	missile.noise = "break/wood_i3.wav";
+	missile.dmg = 40;
+	missile.bouncefactor = 0.7;
+	missile.bouncestop = 0.075;
 
 // set missile speed	
 
 	vector dir = normalize(this.enemy.origin - this.origin);
 
-	missile.velocity = dir * 600;
+	missile.velocity = dir * 200;
 	missile.velocity_z = 200;
 
 	missile.avelocity = '300 300 300';
@@ -117,13 +137,104 @@ void plantera_spore_attack(entity this)
 	missile.angles = vectoangles(missile.velocity);
 
 	settouch(missile, plantera_spike_touch);
-	missile.nextthink = time + 2.5;
-	setthink(missile, plantera_spike_explode);
-	_setmodel(missile, "progs/plantera_thornball.mdl");
-	setsize(missile, '0 0 0', '0 0 0');		
+	missile.count = time + 10;
+	missile.nextthink = time;
+	setthink(missile, plantera_spike_think);
+	setsize(missile, '-10 -10 -10', '10 10 10');		
 	setorigin(missile, this.origin + '0 0 70');
 
 	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_THORNBALL, true);
+}
+
+void plantera_spore_touch(entity this, entity toucher)
+{
+	if(toucher == this.owner)
+		return;
+
+	if(toucher.solid == SOLID_TRIGGER)
+		return;	// trigger field, do nothing
+
+	int contents = pointcontents(this.origin);
+	if(contents == CONTENT_SKY || contents == CONTENT_WATER)
+	{
+		delete(this);
+		return;
+	}
+
+	if(toucher.takedamage)
+	{
+		float damg = ((this.dmg) ? this.dmg : 9);
+		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
+	}
+
+	Send_Effect(EFFECT_TE_WIZSPIKE, this.origin, '0 0 0', 1);
+	delete(this);
+}
+
+void plantera_spore_think(entity this)
+{
+	if(time >= this.count)
+	{
+		delete(this);
+		return;
+	}
+
+	entity targ = this.owner.enemy;
+	if(targ && vdist(this.velocity, >, 0))
+	{
+		float oldz = this.velocity_z;
+		float vel = vlen(vec2(this.velocity));
+		vector vtemp = CENTER_OR_VIEWOFS(targ);
+		vector dir = normalize(vtemp - this.origin);
+		if(vel > 250)
+			vel -= 0.25 * PHYS_INPUT_TIMELENGTH;
+		this.velocity = dir * max(vel, 250);
+		this.velocity_z = oldz;
+	}
+
+	this.nextthink = time;
+}
+
+void plantera_spore_attack(entity this)
+{
+	_sound(this, CH_WEAPON_SINGLE, "plantera/seed_fire.wav", 1, ATTN_BOSS);
+
+	vector org = CENTER_OR_VIEWOFS(this);
+
+	vector dir = normalize(this.enemy.origin - this.origin);
+
+	int maxflames = 1; // per fire frame
+	for(int j = 0; j < maxflames; ++j)
+	{
+		entity newmis = launch_spike(this, org, '0 0 0');
+		newmis.projectiledeathtype = DEATH_MONSTER_PLANTERA.m_id;
+		newmis.dmg = 50;
+		newmis.classname = "spore";
+		settouch(newmis, plantera_spore_touch);
+		_setmodel(newmis, "progs/plantera_spore.mdl");
+		setsize(newmis, '0 0 0', '0 0 0');
+		setthink(newmis, plantera_spore_think);
+		newmis.nextthink = time;
+		newmis.count = time + 7;
+		newmis.gravity = 0.3;
+		set_movetype(newmis, MOVETYPE_TOSS);
+		newmis.angles = '0 0 0';
+		newmis.avelocity = '0 120 0';
+		//newmis.angles_y = random() * 180;
+
+		newmis.velocity = dir * 1000 + randomvec() * 200;
+		newmis.velocity_z = 300;
+	}	
+}
+
+void plantera_secondary(entity this)
+{
+	if(this.bosswave >= 1)
+		plantera_spore_attack(this);
+	else
+		plantera_spike_attack(this);
 }
 
 void plantera_hook(entity this)
@@ -143,7 +254,7 @@ void plantera_hook(entity this)
 void boss_FindTarget(entity this)
 {
 	// go for another player if multi player
-	if(this.enemy.health <= 0 || (coop && random() < 0.02))
+	if(this.enemy.health <= 0 || (this.enemy.flags & FL_NOTARGET) || (coop && random() < 0.02))
 		this.enemy = NULL;
 
 	if(!this.enemy)
@@ -221,7 +332,7 @@ void plantera_movetogoal(entity this, float movespeed, bool dobrake)
 void plantera_move_loop(entity this)
 {
 	setthink(this, plantera_move_loop);
-	this.nextthink = time + FRAME_TIME;
+	this.nextthink = time;
 
 	boss_FindTarget(this);
 
@@ -229,6 +340,8 @@ void plantera_move_loop(entity this)
 		this.goalentity = this.enemy;
 	else if(this.charmer)
 		this.goalentity = this.charmer;
+	else if(this.goalentity.classname != "path_corner")
+		this.goalentity = NULL;
 
 	if(this.enemy)
 	{
@@ -236,6 +349,7 @@ void plantera_move_loop(entity this)
 
 		// check knowledge of enemy
 		this.enemy_visible = visible(this, this.enemy);
+		this.enemy_range = range(this, this.enemy);
 		if(this.enemy_visible)
 			this.search_time = time + 5;
 
@@ -249,7 +363,7 @@ void plantera_move_loop(entity this)
 
 	float movespeed = 80;
 	if(this.enemy)
-		movespeed = (this.bosswave >= 1) ? 160 : 120;
+		movespeed = (this.bosswave >= 1) ? 240 : 160;
 
 	if(time >= this.idle_finished)
 	{
@@ -278,6 +392,7 @@ void plantera_transform(entity this)
 
 	this.th_missile = func_null; // no more seeds!
 	this.bosswave += 1;
+	this.idle_finished = time; // stop stopping right now!
 
 	// TODO
 	int channel = MSG_ALL;
@@ -289,10 +404,14 @@ void plantera_transform(entity this)
 	//WriteShort(channel, compressShortVector(normalize(this.origin - inflictor.origin)));
 	//WriteShort(channel, compressShortVector(inflictor.velocity));
 
-	for(int j = 0; j < 12; ++j)
+	for(int j = 0; j < 9; ++j)
 	{
 		plantera_spawnpart(this, this, "progs/plantera_grabber.mdl", PLANTERA_GRABBER);
 	}
+
+	// no additional grabbers on easy and normal
+	if(autocvar_skill <= 1)
+		return;
 
 	IL_EACH(g_planteraparts, it.owner == this && it.state == PLANTERA_CLAW,
 	{
@@ -389,13 +508,16 @@ void plantera_seed_attack(entity this)
 	set_movetype(missile, MOVETYPE_FLYMISSILE);
 	missile.solid = SOLID_BBOX;
 	missile.projectiledeathtype = DEATH_MONSTER_PLANTERA.m_id;
-	missile.dmg = 50;
+	missile.dmg = 20;
 
 	float bullet_speed = 400;
 	vector org = this.origin + '0 0 16';
-	vector dir = ai_shotlead(org, this.enemy.origin, this.enemy.velocity, bullet_speed);
+	vector dir = ai_shotlead(org, CENTER_OR_VIEWOFS(this.enemy), this.enemy.velocity, bullet_speed);
 	dir = normalize(dir - org);
 	missile.velocity = dir * bullet_speed;
+
+	if(random() <= 0.25)
+		missile.poisonous = true;
 
 	missile.angles = vectoangles(missile.velocity);
 	//missile.angles_z = (random() > 0.5) ? 30 : -30;
@@ -405,11 +527,15 @@ void plantera_seed_attack(entity this)
 	missile.nextthink = time + 8;
 	setthink(missile, SUB_Remove);
 
-	_setmodel(missile, "progs/plantera_seed.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, this.origin);
 
 	IL_PUSH(g_projectiles, missile);
+
+	if(missile.poisonous)
+		CSQCProjectile(missile, true, PROJECTILE_SEED_POISON, true);
+	else
+		CSQCProjectile(missile, true, PROJECTILE_SEED, true);
 }
 
 void plantera_seed(entity this)
@@ -477,15 +603,15 @@ void plantera_part_think(entity this)
 		{
 			if(!this.hook_out)
 			{
-				vector dir = normalize(randomvec() * 360);
 				float maxdist = (this.bosswave >= 1) ? 1000 : 2000;
-				traceline(this.owner.origin, this.owner.origin + dir * maxdist, MOVE_NOMONSTERS, this.owner);
+				traceline(this.owner.origin, this.owner.origin + randomvec() * maxdist, MOVE_NOMONSTERS, this.owner);
 				this.pos1 = trace_endpos;
-				dir = normalize(trace_endpos - this.origin);
+				vector dir = normalize(trace_endpos - this.origin);
 				this.velocity = dir * 500;
 				this.angles = vectoangles(this.velocity);
 				this.hook_out = true;
 				this.on_hook = false; // unlatch as well!
+				this.frame = 0;
 			}
 			else if(!this.on_hook)
 			{
@@ -493,6 +619,7 @@ void plantera_part_think(entity this)
 				{
 					this.velocity = '0 0 0';
 					this.on_hook = true;
+					this.frame = 1;
 					this.wait = time + 1;
 				}
 			}
@@ -518,6 +645,12 @@ void plantera_part_think(entity this)
 			vector org = this.goalentity.origin + this.pos2 * this.t_length;
 			dir = normalize(org - this.origin);
 			this.velocity = dir * 300;
+
+			if(time >= this.idle_finished)
+			{
+				this.idle_finished = time + 0.2;
+				this.frame = (this.frame) ? 0 : 1;
+			}
 
 			plantera_part_checkdamage(this, 32);
 			break;
@@ -545,7 +678,7 @@ entity plantera_spawnpart(entity this, entity attach, string partmdl, int partty
 	part.goalentity = attach;
 	part.state = parttype;
 	part.on_hook = false; // whether we're latched onto something
-	part.hook_out = false; // whether we need to start moving
+	part.hook_out = false; // when false hook will look for a new target to latch onto
 	part.pos1 = attach.origin;
 
 	//setattachment(part, attach, "");
@@ -576,12 +709,10 @@ entity plantera_spawnpart(entity this, entity attach, string partmdl, int partty
 
 void plantera_spawnparts(entity this)
 {
-	entity part;
-
 	// initial 3 grappling hooks
-	part = plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
-	part = plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
-	part = plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
+	plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
+	plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
+	plantera_spawnpart(this, this, "progs/plantera_claw.mdl", PLANTERA_CLAW);
 }
 
 /*QUAKED monster_plantera (1 0 0) (-16 -16 -24) (16 16 40) Ambush
@@ -610,7 +741,7 @@ METHOD(Plantera, mr_setup, bool(Plantera this, entity actor))
 	settouch(actor, plantera_part_hit);
 	set_movetype(actor, MOVETYPE_FLY);
 
-	actor.health = 1000;
+	actor.health = 5000;
 	actor.th_stand = plantera_move_loop;
 	actor.th_walk = plantera_move_loop;
 	actor.th_run = plantera_move_loop;
@@ -621,14 +752,6 @@ METHOD(Plantera, mr_setup, bool(Plantera this, entity actor))
 	actor.checkattack = PlanteraCheckAttack;
 
 	plantera_spawnparts(actor);
-
-	return true;
-}
-METHOD(Plantera, mr_sight, bool(Plantera this, entity actor))
-{
-	TC(Plantera, this);
-
-	// no sight sound?
 
 	return true;
 }

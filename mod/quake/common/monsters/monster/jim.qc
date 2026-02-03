@@ -314,7 +314,7 @@ void jim_walk1(entity this)
 	set_animofs(this, anim_jim_idle, 1, jim_walk1);
 	// Movement is steps, not velocity
 	this.solid = SOLID_SLIDEBOX;
-	set_movetype(this, MOVETYPE_QCENTITY);
+	set_movetype(this, MOVETYPE_STEP);
 	this.velocity = '0 0 0';
 	jim_update(this, JS_IDLE);
 	ai_walk(this, 8);
@@ -324,7 +324,7 @@ void jim_run1(entity this)
 	set_animofs(this, anim_jim_idle, 1, jim_run1);
 	// Movement is steps, only velocity when firing weapon
 	this.solid = SOLID_SLIDEBOX;
-	set_movetype(this, MOVETYPE_QCENTITY);
+	set_movetype(this, MOVETYPE_STEP);
 	this.velocity = '0 0 0';
 	jim_update(this, JS_IDLE);
 	ai_run(this, 16);
@@ -613,7 +613,7 @@ void jim_pain(entity this, entity attacker, float damage, int deathtype)
 	// Stop any ai_run velocity and reset movetype
 	this.velocity = '0 0 0';
 	this.solid = SOLID_SLIDEBOX;
-	set_movetype(this, MOVETYPE_QCENTITY);
+	set_movetype(this, MOVETYPE_STEP);
 	if(random() < 0.5)
 		_sound(this, CH_VOICE, "jim/pain1.wav", 1, ATTN_NORM);
 	else

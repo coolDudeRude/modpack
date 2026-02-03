@@ -1,0 +1,30 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_BRAIN,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was chopped up by Brain of Cthulhu"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_BRAIN,               1,  NULL,           INFO_DEATH_SELF_MON_BRAIN,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_BRAIN,           DEATH_SELF_MON_BRAIN,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_BRAIN, "progs/brain_phase1.mdl");
+#endif
+
+CLASS(Brain, Monster)
+    ATTRIB(Brain, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY);
+    ATTRIB(Brain, m_mins, vector, '-48 -48 -24');
+    ATTRIB(Brain, m_maxs, vector, '48 48 32');
+#ifdef GAMEQC
+    ATTRIB(Brain, m_model, Model, MDL_MON_BRAIN);
+#endif
+    ATTRIB(Brain, netname, string, "brain");
+    ATTRIB(Brain, m_name, string, _("Brain of Cthulhu"));
+    ATTRIB(Brain, m_color, vector, '0.81 0.16 0.08');
+ENDCLASS(Brain)
+
+REGISTER_MONSTER(BRAIN, NEW(Brain));
+
+#ifdef SVQC
+IntrusiveList g_brainparts;
+STATIC_INIT(g_brainparts) { g_brainparts = IL_NEW(); }
+#endif

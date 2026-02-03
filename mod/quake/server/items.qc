@@ -2278,10 +2278,7 @@ entity horn_spawnmonster(entity monster, vector spawnpos, entity actor, Monster 
 		setmodel(monster, mon.m_model);
 		setsize(monster, mon.m_mins, mon.m_maxs);
 
-		if(monster.flags & FL_FLY)
-			set_movetype(monster, MOVETYPE_QCENTITY);
-		else
-			set_movetype(monster, MOVETYPE_STEP);
+		set_movetype(monster, MOVETYPE_STEP);
 
 		if(!(monster.flags & FL_SWIM) && !(mon.spawnflags & MONSTER_TYPE_BOSS))
 		{

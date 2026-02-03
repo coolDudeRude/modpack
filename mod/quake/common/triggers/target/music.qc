@@ -363,7 +363,7 @@ NET_HANDLE(ENT_CLIENT_TRIGGER_MUSIC, bool isnew)
 }
 
 // NOTE: relies on boss bars!
-bool autocvar_cl_quake_bossmusic = false;
+bool autocvar_cl_quake_bossmusic = true;
 .entity musicdef;
 
 void bossmusic_draw(entity this)

@@ -59,7 +59,7 @@ REGISTER_STAT(SECRETS_TOTAL, INT, secrets_total)
 REGISTER_STAT(SECRETS_FOUND, INT, secrets_found)
 
 #ifdef SVQC
-#include <common/physics/movetypes/movetypes.qh>
+#include "physics/movetypes/movetypes.qh"
 
 bool autocvar_sv_gameplayfix_gravityunaffectedbyticrate = true;
 bool autocvar_sv_gameplayfix_upwardvelocityclearsongroundflag = true;

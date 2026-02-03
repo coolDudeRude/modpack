@@ -178,7 +178,7 @@ void blud_rise1(entity this)
 	this.flags |= FL_FLY;
 	settouch(this, func_null);
 	this.pain_finished = time + 4;
-	set_movetype(this, MOVETYPE_QCENTITY); // NOTE: we don't use MOVETYPE_STEP because of a bug in Xonotic's code; FL_FLY shouldn't apply gravity
+	//set_movetype(this, MOVETYPE_QCENTITY); // NOTE: we don't use MOVETYPE_STEP because of a bug in Xonotic's code; FL_FLY shouldn't apply gravity
 	_sound(this, CHAN_AUTO, "monsters/blud/blidle1.wav", 1, ATTN_NORM);
 	ThrowGib(this, this, "progs/xtragib.mdl", this.health);
 	ThrowGib(this, this, "progs/gib1.mdl", this.health);

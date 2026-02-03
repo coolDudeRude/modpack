@@ -21,7 +21,7 @@
 #include "../common/_all.inc"
 
 #include <lib/csqcmodel/cl_model.qc>
-#include "../common/physics.qh"
+#include "../common/physics/player.qh"
 #include <lib/csqcmodel/cl_player.qc>
 #include <lib/csqcmodel/interpolate.qc>
 

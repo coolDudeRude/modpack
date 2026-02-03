@@ -508,6 +508,7 @@ bool MoveToRandomLocationWithinBounds(entity e, vector boundmin, vector boundmax
 
 	vector org = boundmin;
 	vector delta = boundmax - boundmin;
+	float delta_len = vlen(delta);
 
 	vector start, end;
 	start = end = org;
@@ -572,14 +573,16 @@ bool MoveToRandomLocationWithinBounds(entity e, vector boundmin, vector boundmax
 		entity sp = NULL;
 		if(frompos)
 		{
-			if((traceline(mstart, e.origin, MOVE_NORMAL, e), trace_fraction) >= 1)
+			traceline(mstart, e.origin, MOVE_NORMAL, e);
+			if(trace_fraction >= 1)
 				sp = e;
 		}
 		if(!sp)
 		{
 			IL_EACH(g_spawnpoints, checkpvs(mstart, it),
 			{
-				if((traceline(mstart, it.origin, MOVE_NORMAL, e), trace_fraction) >= 1)
+				traceline(mstart, it.origin, MOVE_NORMAL, e);
+				if(trace_fraction >= 1)
 				{
 					sp = it;
 					break;
@@ -593,7 +596,8 @@ bool MoveToRandomLocationWithinBounds(entity e, vector boundmin, vector boundmax
 			{
 				if(!checkpvs(mstart, it))
 					continue;
-				if((traceline(mstart, it.origin + (it.mins + it.maxs) * 0.5, MOVE_NORMAL, e), trace_fraction) >= 1)
+				traceline(mstart, it.origin + (it.mins + it.maxs) * 0.5, MOVE_NORMAL, e);
+				if(trace_fraction >= 1)
 				{
 					sp = it;
 					break;
@@ -612,13 +616,13 @@ bool MoveToRandomLocationWithinBounds(entity e, vector boundmin, vector boundmax
 		end.x = org.x + random() * delta.x;
 		end.y = org.y + random() * delta.y;
 		end.z = org.z + random() * delta.z;
-		end = start + normalize(end - start) * vlen(delta);
+		end = start + normalize(end - start) * delta_len;
 
 		// rule 4: start TO end must not be too short
 		tracebox(start, e.mins, e.maxs, end, MOVE_NORMAL, e);
 		if(trace_startsolid)
 			continue;
-		if(trace_fraction < minviewdistance / vlen(delta))
+		if(trace_fraction < minviewdistance / delta_len)
 			continue;
 
 		// rule 5: don't want to look at sky

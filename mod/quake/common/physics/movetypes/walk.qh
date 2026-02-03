@@ -1,0 +1,3 @@
+#pragma once
+
+void _Movetype_Physics_Walk(entity this, float dt);

@@ -467,10 +467,7 @@ entity SpawnMonster(entity this, Monster mon, vector org, vector temp_angles)
 	{
 		monster.solid = SOLID_SLIDEBOX;
 
-		if(monster.flags & FL_FLY)
-			set_movetype(monster, MOVETYPE_QCENTITY);
-		else
-			set_movetype(monster, MOVETYPE_STEP);
+		set_movetype(monster, MOVETYPE_STEP);
 
 		if(!(monster.flags & FL_SWIM))
 		{

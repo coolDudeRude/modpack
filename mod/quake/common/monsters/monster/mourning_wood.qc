@@ -99,8 +99,7 @@ void mw_greek_fire(entity this)
 
 		newmis.velocity = randomvec() * 200;
 		newmis.velocity_z = 300;
-	}
-		
+	}	
 }
 
 void gib_mw(entity this);

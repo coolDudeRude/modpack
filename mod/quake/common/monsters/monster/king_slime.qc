@@ -7,7 +7,7 @@ const int anim_kslime_jump = 19;
 const int anim_kslime_fly = 21;
 const int anim_kslime_exp = 25;
 
-const int CLIPGROUP_KING_SLIME = 21; // randomly picked!
+const int CLIPGROUP_KING_SLIME = 22; // randomly picked!
 
 void kslime_stand1(entity this) { set_animofs(this, anim_kslime_walk, 1, kslime_stand1); ai_stand(this); }
 

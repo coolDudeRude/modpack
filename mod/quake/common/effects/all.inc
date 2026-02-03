@@ -1426,3 +1426,5 @@ STATIC_INIT(Effect_TR_STAR)
 #endif
 
 EFFECT(0, CRASH_EXPLOSION,       "hagar_explode")
+
+EFFECT(0, BRAIN_CREEPER_DEATH,   "particlegibs_damage_dissolve")

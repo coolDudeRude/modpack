@@ -770,10 +770,10 @@ void judge_firemagicB(entity this, float offset)
 		if(random() < 0.1)
 		{
 			// Fire that flame!
-			dir = v_forward * (100 + (100 * random()));
+			dir = v_forward;
 			// target, origin, v_forward, colour, size, lifetime, speed
 			//Launch_Flame (this, org, dir, fire_col, FLAME_TINY, -1, 600);		
-			entity newmis = Launch_Fireball(this, org, dir, 600);
+			entity newmis = Launch_Fireball(this, org, dir, (100 + (100 * random())));
 			newmis.projectiledeathtype = DEATH_MONSTER_JUDICATOR.m_id;
 			newmis.frame = floor(random() * 14);
 			newmis.walkframe = newmis.frame;

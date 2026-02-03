@@ -10,7 +10,7 @@
 .bool silent;
 
 #include "rubble.qh"
-#include <common/physics/movetypes/movetypes.qh>
+#include "../../physics/movetypes/movetypes.qh"
 
 .float scale;
 .float alpha;

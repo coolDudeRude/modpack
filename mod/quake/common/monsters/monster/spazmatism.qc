@@ -227,14 +227,14 @@ void spaz_breath(entity this)
 
 	if(trace_ent && trace_ent.takedamage && trace_ent.health > 0)
 	{
-		float damg = 4 + random();
-		T_Damage(trace_ent, this, this, damg, DEATH_MONSTER_SPAZMATISM.m_id);
-
 		float burntime = floor(autocvar_skill + 3 + 2*random());
 		// only add more burn time if there isn't already a longer timer running!
 		float curtime = StatusEffects_gettime(STATUSEFFECT_Burning, trace_ent);
 		if((time + burntime) > curtime)
 			StatusEffects_apply(STATUSEFFECT_Burning, trace_ent, time + burntime, 0);
+
+		float damg = 4 + random();
+		T_Damage(trace_ent, this, this, damg, DEATH_MONSTER_SPAZMATISM.m_id);
 	}
 }
 
@@ -484,7 +484,7 @@ void spaz_pain(entity this, entity attacker, float damage, int deathtype)
 		_sound(this, CH_VOICE, "twins/hit.wav", 1, ATTN_BOSS);
 	else
 		_sound(this, CH_VOICE, "eoc/pain.wav", 1, ATTN_BOSS);
-	this.pain_finished = time + 0.2;
+	this.pain_finished = time + 0.1;
 }
 
 void gib_spaz(entity this)

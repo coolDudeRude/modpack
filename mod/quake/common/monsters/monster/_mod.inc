@@ -12,6 +12,8 @@
 #include "blud.qc"
 #include "boglord.qc"
 #include "boil.qc"
+#include "brain.qc"
+#include "brain_creeper.qc"
 #include "breeze.qc"
 #include "bulletkin.qc"
 #include "cacodemon.qc"

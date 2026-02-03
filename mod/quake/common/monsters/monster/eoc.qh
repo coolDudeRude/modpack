@@ -2,7 +2,7 @@
 
 #include "../all.qh"
 
-MSG_INFO_NOTIF(DEATH_SELF_MON_EOC,                     1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1's innards were made outward by Eye Of Cthulhu"), "")
+MSG_INFO_NOTIF(DEATH_SELF_MON_EOC,                     1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1's innards were made outward by Eye of Cthulhu"), "")
 MSG_MULTI_NOTIF(DEATH_SELF_MON_EOC,                1,  NULL,           INFO_DEATH_SELF_MON_EOC,               CENTER_DEATH_SELF_MONSTER)
 REGISTER_DEATHTYPE(MONSTER_EOC,            DEATH_SELF_MON_EOC,            DEATH_MURDER_MONSTER,           "monster")
 
@@ -18,7 +18,7 @@ CLASS(EyeOfCthulhu, Monster)
     ATTRIB(EyeOfCthulhu, m_model, Model, MDL_MON_EOC);
 #endif
     ATTRIB(EyeOfCthulhu, netname, string, "eoc");
-    ATTRIB(EyeOfCthulhu, m_name, string, _("Eye Of Cthulhu"));
+    ATTRIB(EyeOfCthulhu, m_name, string, _("Eye of Cthulhu"));
     ATTRIB(EyeOfCthulhu, m_color, vector, '0.66 0.11 0.11');
 ENDCLASS(EyeOfCthulhu)
 

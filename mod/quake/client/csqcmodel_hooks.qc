@@ -4,7 +4,7 @@
 #include "../client/weapons/projectile.qh"
 #include "../common/constants.qh"
 #include "../common/effects/all.qh"
-#include "../common/physics.qh"
+#include "../common/physics/player.qh"
 #include "../common/sounds/all.qh"
 #include "../common/ent_cs.qh"
 // TODO: this is order dependent!

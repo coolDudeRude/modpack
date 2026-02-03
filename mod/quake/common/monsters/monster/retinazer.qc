@@ -312,7 +312,7 @@ void ret_pain(entity this, entity attacker, float damage, int deathtype)
 		_sound(this, CH_VOICE, "twins/hit.wav", 1, ATTN_BOSS);
 	else
 		_sound(this, CH_VOICE, "eoc/pain.wav", 1, ATTN_BOSS);
-	this.pain_finished = time + 0.2;
+	this.pain_finished = time + 0.1;
 }
 
 void gib_ret(entity this)

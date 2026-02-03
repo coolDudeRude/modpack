@@ -184,9 +184,8 @@ void goat_ram6(entity this)
 	settouch(this, goat_ram_touch);
 	ai_face(this);
 	UNSET_ONGROUND(this);
-	vector vang = this.angles;
-	makevectors('0 1 0' * vang.y);
-	this.velocity += v_forward * 1200;
+	fixedmakevectors(this.angles);
+	this.velocity = v_forward * 1200;
 	this.velocity_z += 150;
 }
 void goat_ram5(entity this) { set_anim(this, anim_goat_ram, goat_ram6); ai_face(this); }

@@ -702,6 +702,7 @@ METHOD(BogLord, mr_setup, bool(BogLord this, entity actor))
 	precache_sound("boglord/attack2.wav");
 	precache_sound("boglord/slime_explode.wav");
 	precache_sound("boglord/slime_miss.wav");
+	precache_sound("boglord/sight.wav");
 	// Melee attacks no longer used anymore
 	// TODO?
 	//precache_sound("boglord/smack.wav");

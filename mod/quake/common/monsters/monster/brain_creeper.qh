@@ -1,0 +1,25 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_BRAIN_CREEPER,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1's entrails were ripped out by Brain of Cthulhu"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_BRAIN_CREEPER,               1,  NULL,           INFO_DEATH_SELF_MON_BRAIN_CREEPER,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_BRAIN_CREEPER,           DEATH_SELF_MON_BRAIN_CREEPER,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_BRAIN_CREEPER, "progs/brain_creeper.mdl");
+#endif
+
+CLASS(BrainCreeper, Monster)
+    ATTRIB(BrainCreeper, spawnflags, int, MONSTER_TYPE_FLY | MON_FLAG_HIDDEN);
+    ATTRIB(BrainCreeper, m_mins, vector, '-16 -16 -24');
+    ATTRIB(BrainCreeper, m_maxs, vector, '16 16 16');
+#ifdef GAMEQC
+    ATTRIB(BrainCreeper, m_model, Model, MDL_MON_BRAIN_CREEPER);
+#endif
+    ATTRIB(BrainCreeper, netname, string, "brain_creeper");
+    ATTRIB(BrainCreeper, m_name, string, _("Brain Creeper"));
+    ATTRIB(BrainCreeper, m_color, vector, '0.81 0.16 0.08');
+ENDCLASS(BrainCreeper)
+
+REGISTER_MONSTER(BRAIN_CREEPER, NEW(BrainCreeper));

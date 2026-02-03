@@ -435,6 +435,9 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(STAR_LARGE)         this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '112 0 0'; this.scale = 5; break;
 			HANDLE(STAR_MEGA)          this.traileffect = EFFECT_TR_STAR.m_id; this.avelocity = '64 0 0'; this.scale = 20; break;
 			HANDLE(SPARK_UPZAP)        this.traileffect = EFFECT_TR_NEXUIZPLASMA.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(SEED)               this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(SEED_POISON)        this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(THORNBALL)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -598,6 +601,21 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			case PROJECTILE_SPARK_UPZAP:
 				this.effects |= EF_FULLBRIGHT;
 				this.effects |= EF_DIMLIGHT;
+				break;
+			case PROJECTILE_SEED_POISON:
+				this.skin = 1;
+			case PROJECTILE_SEED:
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_THORNBALL:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.solid = SOLID_TRIGGER;
+				this.mins = '-10 -10 -10';
+				this.maxs = '10 10 10';
+				this.bouncefactor = 0.7;
+				this.bouncestop = 0.075;
+				this.effects |= EF_FULLBRIGHT;
 				break;
 			default:
 				break;

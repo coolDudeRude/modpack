@@ -54,7 +54,7 @@ REGISTER_NET_TEMP(ENT_CLIENT_INIT)
 #include "viewloc.qh"
 #include "ent_cs.qh"
 
-#include "physics.qh"
+#include "physics/_mod.qh"
 #include "challenges.qh"
 
 

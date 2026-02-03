@@ -2,7 +2,7 @@
 
 #include <lib/csqcmodel/sv_model.qh>
 #include <common/csqcmodel_settings.qh>
-#include "../common/physics.qh"
+#include "../common/physics/player.qh"
 #include "../common/dodgeball/dodgeball.qh"
 #include "../common/slide/slide.qh"
 #include "../common/champions/_mod.qh"
@@ -747,7 +747,7 @@ void GotoNextMap()
 	}
 }
 
-bool autocvar_sv_quake_enginemusic = true;
+bool autocvar_sv_quake_enginemusic = false;
 
 entity music_ent;
 

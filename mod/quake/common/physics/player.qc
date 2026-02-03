@@ -1,7 +1,7 @@
 #ifdef SVQC
-#include "../server/client.qh"
-#include "jumpsdonewell/_mod.qh"
-#include "tank/tank.qh"
+#include "../../server/client.qh"
+#include "../jumpsdonewell/_mod.qh"
+#include "../tank/tank.qh"
 #endif
 
 #ifdef SVQC

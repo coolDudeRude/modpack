@@ -1,7 +1,7 @@
 #include "view.qh"
 
 #include "../common/constants.qh"
-#include <common/physics/movetypes/movetypes.qh>
+#include "../common/physics/movetypes/movetypes.qh"
 #include "../common/sui_sys.qh"
 #include "../common/champions/_mod.qh"
 #include "../common/dodgeball/dodgeball.qh"

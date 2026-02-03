@@ -113,6 +113,7 @@ PRECACHE(Kirby)
 CLASS(Kirby, Champions)
     ATTRIB(Kirby, netname, string, "kirby");
     ATTRIB(Kirby, m_name, string, "Kirby");
+    ATTRIB(Kirby, m_hidden, bool, true);
     ATTRIB(Kirby, qcc_noweaponswap, bool, true);
     ATTRIB(Kirby, qcc_falldamage, float, 0);
     ATTRIB(Kirby, qcc_jumpheight, float, 1.15);

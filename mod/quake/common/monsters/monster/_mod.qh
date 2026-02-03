@@ -12,6 +12,8 @@
 #include "blud.qh"
 #include "boglord.qh"
 #include "boil.qh"
+#include "brain.qh"
+#include "brain_creeper.qh"
 #include "breeze.qh"
 #include "bulletkin.qh"
 #include "cacodemon.qh"

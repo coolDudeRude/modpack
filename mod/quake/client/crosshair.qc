@@ -1,6 +1,6 @@
 #include "crosshair.qh"
 
-#include "../common/physics.qh"
+#include "../common/physics/player.qh"
 #include "../common/viewloc.qh"
 #include "../common/jumpsdonewell/_mod.qh"
 
