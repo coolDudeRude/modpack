@@ -228,6 +228,7 @@ void IthMissile(entity this, vector pos)
 	CSQCProjectile(missile, false, PROJECTILE_VORE_SPIKE, true);
 
 	// perform an immediate update (TODO: why doesn't linking it do this anyway?)
+	// FIXME this is all sorts of wrong
 	UpdateCSQCProjectile(this);
 }
 

@@ -818,3 +818,147 @@ METHOD(Ogre, mr_sight, bool(Ogre this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Ogre)
+{
+	precache_model("progs/v_star_ogre.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Ogre)
+{
+	precache_model("progs/star_bomb.mdl");
+
+	precache_sound("weapons/sword_swing.wav");
+}
+#endif
+
+#ifdef SVQC
+void star_ogre_bomb_explode(entity this, entity directhitentity)
+{
+	// don't do radius damage to the toucher, because all the damage
+	// was done in the impact
+	float mydmg = (this.dmg) ? this.dmg : 100;
+	T_RadiusDamage(this, this.owner, mydmg * 1.2, this.projectiledeathtype, this.owner);
+
+	sound(this, CH_WEAPON_SINGLE, SND_ROCKET_EXPLOSION, 1, ATTN_NORM);
+
+	this.origin = this.origin - 8 * normalize(this.velocity);
+
+	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
+
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	delete(this);
+}
+
+void star_ogre_bomb_explodethink(entity this)
+{
+	star_ogre_bomb_explode(this, this.enemy);
+}
+
+void star_ogre_bomb_touch(entity this, entity toucher)
+{
+	if(toucher == this.owner)
+		return;		// don't explode on owner
+
+	if(pointcontents(this.origin) == CONTENT_SKY)
+	{
+		delete(this);
+		return;
+	}
+	
+	if(toucher.takedamage)
+	{
+		// defer explosion to prevent touch errors
+		this.enemy = toucher;
+		settouch(this, func_null);
+		setthink(this, star_ogre_bomb_explodethink);
+		this.nextthink = time;
+	}
+}
+
+void star_ogre_bomb_attack(entity actor, .entity weaponentity)
+{
+	makevectors(actor.v_angle);
+
+	vector org = W_Shotorg(actor, weaponentity);
+
+	entity missile = spawn();
+	missile.flags = FL_PROJECTILE;
+	missile.owner = actor;
+	missile.realowner = actor;
+	set_movetype(missile, MOVETYPE_BOUNCE); // slide along the ground
+	missile.bouncefactor = 0.25;
+	missile.bouncestop = 0.001;
+	missile.solid = SOLID_BBOX;
+	missile.projectiledeathtype = WEP_STAR.m_id;
+	missile.clipgroup = actor.clipgroup;
+	missile.classname = "bomb";
+	missile.dmg = 120;
+
+	missile.velocity = v_forward * 500 + v_up * 20;
+
+	missile.angles = '0 0 0';
+
+	settouch(missile, star_ogre_bomb_touch);
+	missile.nextthink = time + 1;
+	setthink(missile, star_ogre_bomb_explodethink);
+	_setmodel(missile, "progs/star_bomb.mdl");
+	setsize(missile, '-14 -14 -14', '14 14 14');		
+	setorigin(missile, org);
+
+	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_STAR_BOMB, true);
+}
+
+void star_ogre_bomb_anim(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	this.m_frame += 1;
+
+	if(this.m_frame > 3)
+	{
+		star_ogre_bomb_attack(actor, weaponentity);
+
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+
+	wep_set_anim(this, this.m_frame, star_ogre_bomb_anim);
+}
+
+void star_ogre_bomb(entity actor, .entity weaponentity)
+{
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	_sound(actor, CH_WEAPON_SINGLE, "weapons/sword_swing.wav", 1, ATTN_NORM);
+
+	actor.(weaponentity).m_frame = 0;
+	star_ogre_bomb_anim(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 0.7);
+}
+
+METHOD(Ogre, star_fire, void(Ogre this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// stationary particle whip
+	star_ogre_bomb(actor, weaponentity);
+}
+#endif

@@ -92,3 +92,5 @@ SOUND(MECHBOSS_HIT, "destroyer/hit");
 SOUND(LASER_RICOCHET, "hipweap/laserric");
 
 SOUND(CHEER, "misc/cheer");
+
+SOUND(BOMB_FUSE, "kirby/bomb_fuse");

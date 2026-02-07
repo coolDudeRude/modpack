@@ -301,3 +301,142 @@ METHOD(Vore, mr_sight, bool(Vore this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Vore)
+{
+	precache_model("progs/v_star_shalrath.mdl");
+	precache_model("progs/v_spike.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_Vore)
+{
+	precache_sound("kirby/beam_whip.wav");
+}
+#endif
+
+#ifdef GAMEQC
+REGISTER_NET_TEMP(TE_CSQC_STARBEAM)
+#endif
+
+#if defined(SVQC)
+void SendCSQCStarBeam(vector start, vector end, vector ang)
+{
+	WriteHeader(MSG_BROADCAST, TE_CSQC_STARBEAM);
+	WriteVector(MSG_BROADCAST, start);
+	WriteVector(MSG_BROADCAST, end);
+	WriteAngleVector(MSG_BROADCAST, ang);
+}
+#elif defined(CSQC)
+.vector vorg1;
+void StarBeam_Draw(entity this)
+{
+	string tex;
+	//tex = "particles/lgbeam";
+	tex = "particles/gauntletbeam";
+
+	Draw_CylindricLine(this.vorg1, this.origin, 6, tex, 0.25, -time * 3, '0.9 0.8 0.7', 1, DRAWFLAG_NORMAL, view_origin);
+
+	if(time > this.count)
+		delete(this);
+}
+
+NET_HANDLE(TE_CSQC_STARBEAM, bool isNew)
+{
+	vector org = ReadVector();
+	vector dest = ReadVector();
+	vector ang = ReadAngleVector();
+	
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	//vector ang = vectoangles(dest - org);
+
+	makevectors(ang);
+	vector prev = org;
+
+	for(int j = 0; j < 3; ++j)
+	{
+		entity sg = spawn();
+		sg.solid = SOLID_NOT;
+		_setmodel(sg, "progs/v_spike.mdl");
+		setsize(sg, '0 0 0', '0 0 0');
+		setorigin(sg, org + dir * (len * 0.33 * (j + 1)) + v_up * (18 * j) - v_forward * (18 * j));
+		sg.vorg1 = prev;
+		prev = sg.origin;
+
+		sg.draw = StarBeam_Draw;
+		if (isNew) IL_PUSH(g_drawables, sg);
+		sg.drawmask = MASK_NORMAL;
+
+		sg.classname = "starbeam";
+		sg.effects = EF_FULLBRIGHT;
+		sg.angles = randomvec() * 360;
+		sg.count = time + 0.25;
+	}
+
+	return true;
+}
+#endif
+
+#ifdef SVQC
+void star_vore_whip_attack(entity actor, .entity weaponentity, int offset)
+{
+	makevectors(actor.angles);
+
+	vector org = W_Shotorg(actor, weaponentity) + v_right * 8;
+	vector end = org + v_forward * 140 + v_up * (18 * offset);
+
+	traceline(org, end, MOVE_NORMAL, actor);
+
+	SendCSQCStarBeam(org, trace_endpos, actor.angles);
+
+	if(trace_ent.takedamage)
+		T_Damage(trace_ent, actor, actor, 30, WEP_STAR.m_id);	
+}
+
+void star_vore_whip_anim(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	int offset = 5 - this.m_frame;
+
+	star_vore_whip_attack(actor, weaponentity, offset);
+
+	this.m_frame += 1;
+
+	wep_set_anim(this, this.m_frame, star_vore_whip_anim);
+
+	if(this.m_frame > 5)
+	{
+		this.m_frame = 0;
+		w_ready(this);
+		return;
+	}
+}
+
+void star_vore_whip(entity actor, .entity weaponentity)
+{
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/beam_whip.wav", 1, ATTN_NORM);
+
+	actor.(weaponentity).m_frame = 0;
+	star_vore_whip_anim(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 1.2);
+}
+
+METHOD(Vore, star_fire, void(Vore this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// stationary particle whip
+	star_vore_whip(actor, weaponentity);
+}
+#endif

@@ -182,6 +182,10 @@ void Projectile_Draw(entity this)
 			makevectors(ang);
 			trailorigin += v_up * 8 + v_forward * 5;
 			break;
+		case PROJECTILE_STAR_BOMB:
+			makevectors(ang);
+			trailorigin += v_up * 14;
+			break;
 	}
 
 	if (drawn)
@@ -438,6 +442,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(SEED)               this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(SEED_POISON)        this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(THORNBALL)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(STAR_BOMB)          this.traileffect = EFFECT_TR_GRENADE.m_id; this.avelocity = '300 300 300'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -616,6 +621,16 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.bouncefactor = 0.7;
 				this.bouncestop = 0.075;
 				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_STAR_BOMB:
+				loopsound(this, CH_SHOTS_SINGLE, SND_BOMB_FUSE, VOL_BASE, ATTEN_NORM);
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.effects |= EF_FULLBRIGHT;
+				this.mins = '-14 -14 -14';
+				this.maxs = '14 14 14';
+				this.bouncefactor = 0.25;
+				this.bouncestop = 0.001;
 				break;
 			default:
 				break;

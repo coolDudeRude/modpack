@@ -85,6 +85,7 @@ MODEL(PROJECTILE_SPARK_UPZAP,               "progs/pbullet.mdl");
 MODEL(PROJECTILE_SEED,                      "progs/plantera_seed.mdl");
 MODEL(PROJECTILE_SEED_POISON,               "progs/plantera_seed.mdl");
 MODEL(PROJECTILE_THORNBALL,                 "progs/plantera_thornball.mdl");
+MODEL(PROJECTILE_STAR_BOMB,                 "progs/star_bomb.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

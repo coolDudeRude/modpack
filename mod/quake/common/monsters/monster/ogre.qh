@@ -19,6 +19,9 @@ CLASS(Ogre, Monster)
 #endif
     ATTRIB(Ogre, netname, string, "ogre");
     ATTRIB(Ogre, m_name, string, _("Ogre"));
+    /* kirby power */
+    ATTRIB(Ogre, star_valid, bool, true);
+    ATTRIB(Ogre, star_viewmodel, string, "star_ogre");
 ENDCLASS(Ogre)
 
 REGISTER_MONSTER(OGRE, NEW(Ogre));

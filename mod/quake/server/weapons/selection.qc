@@ -116,6 +116,29 @@ void W_SwitchWeapon_Force(entity this, Weapon wep, .entity weaponentity)
 	this.parry_time = 0; // TODO: allow weapons to tell when they've been swapped away from
 	W_SetCurrentAmmo(this);
 	w_ready(w_ent);
+
+	// hack to prevent offhand weapons from continuing to fire
+	// TODO: remove this hack when proper switching is implemented
+	if(autocvar_g_weaponswitch_debug != 2 || weaponslot(weaponentity) != 0)
+		return;
+
+	for(int slot = 1; slot < MAX_WEAPONSLOTS; ++slot)
+	{
+		.entity wepent = weaponentities[slot];
+		entity wep_e = this.(wepent);
+		if(this.m_champion && this.m_champion.m_offhand && this.m_champion.m_offhand != WEP_Null && !(w_ent.m_weapon.spawnflags & WEP_FLAG_TWOHANDED))
+			continue; // let offhand handle itself in this case
+		wep_e.cnt = wep_e.m_weapon.m_id;
+		wep_e.m_frame = 0;
+		wep_e.m_weapon = w_ent.m_weapon;
+
+		if((wep_e.m_weapon.spawnflags & WEP_FLAG_NODUAL) || (!(wep_e.m_weapon.spawnflags & WEP_FLAG_DUALWIELD) && !Inventory_have(w_ent.m_weapon, this, ITEM_DUALWIELD)))
+		{
+			wep_e.m_weapon = WEP_Null;
+			wep_e.weaponname = "";
+		}
+		w_ready(wep_e);
+	}
 }
 
 // perform weapon to attack (weaponstate and attack_finished check is here)

@@ -160,6 +160,8 @@ STATIC_INIT(TargetMusic_list)
 
 void TargetMusic_Advance()
 {
+	BossMusic_Advance();
+
 	// run AFTER all the thinks!
 	entity best = music_default;
 	if (music_target && time < music_target.lifetime)
@@ -365,16 +367,49 @@ NET_HANDLE(ENT_CLIENT_TRIGGER_MUSIC, bool isnew)
 // NOTE: relies on boss bars!
 bool autocvar_cl_quake_bossmusic = true;
 .entity musicdef;
+.bool music_checkfailed;
 
-void bossmusic_draw(entity this)
+// bit hacky but means we can spawn the boss music when needed
+// don't need to cache all the songs that way!
+bool bossmusic_spawn(Monster mon)
+{
+	string s = engine_fixsound(mon.netname);
+	if(!fexists(s))
+	{
+		mon.music_checkfailed = true;
+		return false;
+	}
+	entity bmusic = spawn();
+	bmusic.classname = "bossmusic";
+	precache_sound(s);
+	strcpy(bmusic.noise, s);
+	bmusic.volume = 1;
+	bmusic.fade_time = 3;
+	bmusic.fade_rate = 2;
+	bmusic.active = ACTIVE_ACTIVE;
+		
+	mon.musicdef = bmusic;
+
+	LL_PUSH(TargetMusic_list, bmusic);
+
+	return true;
+}
+
+void BossMusic_Advance()
 {
 	if(!autocvar_cl_quake_bossmusic)
 		return;
 
 	entity chosen = NULL;
 	float chosen_dist = 0;
-	IL_EACH(g_bossbars, it.monsterdef && it.monsterdef != MON_Null && it.monsterdef.musicdef && (it.state & BOSS_AGGRO) && vdist(view_origin - it.origin, <=, 2048),
+	IL_EACH(g_bossbars, it.monsterdef && it.monsterdef != MON_Null && (it.state & BOSS_AGGRO) && vdist(view_origin - it.origin, <=, 2048),
 	{
+		if(!it.monsterdef.musicdef)
+		{
+			if(it.monsterdef.music_checkfailed || !bossmusic_spawn(it.monsterdef))
+				continue;
+		}
+
 		float mydist = vlen2(view_origin - it.origin);
 		if(!chosen || mydist <= chosen_dist)
 		{
@@ -385,33 +420,6 @@ void bossmusic_draw(entity this)
 
 	if(chosen)
 		music_trigger = chosen.monsterdef.musicdef;
-}
-
-STATIC_INIT_LATE(BossMusic)
-{
-	if(!autocvar_cl_quake_bossmusic)
-		return;
-	
-	FOREACH(Monsters, it != MON_Null,
-	{
-		string s = engine_fixsound(it.netname);
-		if(!fexists(s))
-			continue;
-		entity bmusic = spawn();
-		bmusic.classname = "bossmusic";
-		precache_sound(s);
-		strcpy(bmusic.noise, s);
-		bmusic.volume = 1;
-		bmusic.fade_time = 3;
-		bmusic.fade_rate = 2;
-		bmusic.active = ACTIVE_ACTIVE;
-		bmusic.draw = bossmusic_draw;
-		
-		it.musicdef = bmusic;
-
-		LL_PUSH(TargetMusic_list, bmusic);
-		IL_PUSH(g_drawables, bmusic);
-	});
 }
 
 #endif

@@ -30,6 +30,8 @@ void Ent_TriggerMusic_Think(entity this);
 
 void Ent_TriggerMusic_Remove(entity this);
 
+void BossMusic_Advance();
+
 #elif defined(SVQC)
 void target_music_kill();
 
