@@ -451,7 +451,7 @@ void W_Star_Fire2(entity actor, .entity weaponentity)
 	if(mon && mon != MON_Null && mon.star_valid)
 	{
 		actor.attack2_finished = time;
-		STAT(KIRBY_DISCARD, actor) += PHYS_INPUT_FRAMETIME * 0.33;
+		STAT(KIRBY_DISCARD, actor) += PHYS_INPUT_FRAMETIME * 0.7;
 		if(STAT(KIRBY_DISCARD, actor) >= 1)
 			W_Star_Discard(actor, weaponentity);
 

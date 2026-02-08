@@ -144,9 +144,11 @@ void wrath_explode(entity this)
 	ThrowGib(this, this, "progs/wrthgib1.mdl", this.health);
 	ThrowGib(this, this, "progs/wrthgib2.mdl", this.health);
 	ThrowGib(this, this, "progs/wrthgib3.mdl", this.health);
-	T_RadiusDamage(this, this, 80, DEATH_MONSTER_WRATH.m_id, NULL);
+	T_RadiusDamage(this, this, 80, DEATH_MONSTER_WRATH.m_id, this);
 
 	te_explosion2(this.origin + '0 0 24', 0, 4);
+
+	delete(this);
 }
 
 void wrath_die15(entity this)
@@ -154,7 +156,6 @@ void wrath_die15(entity this)
 	set_animofs(this, anim_wrath_wrthdt01, 15, wrath_die15);
 
 	wrath_explode(this);
-	delete(this);
 }
 void wrath_die13(entity this) { set_animofs(this, anim_wrath_wrthdt01, 13, wrath_die15); }
 void wrath_die11(entity this) { set_animofs(this, anim_wrath_wrthdt01, 11, wrath_die13); }
@@ -173,6 +174,7 @@ void wrath_die(entity this, entity inflictor, entity attacker, int deathtype)
 		case KILLED_NORMAL: break; // normal death
 		case KILLED_GIBBED:
 		{
+			settouch(this, func_null);
 			this.solid = SOLID_NOT;
 			setthink(this, wrath_explode);
 			this.nextthink = time;
