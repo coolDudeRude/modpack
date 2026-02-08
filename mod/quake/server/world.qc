@@ -270,7 +270,7 @@ void SendCSQCLightningBeam(vector v1, vector v2)
 
 void dedicated_print(string input)
 {
-	if (server_is_dedicated) print(input);
+	if (autocvar_sv_dedicated) print(input);
 }
 
 const float FRAME_TIME = 0.1;
@@ -1515,11 +1515,9 @@ spawnfunc(worldspawn)
 
 	startingserverflags = serverflags;
 
-	server_is_dedicated = boolean(stof(cvar_defstring("is_dedicated")));
-
     wantrestart = false;
 	{
-		if (!server_is_dedicated)
+		if (!autocvar_sv_dedicated)
 		{
 			// force unloading of server pk3 files when starting a listen server
 			// localcmd("\nfs_rescan\n"); // FIXME: does more harm than good, has unintended side effects. What we really want is to unload temporary pk3s only
@@ -1884,7 +1882,7 @@ void CheckRules_World()
 	}
 
 	float matchlimit = autocvar_sv_quake_matchlimit * 60;
-	if(server_is_dedicated && !deathmatch && matchlimit && time >= matchlimit && autocvar_quit_when_empty)
+	if(autocvar_sv_dedicated && !deathmatch && matchlimit && time >= matchlimit && autocvar_quit_when_empty)
 	{
 		// crude hack to force restart of the server if we've reached the timelimit on a co-op level
 		if(world.worldtype != WORLDTYPE_DODGEBALL 
