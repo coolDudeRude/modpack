@@ -871,8 +871,8 @@ METHOD(Shambler, star_fire, void(Shambler this, entity actor, .entity weaponenti
 
 	bool swimming = (actor.waterlevel > 1);
 
-	if(swimming)
-		return; // kaboom?
+	//if(swimming)
+		//return; // kaboom?
 
 	// looking down and in the air!
 	if(!IS_ONGROUND(actor) && !swimming && actor.v_angle_x >= 55 && actor.v_angle_x <= 110)

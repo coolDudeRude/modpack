@@ -424,12 +424,24 @@ void W_Star_Discard(entity actor, .entity weaponentity)
 {
 	te_explosion2(actor.origin, 111, 5);
 	_sound(actor, CH_WEAPON_B, "player_kirby/ability_lost.wav", 1, ATTN_NORM);
-	STAT(KIRBY_DISCARD, actor) = 0;
-	STAT(KIRBY_TYPE, actor) = 0;
+
+	// return the ability to kirby's mouth
+	Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, actor));
+	// don't need to check validity, but might as well!
+	if(mon != MON_Null && mon.star_valid)
+	{
+		actor.star_power = mon;
+		actor.star_consumed += 1;
+		STAT(KIRBY_STATE, actor) = KIRBY_FULL;
+	}
 
 	// add a delay to attacks as well
 	ATTACK_FINISHED(actor, weaponentity) = max(ATTACK_FINISHED(actor, weaponentity), time + 0.25);
 	actor.attack2_finished = time + 1;
+
+	// now discard the ability
+	STAT(KIRBY_DISCARD, actor) = 0;
+	STAT(KIRBY_TYPE, actor) = 0;
 }
 
 void W_Star_Fire2(entity actor, .entity weaponentity)
