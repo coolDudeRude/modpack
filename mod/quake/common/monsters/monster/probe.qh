@@ -1,0 +1,25 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_PROBE,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was removed from Quakenotic by Probe"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_PROBE,               1,  NULL,           INFO_DEATH_SELF_MON_PROBE,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_PROBE,           DEATH_SELF_MON_PROBE,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_PROBE, "progs/probe.mdl");
+#endif
+
+CLASS(Probe, Monster)
+    ATTRIB(Probe, spawnflags, int, MONSTER_TYPE_FLY | MON_FLAG_HIDDEN);
+    ATTRIB(Probe, m_mins, vector, '-16 -16 -24');
+    ATTRIB(Probe, m_maxs, vector, '16 16 16');
+#ifdef GAMEQC
+    ATTRIB(Probe, m_model, Model, MDL_MON_PROBE);
+#endif
+    ATTRIB(Probe, netname, string, "probe");
+    ATTRIB(Probe, m_name, string, _("Probe"));
+    ATTRIB(Probe, m_color, vector, '0.81 0.16 0.08');
+ENDCLASS(Probe)
+
+REGISTER_MONSTER(PROBE, NEW(Probe));

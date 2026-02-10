@@ -138,7 +138,7 @@ void des_pain(entity this, entity attacker, float damage, int deathtype)
 	if(random() < 0.1 && checkpvs(this.origin, attacker))
 	{
 		this.skin = 1;
-		minion_spawn(this.realowner, this.origin, new(monster), MON_JIM);
+		minion_spawn(this.realowner, this.origin, new(monster), MON_PROBE);
 	}
 }
 
@@ -147,9 +147,9 @@ void des_hitbox_touch(entity this, entity toucher)
 {
 	entity own = (this.classname == "monster_hitbox") ? this.realowner : this;
 
-	// special exception: never hurt jim!
+	// special exception: never hurt our probe!
 	// TODO: just exclude all monsters if we're not charmed?
-	if(toucher.monsterdef == MON_JIM)
+	if(toucher.monsterdef == MON_PROBE)
 		return;
 	if(toucher.flags & FL_PROJECTILE)
 		return;

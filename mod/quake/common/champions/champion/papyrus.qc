@@ -1,7 +1,7 @@
 #include "papyrus.qh"
 
 #ifdef SVQC
-void BoneTouch(entity this, entity toucher)
+void Papyrus_BoneTouch(entity this, entity toucher)
 {
 	if(toucher == this.owner)
 		return;		// don't explode on owner
@@ -46,7 +46,7 @@ void Papyrus_ThrowBone(entity this)
 
 	missile.angles = vectoangles(missile.velocity);
 
-	settouch(missile, BoneTouch);
+	settouch(missile, Papyrus_BoneTouch);
 	
 // set missile duration
 	missile.scale = max(0.3, random() * 3);

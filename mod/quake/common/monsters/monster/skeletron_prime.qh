@@ -1,0 +1,32 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_SKELETRON_PRIME,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 had an unfortunate encounter with Skeletron Prime"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_SKELETRON_PRIME,               1,  NULL,           INFO_DEATH_SELF_MON_SKELETRON_PRIME,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_SKELETRON_PRIME,           DEATH_SELF_MON_SKELETRON_PRIME,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_SKELETRON_PRIME, "progs/skeletron_prime.mdl");
+
+SOUND(MON_SKELETRON_PRIME_PAIN, "skeletron_prime/hit");
+#endif
+
+CLASS(SkeletronPrime, Monster)
+    ATTRIB(SkeletronPrime, spawnflags, int, MONSTER_TYPE_BOSS | MONSTER_TYPE_FLY);
+    ATTRIB(SkeletronPrime, m_mins, vector, '-32 -32 -24');
+    ATTRIB(SkeletronPrime, m_maxs, vector, '32 32 32');
+#ifdef GAMEQC
+    ATTRIB(SkeletronPrime, m_model, Model, MDL_MON_SKELETRON_PRIME);
+#endif
+    ATTRIB(SkeletronPrime, netname, string, "skeletron_prime");
+    ATTRIB(SkeletronPrime, m_name, string, _("Skeletron Prime"));
+    ATTRIB(SkeletronPrime, m_color, vector, '1 0 0');
+ENDCLASS(SkeletronPrime)
+
+REGISTER_MONSTER(SKELETRON_PRIME, NEW(SkeletronPrime));
+
+#ifdef SVQC
+IntrusiveList g_primeparts;
+STATIC_INIT(g_primeparts) { g_primeparts = IL_NEW(); }
+#endif

@@ -145,6 +145,14 @@ void brain_move_loop(entity this)
 	setthink(this, brain_move_loop);
 	this.nextthink = time;
 
+	if(time >= this.idle_finished)
+	{
+		this.idle_finished = time + 0.1;
+		this.frame += 1;
+		if(this.frame > 3)
+			this.frame = 0;
+	}
+
 	if(this.bosswave < 1)
 		brain_checkcreepers(this);
 

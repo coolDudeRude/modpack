@@ -111,7 +111,12 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 		}
 
 		// TODO: flag for enemies that can't be inhaled
-		if(it.health > 100 || it.monsterdef == MON_EOW_PART || it.monsterdef == MON_SHUB)
+		float hplimit = 100;
+		if(it.monsterdef == MON_EOW_PART)
+			hplimit = 20; // parts have low health, must compensate
+		else if(IS_PLAYER(it))
+			hplimit = 50; // TODO: armor calculation?
+		if(it.health > hplimit || it.monsterdef == MON_SHUB)
 		{
 			T_Damage(it, this, this, 3, WEP_STAR.m_id);
 			continue;
@@ -124,6 +129,13 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 		{
 			if(it.monsterdef && it.monsterdef != MON_Null && it.monsterdef.star_valid)
 				this.star_power = it.monsterdef; // store it until we swallow (or spit!)
+			else
+			{
+				// maybe it's a player with an ability?
+				Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, it));
+				if(mon && mon != MON_Null && mon.star_valid)
+					this.star_power	= mon;
+			}
 			if(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
 				this.star_consumed += 5;
 			else

@@ -42,7 +42,11 @@ void OgreGrenadeTouch(entity this, entity toucher)
 		OgreGrenadeExplode(this);
 		return;
 	}
-	_sound(this, CH_VOICE, "weapons/bounce.wav", 1, ATTN_NORM);	// bounce sound
+	if(time >= this.pain_finished)
+	{
+		this.pain_finished = time;
+		_sound(this, CH_VOICE, "weapons/bounce.wav", 1, ATTN_NORM);	// bounce sound
+	}
 	if(this.velocity == '0 0 0')
 		this.avelocity = '0 0 0';
 }

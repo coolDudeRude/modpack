@@ -51,7 +51,11 @@ void minishark_bullet_touch(entity this, entity toucher)
 	if(toucher.takedamage) // yoder mod, jan 05 2021
 	{
 		spawn_touchblood(this, 18, toucher);
-		T_Damage(toucher, this, this.owner, 18, this.projectiledeathtype);
+		float damg = 18;
+		if(toucher.resist_nails != 0)
+			damg = Resist_Damage(toucher, IT_NAILS, damg);
+		Resist_Nails(toucher, this.origin);
+		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
 	}
 	else
 		te_superspike(this.origin);
