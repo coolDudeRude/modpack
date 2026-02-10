@@ -88,6 +88,7 @@ void star_twister_summon(entity this)
 	this.star_twister = twister;
 }
 
+bool autocvar_sv_quake_kirby_eatprojectiles;
 void W_Star_Inhale(entity this, .entity weaponentity)
 {
 	if(!this.star_twister)
@@ -99,10 +100,21 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 
 	vector myorg = CENTER_OR_VIEWOFS(this);
 	vector org = myorg + v_forward * 100;
-	FOREACH_ENTITY_RADIUS(org, 110, it.takedamage && it.health > 0 && it != this && Damage_ValidTarget(it, this),
+	FOREACH_ENTITY_RADIUS(org, 110, it != this,
 	{
+		if(!(it.flags & FL_PROJECTILE))
+		{
+			if(!it.takedamage || it.health < 1 || !Damage_ValidTarget(it, this))
+				continue;
+		}
+		else
+		{
+			if(!autocvar_sv_quake_kirby_eatprojectiles || (it.owner && !Damage_ValidTarget(it.owner, this)))
+				continue;
+		}
+
 		vector dir = normalize(this.origin - it.origin);
-		if(!(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(it.monsterdef.spawnflags & MON_FLAG_STATIONARY))
+		if(!(it.flags & FL_PROJECTILE) && !(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(it.monsterdef.spawnflags & MON_FLAG_STATIONARY))
 		{
 			float pushforce = 100 / vlen(it.maxs - it.mins);
 
@@ -116,7 +128,7 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 			hplimit = 20; // parts have low health, must compensate
 		else if(IS_PLAYER(it))
 			hplimit = 50; // TODO: armor calculation?
-		if(it.health > hplimit || it.monsterdef == MON_SHUB)
+		if(!(it.flags & FL_PROJECTILE) && (it.health > hplimit || it.monsterdef == MON_SHUB))
 		{
 			T_Damage(it, this, this, 3, WEP_STAR.m_id);
 			continue;
@@ -143,8 +155,18 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 			float sndpitch = 100 * bound(0.5, 0.5 + (0.1 * this.star_consumed), 1.5);
 			sound7(this, CH_WEAPON_B, "player_kirby/eat.wav", 1, ATTN_NORM, sndpitch, 0);
 			STAT(KIRBY_STATE, this) = KIRBY_FULL;
-			it.health = 0;
-			Killed(it, this, this, DEATH_SWALLOW.m_id);
+			if(it.flags & FL_PROJECTILE)
+			{
+				settouch(it, func_null);
+				setthink(it, SUB_Remove);
+				it.nextthink = time;
+				it.solid = SOLID_NOT;
+			}
+			else
+			{
+				it.health = 0;
+				Killed(it, this, this, DEATH_SWALLOW.m_id);
+			}
 			continue;
 		}
 	});

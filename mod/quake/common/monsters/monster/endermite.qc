@@ -115,7 +115,7 @@ void endermite_pain(entity this, entity attacker, float damage, int deathtype)
 	else if(r < 0.66)
 		_sound(this, CH_VOICE, "silverfish/hit2.wav", 1, ATTN_NORM);
 	else
-		_sound(this, CH_VOICE, "silverfish/hit4.wav", 1, ATTN_NORM);
+		_sound(this, CH_VOICE, "silverfish/hit3.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
