@@ -600,6 +600,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.effects |= EF_FULLBRIGHT;
 				this.effects |= EF_BRIGHTLIGHT;
 				this.effects |= EF_ADDITIVE;
+				this.effects |= EF_NODEPTHTEST;
 				this.solid = SOLID_TRIGGER;
 				settouch(this, func_null);
 				break;

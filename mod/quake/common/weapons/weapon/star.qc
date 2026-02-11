@@ -327,6 +327,7 @@ void W_Star_Spit(entity this, .entity weaponentity)
 		newmis.state = 2; // mega star!
 		newmis.cnt = 768;
 		newmis.solid = SOLID_TRIGGER;
+		newmis.effects |= EF_NODEPTHTEST;
 		set_movetype(newmis, MOVETYPE_NOCLIP);
 		settouch(newmis, func_null);
 		CSQCProjectile(newmis, true, PROJECTILE_STAR_MEGA, false);
