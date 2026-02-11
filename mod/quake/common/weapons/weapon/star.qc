@@ -329,7 +329,7 @@ void W_Star_Spit(entity this, .entity weaponentity)
 		newmis.solid = SOLID_TRIGGER;
 		set_movetype(newmis, MOVETYPE_NOCLIP);
 		settouch(newmis, func_null);
-		CSQCProjectile(newmis, true, PROJECTILE_STAR_MEGA, true);
+		CSQCProjectile(newmis, true, PROJECTILE_STAR_MEGA, false);
 	}
 	else if(this.star_consumed >= 6)
 	{
@@ -428,6 +428,7 @@ void W_Star_Swallow(entity actor, .entity weaponentity)
 
 	if(actor.star_power == MON_FLOYD)
 	{
+		actor.star_consumed -= 1; // don't give health too
 		// special case: eating floyd turns you into floyd!
 		te_teleport(actor.origin);
 		actor.transform_limited = time + 20;
@@ -436,6 +437,7 @@ void W_Star_Swallow(entity actor, .entity weaponentity)
 	}
 	else if(actor.star_power == MON_GOATLING || actor.star_power == MON_GOAT)
 	{
+		actor.star_consumed -= 1; // don't give health too
 		// goats are also special
 		_sound(actor, CH_WEAPON_B, "kirby/wawa.wav", 1, ATTN_NORM);
 		T_Damage(actor, actor, NULL, 20, DEATH_GENERIC.m_id);
@@ -446,13 +448,14 @@ void W_Star_Swallow(entity actor, .entity weaponentity)
 	}
 	else if(actor.star_power)
 	{
+		actor.star_consumed -= 1; // don't give health too
 		te_explosion2(actor.origin, 110, 1);
 		STAT(KIRBY_TYPE, actor) = actor.star_power.monsterid;
 		_sound(actor, CH_WEAPON_B, "player_kirby/ability.wav", 1, ATTN_NORM);
 	}
 
-	float healamount = 5 * max(1, actor.star_consumed);
-	if(T_Heal(actor, healamount, true))
+	float healamount = 5 * actor.star_consumed;
+	if(healamount > 0 && T_Heal(actor, healamount, true))
 		actor.healthrot_nextcheck = time + 5;
 
 	STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
