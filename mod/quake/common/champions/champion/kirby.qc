@@ -263,23 +263,12 @@ METHOD(Kirby, m_doublejump, bool(Champions this, entity actor))
 	{
 		default:
 		case KIRBY_NORMAL:
-		{
-			if(!IS_JUMP_HELD(actor) && !IS_ONGROUND(actor))
-			{
-			#ifdef SVQC
-				STAT(KIRBY_JUMPS, actor) = 1; // first jump, just set it to 1 to avoid potential issues NOTE: this also lets you fly infinitely
-				player_axe1(actor);
-				STAT(KIRBY_STATE, actor) = KIRBY_FLYING;
-			#endif
-				return true;
-			}
-			break;
-		}
 		case KIRBY_FLYING:
 		{
-			if(actor.velocity_z <= 0 && STAT(KIRBY_JUMPS, actor) <= 7)
+			if(!IS_JUMP_HELD(actor) && !IS_ONGROUND(actor) && actor.velocity_z <= 0 && STAT(KIRBY_JUMPS, actor) <= 7)
 			{
 			#ifdef SVQC
+				STAT(KIRBY_STATE, actor) = KIRBY_FLYING;
 				STAT(KIRBY_JUMPS, actor) += 1;
 				player_axe1(actor);
 			#endif

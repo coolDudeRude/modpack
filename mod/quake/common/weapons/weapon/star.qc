@@ -16,11 +16,15 @@ PRECACHE(Star)
 	precache_sound("kirby/wawa.wav");
 }
 
+void W_Star_Shambler_Clear(entity actor);
 void W_Star_Clear(entity this)
 {
 	this.star_consumed = 0;
 	STAT(KIRBY_STATE, this) = KIRBY_NORMAL;
 	this.star_power = NULL;
+
+	// TODO
+	W_Star_Shambler_Clear(this);
 }
 
 void wep_star_frame(entity this, .entity weaponentity)
@@ -88,7 +92,7 @@ void star_twister_summon(entity this)
 	this.star_twister = twister;
 }
 
-bool autocvar_sv_quake_kirby_eatprojectiles;
+float autocvar_sv_quake_kirby_eatprojectiles;
 void W_Star_Inhale(entity this, .entity weaponentity)
 {
 	if(!this.star_twister)
@@ -109,8 +113,14 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 		}
 		else
 		{
-			if(!autocvar_sv_quake_kirby_eatprojectiles || (it.owner && !Damage_ValidTarget(it.owner, this)))
+			if(autocvar_sv_quake_kirby_eatprojectiles <= 0 || it.lefty > time || (it.owner && !Damage_ValidTarget(it.owner, this)))
 				continue;
+			if(random() < autocvar_sv_quake_kirby_eatprojectiles)
+			{
+				// failed this time, don't try again instantly
+				it.lefty = time + 0.5;
+				continue;
+			}
 		}
 
 		vector dir = normalize(this.origin - it.origin);

@@ -13,9 +13,9 @@ METHOD(Berserk, m_remove, void(StatusEffects this, entity actor, int removal_typ
     if(IS_PLAYER(actor))
     {
         Inventory_remove(WEP_BERSERKER_FISTS, actor, ITEM_OWNED);
-        if(wasactive)
+        .entity weaponentity = weaponentities[0]; // WEAPONTODO
+        if(wasactive && actor.(weaponentity).m_weapon == WEP_BERSERKER_FISTS)
         {
-            .entity weaponentity = weaponentities[0]; // WEAPONTODO
             W_LastWeapon(actor, weaponentity);
         }
     }
@@ -26,7 +26,7 @@ METHOD(Berserk, m_apply, void(StatusEffects this, entity actor, float eff_time, 
     {
         Inventory_add(WEP_BERSERKER_FISTS, actor, ITEM_OWNED); // TODO: "temporary" ownership flag?
         .entity weaponentity = weaponentities[0]; // WEAPONTODO
-        W_SwitchWeapon_Force(actor, WEP_BERSERKER_FISTS, weaponentity);
+        W_SwitchWeapon(actor, WEP_BERSERKER_FISTS, weaponentity);
     }
     SUPER(Berserk).m_apply(this, actor, eff_time, eff_flags);
 }

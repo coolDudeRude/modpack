@@ -64,7 +64,7 @@ void juggernaut_death10(entity this)
 	set_anim(this, 105, juggernaut_death11);
 	_sound(this, CHAN_ITEM, "monsters/juggers/jfalls.wav", 1, ATTN_NORM);
 }
-void juggernaut_death9(entity this) { set_anim(this, 104, juggernaut_death10); DropBackpack(this); }
+void juggernaut_death9(entity this) { set_anim(this, 104, juggernaut_death10); }
 void juggernaut_death8(entity this) { set_anim(this, 103, juggernaut_death9); }
 void juggernaut_death7(entity this) { set_anim(this, 102, juggernaut_death8); }
 void juggernaut_death6(entity this) { set_anim(this, 101, juggernaut_death7); }

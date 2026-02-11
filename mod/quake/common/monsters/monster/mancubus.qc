@@ -529,7 +529,8 @@ METHOD(Mancubus, mr_setup, bool(Mancubus this, entity actor))
 		precache_sound("mancubus/shoot2.wav");
 		precache_sound("mancubus/sight2.wav");
 
-		actor.skin = 1;
+		//actor.skin = 1; // TODO: skin is broken (transparent parts don't work)
+		actor.skin = 0;
 	}
 	else
 	{

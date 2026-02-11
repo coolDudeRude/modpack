@@ -773,7 +773,7 @@ void star_spark_think(entity this)
 	entity actor = this.owner;
 	this.nextthink = time;
 
-	if(!actor || actor.kirby_spark != this || (this.wait && time >= this.wait) || actor.m_champion != CHAMPION_Kirby)
+	if(!actor || actor.kirby_spark != this || (this.wait && time >= this.wait) || actor.m_champion != CHAMPION_Kirby || actor.health < 1 || intermission_running)
 	{
 		if(actor && actor.kirby_spark == this)
 			actor.kirby_spark = NULL;
@@ -861,6 +861,13 @@ void star_shambler_charge(entity actor, .entity weaponentity)
 	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
 	star_spark_spawn(actor);
 	star_shambler_charge_frame(actor.(weaponentity));
+}
+
+void W_Star_Shambler_Clear(entity actor)
+{
+	if(actor.kirby_spark)
+		delete(actor.kirby_spark);
+	actor.kirby_spark = NULL;
 }
 
 METHOD(Shambler, star_fire, void(Shambler this, entity actor, .entity weaponentity))
