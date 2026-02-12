@@ -251,6 +251,7 @@ void plantera_hook(entity this)
 		targ.hook_out = false;
 }
 
+.float last_enemycheck;
 void boss_FindTarget(entity this)
 {
 	if(time < this.last_enemycheck)
