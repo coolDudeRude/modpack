@@ -253,8 +253,12 @@ void plantera_hook(entity this)
 
 void boss_FindTarget(entity this)
 {
+	if(time < this.last_enemycheck)
+		return;
+	this.last_enemycheck = time + 0.5;
+
 	// go for another player if multi player
-	if(this.enemy.health <= 0 || (this.enemy.flags & FL_NOTARGET) || (coop && random() < 0.02))
+	if(this.enemy.health <= 0 || (this.enemy.flags & FL_NOTARGET) || (coop && random() < 0.1))
 		this.enemy = NULL;
 
 	if(!this.enemy)

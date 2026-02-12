@@ -3257,7 +3257,7 @@ void DropBackpack(entity this)
 			strcpy(item.crypto_idfp, this.crypto_idfp);
 		setcefc(item, BackpackCustomize);
 
-		if(autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent))
+		if(random() <= 0.15 || (autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent)))
 			WaypointSprite_Spawn(WP_SkillIssue, backpack_lifetime, 0, item, '0 0 32', this, 0, item, sprite, false, NULL);
 		else
 			WaypointSprite_Spawn(WP_Death, backpack_lifetime, 0, item, '0 0 32', this, 0, item, sprite, false, NULL);
