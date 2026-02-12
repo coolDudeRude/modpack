@@ -13,15 +13,16 @@ void dadjokes_process_url(entity this, entity fh)
 {
 	RandomSelection_Init();
 
+	int maxlines = 8; // c'mon dad
 	string s;
 	while((s = url_fgets(fh)))
 	{
-		// should just be a dad joke, but who knows... pick a random one if multiple
-		RandomSelection_AddString(s, 1, 1);
+		// TODO: verification of receive order?
+		Send_Notification(NOTIF_ONE_ONLY, this, MSG_INFO, INFO_DADJOKE, s);
+		maxlines -= 1;
+		if(maxlines <= 0)
+			break;
 	}
-
-	if(RandomSelection_chosen_string)
-		Send_Notification(NOTIF_ONE_ONLY, this, MSG_INFO, INFO_DADJOKE, RandomSelection_chosen_string);
 
 	url_fclose(fh);
 }

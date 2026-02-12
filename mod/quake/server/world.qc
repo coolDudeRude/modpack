@@ -1896,7 +1896,7 @@ void CheckRules_World()
 		return;
 	}
 	
-	if(timelimit && time >= timelimit)
+	if((deathmatch || world.worldtype == WORLDTYPE_DODGEBALL) && timelimit && time >= timelimit)
 	{
 		//mapname = "quake";
 		if(deathmatch)
