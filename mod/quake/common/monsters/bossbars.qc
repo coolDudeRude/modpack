@@ -171,8 +171,13 @@ void HUD_BossBars()
 
 	entity chosen = NULL;
 	float chosen_dist = 0;
-	IL_EACH(g_bossbars, it.monsterdef && it.monsterdef != MON_Null && vdist(view_origin - it.origin, <=, BOSSBAR_RANGE),
+	IL_EACH(g_bossbars, it.monsterdef && it.monsterdef != MON_Null,
 	{
+		float cur_range = BOSSBAR_RANGE;
+		if(!(it.state & BOSS_AGGRO))
+			cur_range *= 0.5; // TODO: customise range?
+		if(vdist(view_origin - it.origin, >, cur_range))
+			continue;
 		float mydist = vlen2(view_origin - it.origin);
 		if(!chosen || mydist <= chosen_dist)
 		{
