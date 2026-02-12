@@ -413,7 +413,7 @@ void W_Star_Fire(entity actor, .entity weaponentity)
 	if(mystate == KIRBY_FLYING)
 	{
 		W_Star_Exhale(actor, weaponentity);
-		weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 0.5);
+		weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 0.2);
 		return;
 	}
 
@@ -432,13 +432,13 @@ void W_Star_Fire(entity actor, .entity weaponentity)
 		case KIRBY_NORMAL:
 		{
 			wep_star_inhale(actor.(weaponentity));
-			weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 0.5);
+			weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 0.2);
 			return;
 		}
 		case KIRBY_FULL:
 		{
 			W_Star_Spit(actor, weaponentity);
-			weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 1);
+			weapon_prepareattack(actor.(weaponentity), actor, weaponentity, 0.5);
 			return;
 		}
 		default: return;
