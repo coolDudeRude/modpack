@@ -128,7 +128,11 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 		{
 			float pushforce = 100 / vlen(it.maxs - it.mins);
 
-			it.velocity = dir * (100 * pushforce);
+			// don't nullify falling
+			vector vel = dir * (100 * pushforce);
+			it.velocity_x = vel.x;
+			it.velocity_y = vel.y;
+
 			if(IS_ONGROUND(it))
 			{
 				it.velocity_z = (25 * pushforce);
