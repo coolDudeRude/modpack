@@ -130,7 +130,10 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 
 			it.velocity = dir * (100 * pushforce);
 			if(IS_ONGROUND(it))
+			{
 				it.velocity_z = (25 * pushforce);
+				UNSET_ONGROUND(it);
+			}
 		}
 
 		// TODO: flag for enemies that can't be inhaled
