@@ -129,7 +129,8 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 			float pushforce = 100 / vlen(it.maxs - it.mins);
 
 			it.velocity = dir * (100 * pushforce);
-			it.velocity_z = (25 * pushforce);
+			if(IS_ONGROUND(it))
+				it.velocity_z = (25 * pushforce);
 		}
 
 		// TODO: flag for enemies that can't be inhaled
@@ -157,6 +158,16 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 				Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, it));
 				if(mon && mon != MON_Null && mon.star_valid)
 					this.star_power	= mon;
+				else if(IS_PLAYER(it))
+				{
+					// give them a random valid ability!
+					RandomSelection_Init();
+					FOREACH(Monsters, it != MON_Null && it.star_valid,
+					{
+						RandomSelection_AddEnt(it, 1, 1);
+					});
+					this.star_power = RandomSelection_chosen_ent;
+				}
 			}
 			if(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
 				this.star_consumed += 5;
@@ -301,6 +312,10 @@ void star_think(entity this)
 
 void W_Star_Spit(entity this, .entity weaponentity)
 {
+	int consumed = this.star_consumed;
+	if(deathmatch)
+		consumed = 1; // no biggie
+
 	makevectors(this.v_angle);
 	vector dir = v_forward;
 	entity newmis = launch_spike(this, this.origin + this.view_ofs, dir);
