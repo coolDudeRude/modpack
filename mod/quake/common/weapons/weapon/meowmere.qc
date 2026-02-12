@@ -120,7 +120,8 @@ void W_Cat_Fire(entity this, vector org, .entity weaponentity)
 
 	org += v_right * 8;
 
-	entity missile = new(cat);
+	entity missile = spawn();
+	missile.classname = "cat";
 	missile.flags = FL_PROJECTILE;
 	missile.owner = this;
 	missile.realowner = this;

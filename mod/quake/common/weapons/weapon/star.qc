@@ -111,11 +111,11 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 			if(!it.takedamage || it.health < 1 || !Damage_ValidTarget(it, this))
 				continue;
 		}
-		else
+		else if(it.classname != "cat")
 		{
-			if(autocvar_sv_quake_kirby_eatprojectiles <= 0 || it.lefty > time || (it.owner && (it.classname != "cat" || !Damage_ValidTarget(it.owner, this))))
+			if(autocvar_sv_quake_kirby_eatprojectiles <= 0 || it.lefty > time || (it.owner && !Damage_ValidTarget(it.owner, this)))
 				continue;
-			if(it.classname != "cat" && random() < autocvar_sv_quake_kirby_eatprojectiles)
+			if(random() < autocvar_sv_quake_kirby_eatprojectiles)
 			{
 				// failed this time, don't try again instantly
 				it.lefty = time + 0.5;
