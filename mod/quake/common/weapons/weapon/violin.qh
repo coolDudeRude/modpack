@@ -1,0 +1,28 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(VIOLIN_FIRE, "weapons/violin_fire");
+
+SOUND(VIOLIN_MUSICNOTE, "weapons/violin_music");
+#endif
+
+CLASS(Violin, Weapon)
+/* ammotype  */ ATTRIB(Violin, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Violin, impulse, int, 3);
+/* spawnflags*/ ATTRIB(Violin, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_MUSIC | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(Violin, aflag, int, 5);
+/* modelname */ ATTRIB(Violin, mdl, string, "violin");
+/* crosshair */ ATTRIB(Violin, w_crosshair, string, "gfx/crosshairtuba");
+/* crosshair */ ATTRIB(Violin, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Violin, w_crosshair_color, vector, '0.95 0.92 0.89');
+/* wepimg    */ ATTRIB(Violin, model2, string, "violin");
+/* refname   */ ATTRIB(Violin, netname, string, "violin");
+/* wepname   */ ATTRIB(Violin, m_name, string, _("Violin"));
+#ifdef GAMEQC
+/* music     */ ATTRIB(Violin, m_musicnote, Sound, SND_VIOLIN_MUSICNOTE);
+#endif
+
+ENDCLASS(Violin)
+REGISTER_WEAPON(VIOLIN, NEW(Violin));
+
+SPAWNFUNC_WEAPON(weapon_violin, WEP_VIOLIN)

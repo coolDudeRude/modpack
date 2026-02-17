@@ -75,3 +75,5 @@
 #include "wrench.qc"
 #include "berserker_fists.qc"
 #include "star.qc"
+#include "vortexbeater.qc"
+#include "violin.qc"

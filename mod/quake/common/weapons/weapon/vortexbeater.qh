@@ -1,0 +1,24 @@
+#pragma once
+
+CLASS(VortexBeater, Weapon)
+/* ammotype  */ ATTRIB(VortexBeater, ammo_type, int, IT_NAILS);
+/* impulse   */ ATTRIB(VortexBeater, impulse, int, 4);
+/* spawnflags*/ ATTRIB(VortexBeater, spawnflags, int, 0);
+/* ammo */      ATTRIB(VortexBeater, aflag, int, 30);
+/* modelname */ ATTRIB(VortexBeater, mdl, string, "vortexbeater");
+/* crosshair */ ATTRIB(VortexBeater, w_crosshair, string, "gfx/crosshairuzi");
+/* crosshair */ ATTRIB(VortexBeater, w_crosshair_size, float, 0.8);
+/* crosshair */ ATTRIB(VortexBeater, w_crosshair_color, vector, '0 1 1');
+/* wepimg    */ ATTRIB(VortexBeater, model2, string, "vortexbeater");
+/* refname   */ ATTRIB(VortexBeater, netname, string, "vortexbeater");
+/* wepname   */ ATTRIB(VortexBeater, m_name, string, _("Vortex Beater"));
+
+ENDCLASS(VortexBeater)
+REGISTER_WEAPON(VORTEXBEATER, NEW(VortexBeater));
+
+SPAWNFUNC_WEAPON(weapon_vortexbeater, WEP_VORTEXBEATER)
+
+#ifdef SVQC
+void W_FireVortexBeater(entity this, .entity weaponentity, vector org);
+void W_FireVortexBeaterRocket(entity this, .entity weaponentity, vector org);
+#endif

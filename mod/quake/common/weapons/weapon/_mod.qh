@@ -75,3 +75,5 @@
 #include "wrench.qh"
 #include "berserker_fists.qh"
 #include "star.qh"
+#include "vortexbeater.qh"
+#include "violin.qh"

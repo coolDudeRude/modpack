@@ -229,18 +229,19 @@ void eow_spit(entity this, entity targ)
 	newmis.clipgroup = this.clipgroup;
 
 	newmis.velocity = dir * 500;
-	newmis.avelocity = '3000 1000 2000';
+	//newmis.avelocity = '3000 1000 2000';
 
 	settouch(newmis, eow_spit_touch);
 
 	newmis.nextthink = time + 5;
 	setthink(newmis, SUB_Remove);
 
-	_setmodel(newmis, "progs/bilefrag.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 	setorigin(newmis, org);
 
 	IL_PUSH(g_projectiles, newmis);
+
+	CSQCProjectile(newmis, true, PROJECTILE_EOW_SPIT, true);
 }
 
 // called by hitboxes
@@ -387,8 +388,6 @@ METHOD(EaterPart, mr_setup, bool(EaterPart this, entity actor))
 
 	precache_model("progs/eow_body.mdl");
 	precache_model("progs/eow_tail.mdl");
-
-	precache_model("progs/bilefrag.mdl");
 
 	precache_sound("eow/dig.wav");
 	precache_sound("eow/death.wav");

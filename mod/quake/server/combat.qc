@@ -315,7 +315,7 @@ void ZappyDeath(entity this)
 
 void SwallowThink(entity this)
 {
-	this.scale -= PHYS_INPUT_FRAMETIME * 2;
+	this.scale -= PHYS_INPUT_TIMELENGTH * 2;
 
 	if(this.scale <= 0)
 	{

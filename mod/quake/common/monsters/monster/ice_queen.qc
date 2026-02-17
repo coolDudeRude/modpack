@@ -200,12 +200,13 @@ void IceQueen_IceShard(entity this, vector org, vector dir, vector vel)
 	set_movetype(newmis, MOVETYPE_TOSS);
 	newmis.angles = vectoangles(newmis.velocity);
 	newmis.projectiledeathtype = DEATH_MONSTER_ICE_QUEEN.m_id;
-	_setmodel(newmis, "progs/ice_queen_frostshard.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 	setthink(newmis, ice_shard_think);
 	newmis.nextthink = time + 0.1;
 	newmis.count = time + 7;
 	newmis.noise = "ice_queen/frostshard_impact.wav";
+
+	CSQCProjectile(newmis, true, PROJECTILE_FROSTSHARD, true);
 }
 
 void ice_queen_stand1(entity this) { set_anim(this, anim_ice_queen, ice_queen_stand1); ai_stand(this); }
@@ -361,7 +362,6 @@ METHOD(IceQueen, mr_setup, bool(IceQueen this, entity actor))
     TC(IceQueen, this);
 
 	precache_model("progs/s_frostwave.spr");
-	precache_model("progs/ice_queen_frostshard.mdl");
 	precache_sound("ice_queen/frostwave_fire.wav");
 	precache_sound("ice_queen/frostshard_impact.wav");
 	precache_sound("ice_queen/death.wav");

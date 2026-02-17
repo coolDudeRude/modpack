@@ -443,6 +443,10 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(SEED_POISON)        this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(THORNBALL)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(STAR_BOMB)          this.traileffect = EFFECT_TR_GRENADE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(VORTEX_ROCKET)      this.traileffect = EFFECT_TR_VORTEX_ROCKET.m_id; break;
+			HANDLE(FROSTSHARD)         this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(EOW_SPIT)           this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(VIOLIN_MUSIC)       this.traileffect = EFFECT_Null.m_id; this.avelocity = '90 0 0'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -632,6 +636,11 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.maxs = '14 14 14';
 				this.bouncefactor = 0.25;
 				this.bouncestop = 0.001;
+				break;
+			case PROJECTILE_VIOLIN_MUSIC:
+				set_movetype(this, MOVETYPE_TOSS);
+				this.gravity = -1;
+				this.effects |= EF_FULLBRIGHT;
 				break;
 			default:
 				break;

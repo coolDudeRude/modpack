@@ -86,6 +86,10 @@ MODEL(PROJECTILE_SEED,                      "progs/plantera_seed.mdl");
 MODEL(PROJECTILE_SEED_POISON,               "progs/plantera_seed.mdl");
 MODEL(PROJECTILE_THORNBALL,                 "progs/plantera_thornball.mdl");
 MODEL(PROJECTILE_STAR_BOMB,                 "progs/star_bomb.mdl");
+MODEL(PROJECTILE_VORTEX_ROCKET,             "progs/vortex_rocket.mdl");
+MODEL(PROJECTILE_FROSTSHARD,                "progs/ice_queen_frostshard.mdl");
+MODEL(PROJECTILE_EOW_SPIT,                  "progs/bilefrag.mdl");
+MODEL(PROJECTILE_VIOLIN_MUSIC,              "progs/piano_musicnote_white.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

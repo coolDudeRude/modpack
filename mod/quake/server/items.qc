@@ -1047,8 +1047,8 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 			continue; // but not in deathmatch
 		if(deathmatch && (it == WEP_NUKE || (it.spawnflags & WEP_FLAG_MANA)))
 			continue; // lol no
-		if(wpn == WEP_PISTOL || wpn == WEP_REBAR_CANNON || wpn == WEP_INVOKER || wpn == WEP_MMML)
-			continue; // none of these yet!
+		if(it == WEP_PISTOL || it == WEP_REBAR_CANNON || it == WEP_INVOKER || it == WEP_MMML)
+			continue; // qbj weapons are exclusive to qbj
 		int mytype = it.ammo_type;
 		switch(it)
 		{
@@ -1063,6 +1063,7 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 				break;
 			}
 			case WEP_DOOT:
+			case WEP_VIOLIN:
 			{
 				if(random() > 0.5)
 					mytype = IT_SHELLS;
@@ -3147,7 +3148,7 @@ void DropBackpack(entity this)
 	bool have_weapon = false;
 	if(this.inventory)
 	{
-		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+		FOREACH(Weapons, it != WEP_Null && !(it.spawnflags & WEP_FLAG_CHAMPION) && Inventory_have(it, this, ITEM_OWNED),
 		{
 			have_weapon = true;
 			break;
@@ -3175,7 +3176,7 @@ void DropBackpack(entity this)
 	{
 		Inventory_new(item);
 
-		FOREACH(Weapons, it != WEP_Null && Inventory_have(it, this, ITEM_OWNED),
+		FOREACH(Weapons, it != WEP_Null && !(it.spawnflags & WEP_FLAG_CHAMPION) && Inventory_have(it, this, ITEM_OWNED),
 		{
 			Inventory_add(it, item, ITEM_OWNED);
 		});
