@@ -411,9 +411,10 @@ void hknight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
 	if(random() > 0.5)
-		hknight_die1(this);
+		setthink(this, hknight_die1);
 	else
-		hknight_dieb1(this);
+		setthink(this, hknight_dieb1);
+	this.nextthink = time;
 }
 
 

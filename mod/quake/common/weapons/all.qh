@@ -84,8 +84,8 @@ STATIC_INIT(register_weapons_done)
     // too early for this!
     //IsQBJMap()
     bool nodual = false;
-    string wname = substring(world.model, 0, 10);
-    if(wname == "maps/qbj3_" || wname == "maps/qbjr_")
+    string wname = substring(world.model, 0, 8);
+    if(wname == "maps/qbj")
         nodual = true;
 
     string inaccessible = "";
