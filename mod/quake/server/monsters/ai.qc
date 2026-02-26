@@ -133,6 +133,8 @@ bool t_checkbottom(entity this)
 #endif
 }
 
+bool PointInWaterBrush(vector org);
+
 bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 {
 	vector oldorg = this.origin;
@@ -177,7 +179,7 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 			tracebox(this.origin, this.mins, this.maxs, neworg, MOVE_NORMAL, this);
 			if(trace_fraction == 1)
 			{
-				if((this.flags & FL_SWIM) && !(Mod_Q1BSP_SuperContentsFromNativeContents(pointcontents(trace_endpos)) & DPCONTENTS_LIQUIDSMASK))
+				if((this.flags & FL_SWIM) && !(Mod_Q1BSP_SuperContentsFromNativeContents(pointcontents(trace_endpos)) & DPCONTENTS_LIQUIDSMASK) && !PointInWaterBrush(trace_endpos))
 					return false; // swim monster left water
 
 				this.origin = trace_endpos;

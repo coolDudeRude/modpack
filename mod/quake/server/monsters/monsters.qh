@@ -17,6 +17,7 @@ const int MONSTER_SPAWNED_TFOG = 16;
 const int MONSTER_WAITWALK = 4096;
 
 const int SPAWN_TRIGGERED = 16; // copper junk
+const int MONSTER_SPAWNTRIGGERED = 64; // alkaline junk
 
 .float waitmin, waitmax;
 

@@ -6,6 +6,7 @@
 #include "lock.qh"
 //#include "platforms.qh"
 //#include "teleporters.qh"
+#include "water.qh"
 
 // func
 #include "func/include.qh"

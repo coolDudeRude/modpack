@@ -686,7 +686,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	if(StatusEffects_active(STATUSEFFECT_Berserk, targ))
 		damage *= 0.5;
 
-	if(targ.m_champion)
+	if(targ.m_champion && !DEATH_IS(deathtype, DEATH_GENERIC))
 		damage *= targ.m_champion.qcc_damagetaken;
 
 	if(attacker.m_champion && attacker.m_champion.m_dealdamage)
@@ -1081,7 +1081,7 @@ void T_RadiusDamage(entity inflictor, entity attacker, float damage, int deathty
 		}
 		if(head.takedamage && ((attacker == head || !head.clipgroup) || (head.clipgroup != inflictor.clipgroup && head.clipgroup != attacker.clipgroup)))
 		{
-			vector org = head.origin + (head.mins + head.maxs) * 0.5;
+			vector org = (head.absmin + head.absmax) * 0.5;
 			float points = max(0, 0.5 * vlen(inflictor_org - org));
 			points = damage - points;
 			if(head == attacker || (head.monsterdef && (head.monsterdef.spawnflags & MON_FLAG_EXPLOSIONRESISTANT)))

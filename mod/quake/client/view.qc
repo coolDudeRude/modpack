@@ -6,6 +6,7 @@
 #include "../common/champions/_mod.qh"
 #include "../common/dodgeball/dodgeball.qh"
 #include "../common/jumpsdonewell/_mod.qh"
+#include "../common/monsters/all.qh"
 #include "../common/monsters/bossbars.qh"
 #include "../common/status_effects/cl_status_effects.qh"
 #include "../common/weapons/all.qh"
@@ -284,6 +285,17 @@ void viewmodel_draw(entity this)
 	this.drawmask = mask;
 	this.alpha = a;
 	this.skin = wepskin;
+	this.colormap = 0; // thanks to quake's colormapping, we can't just apply it willy-nilly
+	if(this.activeweapon == WEP_STAR)
+	{
+		Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE));
+		if(mon && mon != MON_Null && mon.star_handy && mon.star_viewmodel && mon.star_viewmodel != "")
+		{
+			int c = entcs_GetClientColors(player_localentnum - 1);
+			this.colormap = 256 + c;  // colormap == 0 is black, c == 0 is white
+		}
+	}
+
 	this.csqcmodel_effects = fx;
 	CSQCModel_Effects_Apply(this);
 	if(a >= 0)

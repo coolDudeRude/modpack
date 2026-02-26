@@ -19,6 +19,9 @@ CLASS(CheddarGoblin, Monster)
 #endif
     ATTRIB(CheddarGoblin, netname, string, "cheddar_goblin");
     ATTRIB(CheddarGoblin, m_name, string, _("Cheddar Goblin"));
+    /* kirby power */
+    ATTRIB(CheddarGoblin, star_valid, bool, true);
+    ATTRIB(CheddarGoblin, star_viewmodel, string, "star_cheddar_goblin");
 ENDCLASS(CheddarGoblin)
 
 REGISTER_MONSTER(CHEDDAR_GOBLIN, NEW(CheddarGoblin));

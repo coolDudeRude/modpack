@@ -334,3 +334,162 @@ METHOD(Bender, mr_sight, bool(Bender this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_Bender)
+{
+	precache_model("progs/v_star_bender.mdl");
+}
+#endif
+
+#ifdef SVQC
+const int BENDER_QUOTES = 16;
+string bender_quote(int bnum)
+{
+	switch(bnum)
+	{
+		case 1: return "kirby/bender_quote_dookie.wav";
+		case 2: return "kirby/bender_quote_hot.wav";
+		case 3: return "kirby/bender_quote_tramp.wav";
+		case 4: return "kirby/bender_quote_beep.wav";
+		case 5: return "kirby/bender_quote_aboutyou.wav";
+		case 6: return "kirby/bender_quote_beepboom.wav";
+		case 7: return "kirby/bender_quote_dundun.wav";
+		case 8: return "kirby/bender_quote_feelbad.wav";
+		case 9: return "kirby/bender_quote_free.wav";
+		case 10: return "kirby/bender_quote_head.wav";
+		case 11: return "kirby/bender_quote_inpain.wav";
+		case 12: return "kirby/bender_quote_mumble.wav";
+		case 13: return "kirby/bender_quote_rumbling.wav";
+		case 14: return "kirby/bender_quote_toilet.wav";
+		case 15: return "kirby/bender_quote_touching.wav";
+		case 16: return "kirby/bender_quote_uhoh.wav";
+	}
+
+	return "kirby/bender_quote_bite.wav";
+}
+
+PRECACHE(Star_Bender)
+{
+	precache_model("progs/h_bender.mdl");
+	precache_sound("kirby/bender_scream.wav");
+	precache_sound("kirby/bender_scream2.wav");
+
+	for(int j = 0; j <= BENDER_QUOTES; ++j)
+	{
+		precache_sound(bender_quote(j));
+	}
+}
+
+void star_bender_explode(entity this)
+{
+	T_RadiusDamage(this, this.owner, 120, this.projectiledeathtype, NULL);
+
+	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
+	sound(this, CH_WEAPON_SINGLE, SND_ROCKET_EXPLOSION, 1, ATTN_NORM);
+
+	entity exp = spawn();
+	exp.nextthink = time;
+	setthink(exp, s_explode1);
+	_setmodel(exp, "progs/s_explod.spr");
+	setsize(exp, '0 0 0', '0 0 0');
+	setorigin(exp, this.origin);
+
+	delete(this);
+}
+
+void star_bender_touch(entity this, entity toucher)
+{
+	if(toucher == this.owner)
+		return;		// don't explode on owner
+	if(toucher.solid == SOLID_TRIGGER)
+		return;
+
+	star_bender_explode(this);
+}
+
+void star_bender_throw_fire(entity actor, .entity weaponentity)
+{
+	makevectors(actor.v_angle);
+
+	float bullet_speed = 1000;
+	vector org = CENTER_OR_VIEWOFS(actor);
+	vector dir = qc_aim_fromorg(actor, org, bullet_speed);
+
+	vector spread = '0.04 0.04 0';
+	vector spread_dir = dir + (crandom() * spread.x) * v_right + (crandom() * spread.y) * v_up;
+
+	entity head = launch_spike(actor, org, spread_dir);
+	head.solid = SOLID_BBOX;
+	set_movetype(head, MOVETYPE_TOSS);
+	head.classname = "bender_head";
+	head.projectiledeathtype = WEP_STAR.m_id;
+	head.velocity = dir * bullet_speed + v_up * 50;
+
+	settouch(head, star_bender_touch);
+	_setmodel(head, "progs/h_bender.mdl");
+	head.dmg = 50;
+
+	setsize(head, '0 0 0', '0 0 0');
+	//head.angles_y = (random() * (random() * 256));
+	//head.avelocity = '10 150 10';
+	
+	vector head_spin = '0 0 0';
+	head_spin.y = (300 + random() * 600);
+
+	head.avelocity = head_spin;
+
+	setthink(head, SUB_Remove);
+	head.nextthink = time + 7;
+
+	if(random() <= 0.2)
+		_sound(head, CH_WEAPON_SINGLE, "kirby/bender_scream2.wav", 1, ATTN_NORM);
+	else
+		_sound(head, CH_WEAPON_SINGLE, "kirby/bender_scream.wav", 1, ATTN_NORM);
+}
+
+void star_bender_throw(entity actor, .entity weaponentity)
+{
+	sound(actor, CH_WEAPON_SINGLE, SND_SWORD_SWING, 1, ATTN_NORM);
+
+	star_bender_throw_fire(actor, weaponentity);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	wep_generic_shot1(actor.(weaponentity));
+	weapon_prepareattack(WEP_STAR, actor, weaponentity, 1);
+}
+
+.float star_lastbend;
+void Star_Bender_Frame(entity actor, .entity weaponentity, int fire)
+{
+	if(!(fire & 1) && time >= actor.star_lastbend && !(time < ATTACK_FINISHED(actor, weaponentity)))
+	{
+		Monster mon = REGISTRY_GET(Monsters, STAT(KIRBY_TYPE, actor));
+		if(mon == MON_BENDER)
+		{
+			if(random() < 0.8)
+			{
+				actor.star_lastbend = time + 1;
+				return;
+			}
+
+			int bnum = floor(random() * (BENDER_QUOTES + 1));
+			_sound(actor, CH_WEAPON_SINGLE, bender_quote(bnum), 1, ATTN_NORM);
+			actor.star_lastbend = time + 5 + (random() * 4);
+		}
+	}
+}
+
+METHOD(Bender, star_fire, void(Bender this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// regular attack
+	star_bender_throw(actor, weaponentity);
+}
+#endif

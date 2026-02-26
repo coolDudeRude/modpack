@@ -5,6 +5,7 @@
 #endif
 
 #ifdef GAMEQC
+// NOTE: world.model is inaccessible in stable clients
 string getworldbasename()
 {
 #ifdef SVQC
@@ -19,9 +20,10 @@ bool is_qbjmap = false;
 bool is_roguemap = false;
 STATIC_INIT(MapSpecific)
 {
-	if(substring(world.model, 0, 8) == "maps/qbj")
+	string wname = getworldbasename();
+	if(substring(wname, 0, 3) == "qbj")
 		is_qbjmap = true;
-	if(substring(world.model, 0, 7) == "maps/r1" || substring(world.model, 0, 7) == "maps/r2" || substring(world.model, 0, 10) == "maps/banjo" || world.model == "maps/e2m8.bsp")
+	if(substring(wname, 0, 2) == "r1" || substring(wname, 0, 2) == "r2" || substring(wname, 0, 5) == "banjo" || wname == "e2m8")
 		is_roguemap = true;
 }
 

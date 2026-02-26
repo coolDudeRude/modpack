@@ -1,5 +1,7 @@
 #ifdef SVQC
 
+#include "train_alk.qh"
+
 const int FUNC_TRAIN_NONSOLID = 1;
 
 const int TRAIN_INHERIT = 1;
@@ -676,7 +678,13 @@ Alt Target Pattern: 'target' selects path start, 'target2' on each pathcorner ar
 ]
 */
 spawnfunc(func_train)
-{	
+{
+	if(IsAlkalineMap())
+	{
+		func_train_alk(this);
+		return;
+	}
+
 	func_train_setup(this);
 	
 	this.th_stand = train_wait;

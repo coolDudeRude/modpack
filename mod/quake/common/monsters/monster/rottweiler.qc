@@ -460,7 +460,12 @@ METHOD(Rottweiler, mr_setup, bool(Rottweiler this, entity actor))
 	}
 
 	if(!actor.variant && random() < 0.2)
+	{
 		actor.variant = floor(random() * 12) + 1;
+		// exclude birthday dog
+		if(actor.variant == 3)
+			actor.variant = 0;
+	}
 
 	if(actor.variant && (!actor.mdl_body || actor.mdl_body == ""))
 	{

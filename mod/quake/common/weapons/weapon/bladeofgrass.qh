@@ -1,0 +1,20 @@
+#pragma once
+
+CLASS(BladeOfGrass, Weapon)
+/* ammotype  */ ATTRIB(BladeOfGrass, ammo_type, int, 0);
+/* impulse   */ ATTRIB(BladeOfGrass, impulse, int, 1);
+/* spawnflags*/ ATTRIB(BladeOfGrass, spawnflags, int, WEP_FLAG_CHAMPION | WEP_FLAG_NOAGGRO | WEP_FLAG_HUDFALLBACK | WEP_FLAG_NOSTEAL | WEP_FLAG_NODUAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_MELEE | WEP_FLAG_TWOHANDED);
+/* ammo */      ATTRIB(BladeOfGrass, aflag, int, 0);
+/* modelname */ ATTRIB(BladeOfGrass, mdl, string, "bladeofgrass");
+/* crosshair */ ATTRIB(BladeOfGrass, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(BladeOfGrass, w_crosshair_size, float, 0.7);
+/* crosshair */ ATTRIB(BladeOfGrass, w_crosshair_color, vector, '0 1 0');
+/* wepimg    */ ATTRIB(BladeOfGrass, model2, string, "bladeofgrass");
+/* refname   */ ATTRIB(BladeOfGrass, netname, string, "bladeofgrass");
+/* wepname   */ ATTRIB(BladeOfGrass, m_name, string, _("Blade of Grass"));
+/* parry anim*/ ATTRIB(BladeOfGrass, m_parryframe, int, 4);
+
+ENDCLASS(BladeOfGrass)
+REGISTER_WEAPON(BLADEOFGRASS, NEW(BladeOfGrass));
+
+SPAWNFUNC_WEAPON(weapon_bladeofgrass, WEP_BLADEOFGRASS)

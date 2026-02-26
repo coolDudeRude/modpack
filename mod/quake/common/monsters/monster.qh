@@ -60,6 +60,7 @@ CLASS(Monster, Object)
     /** Star-specific hack */
     ATTRIB(Monster, star_valid, bool, false);
     ATTRIB(Monster, star_viewmodel, string, "");
+    ATTRIB(Monster, star_handy, bool, false);
     METHOD(Monster, star_fire, void(Monster this, entity actor, .entity weaponentity)) { TC(Monster, this); }
     METHOD(Monster, star_frame, void(Monster this, entity actor, .entity weaponentity)) { TC(Monster, this); }
 

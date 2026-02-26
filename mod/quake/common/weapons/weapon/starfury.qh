@@ -1,0 +1,30 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(STARFURY_SWING, "weapons/sword_swing");
+
+SOUND(STARFURY_BOUNCE1, "weapons/cat_bounce1");
+SOUND(STARFURY_BOUNCE2, "weapons/cat_bounce2");
+Sound SND_STARFURY_BOUNCE_RANDOM() {
+    return (random() > 0.5) ? SND_STARFURY_BOUNCE1 : SND_STARFURY_BOUNCE2;
+}
+#endif
+
+CLASS(Starfury, Weapon)
+/* ammotype  */ ATTRIB(Starfury, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Starfury, impulse, int, 1);
+/* spawnflags*/ ATTRIB(Starfury, spawnflags, int, WEP_FLAG_NOAGGRO | WEP_FLAG_NODUAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_MELEE);
+/* ammo */      ATTRIB(Starfury, aflag, int, 0);
+/* modelname */ ATTRIB(Starfury, mdl, string, "starfury");
+/* crosshair */ ATTRIB(Starfury, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(Starfury, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Starfury, w_crosshair_color, vector, '1 1 0');
+/* wepimg    */ ATTRIB(Starfury, model2, string, "starfury");
+/* refname   */ ATTRIB(Starfury, netname, string, "starfury");
+/* wepname   */ ATTRIB(Starfury, m_name, string, _("Starfury"));
+/* parry anim*/ ATTRIB(Starfury, m_parryframe, int, 4);
+
+ENDCLASS(Starfury)
+REGISTER_WEAPON(STARFURY, NEW(Starfury));
+
+SPAWNFUNC_WEAPON(weapon_starfury, WEP_STARFURY)

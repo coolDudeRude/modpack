@@ -3,6 +3,10 @@
 const int USE_GOLD_KEY = BIT(0);
 const int USE_PLAT_KEY = 16384; // alkaline
 
+const int ALK_SILV_KEY = 8;
+const int ALK_GOLD_KEY = 16;
+const int ALK_PLAT_KEY = 16384;
+
 void keytrigger_use(entity this, entity actor, entity trigger)
 {
 	if(!IS_PLAYER(actor))
@@ -103,12 +107,29 @@ spawnfunc(trigger_usekey)
 	else
 		LOG_DEBUG("no worldtype set!\n");
 
-	if(this.spawnflags & USE_GOLD_KEY)
-		this.items = IT_KEY2;
-	else if(this.spawnflags & USE_PLAT_KEY)
-		this.items = IT_KEY3;
+	if(IsAlkalineMap())
+	{
+		if(this.spawnflags & ALK_SILV_KEY)
+			this.items = IT_KEY1;
+		else if(this.spawnflags & ALK_GOLD_KEY)
+			this.items = IT_KEY2;
+		else if(this.spawnflags & ALK_PLAT_KEY)
+			this.items = IT_KEY3;
+		else
+		{
+			delete(this); // nope
+			return;
+		}
+	}
 	else
-		this.items = IT_KEY1;
+	{
+		if(this.spawnflags & USE_GOLD_KEY)
+			this.items = IT_KEY2;
+		else if(this.spawnflags & USE_PLAT_KEY)
+			this.items = IT_KEY3;
+		else
+			this.items = IT_KEY1;
+	}
 
 	this.use = keytrigger_use;
 	settouch(this, keytrigger_touch);

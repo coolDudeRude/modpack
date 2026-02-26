@@ -8,6 +8,7 @@
 //#include "triggers.qc"
 //#include "platforms.qc"
 #include "teleporters.qc"
+#include "water.qc"
 
 // func
 #include "func/include.qc"

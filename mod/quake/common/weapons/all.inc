@@ -76,9 +76,16 @@
 #include "weapon/star.qh"
 #include "weapon/vortexbeater.qh"
 #include "weapon/violin.qh"
+#include "weapon/starfury.qh"
+#include "weapon/bladeofgrass.qh"
+#include "weapon/corrupted_claws.qh"
+#include "weapon/blizzard.qh"
+#include "weapon/tome.qh"
+#include "weapon/northpole.qh"
+#include "weapon/megashark.qh"
 
 // WARNING: also update the weapon priority list in all.qh or your weapon won't work properly!!
 
 // Weapon registry is sorted to allocate the weapons included above first, update the value below to the number of listed weapons
 // TODO: remove eventually in a way that does not cause https://gitlab.com/xonotic/xonotic-data.pk3dir/-/issues/2714
-#define WEP_HARDCODED_IMPULSES 78
+#define WEP_HARDCODED_IMPULSES 85

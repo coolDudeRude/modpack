@@ -30,6 +30,7 @@
 #include "togglewall.qc"
 #include "toss.qc"
 #include "train.qc"
+#include "train_alk.qc"
 #include "void.qc"
 #include "wall_explode.qc"
 #include "weather.qc"

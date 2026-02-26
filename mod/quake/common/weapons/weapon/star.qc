@@ -535,6 +535,7 @@ void W_Star_Fire2(entity actor, .entity weaponentity)
 }
 
 void Star_Amalgam_Frame(entity actor, .entity weaponentity, int fire);
+void Star_Bender_Frame(entity actor, .entity weaponentity, int fire);
 METHOD(Star, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))
 {
 	if(!(fire & 1))
@@ -549,6 +550,7 @@ METHOD(Star, wr_think, void(entity thiswep, entity actor, .entity weaponentity, 
 	}
 
 	Star_Amalgam_Frame(actor, weaponentity, fire);
+	Star_Bender_Frame(actor, weaponentity, fire);
 
 	if(fire & 1)
 	if(!(time < ATTACK_FINISHED(actor, weaponentity)))

@@ -11,4 +11,5 @@
 #include "rainsnow.qh"
 #include "rotate.qh"
 #include "spawn.qh"
+#include "train_alk.qh"
 #include "void.qh"

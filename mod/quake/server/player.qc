@@ -368,6 +368,12 @@ void player_stand1(entity this)
 		}
 		else if(wep == WEP_STAR)
 			wep_star_frame(this, weaponentity);
+		else if(wep == WEP_TOME)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame > 20 || this.(weaponentity).m_frame < 6)
+				this.(weaponentity).m_frame = 6;
+		}
 	}
 
 	bool animoverride = false;
@@ -500,6 +506,12 @@ void player_run(entity this)
 		}
 		else if(wep == WEP_STAR)
 			wep_star_frame(this, weaponentity);
+		else if(wep == WEP_TOME)
+		{
+			this.(weaponentity).m_frame += 1;
+			if(this.(weaponentity).m_frame > 20 || this.(weaponentity).m_frame < 6)
+				this.(weaponentity).m_frame = 6;
+		}
 	}
 
 	bool animoverride = false;

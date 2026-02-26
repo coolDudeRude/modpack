@@ -2,7 +2,7 @@
 
 CLASS(Minishark, Weapon)
 /* ammotype  */ ATTRIB(Minishark, ammo_type, int, IT_NAILS);
-/* impulse   */ ATTRIB(Minishark, impulse, int, 5);
+/* impulse   */ ATTRIB(Minishark, impulse, int, 4);
 /* spawnflags*/ ATTRIB(Minishark, spawnflags, int, 0);
 /* ammo */      ATTRIB(Minishark, aflag, int, 30);
 /* modelname */ ATTRIB(Minishark, mdl, string, "minishark");

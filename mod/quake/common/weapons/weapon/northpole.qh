@@ -1,0 +1,23 @@
+#pragma once
+
+#ifdef GAMEQC
+SOUND(NORTHPOLE_SWING, "weapons/sword_swing");
+#endif
+
+CLASS(NorthPole, Weapon)
+/* ammotype  */ ATTRIB(NorthPole, ammo_type, int, 0);
+/* impulse   */ ATTRIB(NorthPole, impulse, int, 1);
+/* spawnflags*/ ATTRIB(NorthPole, spawnflags, int, WEP_FLAG_NOAGGRO | WEP_FLAG_NODUAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_MELEE);
+/* ammo */      ATTRIB(NorthPole, aflag, int, 0);
+/* modelname */ ATTRIB(NorthPole, mdl, string, "northpole");
+/* crosshair */ ATTRIB(NorthPole, w_crosshair, string, "gfx/crosshairelectro");
+/* crosshair */ ATTRIB(NorthPole, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(NorthPole, w_crosshair_color, vector, '0 0.85 1');
+/* wepimg    */ ATTRIB(NorthPole, model2, string, "northpole");
+/* refname   */ ATTRIB(NorthPole, netname, string, "northpole");
+/* wepname   */ ATTRIB(NorthPole, m_name, string, _("North Pole"));
+
+ENDCLASS(NorthPole)
+REGISTER_WEAPON(NORTHPOLE, NEW(NorthPole));
+
+SPAWNFUNC_WEAPON(weapon_northpole, WEP_NORTHPOLE)

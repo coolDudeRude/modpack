@@ -2389,6 +2389,8 @@ void EndFrame()
 {
 	Physics_Frame();
 
+	WaterBrushes_Frame();
+
 	// add 1 frametime because after this, engine SV_Physics
 	// increases time by a frametime and then networks the frame
 	// add another frametime because client shows everything with

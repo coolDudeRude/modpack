@@ -406,6 +406,8 @@ bool Monster_Appear_Check(entity this, Monster monster_id)
 	bool check_triggered = (this.spawnflags & SPAWN_TRIGGERED);
 	if(IsMGMap())
 		check_triggered = false;
+	else if(IsAlkalineMap())
+		check_triggered = (this.spawnflags & MONSTER_SPAWNTRIGGERED);
 	if(!(monster_id.spawnflags & MON_FLAG_APPEAR) && !check_triggered)
 		return false;
 	if(this.targetname == "" || !this.targetname)

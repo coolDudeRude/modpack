@@ -331,6 +331,7 @@ int _Movetype_FlyMove(entity this, float dt, bool applygravity, bool applystepno
 	return blockedflag;
 }
 
+void CheckWaterBrushes(entity this); // quake hack
 bool _Movetype_CheckWater(entity this)  // SV_CheckWater
 {
 	vector point = this.origin;
@@ -361,6 +362,9 @@ bool _Movetype_CheckWater(entity this)  // SV_CheckWater
 				this.waterlevel = WATERLEVEL_SUBMERGED;
 		}
 	}
+
+	// quake junk to fix alkaline
+	CheckWaterBrushes(this);
 
 	return this.waterlevel > 1;
 }

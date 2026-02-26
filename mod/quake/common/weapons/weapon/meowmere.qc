@@ -137,7 +137,7 @@ void W_Cat_Fire(entity this, vector org, .entity weaponentity)
 	missile.bouncefactor = 1;
 	missile.bouncestop = 0.1;
 
-	vector dir = qc_aim(this, 10000);
+	vector dir = qc_aim_fromorg(this, org, 1000);
 	missile.velocity = dir * 1000;
 	//missile.velocity_z = 200;
 
@@ -176,8 +176,6 @@ void W_FireMeowmere(entity this, .entity weaponentity)
 
 	if(trace_ent && W_Parry(this, trace_ent))
 		return;
-
-	W_Cat_Fire(this, source, weaponentity);
 
 	float r = random();
 	if(trace_ent.takedamage) // yoder mod, Jan 05 2021
@@ -225,6 +223,8 @@ void W_FireMeowmere(entity this, .entity weaponentity)
 			_sound(this, CH_SHOTS, "enviro/physics/axemet3.wav", 1, ATTN_NORM);
 		te_gunshot(org);
 	}
+
+	W_Cat_Fire(this, source, weaponentity);
 }
 
 PRECACHE(Meowmere)

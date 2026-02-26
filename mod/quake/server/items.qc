@@ -425,7 +425,7 @@ int armortype_fromlegacy(float armor_type)
 .bool armor_simple; // TODO: shouldn't be needed
 void armor_touch(entity this, entity toucher)
 {
-	if(this.m_transform)
+	if(toucher.m_transform)
 		return; // gets reset when transforming back
 	if(!CanTouchItem(this, toucher))
 		return;
@@ -1101,6 +1101,8 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 			case WEP_SQUEAKER:
 			case WEP_ANGELICSTAFF:
 			case WEP_SICKLE:
+			case WEP_STARFURY:
+			case WEP_TOME:
 			{
 				if(random() > 0.5)
 					mytype = IT_CELLS;

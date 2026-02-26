@@ -109,6 +109,7 @@ void QCC_ClearTransform(entity this)
 			}
 		}
 	}
+	this.transform_health = 0;
 	this.transform_prevhealth = 0;
 	this.transform_limited = 0;
 	this.transform_armortype = ARMOR_NONE;
@@ -499,13 +500,13 @@ void cl_champion_draw()
 		return;
 	
 	sui_set_align(vec2(SUI_ALIGN_CENTER, SUI_ALIGN_CENTER));
-	sui_drawtext('0 -200 0', '16 16 0', "CHOOSE A CHAMPION", '0.3 1 0.3', 1, 0);
+	sui_drawtext('0 -220 0', '16 16 0', "CHOOSE A CHAMPION", '0.3 1 0.3', 1, 0);
 	
 	sui_set_align(vec2(SUI_ALIGN_CENTER, SUI_ALIGN_CENTER));
 	sui_fill('0 0 0', '4 4 0', '0 0 0', 0.5, 0);
 	sui_fill('0 0 0', '2 2 0', '1 1 1', 0.75, 0);
 	
-	vector ent_menu_size = '230 370 0'; // NOTE: update y value by at least 10 when adding new champions!
+	vector ent_menu_size = '230 390 0'; // NOTE: update y value by at least 10 when adding new champions!
 	sui_set_align(vec2(SUI_ALIGN_CENTER, SUI_ALIGN_CENTER));
 	sui_push_frame('0 0 0', ent_menu_size);
 	

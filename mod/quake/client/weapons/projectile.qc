@@ -149,6 +149,9 @@ void Projectile_Draw(entity this)
 			case PROJECTILE_GHOST_SICKLE:
 				rot = '720 0 0' * bound(1, (time - this.spawntime), 3); // spinning
 				break;
+			case PROJECTILE_DEMON_SICKLE:
+				rot = '0 1024 0'; // spinning
+				break;
 		}
 
 		if (rot)
@@ -186,6 +189,11 @@ void Projectile_Draw(entity this)
 			makevectors(ang);
 			trailorigin += v_up * 14;
 			break;
+		case PROJECTILE_DEMON_SICKLE:
+			trailorigin.x += crandom() * 24;
+			trailorigin.y += crandom() * 24;
+			trailorigin.z += crandom() * 12;
+			break;
 	}
 
 	if (drawn)
@@ -213,6 +221,10 @@ void Projectile_Draw(entity this)
 			}
 			break;
 		}
+		case PROJECTILE_STARFURY:
+			// hack to make them look right
+			this.angles_x = 0;
+			break;
 		default:
 			break;
 	}
@@ -447,6 +459,11 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(FROSTSHARD)         this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(EOW_SPIT)           this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(VIOLIN_MUSIC)       this.traileffect = EFFECT_Null.m_id; this.avelocity = '90 0 0'; break;
+			HANDLE(STARFURY)           this.traileffect = EFFECT_TR_VORESPIKE.m_id; this.avelocity = '0 0 120'; break;
+			HANDLE(BLIZZARD_SHARD)     this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(DEMON_SICKLE)       this.traileffect = EFFECT_TR_SICKLE.m_id; this.avelocity = '0 1024 0'; break;
+			HANDLE(ICE_SPEAR)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '0 0 -15'; break;
+			HANDLE(ICICLE)             this.traileffect = EFFECT_Null.m_id; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -640,6 +657,36 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			case PROJECTILE_VIOLIN_MUSIC:
 				set_movetype(this, MOVETYPE_TOSS);
 				this.gravity = -1;
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_STARFURY:
+				this.effects |= EF_DIMLIGHT;
+				this.solid = SOLID_NOT;
+				set_movetype(this, MOVETYPE_NOCLIP);
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_BLIZZARD_SHARD:
+				this.effects |= EF_FULLBRIGHT;
+				this.solid = SOLID_NOT;
+				set_movetype(this, MOVETYPE_NOCLIP);
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_DEMON_SICKLE:
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				settouch(this, func_null);
+				this.solid = SOLID_TRIGGER;
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_ADDITIVE;
+				this.dphitcontentsmask = DPCONTENTS_SOLID;
+				break;
+			case PROJECTILE_ICE_SPEAR:
+				this.dphitcontentsmask = DPCONTENTS_SOLID;
+				this.solid = SOLID_TRIGGER;
+				set_movetype(this, MOVETYPE_TOSS);
+				settouch(this, func_null);
+				this.gravity = 0.45;
+				break;
+			case PROJECTILE_ICICLE:
 				this.effects |= EF_FULLBRIGHT;
 				break;
 			default:

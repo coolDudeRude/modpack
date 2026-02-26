@@ -1,0 +1,26 @@
+#pragma once
+
+#ifdef SVQC
+const int TRAIN_RETRIGGER = 1;
+const int TRAIN_MOVEONTRIGGER = 2; 
+const int TRAIN_STOPONTRIGGER = 4;
+const int TRAIN_NONSOLID = 8;
+const int TRAIN_NOROTATE = 16;
+const int TRAIN_ROTATEY = 32;
+
+const int TRAIN_NEXT_WAIT = 0; //normal movement
+const int TRAIN_NEXT_STOP = 1; // force a stop on the next path_corner
+const int TRAIN_NEXT_CONTINUE = 2; // force continue on the next path_corner (ignores wait time)
+
+const int TRAIN_STYLE_SINGLEANIM = 1;
+
+const int TRAIN_ANIMTYPE_FORWARD = 1;
+const int TRAIN_ANIMTYPE_BACKFORTH = 2;
+
+.float first_frame, last_frame; // misc_model
+.float first_frame2, last_frame2; // misc_modeltrain
+.float frtime, frtime2;
+.float animtype, animtype2;
+
+void func_train_alk(entity this);
+#endif

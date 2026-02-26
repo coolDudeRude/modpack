@@ -1,0 +1,20 @@
+#pragma once
+
+#ifdef GAMEQC
+.int liquidtype;
+.bool liquidbrush;
+
+bool PointInWaterBrush(vector org);
+
+void CheckWaterBrushes(entity this);
+
+IntrusiveList g_waterbrushes;
+STATIC_INIT(WaterBrush_Defs)
+{
+    g_waterbrushes = IL_NEW();
+}
+#endif
+
+#ifdef SVQC
+void WaterBrushes_Frame();
+#endif

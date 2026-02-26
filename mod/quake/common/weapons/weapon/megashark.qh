@@ -1,0 +1,23 @@
+#pragma once
+
+CLASS(Megashark, Weapon)
+/* ammotype  */ ATTRIB(Megashark, ammo_type, int, IT_NAILS);
+/* impulse   */ ATTRIB(Megashark, impulse, int, 5);
+/* spawnflags*/ ATTRIB(Megashark, spawnflags, int, 0);
+/* ammo */      ATTRIB(Megashark, aflag, int, 30);
+/* modelname */ ATTRIB(Megashark, mdl, string, "megashark");
+/* crosshair */ ATTRIB(Megashark, w_crosshair, string, "gfx/crosshairhagar");
+/* crosshair */ ATTRIB(Megashark, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(Megashark, w_crosshair_color, vector, '0.62 0.16 0.40');
+/* wepimg    */ ATTRIB(Megashark, model2, string, "megashark");
+/* refname   */ ATTRIB(Megashark, netname, string, "megashark");
+/* wepname   */ ATTRIB(Megashark, m_name, string, _("Megashark"));
+
+ENDCLASS(Megashark)
+REGISTER_WEAPON(MEGASHARK, NEW(Megashark));
+
+SPAWNFUNC_WEAPON(weapon_megashark, WEP_MEGASHARK)
+
+#ifdef SVQC
+void W_FireMegashark(entity this, .entity weaponentity);
+#endif

@@ -40,15 +40,6 @@ PRECACHE(BanjoKazooie)
     precache_sound("player_banjo/gasp2.wav");      // taking breath
     precache_sound("player_banjo/h2odeath.wav");       // drowning death
 
-    precache_sound("player_banjo/pain1.wav");
-    precache_sound("player_banjo/pain2.wav");
-    precache_sound("player_banjo/pain3.wav");
-    precache_sound("player_banjo/pain4.wav");
-
-    precache_sound("player_banjo/death1.wav");
-    precache_sound("player_banjo/death2.wav");
-    precache_sound("player_banjo/death3.wav");
-
     precache_sound("player_banjo/axhit1.wav");
 
     precache_sound("player_banjo/lburn1.wav");     // lava burn

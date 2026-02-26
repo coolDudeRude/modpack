@@ -19,6 +19,10 @@ CLASS(Bender, Monster)
 #endif
     ATTRIB(Bender, netname, string, "bender");
     ATTRIB(Bender, m_name, string, _("Bender"));
+    /* kirby power */
+    ATTRIB(Bender, star_valid, bool, true);
+    ATTRIB(Bender, star_viewmodel, string, "star_bender");
+    ATTRIB(Bender, star_handy, bool, true);
 ENDCLASS(Bender)
 
 REGISTER_MONSTER(BENDER, NEW(Bender));

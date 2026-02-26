@@ -1,0 +1,23 @@
+#pragma once
+
+CLASS(Tome, Weapon)
+/* ammotype  */ ATTRIB(Tome, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Tome, impulse, int, 0);
+/* spawnflags*/ ATTRIB(Tome, spawnflags, int, WEP_FLAG_MANA | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(Tome, aflag, int, 0);
+/* modelname */ ATTRIB(Tome, mdl, string, "tome");
+/* crosshair */ ATTRIB(Tome, w_crosshair, string, "gfx/crosshairelectro");
+/* crosshair */ ATTRIB(Tome, w_crosshair_size, float, 0.4);
+/* crosshair */ ATTRIB(Tome, w_crosshair_color, vector, '0.7 0 0.7');
+/* wepimg    */ ATTRIB(Tome, model2, string, "tome");
+/* refname   */ ATTRIB(Tome, netname, string, "tome");
+/* wepname   */ ATTRIB(Tome, m_name, string, _("Tome"));
+
+ENDCLASS(Tome)
+REGISTER_WEAPON(TOME, NEW(Tome));
+
+SPAWNFUNC_WEAPON(weapon_tome, WEP_TOME)
+
+#ifdef SVQC
+void W_FireTome(entity this, .entity weaponentity);
+#endif

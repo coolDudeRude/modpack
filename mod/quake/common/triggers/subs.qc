@@ -646,7 +646,7 @@ void trigger_reactivate(entity this, entity actor, entity trigger)
 	force_retouch = 2;		// make sure even still objects get hit
 }
 
-
+.int is_waiting; // alkaline junk
 void InitTrigger(entity this)
 {
 	if(RemovedOutsideCoop(this))
@@ -674,7 +674,7 @@ void InitTrigger(entity this)
 	//this.modelindex = 0;
 	this.model = "";
 
-	if((this.spawnflags & SPAWNFLAG_TRIGGER_FIRST) && !IsMGMap())
+	if(((this.spawnflags & SPAWNFLAG_TRIGGER_FIRST) || this.is_waiting) && !IsMGMap())
 	{
 		this.solid = SOLID_NOT;
 		setorigin(this, this.origin); // relink

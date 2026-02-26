@@ -1392,6 +1392,25 @@ STATIC_INIT(Effect_TR_SICKLE)
 }
 #endif
 
+EFFECT(1, TR_DEMONSICKLE,             "TR_DEMONSICKLE")
+#ifdef CSQC
+STATIC_INIT(Effect_TR_DEMONSICKLE)
+{
+	registercvar("cl_particle_TR_DEMONSICKLE", "sparks");
+
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_trailspacing", "1");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_type", "static");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_tex", "33 33");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_stretchfactor", "0.25");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_color", "0x9d00ff 0x9d00ff");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_size", "0.5 1.0");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_alpha", "192 256 1024");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_gravity", "0.05");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_originjitter", "16 16 16");
+	registercvar("cl_particle_TR_DEMONSICKLE_sparks_velocityjitter", "8 8 8");
+}
+#endif
+
 EFFECT(1, TR_STAR,             "TR_STAR")
 #ifdef CSQC
 STATIC_INIT(Effect_TR_STAR)

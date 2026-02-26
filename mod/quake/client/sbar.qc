@@ -1037,14 +1037,14 @@ void Sbar_DrawInventory(vector pos, vector mySize)
 			if(j == 10)
 				imp = 0; // we want special 0 weapons to show on slot 10!
 			Weapon wep = WEP_Null;
-			if(thiswep.activeweapon.impulse == imp && thiswep.activeweapon != WEP_BERSERKER_FISTS)
+			if(thiswep.activeweapon.impulse == imp && thiswep.activeweapon != WEP_BERSERKER_FISTS && thiswep.activeweapon != WEP_CORRUPTED_CLAWS)
 				wep = thiswep.activeweapon;
 			else
 			{
 				FOREACH_WORD(weporder, true,
 				{
 					Weapon wepent = Weapon_from_name(it);
-					if(wepent == WEP_BERSERKER_FISTS)
+					if(wepent == WEP_BERSERKER_FISTS || wepent == WEP_CORRUPTED_CLAWS)
 						continue;
 					if(wepent == WEP_Null || wepent.impulse != imp || !Inventory_have(wepent, g_inventory, ITEM_OWNED))
 						continue;

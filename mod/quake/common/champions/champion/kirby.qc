@@ -241,7 +241,7 @@ METHOD(Kirby, m_physics, bool(Champions this, entity actor, float dt))
 	if(vdist(actor.velocity, <, PHYS_MAXSPEED(actor) * 0.3) && PHYS_INPUT_BUTTON_CROUCH(actor) && IS_ONGROUND(actor) && !(STAT(ITEMS, actor) & IT_TANK) && STAT(KIRBY_STATE, actor) == KIRBY_NORMAL)
 	{
 	#ifdef SVQC
-		player_sound(actor, CH_WEAPON_SINGLE, "slide.wav", ATTN_NORM);
+		player_sound(actor, CH_PLAYER_SINGLE, "slide.wav", ATTN_NORM);
 		STAT(QCC_ABILITYTIME, actor) = time + 1;
 		player_axed1(actor);
 	#endif

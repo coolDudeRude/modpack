@@ -1,0 +1,26 @@
+#pragma once
+
+CLASS(CorruptedClaws, Weapon)
+/* ammotype  */ ATTRIB(CorruptedClaws, ammo_type, int, 0);
+/* impulse   */ ATTRIB(CorruptedClaws, impulse, int, 1);
+/* spawnflags*/ ATTRIB(CorruptedClaws, spawnflags, int, WEP_FLAG_MELEE | WEP_FLAG_CHAMPION | WEP_FLAG_TWOHANDED | WEP_FLAG_NOAGGRO | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* ammo */      ATTRIB(CorruptedClaws, aflag, int, 0);
+/* modelname */ ATTRIB(CorruptedClaws, mdl, string, "corrupted");
+/* crosshair */ ATTRIB(CorruptedClaws, w_crosshair, string, "gfx/crosshair20");
+/* crosshair */ ATTRIB(CorruptedClaws, w_crosshair_size, float, 0.5);
+/* crosshair */ ATTRIB(CorruptedClaws, w_crosshair_color, vector, '0.5 0 0.5');
+/* wepimg    */ ATTRIB(CorruptedClaws, model2, string, "corrupted");
+/* refname   */ ATTRIB(CorruptedClaws, netname, string, "corrupted");
+/* wepname   */ ATTRIB(CorruptedClaws, m_name, string, _("Corrupted Claws"));
+
+ENDCLASS(CorruptedClaws)
+REGISTER_WEAPON(CORRUPTED_CLAWS, NEW(CorruptedClaws));
+
+//SPAWNFUNC_WEAPON(weapon_corrupted, WEP_CORRUPTED_CLAWS)
+
+#ifdef SVQC
+void wep_corrupted_lunge1(entity this);
+void corrupted_lunge1(entity this);
+
+void W_FireCorruptedClaws(entity this, .entity weaponentity);
+#endif

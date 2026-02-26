@@ -90,6 +90,11 @@ MODEL(PROJECTILE_VORTEX_ROCKET,             "progs/vortex_rocket.mdl");
 MODEL(PROJECTILE_FROSTSHARD,                "progs/ice_queen_frostshard.mdl");
 MODEL(PROJECTILE_EOW_SPIT,                  "progs/bilefrag.mdl");
 MODEL(PROJECTILE_VIOLIN_MUSIC,              "progs/piano_musicnote_white.mdl");
+MODEL(PROJECTILE_STARFURY,                  "progs/starfury_star.mdl");
+MODEL(PROJECTILE_BLIZZARD_SHARD,            "progs/blizzard_shard.mdl");
+MODEL(PROJECTILE_DEMON_SICKLE,              "progs/demon_sickle.mdl");
+MODEL(PROJECTILE_ICE_SPEAR,                 "progs/ice_spear.mdl");
+MODEL(PROJECTILE_ICICLE,                    "progs/icicle.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

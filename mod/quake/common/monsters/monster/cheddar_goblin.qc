@@ -362,3 +362,125 @@ METHOD(CheddarGoblin, mr_sight, bool(CheddarGoblin this, entity actor))
 	return true;
 }
 #endif
+
+// kirby power
+#ifdef CSQC
+PRECACHE(Star_CheddarGoblin)
+{
+	precache_model("progs/v_star_cheddar_goblin.mdl");
+}
+#endif
+
+#ifdef SVQC
+PRECACHE(Star_CheddarGoblin)
+{
+	precache_sound("kirby/cheddar_eat.wav");
+	precache_sound("kirby/cheddar_spit.wav");
+
+	// there might not have been a monster in the stage
+	// (we can take abilities between levels)
+	// so cache what's used
+	precache_model("progs/s_macpool.mdl");
+	precache_model("progs/s_macspit.mdl");
+	precache_sound("blob/land1.wav");
+}
+
+void star_cheddar_goblin_spit_fire(entity actor, .entity weaponentity)
+{
+	vector org = W_Shotorg(actor, weaponentity);
+	makevectors(actor.v_angle);
+
+	entity newmis = new(acidspit);
+	newmis.flags = FL_PROJECTILE;
+	newmis.owner = actor;
+	newmis.realowner = actor;
+	set_movetype(newmis, MOVETYPE_TOSS);
+	newmis.solid = SOLID_CORPSE;
+
+	newmis.dphitcontentsmask = DPCONTENTS_SOLID | DPCONTENTS_BODY | DPCONTENTS_CORPSE;
+
+	newmis.velocity = v_forward * 500;
+	newmis.velocity_z += 20;
+
+	newmis.poisonous = true;
+	newmis.silent = false; // not gibbing
+	newmis.projectiledeathtype = WEP_STAR.m_id;
+	newmis.clipgroup = actor.clipgroup;
+	newmis.avelocity = '300 300 300';
+	newmis.angles = vectoangles(newmis.avelocity);
+	_setmodel(newmis, "progs/s_macspit.mdl");
+	setsize(newmis, '0 0 0', '0 0 0');
+	setorigin(newmis, org);
+	setthink(newmis, cheddar_spit_anim);
+	settouch(newmis, cheddar_spit_touch);
+	newmis.nextthink = time + 0.1;
+
+	IL_PUSH(g_projectiles, newmis);
+}
+
+void star_cheddar_goblin_spit_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	if(time > (ATTACK_FINISHED(actor, weaponentity) - 0.1))
+	{
+		w_ready(this);
+		return;
+	}
+	wep_set_anim(this, 0, star_cheddar_goblin_spit_frame);
+
+	star_cheddar_goblin_spit_fire(actor, weaponentity);
+}
+
+void star_cheddar_goblin_spit(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/cheddar_spit.wav", 1, ATTN_NORM);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 2;
+
+	actor.(weaponentity).m_frame = 0;
+	star_cheddar_goblin_spit_frame(actor.(weaponentity));
+}
+
+void star_cheddar_goblin_eat_frame(entity this)
+{
+	entity actor = this.owner;
+	.entity weaponentity = this.weaponentity_fld;
+
+	ATTACK_FINISHED(actor, weaponentity) = time + 0.2;
+
+	this.m_frame += 1;
+	if(this.m_frame > 6)
+	{
+		star_cheddar_goblin_spit(actor, weaponentity);
+		return;
+	}
+
+	wep_set_anim(this, this.m_frame, star_cheddar_goblin_eat_frame);
+}
+
+void star_cheddar_goblin_eat(entity actor, .entity weaponentity)
+{
+	_sound(actor, CH_WEAPON_SINGLE, "kirby/cheddar_eat.wav", 1, ATTN_NORM);
+
+	if(IS_PLAYER(actor))
+		player_shot1(actor);
+
+	actor.(weaponentity).m_frame = 0;
+	star_cheddar_goblin_eat_frame(actor.(weaponentity));
+}
+
+METHOD(CheddarGoblin, star_fire, void(CheddarGoblin this, entity actor, .entity weaponentity))
+{
+	// we're always going to do *something*, so always cancel out of flight now
+	if(STAT(KIRBY_STATE, actor) == KIRBY_FLYING)
+		STAT(KIRBY_STATE, actor) = KIRBY_NORMAL;
+
+	// regular slice attack
+	star_cheddar_goblin_eat(actor, weaponentity);
+}
+#endif

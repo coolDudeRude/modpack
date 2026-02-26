@@ -1,0 +1,81 @@
+#pragma once
+
+#include "../all.qh"
+
+#ifdef GAMEQC
+MODEL(Corrupted, "progs/player_corrupted.mdl");
+MODEL(Corrupted_Head, "progs/h_player_corrupted.mdl");
+
+SOUND(Corrupted_Death1, "player_corrupted/death1");
+SOUND(Corrupted_Death2, "player_corrupted/death2");
+Sound SND_Corrupted_Death_Random() {
+    return (random() > 0.5) ? SND_Corrupted_Death1 : SND_Corrupted_Death2;
+}
+
+PRECACHE(Corrupted)
+{
+#ifdef CSQC
+    precache_pic("gfx/quake/dryad_face_corrupted");
+    precache_pic("gfx/quake/dryad_corruptbar");
+#endif
+#ifdef SVQC
+    precache_sound("player_corrupted/plyrjmp8.wav");       // player jump
+    precache_sound("player_corrupted/land.wav");           // player landing
+    precache_sound("player_corrupted/land2.wav");      // player hurt landing
+    precache_sound("player_corrupted/drown1.wav");     // drowning pain
+    precache_sound("player_corrupted/drown2.wav");     // drowning pain
+    precache_sound("player_corrupted/gasp1.wav");      // gasping for air
+    precache_sound("player_corrupted/gasp2.wav");      // taking breath
+    precache_sound("player_corrupted/h2odeath.wav");       // drowning death
+    precache_sound("player_corrupted/pain.wav");
+
+    precache_sound("player_corrupted/axhit1.wav");
+    precache_sound("player_corrupted/axhit2.wav");
+
+    precache_sound("player_corrupted/lburn1.wav");     // lava burn
+    precache_sound("player_corrupted/lburn2.wav");     // lava burn
+
+    precache_sound("player_corrupted/start1.wav");
+    precache_sound("player_corrupted/start2.wav");
+    precache_sound("player_corrupted/start3.wav");
+
+    precache_sound("player_dryad/player_transform.wav");
+    precache_sound("player_corrupted/corrupt_damage1.wav");
+    precache_sound("player_corrupted/corrupt_damage2.wav");
+#endif
+}
+#endif
+CLASS(Corrupted, Champions)
+    ATTRIB(Corrupted, netname, string, "corrupted");
+    ATTRIB(Corrupted, m_name, string, "Corrupted");
+    ATTRIB(Corrupted, m_viewofs, vector, '0 0 28');
+    ATTRIB(Corrupted, qcc_anim_stand, vector, '17 0 12');
+    ATTRIB(Corrupted, m_hidden, bool, true);
+    ATTRIB(Corrupted, qcc_noselect, bool, true);
+    ATTRIB(Corrupted, qcc_movespeed, float, 1.50);
+    ATTRIB(Corrupted, qcc_jumpheight, float, 1.50);
+    ATTRIB(Corrupted, qcc_damagetaken, float, 0.3);
+    ATTRIB(Corrupted, qcc_health_regen_stable, float, 0);
+#ifdef GAMEQC
+    ATTRIB(Corrupted, m_model, Model, MDL_Corrupted);
+    ATTRIB(Corrupted, m_model_head, Model, MDL_Corrupted_Head);
+    ATTRIB(Corrupted, m_soundpath, string, "player_corrupted/");
+    METHOD(Corrupted, m_sound_pain, string()) { return "player_corrupted/pain.wav"; }
+    METHOD(Corrupted, m_sound_death, string()) { return SND(Corrupted_Death_Random()); }
+    METHOD(Corrupted, m_sound_jump, string(entity actor)) { return "player_corrupted/plyrjmp8.wav"; }
+#endif
+#ifdef CSQC
+    ATTRIB(Corrupted, m_faceprefix, string, "gfx/quake/dryad_");
+#endif
+#ifdef CSQC
+    ATTRIB(Corrupted, message, string, "You are transformed!");
+#endif
+ENDCLASS(Corrupted)
+REGISTER_CHAMPION(Corrupted, NEW(Corrupted));
+
+#ifdef SVQC
+.float corrupted_bash;
+.float corrupted_bash_time;
+
+.float corrupted_dmgtime;
+#endif
