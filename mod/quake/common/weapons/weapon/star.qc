@@ -169,7 +169,7 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 				{
 					// give them a random valid ability!
 					RandomSelection_Init();
-					FOREACH(Monsters, it != MON_Null && it.star_valid && !(it.spawnflags & MONSTER_TYPE_BOSS),
+					FOREACH(Monsters, it != MON_Null && it.star_valid && !(it.spawnflags & MONSTER_TYPE_BOSS) && it != MON_GOAT,
 					{
 						RandomSelection_AddEnt(it, 1, 1);
 					});

@@ -133,7 +133,7 @@ METHOD(Dryad, m_playerthink, void(Champions this, entity actor))
 		return;
 	}
 
-	if(time >= actor.dryad_lastleaf)
+	if(time >= actor.dryad_lastleaf && !deathmatch)
 	{
 		actor.dryad_lastleaf = time + 0.5;
 
