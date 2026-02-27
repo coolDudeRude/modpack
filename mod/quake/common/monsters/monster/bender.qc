@@ -384,7 +384,7 @@ PRECACHE(Star_Bender)
 
 void star_bender_explode(entity this)
 {
-	T_RadiusDamage(this, this.owner, 120, this.projectiledeathtype, NULL);
+	T_RadiusDamage(this, this.owner, 120, this.projectiledeathtype, this.owner);
 
 	Send_Effect(EFFECT_EXPLOSION, this.origin, '0 0 0', 1);
 	sound(this, CH_WEAPON_SINGLE, SND_ROCKET_EXPLOSION, 1, ATTN_NORM);
