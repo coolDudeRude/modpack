@@ -54,7 +54,7 @@ CLASS(Corrupted, Champions)
     ATTRIB(Corrupted, qcc_noselect, bool, true);
     ATTRIB(Corrupted, qcc_movespeed, float, 1.50);
     ATTRIB(Corrupted, qcc_jumpheight, float, 1.50);
-    ATTRIB(Corrupted, qcc_damagetaken, float, 0.25);
+    ATTRIB(Corrupted, qcc_damagetaken, float, 0.2);
     ATTRIB(Corrupted, qcc_health_regen_stable, float, 0);
 #ifdef GAMEQC
     ATTRIB(Corrupted, m_model, Model, MDL_Corrupted);

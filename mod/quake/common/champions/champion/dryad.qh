@@ -90,7 +90,7 @@ PRECACHE(Dryad)
 "In corrupted form:\n" \
 "- Can only use claws\n" \
 "- Speed and Jump increased by 50%\n" \
-"- Damage taken reduced by 75%"
+"- Damage taken reduced by 80%"
 #endif
 CLASS(Dryad, Champions)
     ATTRIB(Dryad, netname, string, "dryad");
