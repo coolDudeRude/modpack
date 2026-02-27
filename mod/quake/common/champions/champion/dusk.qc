@@ -163,18 +163,18 @@ void Dusk_PlayerSpawn(entity player)
 		if (it.health < 1) continue;
 		if (it == player) continue;
 
-		vector horiz_vel = vec2(it.velocity);
+		//vector horiz_vel = vec2(it.velocity);
 		// when walking slowly sideways, we assume the player wants a clear shot ahead - spawn behind them according to where they're looking
 		// when running fast, spawn behind them according to their direction of movement to prevent colliding with the newly spawned player
 		vector forward = '0 0 0'; vector right = '0 0 0'; vector up = '0 0 0';
-		if (vdist(horiz_vel, >, autocvar_sv_maxspeed + 50))
-		{
-			FIXED_MAKE_VECTORS(vectoangles(horiz_vel), forward, right, up);
-		}
-		else
-		{
+		//if (vdist(horiz_vel, >, autocvar_sv_maxspeed + 50))
+		//{
+		//	FIXED_MAKE_VECTORS(vectoangles(horiz_vel), forward, right, up);
+		//}
+		//else
+		//{
 			FIXED_MAKE_VECTORS(it.angles, forward, right, up);
-		}
+		//}
 
 		// test different spots close to mate - trace upwards so it works on uneven surfaces
 		// don't spawn in front of player or directly behind to avoid players shooting each other
