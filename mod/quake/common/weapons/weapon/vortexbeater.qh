@@ -3,7 +3,7 @@
 CLASS(VortexBeater, Weapon)
 /* ammotype  */ ATTRIB(VortexBeater, ammo_type, int, IT_NAILS);
 /* impulse   */ ATTRIB(VortexBeater, impulse, int, 6);
-/* spawnflags*/ ATTRIB(VortexBeater, spawnflags, int, 0);
+/* spawnflags*/ ATTRIB(VortexBeater, spawnflags, int, WEP_FLAG_NODUAL);
 /* ammo */      ATTRIB(VortexBeater, aflag, int, 30);
 /* modelname */ ATTRIB(VortexBeater, mdl, string, "vortexbeater");
 /* crosshair */ ATTRIB(VortexBeater, w_crosshair, string, "gfx/crosshairuzi");

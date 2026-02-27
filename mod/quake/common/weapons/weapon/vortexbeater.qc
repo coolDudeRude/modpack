@@ -113,7 +113,7 @@ void vortexbeater_rocket_think(entity this)
 		return;
 	}
 
-	if(!this.enemy && time > this.cnt)
+	if(!this.enemy && time > this.cnt && !deathmatch)
 	{
 		this.enemy = W_PickNearbyTarget(this, this.owner, 500, false, false);
 		this.cnt = time + 0.1; // don't spam it!
