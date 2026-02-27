@@ -91,7 +91,7 @@ void hitcorrupted(entity this, entity hitent, vector org, vector dir)
 	{		
 		hitent.axhitme = 1;
 
-		float damage = 60;
+		float damage = 80;
 
 		SpawnBlood(org, dir, damage, hitent);
 
@@ -113,6 +113,10 @@ void hitcorrupted(entity this, entity hitent, vector org, vector dir)
 
 void W_FireCorruptedClaws(entity this, .entity weaponentity)
 {
+	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
+	if(lag)
+		antilag_takeback_all(this, lag);
+
 	entity hitent1 = NULL, hitent2 = NULL;
 	vector hitpos1 = '0 0 0', hitpos2 = '0 0 0';
 	float shortest_hit1 = 1000;
@@ -206,7 +210,11 @@ void W_FireCorruptedClaws(entity this, .entity weaponentity)
 	this.dphitcontentsmask = oldsolid;
 
 	if(shortest_hit1 == 1000 && shortest_hit2 == 1000)
+	{
+		if(lag)
+			antilag_restore_all(this);
 		return;
+	}
 
 	this.show_hostile = time + 1; // hit something, so alert monsters
 	
@@ -216,6 +224,9 @@ void W_FireCorruptedClaws(entity this, .entity weaponentity)
 		hitcorrupted(this, hitent1, hitpos1 - v_forward*4, dir);
 	if(shortest_hit2 < 1000 && hitent1 != hitent2)
 		hitcorrupted(this, hitent2, hitpos2 - v_forward*4, dir);
+
+	if(lag)
+		antilag_restore_all(this);
 }
 
 METHOD(CorruptedClaws, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

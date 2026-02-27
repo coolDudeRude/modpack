@@ -94,6 +94,10 @@ void hitbladeofgrass(entity this, entity hitent, vector org, vector dir)
 
 void W_FireBladeOfGrass(entity this, .entity weaponentity)
 {
+	float lag = (IS_PLAYER(this)) ? antilag_getlag(this) : 0;
+	if(lag)
+		antilag_takeback_all(this, lag);
+
 	entity hitent1 = NULL, hitent2 = NULL;
 	vector hitpos1 = '0 0 0', hitpos2 = '0 0 0';
 	float shortest_hit1 = 1000;
@@ -187,10 +191,18 @@ void W_FireBladeOfGrass(entity this, .entity weaponentity)
 	this.dphitcontentsmask = oldsolid;
 
 	if(shortest_hit1 == 1000 && shortest_hit2 == 1000)
+	{
+		if(lag)
+			antilag_restore_all(this);
 		return;
+	}
 
 	if((hitent1 && W_Parry(this, hitent1)) || (hitent2 && W_Parry(this, hitent2)))
+	{
+		if(lag)
+			antilag_restore_all(this);
 		return;
+	}
 	
 	vector dir = v_right * 20 - v_up*5; // direction for blood particles
 
@@ -198,6 +210,9 @@ void W_FireBladeOfGrass(entity this, .entity weaponentity)
 		hitbladeofgrass(this, hitent1, hitpos1 - v_forward*4, dir);
 	if(shortest_hit2 < 1000 && hitent1 != hitent2)
 		hitbladeofgrass(this, hitent2, hitpos2 - v_forward*4, dir);
+
+	if(lag)
+		antilag_restore_all(this);
 }
 
 PRECACHE(BladeOfGrass)
