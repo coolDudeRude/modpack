@@ -63,6 +63,7 @@ void dryad_leaf_spawn(entity this)
 	setthink(leaf, dryad_leaf_think);
 	leaf.nextthink = time;
 	leaf.effects = EF_LOWPRECISION;
+	leaf.clipgroup = this.clipgroup;
 
 	IL_PUSH(g_leaves, leaf);
 }
