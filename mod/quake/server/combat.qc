@@ -939,7 +939,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	}
 
 	// NOTE: using damage as a cheap valid target check, means the effect won't apply if the target is invulnerable!
-	if(((IS_MONSTER(attacker) && attacker.confusing) || inflictor.confusing) && (IS_PLAYER(targ) || IS_MONSTER(targ)) && targ != attacker && damage > 0 && !targ.tank)
+	if(((IS_MONSTER(attacker) && attacker.confusing) || inflictor.confusing) && ((IS_PLAYER(targ) && !deathmatch) || IS_MONSTER(targ)) && targ != attacker && damage > 0 && !targ.tank)
 	{
 		float confusetime = floor(autocvar_skill + 3 + 2*random());
 		// only add the effect if there isn't already a longer timer running!
