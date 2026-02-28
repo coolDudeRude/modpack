@@ -36,8 +36,9 @@ void W_SubMachineGun_Attack(entity this)
 	if(this.m_frame >= 9)
 		this.m_frame = 1;
 	wep_set_anim(this, this.m_frame, W_SubMachineGun_Attack);
+	this.weapon_nextthink = time + 0.05;
 	SuperDamageSound(actor);
-	W_FireSubMachineGun(actor, ((this.misc_bulletcounter % 2) ? 3 : -3), weaponentity);
+	W_FireSubMachineGun(actor, ((this.misc_bulletcounter % 2) ? 4 : -4), weaponentity);
 	ATTACK_FINISHED(actor, weaponentity) = time + 0.1;
 }
 
@@ -47,10 +48,10 @@ void W_FireSubMachineGun(entity this, float ox, .entity weaponentity)
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/hplasma.wav", 1, ATTN_NORM);
 	ATTACK_FINISHED(this, weaponentity) = time + 0.1;
-	vector dir = qc_aim(this, 3000);
+	vector dir = qc_aim(this, 4000);
 	// NOTE: position fix by Seven and Sajt applied here
 	entity missile = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * ox, dir);
-	missile.velocity = dir * 3000;
+	missile.velocity = dir * 4000;
 	missile.classname = "smg_bolt";
 	missile.projectiledeathtype = WEP_SMG.m_id;
 	_setmodel(missile, "progs/ee_p_pm_yl.mdl");

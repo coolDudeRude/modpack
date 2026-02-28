@@ -39,9 +39,9 @@ METHOD(Enyo, m_playerthink, void(Champions this, entity actor))
 	if(time > actor.last_wingbonus && STAT(WINGCHARGE, actor) < 100)
 	{
 		actor.last_wingbonus = time + 1;
-		int points = 2;
+		int points = 5;
 		if(deathmatch)
-			points = 4;
+			points = 8;
 
 		enyo_WingCharge(actor, points);
 	}
