@@ -36,9 +36,8 @@ void W_SubMachineGun_Attack(entity this)
 	if(this.m_frame >= 9)
 		this.m_frame = 1;
 	wep_set_anim(this, this.m_frame, W_SubMachineGun_Attack);
-	this.weapon_nextthink = time + 0.05;
 	SuperDamageSound(actor);
-	W_FireSubMachineGun(actor, ((this.misc_bulletcounter % 2) ? 4 : -4), weaponentity);
+	W_FireSubMachineGun(actor, ((this.misc_bulletcounter % 2) ? 5 : -5), weaponentity);
 	ATTACK_FINISHED(actor, weaponentity) = time + 0.1;
 }
 
