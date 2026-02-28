@@ -63,7 +63,7 @@ METHOD(Corrupted, m_playerthink, void(Champions this, entity actor))
 		else
 			_sound(actor, CH_VOICE, "player_corrupted/corrupt_damage2.wav", 1, ATTN_NORM);
 		actor.corrupted_dmgtime = time + 0.5;
-		T_Damage(actor, actor, actor, 5, DEATH_GENERIC.m_id);
+		T_Damage(actor, NULL, NULL, 5, DEATH_GENERIC.m_id);
 	}
 }
 
@@ -190,7 +190,7 @@ METHOD(Corrupted, m_overlay, void(Champions this))
 	if(charge)
 		charge /= 10; // total duration
 
-	drawpic('0 0 0', "gfx/blood", vec2(vid_conwidth, vid_conheight), '0.5 0 0.5', bound(0, charge, 0.7), DRAWFLAG_NORMAL);
+	drawpic('0 0 0', "gfx/blood", vec2(vid_conwidth, vid_conheight), '0.5 0 0.5', bound(0, charge * 0.5, 0.7), DRAWFLAG_NORMAL);
 
 	if(charge >= 1)
 	{
