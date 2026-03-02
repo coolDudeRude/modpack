@@ -148,7 +148,7 @@ void spiralrocket_think(entity this)
 
 void W_FireMultiMissileLauncher(entity this, vector offset, int ammo_amount, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	this.effects |= EF_MUZZLEFLASH;
 
 	W_TakeAmmo(this, IT_ROCKETS, ammo_amount);

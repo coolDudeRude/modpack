@@ -93,7 +93,7 @@ void W_FireMultiRocket(entity this, .entity weaponentity)
 	
 	_sound(this, CH_WEAPON_SINGLE, "weapons/sgun1.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	
 	MultiRocketLaunch(this, -10, 2, weaponentity);
 	MultiRocketLaunch(this, -5, 3, weaponentity);

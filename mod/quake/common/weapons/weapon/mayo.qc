@@ -132,7 +132,7 @@ void W_FireMayo(entity this, .entity weaponentity)
 	
 	_sound(this, CH_WEAPON_SINGLE, "hknight/slash1.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	entity missile = new(grenade);
 	missile.flags = FL_PROJECTILE;

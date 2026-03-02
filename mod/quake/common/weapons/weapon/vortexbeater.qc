@@ -100,7 +100,7 @@ void W_FireVortexBeater(entity this, .entity weaponentity, vector org)
 	setsize(newmis, '0 0 0', '0 0 0');
 	CSQCProjectile(newmis, true, PROJECTILE_SUPER_SPIKE, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 void vortexbeater_rocket_think(entity this)

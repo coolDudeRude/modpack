@@ -398,7 +398,7 @@ void W_FireLooseCannon(entity actor, int fuse_time, .entity weaponentity)
 
 	_sound(actor, CH_WEAPON_B, "weapons/grenade.wav", 1, ATTN_NORM);
 	_sound(actor, CH_WEAPON_SINGLE, "pirate/loose_cannon_fire.wav", 1, ATTN_NORM);
-	actor.punchangle_x = -2;
+	actor.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	// set grenade speed	
 	makevectors(actor.v_angle);

@@ -57,7 +57,7 @@ void W_FireSuperShotgun(entity this, .entity weaponentity)
 	else
 		_sound(this, CH_WEAPON_SINGLE, "weapons/shotgn2.wav", 1, ATTN_NORM);	
 
-	this.punchangle_x = -4;
+	this.punchangle_x = -4 * autocvar_sv_quake_recoil;
 
 	W_TakeAmmo(this, IT_SHELLS, 2);
 	vector dir = qc_aim(this, 100000);

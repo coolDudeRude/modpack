@@ -68,7 +68,7 @@ entity W_FireGoldy(entity this, .entity weaponentity)
 
 	sound(this, CH_WEAPON_SINGLE, SND_GOLDY_FIRE_RANDOM(), 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;

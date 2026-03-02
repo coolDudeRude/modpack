@@ -155,7 +155,7 @@ vector tuba_calc_velocity(entity actor, entity note)
 
 void W_FireTuba(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	W_TakeMana(this, 7);
 
 	T_RadiusDamage(this, this, 110, WEP_TUBA.m_id, this);

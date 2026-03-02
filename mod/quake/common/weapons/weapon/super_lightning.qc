@@ -179,7 +179,7 @@ void W_FireSuperLightning(entity this, .entity weaponentity)
 		return;
 	}
 	W_TakeAmmo(this, IT_CELLS, 1);
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	entity missile = new(lightme);
 	missile.flags = FL_PROJECTILE;
 	missile.owner = missile.realowner = this;

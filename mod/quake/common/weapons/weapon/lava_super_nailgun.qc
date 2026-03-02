@@ -52,7 +52,7 @@ void W_FireSuperLavaSpikes(entity this, .entity weaponentity)
 
 	CSQCProjectile(newmis, true, PROJECTILE_LAVA_NAIL, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(LavaSuperNailgun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

@@ -111,7 +111,7 @@ void W_FireSpikes(entity this, float ox, .entity weaponentity)
 
 	CSQCProjectile(missile, true, PROJECTILE_BULLET, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(Nailgun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

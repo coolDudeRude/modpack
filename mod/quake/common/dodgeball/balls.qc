@@ -213,7 +213,7 @@ void ThrowBall(entity this)
 	
 	STAT(HAS_BALL, this) = 0;
 
-	this.punchangle_x = -1;
+	this.punchangle_x = -1 * autocvar_sv_quake_recoil;
 
 	_sound(this, CH_WEAPON_SINGLE, "zombie/z_shot1.wav", 1, ATTN_NORM);
 
@@ -277,7 +277,7 @@ void PowerThrow(entity this)
 	this.throw_finished = time + 20;
 	player_ball3(this);
 	
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	
 	_sound(this, CH_WEAPON_SINGLE, "dodgeball/powerthrow_db.wav", 1, ATTN_NORM);
 	
@@ -777,7 +777,7 @@ void ThrowSpecialBall(entity this)
 		return;
 	}
 	
-	this.punchangle_x = -1;
+	this.punchangle_x = -1 * autocvar_sv_quake_recoil;
 	
 	_sound(this, CH_WEAPON_SINGLE, "zombie/z_shot1.wav", 1, ATTN_NORM);
 	

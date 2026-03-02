@@ -29,7 +29,7 @@ void W_FirePewPew(entity this, .entity weaponentity)
 	else
 		_sound(this, CH_WEAPON_SINGLE, "weapons/pewpew3.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	vector org = W_Shotorg(this, weaponentity) + v_right * 7;
 	vector dir = qc_aim_fromorg(this, org, 1000);

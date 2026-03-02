@@ -21,7 +21,7 @@ entity W_FireSqueaker(entity this, .entity weaponentity)
 
 	sound(this, CH_WEAPON_SINGLE, SND_SQUEAKER_FIRE_RANDOM(), 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	entity missile = Create_Egg(this, MON_SQUEAK);
 	missile.projectiledeathtype = WEP_SQUEAKER.m_id;

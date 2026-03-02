@@ -84,7 +84,7 @@ void disc_think(entity this)
 
 void W_FireLightDisc(entity this, .entity weaponentity)
 {
-	//this.punchangle_x = -2;
+	//this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/disc_throw.wav", 1, ATTN_NORM);
 

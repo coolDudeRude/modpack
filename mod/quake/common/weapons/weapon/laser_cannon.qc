@@ -57,7 +57,7 @@ void HIP_FireLaser(entity this, float stat, .entity weaponentity)
 		else
 			HIP_LaunchLaser(this, org, dir, 0);
 	}
-	this.punchangle_x = -1;
+	this.punchangle_x = -1 * autocvar_sv_quake_recoil;
 }
 
 METHOD(LaserCannon, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

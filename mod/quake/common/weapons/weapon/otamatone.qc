@@ -103,7 +103,7 @@ void otamatone_note_think(entity this)
 
 void W_FireOtamatone(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -1;
+	this.punchangle_x = -1 * autocvar_sv_quake_recoil;
 	W_TakeMana(this, 8);
 
 	//vector org = gettaginfo(this.(weaponentity), 0);

@@ -449,7 +449,7 @@ void W_FireSpear(entity this, .entity weaponentity)
 	IL_PUSH(g_projectiles, missile);
 
 	this.velocity = this.velocity - (v_forward * (600 - this.armorvalue)) + '0 0 50';
-	this.punchangle_x = -10;
+	this.punchangle_x = -10 * autocvar_sv_quake_recoil;
 }
 
 METHOD(Impaler, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

@@ -89,7 +89,7 @@ void kazoo_note_think(entity this)
 
 void W_FireKazoo(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -1;
+	this.punchangle_x = -1 * autocvar_sv_quake_recoil;
 	W_TakeMana(this, 5);
 
 	//vector org = gettaginfo(this.(weaponentity), 0);

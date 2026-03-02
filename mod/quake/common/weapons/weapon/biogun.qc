@@ -46,7 +46,7 @@ void W_FireBio(entity this, float ox, .entity weaponentity)
 
 	CSQCProjectile(missile, true, PROJECTILE_BIOGUN_BONESHARD, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(Biogun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

@@ -78,7 +78,7 @@ void W_FireNapalm(entity this, .entity weaponentity)
 {
 	W_TakeAmmo(this, IT_ROCKETS, 1);
 	_sound(this, CH_WEAPON_SINGLE, "weapons/grenade.wav", 1, ATTN_NORM);
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;
 	missile.owner = this;

@@ -69,7 +69,7 @@ void W_FireSaw(entity this, .entity weaponentity)
 		
 		ent.velocity = ent.velocity * 0.5;
 		_sound(this, CH_WEAPON_SINGLE, "weapons/sawguts.wav", 1, ATTN_NORM);
-		this.punchangle_x = -8;
+		this.punchangle_x = -8 * autocvar_sv_quake_recoil;
 	}
 	else
 	{	// hit wall

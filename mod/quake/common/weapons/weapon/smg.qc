@@ -58,7 +58,7 @@ void W_FireSubMachineGun(entity this, float ox, .entity weaponentity)
 	//missile.noise = "weapons/dsfirxpl.wav";
 	missile.dmg = 15;
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(SubMachineGun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

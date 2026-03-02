@@ -157,7 +157,6 @@ void W_FireMic(entity this, .entity weaponentity)
 {
 	bool dobrown = (random() < 0.1);
 
-	this.punchangle_x = -2;
 	W_TakeMana(this, 10);
 
 	//vector org = gettaginfo(this.(weaponentity), 0);

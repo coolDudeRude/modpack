@@ -172,7 +172,7 @@ void W_FirePistol(entity this, .entity weaponentity)
 		default: _sound(this, CH_WEAPON_B, "pistol/pistol_fire4.wav", 0.3, ATTN_NORM); break;
 	}
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	vector dir = qc_aim(this, 10000);
 	FireBullets(this, 1, 20, W_Shotorg(this, weaponentity) + v_right * 8, dir, '0.015 0.015 0', WEP_PISTOL.m_id);

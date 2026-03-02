@@ -161,7 +161,7 @@ void W_FireCrossbow(entity this, float ox, .entity weaponentity)
 
 	CSQCProjectile(missile, true, PROJECTILE_CROSSBOW_BOLT, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(Crossbow, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

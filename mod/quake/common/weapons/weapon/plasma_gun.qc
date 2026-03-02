@@ -213,7 +213,7 @@ void W_FirePlasma(entity this, .entity weaponentity)
 	}
 	W_TakeAmmo(this, IT_PLASMA_AMMO, 1);
 	_sound(this, CH_WEAPON_SINGLE, "plasma/fire.wav", 0.5, ATTN_NORM);
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	makevectors(this.v_angle);
 	vector dir = qc_aim(this, 1000);

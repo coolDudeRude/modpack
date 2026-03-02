@@ -181,7 +181,7 @@ void W_FireWoodPiano(entity this, .entity weaponentity) // Fire Music Note + Pla
 	}
 	W_TakeMana(this, 3);
 	
-	//this.punchangle_x = 1;
+	//this.punchangle_x = 1 * autocvar_sv_quake_recoil;
 
 	entity musicnote = spawn();
 	musicnote.flags = FL_PROJECTILE;

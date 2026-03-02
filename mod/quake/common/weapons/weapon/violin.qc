@@ -52,7 +52,7 @@ void violin_note_touch(entity this, entity toucher)
 
 void W_FireViolin(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	W_TakeMana(this, 8);
 
 	//vector org = gettaginfo(this.(weaponentity), 0);

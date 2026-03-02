@@ -51,7 +51,7 @@ void banjo_note_touch(entity this, entity toucher)
 
 void W_FireBanjo(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 	W_TakeMana(this, 5);
 
 	//vector org = gettaginfo(this.(weaponentity), 0);

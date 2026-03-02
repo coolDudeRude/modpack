@@ -5,7 +5,7 @@ void W_FireShotgun(entity this, .entity weaponentity)
 {
 	_sound(this, CH_WEAPON_SINGLE, "weapons/guncock.wav", 1, ATTN_NORM);	
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	W_TakeAmmo(this, IT_SHELLS, 1);
 	vector dir = qc_aim(this, 100000);

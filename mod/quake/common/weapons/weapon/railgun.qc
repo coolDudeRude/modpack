@@ -143,7 +143,7 @@ void W_FireSniperLightning(entity this)
 		_sound(this, CH_WEAPON_A, "weapons/rail2.wav", 1, ATTN_NORM);
 		this.t_width = time + 0.6;
 	}
-	this.punchangle_x = -4;
+	this.punchangle_x = -4 * autocvar_sv_quake_recoil;
 	W_TakeAmmo(this, IT_CELLS, 10);
 	this.effects |= EF_MUZZLEFLASH;
 

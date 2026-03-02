@@ -90,7 +90,7 @@ void ripper_blade_think(entity this)
 
 void W_FireRipper(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	W_TakeAmmo(this, IT_SHELLS, 2);
 

@@ -87,7 +87,7 @@ void W_FireMegashark(entity this, .entity weaponentity)
 	setsize(newmis, '0 0 0', '0 0 0');
 	CSQCProjectile(newmis, true, PROJECTILE_SUPER_SPIKE, true);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }
 
 METHOD(Megashark, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

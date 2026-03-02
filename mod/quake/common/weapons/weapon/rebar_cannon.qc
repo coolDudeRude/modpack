@@ -240,7 +240,7 @@ void RebarThink(entity this)
 
 void W_FireRebarCannon(entity this, .entity weaponentity)
 {
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	W_TakeAmmo(this, IT_NAILS, 10);
 

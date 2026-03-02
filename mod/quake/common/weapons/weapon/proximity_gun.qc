@@ -89,7 +89,7 @@ void W_FireProximityGrenade(entity this, .entity weaponentity)
 
 	_sound(this, CH_WEAPON_SINGLE, "hipweap/proxbomb.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;

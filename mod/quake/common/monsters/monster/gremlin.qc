@@ -1014,7 +1014,7 @@ void Gremlin_FireRocket(entity this)
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/sgun1.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	entity missile = new(missile);
 	missile.flags = FL_PROJECTILE;

@@ -112,7 +112,7 @@ void W_FireDriller(entity this, .entity weaponentity)
 	
 	_sound(this, CH_WEAPON_SINGLE, "weapons/drill_shot.wav", 1, ATTN_NORM);
 
-	this.punchangle_x = -2;
+	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 
 	makevectors(this.v_angle);
 
@@ -136,8 +136,6 @@ void W_FireDriller(entity this, .entity weaponentity)
 
 	setthink(missile, drill_think);
 	missile.nextthink = time;
-
-	this.punchangle_x = -2;
 }
 
 METHOD(Driller, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))
