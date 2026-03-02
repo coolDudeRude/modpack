@@ -164,7 +164,7 @@ METHOD(Vampirism, m_tick, void(StatusEffects this, entity actor))
     float curtime = StatusEffects_gettime(this, actor);
     if(curtime < time + 3 && !actor.vampirism_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_VAMPIRISM);
         _sound(actor, CH_TRIGGER_SINGLE, "items/vampfade.wav", 1, ATTN_NORM);
         actor.vampirism_warning = true;

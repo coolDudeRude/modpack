@@ -92,7 +92,7 @@ entity overlord_find_dest3(entity this)
 				return bestDest;
 			if(furthestDest)
 				return furthestDest;
-			if(horde_ent)
+			if(gametype == GAMETYPE_HORDE)
 				return NULL;
 			return overlord_find_newdest(this);
 		}

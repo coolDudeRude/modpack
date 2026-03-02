@@ -193,7 +193,7 @@ void slide_physics(entity this)
 
 void slide_check_time()
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 		return;
 
 	if(slide_timelimit && slide_timelimit < time)	//time is over
@@ -343,7 +343,7 @@ void Set_Check(entity this)
 
 PRECACHE(Slide)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 		return;
 
 	precache_sound("doors/airdoor2.wav");
@@ -382,7 +382,7 @@ void Slide_Push(entity this)
 
 bool slide_ImpulseCommands(entity this, int imp)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 		return false;
 
 #if 0
@@ -454,7 +454,7 @@ void ZipTouch(entity this, entity toucher)
 
 spawnfunc(point_zip)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -535,7 +535,7 @@ void StartTouch(entity this, entity toucher)
 
 spawnfunc(point_start)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -654,7 +654,7 @@ void EndPointTouch(entity this, entity toucher)
 
 spawnfunc(point_end)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -704,7 +704,7 @@ void CheckPointTouch(entity this, entity toucher)
 
 spawnfunc(point_check)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -755,7 +755,7 @@ void ReslideTouch(entity this, entity toucher)
 
 spawnfunc(item_reslide)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -808,7 +808,7 @@ void BonusTouch(entity this, entity toucher)
 
 spawnfunc(item_bonus)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -874,7 +874,7 @@ void ZipFieldTouch(entity this, entity toucher)
 
 spawnfunc(trigger_zip)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -923,7 +923,7 @@ void ImpactFieldTouch(entity this, entity toucher)
 //field that does dsamage based on player velocity. for spikes and stuff.
 spawnfunc(trigger_impact)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -954,7 +954,7 @@ void PeaceFieldTouch(entity this, entity toucher)
 //Players can't shoot. For observation booths and MAYBE start areas.
 spawnfunc(trigger_peace)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -990,7 +990,7 @@ void StartFlash(entity this)
 
 spawnfunc(trigger_start)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1054,7 +1054,7 @@ void EndFieldTouch(entity this, entity toucher)
 
 spawnfunc(trigger_end)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1071,7 +1071,7 @@ spawnfunc(trigger_end)
 
 spawnfunc(dummy_end)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1128,7 +1128,7 @@ void CheckFieldTouch(entity this, entity toucher)
 
 spawnfunc(trigger_check)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1145,7 +1145,7 @@ spawnfunc(trigger_check)
 
 spawnfunc(dummy_check)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1192,7 +1192,7 @@ void ReslideFlash(entity this)
 
 spawnfunc(trigger_reslide)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;
@@ -1243,7 +1243,7 @@ void TripTouch(entity this, entity toucher)
 
 spawnfunc(trigger_trip)
 {
-	if(world.worldtype != WORLDTYPE_SLIDE)
+	if(gametype != GAMETYPE_SLIDE)
 	{
 		delete(this);
 		return;

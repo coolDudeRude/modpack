@@ -4,7 +4,7 @@
 
 PRECACHE(JumpsDoneWell)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 		return;
 
 	precache_model("models/player.iqm");

@@ -1108,7 +1108,7 @@ void TeleportToTarget(entity this, entity targ, bool show_effect)
 
 bool CanTeleportToTarget(entity this, entity targ, float tprange)
 {
-	if(!autocvar_sv_quake_pets_teleport || horde_ent)
+	if(!autocvar_sv_quake_pets_teleport || gametype == GAMETYPE_HORDE)
 		return false;
 	if(this.health <= 0)
 		return false;

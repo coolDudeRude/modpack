@@ -39,7 +39,7 @@ void Physics_UpdateStats(entity this)
 
 	QCC_UpdateStats(this);
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_Physics_UpdateStats(this);
 
 	if(this.clockwork && !intermission_running)
@@ -614,7 +614,7 @@ void PM_Main(entity this, float dt)
 		return;
 
 	// TODO: less overrides?
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		JDW_PM_Main(this, dt);
 		return;

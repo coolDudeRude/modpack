@@ -4,7 +4,7 @@ bool Caleb_bloodrage_max()
 {
 	int bloodmax = BLOODRAGE_MAX;
 	// enable for horde-specific higher limit
-	//if(STAT(HORDE))
+	//if(gametype == GAMETYPE_HORDE)
 		//return ceil(bloodmax * 2);
 	return bloodmax;
 }

@@ -1,0 +1,17 @@
+#pragma once
+
+#ifdef SVQC
+void SetGametype();
+#endif
+
+int gametype;
+
+enum {
+	GAMETYPE_NONE,
+	GAMETYPE_HORDE,
+	GAMETYPE_SKATE,
+	GAMETYPE_DODGEBALL,
+	GAMETYPE_SLIDE,
+	GAMETYPE_JUMPSDONEWELL,
+	GAMETYPE_INSTAGIB
+};

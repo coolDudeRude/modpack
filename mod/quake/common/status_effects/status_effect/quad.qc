@@ -15,7 +15,7 @@ METHOD(Quad, m_tick, void(StatusEffects this, entity actor))
     float curtime = StatusEffects_gettime(this, actor);
     if(curtime < time + 3 && !actor.quad_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_QUAD_DAMAGE);
         _sound(actor, CH_TRIGGER_SINGLE, "items/damage2.wav", 1, ATTN_NORM);
         actor.quad_warning = true;

@@ -710,7 +710,7 @@ Key doors are allways wait -1.
 void func_door_init(entity this, entity actor, entity trigger);
 spawnfunc(func_door)
 {
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		JDW_func_door(this);
 		return;

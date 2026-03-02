@@ -493,7 +493,7 @@ void shopkeep_draw(entity this)
 
 	if(cursor_active)
 		return; // already started TODO: better indicator that we're inside the menu
-	if(!STAT(HORDE) || STAT(SHOP_OPEN) < time)
+	if(gametype != GAMETYPE_HORDE || STAT(SHOP_OPEN) < time)
 		return; // not active yet TODO: message about this fact?
 	if(this.shopkeep_delay > time)
 		return;

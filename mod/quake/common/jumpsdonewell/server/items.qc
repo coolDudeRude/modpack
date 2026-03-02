@@ -35,7 +35,7 @@ void heart_touch(entity this, entity toucher)
 
 spawnfunc(item_heart) 
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;
@@ -63,7 +63,7 @@ void feather_touch(entity this, entity toucher)
 
 spawnfunc(item_feather)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;
@@ -92,7 +92,7 @@ void sword_touch(entity this, entity toucher)
 
 spawnfunc(item_sword)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;

@@ -153,7 +153,7 @@ void W_FireSniperLightning(entity this)
 	traceline(org, org + v_forward * 32, false, this);
 	org += v_forward * 32 * trace_fraction;
 
-	vector dir = qc_aim(this, 4000);
+	vector dir = qc_aim_fromorg(this, org, 4000);
 
 	float lag = antilag_getlag(this);
 	if(lag)

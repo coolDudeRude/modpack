@@ -14,7 +14,7 @@ METHOD(Wetsuit, m_tick, void(StatusEffects this, entity actor))
     float curtime = StatusEffects_gettime(this, actor);
     if(curtime < time + 3 && !actor.wetsuit_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_WETSUIT);
         _sound(actor, CH_TRIGGER_SINGLE, "items/suit2.wav", 1, ATTN_NORM);
         actor.wetsuit_warning = true;

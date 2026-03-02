@@ -39,7 +39,7 @@ void bamboo_hurt(entity this, entity attacker, float damage, int deathtype)
 
 spawnfunc(misc_bamboo)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;

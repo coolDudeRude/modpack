@@ -134,7 +134,7 @@ entity HordeFindTarget()
 float horde_failed_time = 0;
 void horde_StartFrame()
 {
-	if(!horde_ent || !horde_ent.active)
+	if(gametype != GAMETYPE_HORDE || !horde_ent.active)
 		return;
 
 	int alivecount = 0, playercount = 0;

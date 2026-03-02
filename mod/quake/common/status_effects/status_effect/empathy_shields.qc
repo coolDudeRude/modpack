@@ -15,7 +15,7 @@ METHOD(EmpathyShields, m_tick, void(StatusEffects this, entity actor))
     float curtime = StatusEffects_gettime(this, actor);
     if(curtime < time + 3 && !actor.empathyshields_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_EMPATHY);
         _sound(actor, CH_TRIGGER_SINGLE, "items/suit2.wav", 1, ATTN_NORM);
         actor.empathyshields_warning = true;

@@ -56,6 +56,7 @@ REGISTER_NET_TEMP(ENT_CLIENT_INIT)
 
 #include "physics/_mod.qh"
 #include "challenges.qh"
+#include "gametypes.qh"
 
 
 #include "effects/qc/_mod.qh"

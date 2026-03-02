@@ -3,7 +3,7 @@
 #ifdef SVQC
 void comp_start(entity this)
 {
-	if(world.worldtype != WORLDTYPE_SKATE)
+	if(gametype != GAMETYPE_SKATE)
 	{
 		delete(this);
 		return;

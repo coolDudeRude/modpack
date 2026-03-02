@@ -847,7 +847,7 @@ METHOD(Ithagnal, mr_setup, bool(Ithagnal this, entity actor))
 	precache_sound("ithagnal/ithtelet2.wav");
 
     actor.health = 3000;
-    if(horde_ent || actor.charmed)
+    if(gametype == GAMETYPE_HORDE || actor.charmed)
     	actor.scale = 0.2;
     else
     	actor.scale = 0.75;

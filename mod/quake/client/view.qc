@@ -548,7 +548,7 @@ void View_UpdateFov()
 		fov = GetViewLocationFOV(70);
 	else if(csqcplayer && csqcplayer.viewloc)
 		fov = GetViewLocationFOV(110); // enforce 110 fov, so things don't look odd
-	else if(IsJumpsDoneWell())
+	else if(gametype == GAMETYPE_JUMPSDONEWELL)
 		fov = GetViewLocationFOV(50);
 	else
 		fov = GetCurrentFov(autocvar_fov);
@@ -584,7 +584,7 @@ void View_EventChase(entity this)
 	// event chase camera
 	if(autocvar_chase_active <= 0) // greater than 0 means it's enabled manually, and this code is skipped
 	{
-		if((player_localnum + 1) != player_localentnum || IsJumpsDoneWell())
+		if((player_localnum + 1) != player_localentnum || gametype == GAMETYPE_JUMPSDONEWELL)
 		{
 			if(!autocvar_chase_active)
 			{
@@ -933,7 +933,7 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	ticrate = STAT(MOVEVARS_TICRATE) * STAT(MOVEVARS_TIMESCALE);
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_SetCamera();
 	else
 		CSQCPlayer_SetCamera();
@@ -974,7 +974,7 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 	if(intermission && !intermission_time)
 		intermission_time = time;
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		View_JumpsDoneWell();
 
 	// ALWAYS Clear Current Scene First
@@ -1029,7 +1029,7 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 	draw_message_triggers();
 	Draw_ShowNames_All();
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		HUD_JumpsDoneWell();
 
 	sui_begin(vid_conwidth, vid_conheight);

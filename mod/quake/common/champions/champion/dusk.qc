@@ -154,9 +154,9 @@ void Dusk_Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 vector snt_ofs[6];
 void Dusk_PlayerSpawn(entity player)
 {
-	if(horde_ent || deathmatch)
+	if(gametype == GAMETYPE_HORDE || deathmatch)
 		return;
-	if(world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_SKATE || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL)
 		return;
 
 	FOREACH_CLIENT_RANDOM(IS_PLAYER(it) && it.m_champion == CHAMPION_Dusk, {

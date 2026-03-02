@@ -25,17 +25,7 @@ STATIC_INIT(Challenges)
 {
 	challenge = CHALLENGE_NONE;
 
-	if(deathmatch)
-		return;
-
-	if(world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_DODGEBALL)
-		return;
-
-	// can't check for horde the classic way this early
-	if(find(NULL, classname, "horde_manager") || find(NULL, classname, "info_qonquer"))
-		return;
-
-	if(IsJumpsDoneWell())
+	if(deathmatch || gametype != GAMETYPE_NONE)
 		return;
 
 	FOREACH_WORD(autocvar_sv_quake_challenge, true,

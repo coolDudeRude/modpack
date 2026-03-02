@@ -139,7 +139,7 @@ void HUD_Crosshair(entity this)
 		return;
 	}
 
-	if(!sb_showscores && !cursor_active && !camera_active && !intermission && !(STAT(HEALTH) <= 0) && (!csqcplayer.viewloc || (csqcplayer.viewloc.spawnflags & VIEWLOC_FREEAIM)) && STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL && !IsJumpsDoneWell())
+	if(!sb_showscores && !cursor_active && !camera_active && !intermission && !(STAT(HEALTH) <= 0) && (!csqcplayer.viewloc || (csqcplayer.viewloc.spawnflags & VIEWLOC_FREEAIM)) && gametype != GAMETYPE_DODGEBALL && gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		if (!autocvar_crosshair_enabled) // main toggle for crosshair rendering
 			return;

@@ -129,7 +129,7 @@ If the trigger_teleport has a targetname, it will only teleport entities when it
 */
 spawnfunc(trigger_teleport)
 {
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		JDW_trigger_teleport(this);
 		return;

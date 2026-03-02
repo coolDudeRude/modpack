@@ -193,7 +193,7 @@ void spiky_touch(entity this, entity toucher)
 
 spawnfunc(monster_shroom)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;

@@ -858,10 +858,10 @@ METHOD(Volkerh, mr_setup, bool(Volkerh this, entity actor))
 
     actor.health = 3000;
     actor.gibhealth = -150;
-    if(horde_ent || actor.charmed)
-    	actor.scale = 0.2;
-    else
-    	actor.scale = 0.75;
+	if(gametype == GAMETYPE_HORDE || actor.charmed)
+		actor.scale = 0.2;
+	else
+		actor.scale = 0.75;
 
 	actor.th_stand = vol_stand1;
 	actor.th_walk = vol_walk1;

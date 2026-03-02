@@ -126,7 +126,7 @@ void W_FireKatana(entity this, .entity weaponentity)
 		}
 		trace_ent.axhitme = true;
 		float damage = 80;
-		if(deathmatch && autocvar_skill == 3)
+		if(gametype == GAMETYPE_INSTAGIB)
 			damage = 100;
 		T_Damage(trace_ent, this, this, damage, WEP_KATANA.m_id);
 	}

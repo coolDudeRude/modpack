@@ -128,7 +128,7 @@ void put_sentryball(entity this)
 
 STATIC_INIT_LATE(Dodgeball)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	cvar_settemp("timelimit", ftos(autocvar_sv_quake_dodgeball_timelimit));
@@ -182,7 +182,7 @@ PRECACHE(Dodgeball_Precache)
 	precache_model("progs/v_nododgeball.mdl"); // always precached for the weapon
 	precache_model("progs/v_dodgeball.mdl");
 
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	// dodgeball sounds/models
@@ -299,7 +299,7 @@ void CheckRounds()
 
 void dodgeball_StartFrame()
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		//FOREACH_CLIENT(IS_BOT_CLIENT(it), { dropclient(it); });
 		return;
@@ -389,7 +389,7 @@ void Deflect(entity this)
 
 void dodgeball_PutPlayerInServer(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	this.health = 100;
@@ -408,7 +408,7 @@ void dodgeball_PutPlayerInServer(entity this)
 
 void dodgeball_respawn2(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	if(!this.died)
@@ -426,7 +426,7 @@ void dodgeball_respawn2(entity this)
 
 void dodgeball_GibPlayer(entity this, entity inflictor, entity attacker)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	if(STAT(FROZEN, this) > time)
@@ -443,7 +443,7 @@ void dodgeball_GibPlayer(entity this, entity inflictor, entity attacker)
 
 void dodgeball_PlayerDies(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	if(!ceasefire && !countdown)
@@ -452,7 +452,7 @@ void dodgeball_PlayerDies(entity this)
 
 void dodgeball_RemovePlayer(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	// flip last played team to ensure next join is on their team
@@ -465,7 +465,7 @@ void dodgeball_RemovePlayer(entity this)
 
 void dodgeball_ClientConnect(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	this.team_no = (last_team == 1) ? 2 : 1;
@@ -474,7 +474,7 @@ void dodgeball_ClientConnect(entity this)
 
 void dodgeball_Rejoin(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	this.team_no = (last_team == 1) ? 2 : 1;
@@ -488,7 +488,7 @@ void dodgeball_Rejoin(entity this)
 
 void dodgeball_PlayerPreThink(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	if(!PHYS_INPUT_BUTTON_CROUCH(this) && this.health > 0)
@@ -503,7 +503,7 @@ void dodgeball_PlayerPreThink(entity this)
 
 void dodgeball_PlayerPowerups(entity this)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return;
 
 	if(STAT(HAS_BALL, this))
@@ -814,7 +814,7 @@ void teamwall_touch(entity this, entity toucher)
 
 spawnfunc(func_teamwall)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		delete(this);
 		return;
@@ -836,7 +836,7 @@ void teleportball_touch(entity this, entity toucher)
 
 spawnfunc(trigger_teleportball)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		delete(this);
 		return;
@@ -847,7 +847,7 @@ spawnfunc(trigger_teleportball)
 
 spawnfunc(info_ball_spot)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		delete(this);
 		return;
@@ -856,7 +856,7 @@ spawnfunc(info_ball_spot)
 
 spawnfunc(info_player_prison1)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		delete(this);
 		return;
@@ -865,7 +865,7 @@ spawnfunc(info_player_prison1)
 
 spawnfunc(info_player_prison2)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 	{
 		delete(this);
 		return;
@@ -875,14 +875,14 @@ spawnfunc(info_player_prison2)
 
 bool dodgeball_Sprinting(entity this)
 {
-	if(STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL || STAT(SKATING) || STAT(SLIDE_ON) || (STAT(ITEMS) & IT_TANK) || STAT(CLOCKWORK))
+	if(gametype != GAMETYPE_DODGEBALL || STAT(SKATING) || STAT(SLIDE_ON) || (STAT(ITEMS) & IT_TANK) || STAT(CLOCKWORK))
 		return false;
 	return (PHYS_INPUT_BUTTON_CROUCH(this) && STAT(STAMINA, this) > 0 && IS_ONGROUND(this) && this.velocity != '0 0 0');
 }
 
 float dodgeball_GetMoveSpeed(entity this)
 {
-	if(STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return 1;
 
 	if(dodgeball_Sprinting(this))
@@ -892,7 +892,7 @@ float dodgeball_GetMoveSpeed(entity this)
 
 bool dodgeball_PlayerPhysics(entity this)
 {
-	if(STAT(WORLDTYPE) != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		return false;
 
 	if(STAT(FROZEN, this) > time)

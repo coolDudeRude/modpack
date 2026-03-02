@@ -1536,7 +1536,7 @@ void NoclipCheat(entity this)
 {
 	if(!autocvar_sv_cheats && !this.maycheat)
 		return;
-	//if(world.worldtype == WORLDTYPE_DODGEBALL)
+	//if(gametype == GAMETYPE_DODGEBALL)
 		//return;
 
 	if(this.move_movetype == MOVETYPE_WALK)
@@ -1555,7 +1555,7 @@ void GodCheat(entity this)
 {
 	if(!autocvar_sv_cheats && !this.maycheat)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return;
 
 	if(this.flags & FL_GODMODE)
@@ -1574,7 +1574,7 @@ void NotargetCheat(entity this)
 {
 	if(!autocvar_sv_cheats && !this.maycheat)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return;
 
 	if(this.flags & FL_NOTARGET)
@@ -1593,7 +1593,7 @@ void GiveCheat(entity this, string input)
 {
 	if(!autocvar_sv_cheats && !this.maycheat)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL || input == "ball")
+	if(gametype == GAMETYPE_DODGEBALL || input == "ball")
 		return;
 
 	Weapon wep = WEP_Null;
@@ -1707,9 +1707,9 @@ void W_WeaponFrame(entity this, .entity weaponentity)
 {
 	if(this.exptime != 0)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL && (ceasefire || STAT(FROZEN, this) > time || this.died))
+	if(gametype == GAMETYPE_DODGEBALL && (ceasefire || STAT(FROZEN, this) > time || this.died))
 		return;
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return;
 	if(!STAT(SKATING, this) && this.m_champion && this.m_champion.m_weaponframe)
 	{

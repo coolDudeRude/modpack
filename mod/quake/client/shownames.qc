@@ -40,7 +40,7 @@ void Draw_ShowNames(entity this)
 
 	// since quake players are smaller, subtract a bit off the offset so it looks less silly!
 	float realoffset = autocvar_hud_shownames_offset;
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		realoffset += 16;
 	else if(realoffset == 52) // xonotic default
 		realoffset -= 16;

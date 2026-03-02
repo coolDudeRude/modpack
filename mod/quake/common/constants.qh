@@ -62,6 +62,7 @@ const int WORLDTYPE_MEDIEVAL = 0;
 const int WORLDTYPE_METAL = 1;
 const int WORLDTYPE_BASE = 2;
 const int WORLDTYPE_HUB = 3;
+// TODO: remove these in favour of entity/field tests
 const int WORLDTYPE_SKATE = 4;
 const int WORLDTYPE_SLIDE = 5;
 const int WORLDTYPE_DODGEBALL = 6;

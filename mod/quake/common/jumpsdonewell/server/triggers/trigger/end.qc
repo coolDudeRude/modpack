@@ -15,7 +15,7 @@ void end2_touch(entity this, entity toucher)
 
 spawnfunc(trigger_end2)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;
@@ -61,7 +61,7 @@ void end1_touch(entity this, entity toucher)
 
 spawnfunc(trigger_end1)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;

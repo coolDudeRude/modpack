@@ -20,7 +20,7 @@ void tankitem_touch(entity this, entity toucher)
 
 	//Send_Notification(NOTIF_ONE, toucher, MSG_MULTI, ITEM_TANK_GOT);
 
-	if(deathmatch != 2 && !horde_ent)
+	if(deathmatch != 2 && gametype != GAMETYPE_HORDE)
 	{
 		this.model = string_null;
 		this.solid = SOLID_NOT;

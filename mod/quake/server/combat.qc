@@ -19,7 +19,7 @@ void horde_spawn_powerup(entity this, entity attacker);
 int autocvar__playerscale_testing; // internal setting for testing purposes
 void playerscale_StartFrame()
 {
-	if(!autocvar_sv_quake_playerscaling || horde_ent)
+	if(!autocvar_sv_quake_playerscaling || gametype == GAMETYPE_HORDE)
 	{
 		player_scale = 1;
 		return;
@@ -442,7 +442,7 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 	}
 
 	// Yoder March04 2022, punish team killspree
-	if(horde_ent && IS_PLAYER(attacker) && IS_PLAYER(targ))
+	if(gametype == GAMETYPE_HORDE && IS_PLAYER(attacker) && IS_PLAYER(targ))
 	{
 		LOG_DEBUG("punish teamkill");
 		attacker.killtime = 0;
@@ -453,7 +453,7 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 	if(IS_MONSTER(targ))
 	{
 		// Yoder Sept24, 2021 Horde Merge
-		if(horde_ent && !targ.charmed)
+		if(gametype == GAMETYPE_HORDE && !targ.charmed)
 		{
 			if(targ.monsterdef && !(targ.flags & FL_CLONE) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD)) // zombies don't count
 				monsters_killed += 1;
@@ -509,7 +509,7 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 			update_minioncount(targ.owner, -1);
 		if(IS_PLAYER(attacker) && !(targ.flags & FL_CLONE) && !targ.charmed)
 			attacker.frags += 1;
-		if(horde_ent && !targ.charmed)
+		if(gametype == GAMETYPE_HORDE && !targ.charmed)
 			Horde_GiveScore(HORDE_TEAMSCORE_KILL);
 
 		if(STAT(PASSIVES, attacker) & PASSIVE_BOOMER)
@@ -540,7 +540,7 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 	targ.flags &= ~FL_FLY;
 	targ.flags &= ~FL_SWIM;
 
-	if(IS_MONSTER(targ) && horde_ent && !targ.charmed && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
+	if(IS_MONSTER(targ) && gametype == GAMETYPE_HORDE && !targ.charmed && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD))
 		remote_wavecheck(targ);
 
 	// TODO: reset target? not sure if this is needed!
@@ -600,7 +600,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	if(ai_immunebreakable(attacker, targ))
 		return;
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		if(JDW_Damage(attacker, targ, damage))
 			return;
@@ -834,14 +834,14 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	}
 
 // coop damage avoidance (if enabled)
-	if(coop && attacker != targ && IS_PLAYER(attacker) && IS_PLAYER(targ) && world.worldtype != WORLDTYPE_DODGEBALL)
+	if(coop && attacker != targ && IS_PLAYER(attacker) && IS_PLAYER(targ) && gametype != GAMETYPE_DODGEBALL)
 	{
 		if(autocvar_g_friendlyfire_virtual)
 			return;
 		take *= autocvar_g_friendlyfire;
 	}
 
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 	{
 		if(targ.team_no > 0 && targ.team_no == attacker.team_no && targ != attacker)
 			return;
@@ -992,7 +992,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		{
 			if(targ.classname != attacker.classname || (targ.monsterdef.spawnflags & MON_FLAG_INFIGHT))
 			{
-				if(coop || autocvar_horde)
+				if(coop || gametype == GAMETYPE_HORDE)
 				{
 					// yoder Sept24, 2021
 					// if in horde mode, have enemies obey a reaggro time

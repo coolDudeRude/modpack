@@ -166,7 +166,7 @@ void W_TakeAmmo(entity ent, int ammotype, float amount)
 	if(StatusEffects_active(STATUSEFFECT_SharpShooter, ent))
 		return;
 
-	if(deathmatch && autocvar_skill == 3)
+	if(gametype == GAMETYPE_INSTAGIB)
 		return;
 
 	if(ent.m_champion && ent.m_champion.m_takeammo)

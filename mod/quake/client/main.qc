@@ -6,6 +6,7 @@
 #include "shop.qh"
 #include "view.qh"
 #include "../common/champions/_mod.qh"
+#include "../common/gametypes.qh"
 #include "../common/music.qh"
 #include "../common/stats.qh"
 #include "../common/sui_sys.qh"
@@ -503,10 +504,13 @@ bool CSQC_Parse_TempEntity()
 	return false;
 }
 
+void JumpsDoneWell_Init();
 void PostInit()
 {
 	// this can't be called in CSQC_Init as it'd send cvars too early
 	ReplicateVars_Start();
+
+	JumpsDoneWell_Init();
 
 	postinit = true;
 }
@@ -514,6 +518,7 @@ void PostInit()
 NET_HANDLE(ENT_CLIENT_INIT, bool isnew)
 {
 	serverflags = ReadByte();
+	gametype = ReadByte();
 	strfree(vote_list);
 	vote_list = strzone(ReadString());
 

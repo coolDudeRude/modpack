@@ -10,8 +10,6 @@ REGISTER_NET_LINKED(ENT_CLIENT_BAMBOO)
 
 #include "stats.qh"
 
-#include "util.qh"
-
 #include "physics.qh"
 
 #include "effects/all.inc"

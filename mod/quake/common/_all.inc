@@ -36,4 +36,5 @@
 #include "editor.qc"
 #include "challenges.qc"
 #include "shop.qc"
+#include "gametypes.qc"
 #endif

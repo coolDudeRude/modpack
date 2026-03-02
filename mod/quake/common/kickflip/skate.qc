@@ -795,7 +795,7 @@ void skate_reset(entity this)
 
 void skate_spawn(entity this)
 {
-	STAT(SKATING, this) = (world.worldtype == WORLDTYPE_SKATE);
+	STAT(SKATING, this) = (gametype == GAMETYPE_SKATE);
 	skate_reset(this);
 }
 

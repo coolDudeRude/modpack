@@ -271,7 +271,7 @@ void monster_start_go(entity this)
 	if(monster_checkspawnedflag(this))
 	{
 		// Yoder, Sept29, horde fix so that preplaced monsters are counted on spawn_tdeath
-		if(horde_ent)
+		if(gametype == GAMETYPE_HORDE)
 			monsters_total += 1;
 		// end Yoder chunk, back to normal
 		
@@ -509,7 +509,7 @@ void monster_setup(entity this, Monster mon)
 		this.realowner.health += this.health;
 	}
 
-	if(!horde_ent && !this.charmed && this.health > 0 && ((mon.spawnflags & MONSTER_TYPE_BOSS) || (mon.spawnflags & MONSTER_TYPE_CONTROLLER)) && !(mon.spawnflags & MON_FLAG_PART))
+	if(gametype != GAMETYPE_HORDE && !this.charmed && this.health > 0 && ((mon.spawnflags & MONSTER_TYPE_BOSS) || (mon.spawnflags & MONSTER_TYPE_CONTROLLER)) && !(mon.spawnflags & MON_FLAG_PART))
 	{
 		if(autocvar_sv_quake_bossbars == 1 && !this.sprite)
 		{
@@ -530,7 +530,7 @@ void monster_setup(entity this, Monster mon)
 
 bool monster_start(entity this, bool check_appear, Monster mon)
 {
-	if(!autocvar_horde && autocvar_skill == 3 && !this.nightmare_checked && !(mon.spawnflags & MONSTER_TYPE_BOSS) && !(mon.spawnflags & MONSTER_TYPE_SWIM) && !(mon.spawnflags & MONSTER_TYPE_UNDEAD) && !(mon.spawnflags & MON_FLAG_STATIONARY))
+	if(gametype != GAMETYPE_HORDE && autocvar_skill == 3 && !this.nightmare_checked && !(mon.spawnflags & MONSTER_TYPE_BOSS) && !(mon.spawnflags & MONSTER_TYPE_SWIM) && !(mon.spawnflags & MONSTER_TYPE_UNDEAD) && !(mon.spawnflags & MON_FLAG_STATIONARY))
 		mon = monster_randomize(this, mon);
 
 	if(check_appear && qonquer_monstercompat(this, mon))
@@ -600,8 +600,8 @@ bool monster_start(entity this, bool check_appear, Monster mon)
 	setup_minionsupport(this);
 
 	// Yoder, Sept29, fix for preplaced monsters in horde_ent
-	// in horde, mosnters shouldn't increase total count until spawned
-	if(autocvar_horde)
+	// in horde, monsters shouldn't increase total count until spawned
+	if(gametype == GAMETYPE_HORDE)
 	{
 		if(!monster_checkspawnedflag(this) && !(this.flags & FL_DECOY) && !(this.flags & FL_CLONE) && !(this.flags & FL_SPAWNING))
 			monsters_total += 1;
@@ -637,7 +637,7 @@ void MonsterFade2(entity this)
 }
 void MonsterFade(entity this)
 {
-	if(!autocvar_horde)
+	if(gametype != GAMETYPE_HORDE)
 	{
 		setthink(this, func_null);
 		return;

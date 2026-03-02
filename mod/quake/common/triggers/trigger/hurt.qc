@@ -72,7 +72,7 @@ spawnfunc(trigger_hurt)
 		this.wait = 1;
 	if((this.spawnflags & START_OFF) && IsMGMap())
 		this.state = 1;
-	else if((this.spawnflags & 1) || IsJumpsDoneWell())
+	else if((this.spawnflags & 1) || gametype == GAMETYPE_JUMPSDONEWELL)
 		this.dmg = 10000;
 	this.use = hurt_use;
 

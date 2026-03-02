@@ -269,7 +269,7 @@ void wep_star_frame(entity this, .entity weaponentity);
 
 void player_stand1(entity this)
 {
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return;
 	
 	set_anim(this, anim_player_axstnd1, player_stand1);
@@ -413,7 +413,7 @@ void player_stand1(entity this)
 .vector footsteps_oldorigin;
 void player_run(entity this)
 {
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return;
 
 	set_anim(this, anim_player_rockrun1, player_run);
@@ -908,7 +908,7 @@ string get_deathsound(entity this, int chance);
 void DeathSound(entity this)
 {
 	int atten = ATTN_NONE;
-	if(deathmatch || world.worldtype == WORLDTYPE_DODGEBALL)
+	if(deathmatch || gametype == GAMETYPE_DODGEBALL)
 		atten = ATTN_NORM;
 	// water death sounds
 	if(this.waterlevel == 3)
@@ -1023,7 +1023,7 @@ void ThrowHead(entity this, entity inflictor, string gibname, float dm)
 	this.avelocity = crandom() * '0 600 0';
 
 	// Yoder Sept24 2021, Horde Merge
-	if(horde_ent && !IS_PLAYER(this))
+	if(gametype == GAMETYPE_HORDE && !IS_PLAYER(this))
 	{
 		// only monsters gibs should fade away 
 		setthink(this, MonsterFade);
@@ -1039,7 +1039,7 @@ void ThrowHead(entity this, entity inflictor, string gibname, float dm)
 
 void Corpse_Fade(entity this)
 {
-	if(horde_ent)
+	if(gametype == GAMETYPE_HORDE)
 	{
 		setthink(this, MonsterFade);
 		this.nextthink = time + FADETIME;
@@ -1062,7 +1062,7 @@ void CorpseThink(entity this)
 void GibPlayer(entity this, entity inflictor, entity attacker)
 {
 	int atten = ATTN_NONE;
-	if(deathmatch || world.worldtype == WORLDTYPE_DODGEBALL)
+	if(deathmatch || gametype == GAMETYPE_DODGEBALL)
 		atten = ATTN_NORM;
 
 	ThrowHead(this, inflictor, get_playerhead(this), this.health);
@@ -1140,15 +1140,15 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 
 	W_Spellbook_ClearSpells(this);
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		JDW_PlayerDie(this);
 		return;
 	}
 
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		DropBall(this);
-	else if(deathmatch && autocvar_skill == 3)
+	else if(gametype == GAMETYPE_INSTAGIB)
 		{ /* do nothing */ }
 	else if(deathmatch || coop)
 		DropBackpack(this);
@@ -1164,10 +1164,10 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 
 	int killed_type = Death_SpecialType(this, inflictor, attacker, deathtype);
 
-	if(killed_type == KILLED_GIBBED || STAT(SKATING, this) || horde_ent || STAT(FROZEN, this) > time)
+	if(killed_type == KILLED_GIBBED || STAT(SKATING, this) || gametype == GAMETYPE_HORDE || STAT(FROZEN, this) > time)
 	{
 		GibPlayer(this, inflictor, attacker);
-		if(horde_ent)
+		if(gametype == GAMETYPE_HORDE)
 		{
 			entity spot = FindIntermission(this);
 			this.angles = this.v_angle = spot.mangle;

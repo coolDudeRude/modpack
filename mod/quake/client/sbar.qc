@@ -163,7 +163,7 @@ string Sbar_PickNum(string frm)
 vector Sbar_BgColor()
 {
 	vector bgcolor = '1 1 1';
-	if(STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL && STAT(DODGEBALL_TEAM) > 0)
+	if(gametype == GAMETYPE_DODGEBALL && STAT(DODGEBALL_TEAM) > 0)
 	{
 		if(STAT(DODGEBALL_TEAM) == 1)
 			bgcolor = '1 0.7 0.1';
@@ -331,7 +331,7 @@ void Sbar_SoloScoreboard(vector pos, vector mySize)
 	//int seconds = rint(t - 60*floor(t/60));
 
 	int totalmonsters = STAT(MONSTERS_TOTAL);
-	if(STAT(HORDE) && STAT(TOP_SCORE))
+	if(gametype == GAMETYPE_HORDE && STAT(TOP_SCORE))
 		totalmonsters = STAT(TOP_SCORE);
 
 	// monsters and secrets are now both on the top row
@@ -383,7 +383,7 @@ void Sbar_SoloScoreboard(vector pos, vector mySize)
 	drawstring_aspect(text_pos + vec2(mySize.x * 0.5, mySize.y * 0.5), timestr, text_size, col, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 
 	// port of the intermission display of monster kills
-	if(STAT(HORDE))
+	if(gametype == GAMETYPE_HORDE)
 	{
 		vector oldsbar = sbar;
 		sbar.x = (vid_conwidth - 320) >> 1;
@@ -510,13 +510,13 @@ void Sbar_Score(vector thepos, int margin)
 	sbar.x = thepos.x - margin;
 
 	int me = player_localnum; // was -1
-	if(STAT(HORDE))
+	if(gametype == GAMETYPE_HORDE)
 	{
 		int score = entcs_GetClientFrags(me);
 		Sbar_DrawXNum(vec2(-3*12, -12), score, 3, 12, '1 1 1');
 		Sbar_DrawXNum(vec2(-32*4, 0), STAT(HORDE_WAVE), 4, 32, (((STAT(HORDE_WAVE) % 3) == 0) ? '1 0 0 ' : '1 1 1'));
 	}
-	else if(STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL)
+	else if(gametype == GAMETYPE_DODGEBALL)
 	{
 		int dteam = STAT(DODGEBALL_TEAM);
 		if(dteam > 0)
@@ -576,9 +576,9 @@ void Sbar_Score(vector thepos, int margin)
 		}
 	}
 
-	if(autocvar_sbar_gametime && (deathmatch || STAT(SKATING) || STAT(WORLDTYPE) == WORLDTYPE_SLIDE || STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL))
+	if(autocvar_sbar_gametime && (deathmatch || STAT(SKATING) || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL))
 	{
-		if((deathmatch || STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL) && STAT(TIMELIMIT))
+		if((deathmatch || gametype == GAMETYPE_DODGEBALL) && STAT(TIMELIMIT))
 		{
 			string timestr = seconds_tostring(max(0, STAT(TIMELIMIT) * 60 - time));
 			Sbar_DrawNum_lettersize(vec2(-12 * 3, 32), timestr, strlen(timestr), '1 1 1', 12, '12 12 0');
@@ -850,7 +850,7 @@ void Sbar_IntermissionOverlay()
 		Sbar_DrawNum('240 104 0', itos(STAT(SECRETS_FOUND)), 3, '1 1 1');
 
 	int totalmonsters = STAT(MONSTERS_TOTAL);
-	if(STAT(HORDE) && STAT(TOP_SCORE))
+	if(gametype == GAMETYPE_HORDE && STAT(TOP_SCORE))
 		totalmonsters = STAT(TOP_SCORE);
 
 	if(totalmonsters)
@@ -1336,7 +1336,7 @@ void Sbar_Draw()
 		vector mySize = panel_size;
 
 		vector bgcolor = Sbar_BgColor();
-		if(!intermission && !sb_showscores && STAT(HEALTH) > 0 && !IsJumpsDoneWell())
+		if(!intermission && !sb_showscores && STAT(HEALTH) > 0 && gametype != GAMETYPE_JUMPSDONEWELL)
 		{
 			Draw_BorderPicture(
 				pos - '1 1 0' * 2,
@@ -1398,7 +1398,7 @@ void Sbar_Draw()
 			Sbar_IntermissionOverlay();
 		else if(intermission == 2)
 			Sbar_FinaleOverlay();
-		else if(IsJumpsDoneWell())
+		else if(gametype == GAMETYPE_JUMPSDONEWELL)
 			{ /* do nothing */ }
 		else // Quake
 		{
@@ -1504,7 +1504,7 @@ void Sbar_Draw()
 				entity thiswep = viewmodels[0]; // TODO: unhardcode
 				if(STAT(SKATING) || (STAT(ITEMS) & IT_TANK))
 					{ /* nothing */}
-				else if(STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL)
+				else if(gametype == GAMETYPE_DODGEBALL)
 				{
 					//Sbar_DrawNum('248 0 0', itos(ceil(STAT(STAMINA))), 3, ((STAT(STAMINA) <= 10) ? '1 0 0' : '1 1 1'));
 					sbar = '0 0 0';

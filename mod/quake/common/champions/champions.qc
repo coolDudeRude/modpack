@@ -72,15 +72,15 @@ bool QCC_Allowed(entity this)
 {
 	if(STAT(ITEMS) & IT_TANK)
 		return false;
-	if(STAT(SLIDE_ON, this) || STAT(WORLDTYPE) == WORLDTYPE_SLIDE)
+	if(STAT(SLIDE_ON, this) || gametype == GAMETYPE_SLIDE)
 		return false;
 	if(STAT(SKATING, this))
 		return false;
-	if(STAT(WORLDTYPE) == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return false;
 	if(Challenge_Active(CHALLENGE_BONK))
 		return false;
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return false;
 	return true;
 }
@@ -259,7 +259,7 @@ void QCC_UpdatePlayer(entity this)
 		}
 		champ = this.m_transform;
 	}
-	else if(deathmatch && autocvar_skill == 3)
+	else if(gametype == GAMETYPE_INSTAGIB)
 		champ = CHAMPION_V1;
 	else if(champ.qcc_noselect || (champ.m_condition && champ.m_condition(champ, this)))
 		champ = CHAMPION_Ranger;

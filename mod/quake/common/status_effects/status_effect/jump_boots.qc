@@ -14,7 +14,7 @@ METHOD(JumpBoots, m_tick, void(StatusEffects this, entity actor))
     float curtime = StatusEffects_gettime(this, actor);
     if(curtime < time + 3 && !actor.jumpboots_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_JUMPBOOTS);
         _sound(actor, CH_TRIGGER_SINGLE, "items/jboots_timed.wav", 1, ATTN_NORM);
         actor.jumpboots_warning = true;

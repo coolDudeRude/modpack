@@ -6,6 +6,7 @@
 #include "horde.qh"
 #include "ipban.qh"
 #include "../common/challenges.qh"
+#include "../common/gametypes.qh"
 #include "../common/dodgeball/dodgeball.qh"
 #include "../common/jumpsdonewell/_mod.qh"
 #include "../common/triggers/func/button.qh"
@@ -702,6 +703,7 @@ void ClientInit_misc(entity this)
 	WriteHeader(channel, ENT_CLIENT_INIT);
 
 	WriteByte(channel, this.count);
+	WriteByte(channel, this.cnt);
 	WriteString(channel, this.message);
 }
 
@@ -711,6 +713,11 @@ void ClientInit_CheckUpdate(entity this)
 	if(this.count != serverflags)
 	{
 		this.count = serverflags;
+		this.SendFlags |= 1;
+	}
+	if(this.cnt != gametype)
+	{
+		this.cnt = gametype;
 		this.SendFlags |= 1;
 	}
 	if(this.message != autocvar_sv_vote_commands)
@@ -1576,6 +1583,17 @@ spawnfunc(worldspawn)
 		}
 	}
 
+	string themap = autocvar_sv_worldbasename;
+	bool wantdeathmatch = false;
+	if(!wantrestart && coop && changelevel_checkinlist(themap, autocvar_sv_quake_maplist))
+	{
+		wantdeathmatch = true;
+		deathmatch = 1;
+		coop = 0;
+	}
+
+	SetGametype();
+
 	lastspawn = NULL;
 
 // the area based ambient sounds MUST be the first precache_sounds
@@ -1585,7 +1603,7 @@ spawnfunc(worldspawn)
 		cvar_set("sv_gravity", ftos(this.gravity));
 	else if(this.model == "maps/e1m8.bsp")
 		cvar_set("sv_gravity", "100");
-	else if(world.worldtype == WORLDTYPE_SKATE)
+	else if(gametype == GAMETYPE_SKATE)
 		cvar_set("sv_gravity", "700");
 	else
 		cvar_set("sv_gravity", "800");
@@ -1601,18 +1619,16 @@ spawnfunc(worldspawn)
 	// needs to be done so early because of the constants they create
 	static_init();
 
-	string themap = autocvar_sv_worldbasename;
-	if(!wantrestart && coop && changelevel_checkinlist(themap, autocvar_sv_quake_maplist))
+	ServerProgsDB = db_load(strcat("server.db", autocvar_sessionid));
+
+	// can't do these earlier as the settemp list doesn't exist!
+	if(wantdeathmatch)
 	{
 		cvar_settemp("deathmatch", "1");
 		cvar_settemp("coop", "0");
-		deathmatch = 1;
-		coop = 0;
 		cvar_settemp("timelimit", ftos(autocvar_sv_quake_timelimit));
 		cvar_settemp("fraglimit", ftos(autocvar_sv_quake_fraglimit));
 	}
-
-	ServerProgsDB = db_load(strcat("server.db", autocvar_sessionid));
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -1885,7 +1901,7 @@ void CheckRules_World()
 	if(autocvar_sv_dedicated && !deathmatch && matchlimit && time >= matchlimit && autocvar_quit_when_empty)
 	{
 		// crude hack to force restart of the server if we've reached the timelimit on a co-op level
-		if(world.worldtype != WORLDTYPE_DODGEBALL 
+		if(gametype != GAMETYPE_DODGEBALL 
 			&& world.model != "maps/start.bsp" && world.model != "maps/rstart.bsp" && world.model != "maps/hipstart.bsp"
 			&& world.model != "maps/aopstart.bsp" && world.model != "maps/mgstart.bsp" && world.model != "maps/hub.bsp" && world.model != "maps/quake.bsp")
 		{
@@ -1896,7 +1912,7 @@ void CheckRules_World()
 		return;
 	}
 	
-	if((deathmatch || world.worldtype == WORLDTYPE_DODGEBALL) && timelimit && time >= timelimit)
+	if((deathmatch || gametype == GAMETYPE_DODGEBALL) && timelimit && time >= timelimit)
 	{
 		//mapname = "quake";
 		if(deathmatch)
@@ -2000,7 +2016,7 @@ void CreatureFrame_FallDamage(entity this)
 		jumpheight_mod *= 1.5;
 	if(cannon_land(this))
 		{ /* do nothing */ }
-	else if(IsJumpsDoneWell())
+	else if(gametype == GAMETYPE_JUMPSDONEWELL)
 		{ /* do nothing */ }
 	else if(STAT(SKATING, this) && this.jump_flag < -50 && IS_ONGROUND(this) && this.health > 0)
 		skate_land(this);

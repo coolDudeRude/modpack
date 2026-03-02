@@ -132,7 +132,7 @@ void GrappleAnchor(entity this, entity toucher)
 
 	_sound(this.owner, CH_WEAPON_SINGLE, "weapons/tink1.wav", 1, ATTN_NORM);
 
-	if(!this.owner.button3)
+	if(!this.owner.button3 && !PHYS_INPUT_BUTTON_HOOK(this.owner))
 	{
 		GrappleReset(this);
 		return;
@@ -292,7 +292,7 @@ void GrappleHook_Pull_Classic(entity this)
 // merged with GrappleService
 void GrappleHookFrame(entity this)
 {
-	if(!this.button3 || !(this.items & IT_GRAPPLE) || STAT(CANNON, this) || this.tank || this.clockwork || this.m_transform 
+	if((!this.button3 && !PHYS_INPUT_BUTTON_HOOK(this)) || !(this.items & IT_GRAPPLE) || STAT(CANNON, this) || this.tank || this.clockwork || this.m_transform 
 		|| STAT(SKATING, this) || STAT(SLIDE_ON, this) || this.teleport_time > time)
 	{
 		if(this.hook)

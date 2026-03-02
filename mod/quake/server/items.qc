@@ -158,8 +158,7 @@ Sets the clipping size and plants the object on the floor
 */
 void StartItem(entity this)
 {
-	// instagib
-	if(deathmatch && autocvar_skill == 3)
+	if(gametype == GAMETYPE_INSTAGIB)
 	{
 		delete(this);
 		return;
@@ -192,7 +191,7 @@ bool T_Heal(entity e, float healamount, bool ignore)
 		return false;
 	if(e.clockwork)
 		return false;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return false;
 	if(e.m_champion)
 		hp_heal_max *= e.m_champion.qcc_health_heal_max;
@@ -203,7 +202,7 @@ bool T_Heal(entity e, float healamount, bool ignore)
 	healamount = ceil(healamount);
 
 	// AY Dec13 2021, horde rune of hunger
-	if(autocvar_horde && (serverflags & 2))
+	if(gametype == GAMETYPE_HORDE && (serverflags & 2))
 		e.hunger_time = time + HUNGER_MAX;
 
 	e.health = e.health + healamount;
@@ -478,7 +477,7 @@ void armor_touch(entity this, entity toucher)
 void armor_init(entity this, int armor_type)
 {
 	// TODO: cleaner randomiser logic
-	if(horde_ent || (autocvar_skill >= 3 && !deathmatch))
+	if(gametype == GAMETYPE_HORDE || (autocvar_skill >= 3 && !deathmatch))
 		armor_type = bound(ARMOR_NONE + 1, floor(random() * ARMOR_LAST) + 1, ARMOR_LAST - 1);
 
 	this.armortype = armor_type;
@@ -1918,7 +1917,7 @@ void key_spend(entity player, int key_item)
 		return; // keep the key!
 
 	// Yoder Sept24, 2021 Horde merge
-	if(horde_ent || autocvar_sv_quake_globalkeys)
+	if(gametype == GAMETYPE_HORDE || autocvar_sv_quake_globalkeys)
 	{
 		horde_key_spend(key_item);
 	}
@@ -2090,7 +2089,7 @@ void sigil_touch(entity this, entity toucher)
 	}
 	else
 		serverflags = serverflags | (this.spawnflags & 15);
-	if(autocvar_horde && (this.spawnflags & SIGIL_E2)) // Hunger
+	if(gametype == GAMETYPE_HORDE && (this.spawnflags & SIGIL_E2)) // Hunger
 	{
 		FOREACH_CLIENT(IS_PLAYER(it),
 		{
@@ -2425,7 +2424,7 @@ void powerup_touch(entity this, entity toucher)
 		this.nextthink = time + this.wait;
 		setthink(this, SUB_regen);
 	}
-	else if(horde_ent)
+	else if(gametype == GAMETYPE_HORDE)
 	{
 		setthink(this, SUB_Remove);
 		this.nextthink = time;
@@ -2443,7 +2442,7 @@ void powerup_touch(entity this, entity toucher)
 	if(this.radsuit_finished)
 	{
 		StatusEffects_apply(STATUSEFFECT_Biosuit, toucher, time + 30, 0);
-		if(coop && !horde_ent) // Respawn this powerup in coop, since it might be required for progression
+		if(coop && gametype != GAMETYPE_HORDE) // Respawn this powerup in coop, since it might be required for progression
 		{
 			this.target = string_null; // but don't fire off targets again
 			setthink(this, SUB_regen);
@@ -2453,19 +2452,19 @@ void powerup_touch(entity this, entity toucher)
 
 	if(this.invincible_finished)
 	{
-		float invulntime = (horde_ent) ? 5 : this.invincible_finished;
+		float invulntime = (gametype == GAMETYPE_HORDE) ? 5 : this.invincible_finished;
 		StatusEffects_apply(STATUSEFFECT_Invulnerability, toucher, time + invulntime, 0);
 	}
 
 	if(this.invisible_finished)
 	{
-		float invistime = (horde_ent) ? 5 : this.invisible_finished;
+		float invistime = (gametype == GAMETYPE_HORDE) ? 5 : this.invisible_finished;
 		StatusEffects_apply(STATUSEFFECT_Invisibility, toucher, time + invistime, 0);
 	}
 
 	if(this.super_damage_finished)
 	{
-		float quadtime = (horde_ent) ? 5 : this.super_damage_finished;
+		float quadtime = (gametype == GAMETYPE_HORDE) ? 5 : this.super_damage_finished;
 		StatusEffects_apply(STATUSEFFECT_Quad, toucher, time + quadtime, 0);
 	}
 
@@ -2473,14 +2472,14 @@ void powerup_touch(entity this, entity toucher)
 	{
 		toucher.field_generator_health = this.health;
 		toucher.field_generator_time = -150;
-		float fieldtime = (horde_ent) ? 15 : 30;
+		float fieldtime = (gametype == GAMETYPE_HORDE) ? 15 : 30;
 		StatusEffects_apply(STATUSEFFECT_FieldGen, toucher, time + fieldtime, 0);
 	}
 
 	if(this.wetsuit_finished)
 	{
 		StatusEffects_apply(STATUSEFFECT_Wetsuit, toucher, time + 30, 0);
-		if(coop && !horde_ent) // Respawn this powerup in coop, since it might be required for progression
+		if(coop && gametype != GAMETYPE_HORDE) // Respawn this powerup in coop, since it might be required for progression
 		{
 			this.target = string_null; // but don't fire off targets again
 			setthink(this, SUB_regen);
@@ -2490,7 +2489,7 @@ void powerup_touch(entity this, entity toucher)
 
 	if(this.empathy_finished)
 	{
-		float etime = (horde_ent) ? 15 : 30;
+		float etime = (gametype == GAMETYPE_HORDE) ? 15 : 30;
 		StatusEffects_apply(STATUSEFFECT_EmpathyShields, toucher, time + etime, 0);
 	}
 
@@ -2507,7 +2506,7 @@ void powerup_touch(entity this, entity toucher)
 	if(this.antigrav_finished)
 	{
 		StatusEffects_apply(STATUSEFFECT_Antigrav, toucher, time + 45, 0);
-		if(coop && !horde_ent) // Respawn this powerup in coop, since it might be required for progression
+		if(coop && gametype != GAMETYPE_HORDE) // Respawn this powerup in coop, since it might be required for progression
 		{
 			this.target = string_null; // but don't fire off targets again
 			setthink(this, SUB_regen);
@@ -2517,7 +2516,7 @@ void powerup_touch(entity this, entity toucher)
 
 	if(this.shield_finished)
 	{
-		float shieldtime = (horde_ent) ? 15 : 30;
+		float shieldtime = (gametype == GAMETYPE_HORDE) ? 15 : 30;
 		StatusEffects_apply(STATUSEFFECT_PowerShield, toucher, time + shieldtime, 0);
 	}
 
@@ -2532,7 +2531,7 @@ void powerup_touch(entity this, entity toucher)
 	if(this.jboots_finished)
 	{
 		StatusEffects_apply(STATUSEFFECT_JumpBoots, toucher, time + 30, 0);
-		if(coop && !horde_ent) // Respawn this powerup in coop, since it might be required for progression
+		if(coop && gametype != GAMETYPE_HORDE) // Respawn this powerup in coop, since it might be required for progression
 		{
 			this.target = string_null; // but don't fire off targets again
 			setthink(this, SUB_regen);
@@ -2543,7 +2542,7 @@ void powerup_touch(entity this, entity toucher)
 	if(this.powerups & POWERUP_DOUBLEJUMPBOOTS)
 	{
 		StatusEffects_apply(STATUSEFFECT_DoubleJumpBoots, toucher, time + 666, 0);
-		if(coop && !horde_ent) // Respawn this powerup in coop, since it might be required for progression
+		if(coop && gametype != GAMETYPE_HORDE) // Respawn this powerup in coop, since it might be required for progression
 		{
 			this.target = string_null; // but don't fire off targets again
 			setthink(this, SUB_regen);
@@ -2553,13 +2552,13 @@ void powerup_touch(entity this, entity toucher)
 
 	if(this.sharp_finished)
 	{
-		float sharptime = (horde_ent) ? 10 : 30;
+		float sharptime = (gametype == GAMETYPE_HORDE) ? 10 : 30;
 		StatusEffects_apply(STATUSEFFECT_SharpShooter, toucher, time + sharptime, 0);
 	}
 
 	if(this.powerups & POWERUP_REVIVAL)
 	{
-		if(horde_ent)
+		if(gametype == GAMETYPE_HORDE)
 			RespawnAllPlayers();
 	}
 
@@ -2571,7 +2570,7 @@ void powerup_touch(entity this, entity toucher)
 
 	if(this.berserk_finished)
 	{
-		float berserktime = (horde_ent) ? 10 : 30;
+		float berserktime = (gametype == GAMETYPE_HORDE) ? 10 : 30;
 		StatusEffects_apply(STATUSEFFECT_Berserk, toucher, time + berserktime, 0);
 	}
 
@@ -3167,7 +3166,7 @@ void DropBackpack(entity this)
 
 	// Yoder Sept24 2021 Horde Merge
 	// don't drop backpacks in horde mode
-	if(horde_ent)
+	if(gametype == GAMETYPE_HORDE)
 		return;
 
 	entity item = spawn();

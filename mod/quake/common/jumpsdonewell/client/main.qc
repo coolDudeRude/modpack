@@ -1,6 +1,6 @@
-STATIC_INIT(fix_commands)
+void JumpsDoneWell_Init()
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 		return;
 
 	cvar_settemp("chase_active", "1");

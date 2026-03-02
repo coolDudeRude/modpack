@@ -159,7 +159,7 @@ void parms_read(entity this)
 		}
 	}
 
-	if(deathmatch && autocvar_skill == 3)
+	if(gametype == GAMETYPE_INSTAGIB)
 		this.items |= IT_GRAPPLE;
 }
 
@@ -224,15 +224,15 @@ void parms_reset(entity this)
 	Weapon fallback_weapon = WEP_PEWPEW;
 	Weapon start_weapon = WEP_AXE;
 	Weapon prev_weapon = WEP_SHOTGUN;
-	if(autocvar_horde)
+	if(gametype == GAMETYPE_HORDE)
 		start_weapon = WEP_CHAINSAW;
-	else if(world.worldtype == WORLDTYPE_DODGEBALL)
+	else if(gametype == GAMETYPE_DODGEBALL)
 	{
 		start_weapon = WEP_BALL;
 		prev_weapon = WEP_BALL;
 		fallback_weapon = WEP_BALL;
 	}
-	else if(deathmatch && autocvar_skill == 3)
+	else if(gametype == GAMETYPE_INSTAGIB)
 	{
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
@@ -270,7 +270,7 @@ void parms_reset(entity this)
 	parms_putdata(myid, "ammo_shells", "25");
 	parms_putdata(myid, "ammo_nails", "0");
 	parms_putdata(myid, "ammo_rockets", "0");
-	parms_putdata(myid, "ammo_cells", ((deathmatch && autocvar_skill == 3) ? "100" : "0"));
+	parms_putdata(myid, "ammo_cells", ((gametype == GAMETYPE_INSTAGIB) ? "100" : "0"));
 	parms_putdata(myid, "ammo_lava_nails", "0");
 	parms_putdata(myid, "ammo_multi_rockets", "0");
 	parms_putdata(myid, "ammo_plasma", "0");
@@ -314,7 +314,7 @@ void SetChangeParms(entity this)
 		SetSpawnParms(this);
 		return;
 	}
-	if(this.health <= 0 || deathmatch || world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SKATE || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL)
+	if(this.health <= 0 || deathmatch || world.worldtype == WORLDTYPE_HUB || gametype == GAMETYPE_SKATE || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL)
 	{
 		parms_clear(this);
 		return;
@@ -370,11 +370,11 @@ void SetNewParms()
 
 	Weapon start_weapon = WEP_AXE;
 	Weapon prev_weapon = WEP_SHOTGUN;
-	if(autocvar_horde)
+	if(gametype == GAMETYPE_HORDE)
 		start_weapon = WEP_CHAINSAW;
-	else if(world.worldtype == WORLDTYPE_DODGEBALL)
+	else if(gametype == GAMETYPE_DODGEBALL)
 		start_weapon = WEP_BALL;
-	else if(deathmatch && autocvar_skill == 3)
+	else if(gametype == GAMETYPE_INSTAGIB)
 	{
 		start_weapon = WEP_RAILGUN;
 		prev_weapon = WEP_KATANA;
@@ -385,9 +385,9 @@ void SetNewParms()
 		prev_weapon = WEP_PISTOL;
 	}
 	WepSet weps = (WEPSET(PEWPEW) | prev_weapon.m_wepset | start_weapon.m_wepset);
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		weps = start_weapon.m_wepset;
-	else if(deathmatch && autocvar_skill == 3)
+	else if(gametype == GAMETYPE_INSTAGIB)
 		weps = WEPSET(RAILGUN);
 
 	if(Challenge_Active(CHALLENGE_BONK))
@@ -398,7 +398,7 @@ void SetNewParms()
 	}
 
 	int start_items = 0;
-	if(deathmatch && autocvar_skill == 3)
+	if(gametype == GAMETYPE_INSTAGIB)
 		start_items = IT_GRAPPLE;
 
 	parm1 = weps.x;
@@ -408,7 +408,7 @@ void SetNewParms()
 	parm5 = 25;
 	parm6 = 0;
 	parm7 = 0;
-	parm8 = (deathmatch && autocvar_skill == 3) ? 100 : 0;
+	parm8 = (gametype == GAMETYPE_INSTAGIB) ? 100 : 0;
 	parm9 = prev_weapon.m_id;
 	parm10 = 0;
 	parm11 = 0;
@@ -438,10 +438,10 @@ void DecodeLevelParms(entity this)
 
 	// TODO: clean up this mess
 	if(world.model == "maps/quake.bsp" || world.model == "maps/start.bsp" || world.model == "maps/aopstart.bsp"
-		|| world.worldtype == WORLDTYPE_HUB || world.worldtype == WORLDTYPE_SLIDE || world.worldtype == WORLDTYPE_DODGEBALL || need_reset
+		|| world.worldtype == WORLDTYPE_HUB || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL || need_reset
 		|| world.model == "maps/hipstart.bsp" || world.model == "maps/hip1m1.bsp" || world.model == "maps/hip2m1.bsp" || world.model == "maps/hip3m1.bsp"
 		|| world.model == "maps/rstart.bsp" || world.model == "maps/r2m1.bsp" || world.model == "maps/aop2m1.bsp"
-		|| autocvar_horde || deathmatch)
+		|| gametype == GAMETYPE_HORDE || deathmatch)
 	{
 		// take away all stuff on starting new episode
 		// or when starting special missions
@@ -535,9 +535,9 @@ string get_playermodel(entity this)
 {
 	if(STAT(SKATING, this))
 		return "progs/skater.mdl";
-	else if(IsJumpsDoneWell())
+	else if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return "models/player.iqm";
-	else if(world.worldtype == WORLDTYPE_DODGEBALL)
+	else if(gametype == GAMETYPE_DODGEBALL)
 	{
 		if(STAT(HAS_BALL, this))
 			return "progs/player_db2.mdl";
@@ -613,7 +613,7 @@ string get_painsound(entity this, int chance)
 
 string get_jumpsound(entity this)
 {
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return "jump.wav";
 	if(this.m_champion && !STAT(SLIDE_ON, this) && !STAT(SKATING, this))
 		return this.m_champion.m_sound_jump(this);
@@ -700,7 +700,7 @@ Returns the entity to view from
 */
 entity FindIntermission(entity this)
 {
-	if(world.worldtype == WORLDTYPE_SKATE || IsJumpsDoneWell())
+	if(gametype == GAMETYPE_SKATE || gametype == GAMETYPE_JUMPSDONEWELL)
 		return NULL; // stay at player view
 // look for info_intermission first
 	RandomSelection_Init();
@@ -738,7 +738,7 @@ void GotoNextMap()
 		changelevel(mapname);
 	else
 	{
-		if(autocvar_horde)
+		if(gametype == GAMETYPE_HORDE)
 			changelevel(HordeRandomMap());
 		else if(deathmatch)
 			changelevel(PickDMMap(true));
@@ -1092,7 +1092,7 @@ void ExitIntermission()
 		}
 
 		// NOTE: credits not implemented
-		//if(nextmap == "start" || nextmap == "hipstart" || nextmap == "rstart" || nextmap == "aopstart" || nextmap == "mgstart" && !coop && !autocvar_horde) // Yoder modify Oct25 to check against horde
+		//if(nextmap == "start" || nextmap == "hipstart" || nextmap == "rstart" || nextmap == "aopstart" || nextmap == "mgstart" && !coop && gametype != GAMETYPE_HORDE) // Yoder modify Oct25 to check against horde
 		GotoNextMap();
 	}
 	
@@ -1235,7 +1235,7 @@ void execute_changelevel(entity this)
 	intermission_running = 1;
 	
 // enforce a wait time before allowing changelevel
-	if(deathmatch || world.worldtype == WORLDTYPE_DODGEBALL)
+	if(deathmatch || gametype == GAMETYPE_DODGEBALL)
 		intermission_exittime = time + 5;
 	else
 		intermission_exittime = time + 2;
@@ -1257,7 +1257,7 @@ void execute_changelevel(entity this)
 	WriteByte(MSG_ALL, SVC_INTERMISSION);
 
 	// Yoder merge Horde sept24 2021
-	if(horde_ent)
+	if(gametype == GAMETYPE_HORDE && horde_ent)
 	{
 		setthink(horde_ent, func_null);
 		horde_ent.nextthink = -1;
@@ -1392,9 +1392,9 @@ void ClientKill(entity this)
 {
 	if(gameover || intermission_running)
 		return;
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 	{
 		sprint(this, "Pointless...\n");
 		return;
@@ -1404,7 +1404,7 @@ void ClientKill(entity this)
 		sprint(this, "You must wait before suiciding again... Get help.\n");
 		return;
 	}
-	if(world.worldtype == WORLDTYPE_SLIDE)
+	if(gametype == GAMETYPE_SLIDE)
 		this.suicide_delay = time + 1;
 	else
 		this.suicide_delay = time + autocvar_sv_quake_kill_delay;
@@ -1413,7 +1413,7 @@ void ClientKill(entity this)
 
 	bprintf("%s suicides\n", this.netname);
 
-	if(autocvar_horde) // horde mode behaviour
+	if(gametype == GAMETYPE_HORDE) // horde mode behaviour
 	{
 		PlayerDie(this, NULL, NULL, DEATH_KILL.m_id);
 		this.health = 0;
@@ -1483,7 +1483,7 @@ entity SelectSpawnPoint(entity this, bool forceSpawn)
 		have_spawntarget = true;
 		
 // choose a info_player_deathmatch point
-	if(autocvar_horde)
+	if(gametype == GAMETYPE_HORDE)
 	{ // run simpler logic for horde - just need a spot with noone on top of it...
 		string horde_spawnpoint = "info_player_coop";
 		if(horde_ent.currentammo)
@@ -1766,7 +1766,7 @@ void RunPostPutClientInServer(entity this)
 	if(!FogPushSettingsFrom(player, spot, 0))
 		FogPushSettingsFrom(player, NULL, 0);
 
-	if(horde_ent && horde_ent.active && player.just_joined)
+	if(gametype == GAMETYPE_HORDE && horde_ent && horde_ent.active && player.just_joined)
 	{
 		player.health = 0;
 		player.takedamage = DAMAGE_NO;
@@ -1884,7 +1884,7 @@ void PutObserverInServer(entity this)
 	champions_RemovePlayer(this);
 	music_RemovePlayer(this);
 	dodgeball_RemovePlayer(this);
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_PutObserverInServer(this);
 }
 
@@ -1935,7 +1935,7 @@ void PutPlayerInServer(entity this)
 	this.alpha = 1;
 	this.colormod = '1 1 1';
 
-	if(deathmatch && autocvar_skill == 3)
+	if(gametype == GAMETYPE_INSTAGIB)
 		this.colormod = '2 2 2';
 
 	this.viewloc = NULL;
@@ -1943,7 +1943,7 @@ void PutPlayerInServer(entity this)
 	this.weaponframe = 0;
 	this.weaponmodel = "";
 
-	if(coop && autocvar_g_player_collisions && world.worldtype != WORLDTYPE_DODGEBALL)
+	if(coop && autocvar_g_player_collisions && gametype != GAMETYPE_DODGEBALL)
 		this.clipgroup = CLIPGROUP_PLAYER;
 	else
 		this.clipgroup = 0;
@@ -2002,7 +2002,7 @@ void PutPlayerInServer(entity this)
 	}
 	else
 		shouldTelefrag = false;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		spot = SelectTeamSpawn(this, this.team_no);
 	else
 		spot = SelectSpawnPoint(this, false);
@@ -2081,7 +2081,7 @@ void PutPlayerInServer(entity this)
 
 	dodgeball_PutPlayerInServer(this);
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_PutPlayerInServer(this);
 
 	GrappleReset(this.hook);
@@ -2106,7 +2106,7 @@ void PutPlayerInServer(entity this)
 	this.velocity = '0 0 0'; // 1998-07-21 Player moves after respawn fix by Xian
 
 	STAT(QCC_CHAMPION, this) = 0;
-	if(!STAT(SKATING, this) && world.worldtype != WORLDTYPE_SLIDE && world.worldtype != WORLDTYPE_DODGEBALL)
+	if(!STAT(SKATING, this) && gametype != GAMETYPE_SLIDE && gametype != GAMETYPE_DODGEBALL)
 		champions_PutPlayerInServer(this);
 
 	player_stand1(this);
@@ -2197,13 +2197,13 @@ spawnfunc(info_player_deathmatch)
 
 spawnfunc(info_player_team1)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		spawnfunc_info_player_deathmatch(this);
 }
 
 spawnfunc(info_player_team2)
 {
-	if(world.worldtype != WORLDTYPE_DODGEBALL)
+	if(gametype != GAMETYPE_DODGEBALL)
 		spawnfunc_info_player_deathmatch(this);
 }
 
@@ -2459,7 +2459,7 @@ void PlayerDeathThink(entity this)
 	this.button4 = 0;
 	this.button5 = 0;
 	// Yoder Sept24, 2021
-	if(horde_ent && horde_ent.active)
+	if(gametype == GAMETYPE_HORDE && horde_ent && horde_ent.active)
 		return;
 	respawn(this);
 }
@@ -2521,7 +2521,7 @@ void PlayerPreThink(entity this)
 	if(this.view_ofs == '0 0 0')
 		return;		// intermission or finale
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
 		JDW_PlayerPreThink(this);
 		return;
@@ -2561,7 +2561,7 @@ void PlayerPreThink(entity this)
 		PlayerUseKey(this);
 	this.usekeypressed = PHYS_INPUT_BUTTON_USE(this);
 
-	if(!STAT(SKATING, this) && world.worldtype != WORLDTYPE_SLIDE) // champions handles tank status properly
+	if(!STAT(SKATING, this) && gametype != GAMETYPE_SLIDE) // champions handles tank status properly
 		champions_PlayerPreThink(this);
 
 	cannon_PlayerPreThink(this);
@@ -2679,7 +2679,7 @@ void CheckHealthRot(entity this)
 		return;
 	if(this.clockwork)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return;
 
 	if(this.healthrot_nextcheck > time)
@@ -2711,11 +2711,11 @@ void Regenerate_Health(entity this)
 		return;
 	if(this.clockwork)
 		return;
-	if(world.worldtype == WORLDTYPE_DODGEBALL)
+	if(gametype == GAMETYPE_DODGEBALL)
 		return;
 	if(Challenge_Active(CHALLENGE_ONEHP))
 		return;
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return;
 
 	float regen_rate = 1;
@@ -2800,7 +2800,7 @@ void PlayerPostThink(entity this)
 		return;		// intermission or finale
 	}
 
-	if(world.worldtype == WORLDTYPE_SLIDE)
+	if(gametype == GAMETYPE_SLIDE)
 		Slide_OnThink(this);
 
 	if(this.tank)
@@ -3023,7 +3023,7 @@ string getcdtrack(int numb)
 		return rogue_getcdtrack(numb);
 	if(IsImpelMap())
 		return aop_getcdtrack(numb);
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		return "misc/null"; // music will start with the trigger
 
 	// first 11 use Quake's naming scheme
@@ -3176,7 +3176,7 @@ void ClientDisconnect(entity this)
 
 	W_Spellbook_ClearSpells(this);
 
-	if(IsJumpsDoneWell())
+	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_ClientDisconnect(this);
 
 	set_suicide_frame(this);

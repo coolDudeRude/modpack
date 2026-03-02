@@ -485,7 +485,7 @@ METHOD(Floyd, mr_setup, bool(Floyd this, entity actor))
 	precache_sound("enforcer/enfstop.wav");
 
 	// random chance outside of horde to be on side!
-	if(!horde_ent && !actor.spawnflags && random() <= 0.1)
+	if(gametype != GAMETYPE_HORDE && !actor.spawnflags && random() <= 0.1)
 	{
 		if(random() > 0.5)
 			actor.spawnflags |= FLOYD_ROLLING;

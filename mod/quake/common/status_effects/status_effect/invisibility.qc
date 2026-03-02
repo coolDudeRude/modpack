@@ -35,7 +35,7 @@ METHOD(Invisibility, m_tick, void(StatusEffects this, entity actor))
     }
     if(curtime < time + 3 && !actor.invisible_warning)
     {
-        if(!horde_ent)
+        if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_INVISIBLE);
         _sound(actor, CH_TRIGGER_SINGLE, "items/inv2.wav", 1, ATTN_NORM);
         actor.invisible_warning = true;

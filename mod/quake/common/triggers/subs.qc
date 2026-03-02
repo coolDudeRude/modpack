@@ -201,7 +201,8 @@ Used as a positional target for spotlights, etc.
 */
 spawnfunc(info_null)
 {
-	if(!IsJumpsDoneWell())
+	// TODO: maybe we should just always keep these
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 		delete(this);
 }
 #endif

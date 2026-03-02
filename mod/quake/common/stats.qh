@@ -206,7 +206,6 @@ REGISTER_STAT(FIELDGEN_HEALTH, FLOAT, this.field_generator_health)
 #ifdef SVQC
 #include "../server/horde.qh"
 #endif
-REGISTER_STAT(HORDE, BOOL, (horde_ent) ? true : false)
 REGISTER_STAT(HORDE_WAVE, INT, (horde_ent) ? horde_ent.wave : 0)
 
 #ifdef SVQC
@@ -243,11 +242,6 @@ REGISTER_STAT(QCC_BLOODRAGE_COUNT, INT)
 #include "slide/slide.qh"
 #endif
 REGISTER_STAT(SLIDE_ON, BOOL)
-
-#ifdef SVQC
-.int worldtype;
-#endif
-REGISTER_STAT(WORLDTYPE, INT, world.worldtype)
 
 REGISTER_STAT(CANNON, BOOL)
 

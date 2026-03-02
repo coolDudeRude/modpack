@@ -13,7 +13,7 @@ void vine_destroy(entity this)
 
 spawnfunc(misc_vine)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 	{
 		delete(this);
 		return;

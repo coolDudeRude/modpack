@@ -783,7 +783,7 @@ METHOD(Cthulhu, mr_setup, bool(Cthulhu this, entity actor))
 
 	actor.health = 4000;
 	actor.gibhealth = -150;
-	if(horde_ent || actor.charmed)
+	if(gametype == GAMETYPE_HORDE || actor.charmed)
 		actor.scale = 0.5;
 	else if(!actor.scale)
 		actor.scale = 1;
@@ -810,7 +810,7 @@ METHOD(Cthulhu, mr_setup, bool(Cthulhu this, entity actor))
 	actor.steptype = FS_TYPECUSTOM;
 
 	if(!actor.target || actor.targetname == "")
-	if(!horde_ent && !actor.charmed)
+	if(gametype != GAMETYPE_HORDE && !actor.charmed)
 		cth_wake(actor, actor.enemy, NULL);
 
 	return true;

@@ -21,7 +21,7 @@ void trigger_push_touch(entity this, entity toucher)
 
 	// yoder Sept 24 2021 horde merge
 	
-	if(horde_ent)
+	if(gametype == GAMETYPE_HORDE)
 	{
 		if(this.spawnflags & PUSH_START_OFF) // ignore this spawnflag in horde mode
 			this.spawnflags &= ~PUSH_START_OFF;
@@ -63,7 +63,7 @@ void trigger_push_touch(entity this, entity toucher)
 		}
 		else
 		{
-			float pushpower = (world.worldtype == WORLDTYPE_DODGEBALL) ? 4 : 10;
+			float pushpower = (gametype == GAMETYPE_DODGEBALL) ? 4 : 10;
 			toucher.velocity = this.speed * this.movedir * pushpower;
 		}
 		if(IS_PLAYER(toucher))

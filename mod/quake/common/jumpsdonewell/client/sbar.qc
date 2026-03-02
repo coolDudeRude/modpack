@@ -2,7 +2,7 @@
 
 PRECACHE(hud_icons)
 {
-	if(!IsJumpsDoneWell())
+	if(gametype != GAMETYPE_JUMPSDONEWELL)
 		return;
 
 	precache_pic("textures/emptyheart");
