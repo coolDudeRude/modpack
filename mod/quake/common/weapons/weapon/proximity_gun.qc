@@ -18,7 +18,8 @@ void ProximityExplode(entity this)
 void ProximityGrenadeExplode(entity this, entity inflictor, entity attacker, int deathtype)
 {
 	this.takedamage = DAMAGE_NO;
-	this.realowner.NumProximityGrenades -= 1;
+	if(this.realowner)
+		this.realowner.NumProximityGrenades -= 1;
 	this.nextthink = time + 0.1;
 	this.state = 2;
 	this.owner = this.lastvictim;

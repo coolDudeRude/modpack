@@ -74,13 +74,6 @@ METHOD(Duck, m_cannon_land, bool(Champions this, entity actor))
 	actor.duck_cannon = false;
 	return false;
 }
-
-METHOD(Duck, m_condition, bool(Champions this, entity actor))
-{
-	if(autocvar_sv_allow_customplayermodels_ducklist == "")
-		return true;
-	return !PlayerInList(actor, autocvar_sv_allow_customplayermodels_ducklist);
-}
 #endif
 
 #ifdef CSQC
