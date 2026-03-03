@@ -1148,7 +1148,7 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 
 	if(gametype == GAMETYPE_DODGEBALL)
 		DropBall(this);
-	else if(gametype == GAMETYPE_INSTAGIB)
+	else if(gametype == GAMETYPE_INSTAGIB || gametype == GAMETYPE_SLIDE)
 		{ /* do nothing */ }
 	else if(deathmatch || coop)
 		DropBackpack(this);

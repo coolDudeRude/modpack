@@ -260,7 +260,7 @@ bool Damage_ValidTarget(entity targ, entity attacker)
 	if(!attacker || targ == attacker)
 		return true;
 	// no PvP thank you very much
-	if(coop && IS_PLAYER(targ) && IS_PLAYER(attacker))
+	if(coop && IS_PLAYER(targ) && IS_PLAYER(attacker) && gametype != GAMETYPE_DODGEBALL)
 		return false;
 	// decoys are never valid targets
 	if(targ.monsterdef && (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY))

@@ -31,7 +31,7 @@ void lvl3_sentry_stand(entity this)
 
 void SentryFindTarget(entity this)
 {
-	if(!IS_PLAYER(this.builder) || this.builder.health <= 0 || this.builder.died || countdown || ceasefire)
+	if(!IS_PLAYER(this.builder) || this.builder.health <= 0 || this.builder.died || countdown || ceasefire || time >= this.count)
 	{
 		spawn_tfog(this.origin + '0 0 32');
 		if(this.trigger_field)

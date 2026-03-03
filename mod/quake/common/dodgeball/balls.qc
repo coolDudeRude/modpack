@@ -359,7 +359,7 @@ void iceball_touch(entity this, entity toucher)
 
 void homingball_touch(entity this, entity toucher)
 {
-	if(toucher.health)
+	if(toucher.takedamage)
 		T_Damage(toucher, this, this.owner, 50, DEATH_BALL_HOMING.m_id);
 
 	T_RadiusDamage(this, this.owner, 50, DEATH_BALL_HOMING.m_id, toucher);
@@ -708,6 +708,8 @@ void SentryBuilt(entity this)
 	gun.health = 100;
 	gun.takedamage = DAMAGE_AIM;
 	gun.th_die = SentryDie;
+
+	gun.count = time + 10;
 	
 	gun.team_no = this.builder.team_no;
 	gun.view_ofs = '0 0 35';
