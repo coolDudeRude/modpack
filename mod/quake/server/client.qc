@@ -1943,8 +1943,13 @@ void PutPlayerInServer(entity this)
 	this.weaponframe = 0;
 	this.weaponmodel = "";
 
-	if(coop && autocvar_g_player_collisions && gametype != GAMETYPE_DODGEBALL)
-		this.clipgroup = CLIPGROUP_PLAYER;
+	if(coop && autocvar_g_player_collisions)
+	{
+		if(gametype == GAMETYPE_DODGEBALL)
+			this.clipgroup = this.team_no;
+		else
+			this.clipgroup = CLIPGROUP_PLAYER;
+	}
 	else
 		this.clipgroup = 0;
 

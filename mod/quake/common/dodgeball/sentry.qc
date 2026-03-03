@@ -143,6 +143,7 @@ bool SentryFire(entity this, float ox, vector up, float power)
 	set_movetype(ball, MOVETYPE_FLYMISSILE);
 	ball.solid = SOLID_BBOX;
 	ball.classname = "dodgeball";
+	ball.clipgroup = this.clipgroup;
 
 	float vel = (power) ? 1300 : 850;
 	

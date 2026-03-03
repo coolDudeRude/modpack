@@ -194,6 +194,8 @@ void teleport_back(entity this)
 	this.velocity_x = crandom()*250;
 	this.velocity_y = crandom()*250;
 	this.velocity_z = 500;
+
+	this.clipgroup = 0;
 	
 	this.nextthink = time + 20;
 	setthink(this, teleport_back);
@@ -710,11 +712,13 @@ void SentryBuilt(entity this)
 	gun.th_die = SentryDie;
 
 	gun.count = time + 10;
+	this.count = gun.count;
 	
 	gun.team_no = this.builder.team_no;
 	gun.view_ofs = '0 0 35';
 	gun.angles_y = this.angles_y;
 	gun.yaw_speed = 25;
+	gun.clipgroup = this.clipgroup;
 	
 	gun.nextthink = time + 0.5;
 	setthink(gun, lvl1_sentry_stand);
@@ -754,6 +758,7 @@ void BuildSentry(entity this)
 	base.classname = "base";
 	base.angles_y = this.angles_y;
 	base.nextthink = time + 3;
+	base.clipgroup = this.clipgroup;
 	setthink(base, SentryBuilt);
 	_setmodel(base, "progs/sentry_stand_db.mdl");
 	setsize(base, '-32 -32 -8', '32 32 74');
@@ -886,7 +891,8 @@ void DropSpecialBall(entity this)
 	set_movetype(ball, MOVETYPE_BOUNCE);
 	ball.solid = SOLID_TRIGGER;
 	ball.classname = "dodgeball";
-	
+	ball.clipgroup = this.clipgroup;
+
 	ball.velocity_x = crandom()*100;
 	ball.velocity_y = crandom()*100;
 	ball.velocity_z = 300;
@@ -962,6 +968,7 @@ void DropBall(entity this)
 	set_movetype(ball, MOVETYPE_BOUNCE);
 	ball.solid = SOLID_BBOX;
 	ball.classname = "dodgeball";
+	ball.clipgroup = this.clipgroup;
 	
 	ball.velocity_x = crandom()*100;
 	ball.velocity_y = crandom()*100;
