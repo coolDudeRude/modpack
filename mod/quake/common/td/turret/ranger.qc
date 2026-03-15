@@ -44,7 +44,7 @@ METHOD(RangerBarricade, tr_think, void(RangerBarricade thistur, entity actor))
 }
 METHOD(RangerBarricade, tr_setup, void(RangerBarricade this, entity actor))
 {
-	actor.health = 800;
+	actor.health = 700;
 	actor.max_health = actor.health;
 }
 #endif // SVQC

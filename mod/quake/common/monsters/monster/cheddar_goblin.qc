@@ -99,7 +99,7 @@ void cheddar_pool_anim(entity this)
 
 void cheddar_spit_touch(entity this, entity toucher)
 {
-	if(toucher == this.owner)
+	if(toucher == this.owner || toucher.solid == SOLID_TRIGGER)
 		return;
 
 	if(pointcontents(this.origin) < CONTENT_WATER)
@@ -108,8 +108,13 @@ void cheddar_spit_touch(entity this, entity toucher)
 		return;
 	}
 
-	particle(this.origin, '0 0 0', 57, 50);
-	_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
+	if(time >= this.spamtime)
+	{
+		this.spamtime = time + 0.2; // prevent spam
+
+		particle(this.origin, '0 0 0', 57, 50);
+		_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
+	}
 
 	if(!this.silent && (toucher.takedamage || IS_MONSTER(toucher)))
 	{
