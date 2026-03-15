@@ -178,7 +178,7 @@ METHOD(RangerMortar, tr_think, void(RangerMortar thistur, entity actor))
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = mortar_calc_velocity(newmis, org, actor.enemy);
 			newmis.gravity = 1;
-			newmis.dmg = 80 * turret_getpower(actor.tur_level, 0.15);
+			newmis.dmg = 50 * turret_getpower(actor.tur_level, 0.15);
 			set_movetype(newmis, MOVETYPE_TOSS);
 			settouch(newmis, T_MissileTouch);
 			CSQCProjectile(newmis, true, PROJECTILE_MORTAR, true);
@@ -251,7 +251,7 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 			vector dir;
 			vector myorg = actor.origin + '0 0 30';
 			vector targ_org = CENTER_OR_VIEWOFS(actor.enemy);
-			float damage = 50 * turret_getpower(actor.tur_level, 0.15);
+			float damage = 15 * turret_getpower(actor.tur_level, 0.15);
 			entity newmis;
 			// left eye
 			org = myorg + v_right * 6;
