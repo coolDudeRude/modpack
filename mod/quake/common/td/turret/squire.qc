@@ -301,7 +301,7 @@ METHOD(SquireSliceNDice, tr_think, void(SquireSliceNDice thistur, entity actor))
 	emin -= extrasize;
 	emax += extrasize;
 
-	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && it.health > 0 && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
 	{
 		slicendice_hitbox_touch(actor, it);
 	});
