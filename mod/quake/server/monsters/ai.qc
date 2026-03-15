@@ -280,6 +280,9 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 
 bool t_walkmove(entity this, float yaw, float dist)
 {
+	if(gametype == GAMETYPE_TD)
+		dist *= td_GetMonsterSpeed(this, dist);
+
 	if(StatusEffects_active(STATUSEFFECT_Slowness, this))
 		dist *= 0.15;
 
@@ -397,6 +400,9 @@ void t_newchasedir(entity this, entity targ, float dist)
 
 void t_movetogoal(entity this, float dist)
 {
+	if(gametype == GAMETYPE_TD)
+		dist *= td_GetMonsterSpeed(this, dist);
+
 	if(StatusEffects_active(STATUSEFFECT_Slowness, this))
 		dist *= 0.15;
 
@@ -572,7 +578,14 @@ void t_movetarget(entity this, entity toucher)
 
 	if(this.target && this.target != "")
 	{
-		toucher.goalentity = toucher.movetarget = findunlocked(NULL, targetname, this.target);
+		RandomSelection_Init();
+		FOREACH_ENTITY_STRING(targetname, this.target,
+		{
+			if(it.customflags & CFL_LOCKED)
+				continue;
+			RandomSelection_AddEnt(it, 1, 1);
+		});
+		toucher.goalentity = toucher.movetarget = RandomSelection_chosen_ent;
 		if (!toucher.movetarget || this.wait == -1)
 		{
 			toucher.pausetime = -1;
@@ -672,6 +685,7 @@ spawnfunc(target_switchpath)
 
 const vector RANGES_NORMAL = '120 500 1000';
 const vector RANGES_NEARSIGHTED = '120 300 340';
+const vector RANGES_CHICKEN = '60 500 1000';
 
 const float VISIONCONE_NORMAL = 0.3;
 const float VISIONCONE_NEARSIGHTED = 0.866; // ~30 degrees
@@ -811,6 +825,8 @@ int range(entity this, entity targ)
 		else
 			ranges = RANGES_NEARSIGHTED;
 	}
+	else if(this.monsterdef == MON_CHICKEN)
+		ranges = RANGES_CHICKEN; // little pecker
 
 	if(vdist(spot1 - spot2, <, ranges.x))
 		return RANGE_MELEE;
@@ -1331,11 +1347,33 @@ bool FindTarget(entity this)
 	// if the first spawnflag bit is set, the monster will only wake up on
 	// really seeing the player, not another monster getting angry
 
-	// spawnflags & 3 is a big hack, because zombie crucified used the first
-	// spawn flag prior to the ambush flag, and I forgot about it, so the second
-	// spawn flag works as well
-	if(sight_entity_time >= time - 0.1 && !(this.spawnflags & 3) && !this.charmed)
+	// in tower defence, bosses always fight players
+	if(gametype == GAMETYPE_TD && !(this.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
 	{
+		entity selected = NULL;
+		float dist = 256;
+		FOREACH_ENTITY_RADIUS(this.origin, dist, it != this && it.monster_attack && !(it.flags & FL_NOTARGET) && it.health > 0,
+		{
+			if(it.clipgroup && it.clipgroup == this.clipgroup)
+				continue;
+			if(IS_PLAYER(it) && vdist(it.origin - this.origin, >, 64))
+				continue; // for players, reduce the range further?
+			if(visible(this, it) && this.visible_distance < dist)
+			{
+				selected = it;
+				dist = this.visible_distance;
+			}
+		});
+		if(!selected)
+			return false;
+
+		client = selected;
+	}
+	else if(sight_entity_time >= time - 0.1 && !(this.spawnflags & 3) && !this.charmed)
+	{
+		// spawnflags & 3 is a big hack, because zombie crucified used the first
+		// spawn flag prior to the ambush flag, and I forgot about it, so the second
+		// spawn flag works as well
 		client = sight_entity;
 		if(client.enemy == this.enemy)
 			return true;
@@ -1872,7 +1910,10 @@ void ai_run(entity this, float dist)
 		else
 		{
 			if(this.movetarget)
+			{
+				this.goalentity = this.movetarget;
 				this.th_walk(this);
+			}
 			else
 				this.th_stand(this);
 			return;

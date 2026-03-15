@@ -169,6 +169,8 @@ bool W_SwitchWeapon(entity this, Weapon w, .entity weaponentity)
 		return false;
 	if(this.clockwork)
 		return false;
+	if(STAT(TD_BUILDMODE, this))
+		return false;
 	if(this.m_transform && this.m_transform.qcc_noselect)
 		return false; // TODO
 	if(this.m_champion && this.m_champion.qcc_noweaponswap)

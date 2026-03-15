@@ -1,6 +1,11 @@
 #pragma once
 
+bool autocvar_cl_forceplayercolors;
+bool autocvar_cl_forceuniqueplayercolors;
+int autocvar_cl_forcemyplayercolors;
+int autocvar__cl_color;
 float autocvar_cl_jetpack_attenuation = 2;
+//float autocvar_r_hdr_glowintensity;
 
 // FEATURE: EF_NODRAW workalike
 const int EF_BRIGHTFIELD       = BIT(0);
@@ -24,5 +29,7 @@ const int MF_TRACER3 =  BIT(7);  // purple trail
 .int csqcmodel_effects;
 .int csqcmodel_modelflags;
 .int csqcmodel_traileffect;
+
+.bool isplayermodel;
 
 void CSQCModel_Effects_Apply(entity this);

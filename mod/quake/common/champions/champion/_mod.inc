@@ -35,6 +35,7 @@
 #include "ranger.qc"
 #include "shantae.qc"
 #include "sorlag.qc"
+#include "squire.qc"
 #include "steve.qc"
 #include "v1.qc"
 #include "valkyrie.qc"

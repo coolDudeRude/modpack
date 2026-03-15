@@ -137,6 +137,9 @@ void des_pain(entity this, entity attacker, float damage, int deathtype)
 	// low chance and need to be within pvs (not out of the world!)
 	if(random() < 0.1 && checkpvs(this.origin, attacker))
 	{
+		tracebox(this.origin, MON_PROBE.m_mins, MON_PROBE.m_maxs, this.origin, MOVE_NOMONSTERS, this);
+		if(trace_startsolid)
+			return;
 		this.skin = 1;
 		minion_spawn(this.realowner, this.origin, new(monster), MON_PROBE);
 	}

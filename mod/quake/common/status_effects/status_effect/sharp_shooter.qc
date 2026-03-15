@@ -12,7 +12,7 @@ METHOD(SharpShooter, m_remove, void(StatusEffects this, entity actor, int remova
 METHOD(SharpShooter, m_tick, void(StatusEffects this, entity actor))
 {
     float curtime = StatusEffects_gettime(this, actor);
-    if(curtime < time + 3 && !actor.sharpshooter_warning)
+    if(curtime < time + 3 && !actor.sharpshooter_warning && IS_REAL_CLIENT(actor))
     {
         if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_SHARPSHOOTER);

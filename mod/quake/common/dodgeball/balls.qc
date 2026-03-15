@@ -532,7 +532,7 @@ void roflcopter_explode(entity this)
 			
 			settouch(sball, specialball_pickup);
 			setsize(sball, '-5 -5 -5', '5 5 5');
-			setorigin(sball, this.origin);
+			setorigin(sball, this.origin - '0 0 5');
 
 			sballcount -= 1;
 		}
@@ -637,7 +637,8 @@ void Launch_Roflcopter(entity this)
 	ball.classname = "roflcopter";
 	STAT(SPECIAL, ball) = STAT(SPECIAL, this);
 	ball.team_no = this.team_no;
-	
+	ball.clipgroup = this.clipgroup;
+
 	ball.velocity = '0 0 100';
 	ball.angles_y = this.angles_y;
 	
@@ -662,6 +663,7 @@ void Launch_Roflcopter(entity this)
 	ball.propeller = prop;
 	prop.solid = SOLID_BBOX;
 	prop.classname = "propeller";
+	prop.clipgroup = ball.clipgroup;
 	prop.angles_y = this.angles_y;
 	settouch(prop, propeller_touch);
 	_setmodel(prop, "progs/prop_db.mdl");

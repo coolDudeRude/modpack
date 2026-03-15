@@ -104,6 +104,7 @@ CLASS(Keyleth, Champions)
 #ifdef CSQC
     ATTRIB(Keyleth, message, string, KEYLETH_STATS);
 #endif
+    ATTRIB(Keyleth, td_turrets, bool, true);
 ENDCLASS(Keyleth)
 REGISTER_CHAMPION(Keyleth, NEW(Keyleth));
 

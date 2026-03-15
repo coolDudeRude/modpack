@@ -783,7 +783,7 @@ METHOD(Cthulhu, mr_setup, bool(Cthulhu this, entity actor))
 
 	actor.health = 4000;
 	actor.gibhealth = -150;
-	if(gametype == GAMETYPE_HORDE || actor.charmed)
+	if(gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD || actor.charmed)
 		actor.scale = 0.5;
 	else if(!actor.scale)
 		actor.scale = 1;

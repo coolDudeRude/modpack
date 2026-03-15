@@ -54,6 +54,8 @@ void sui_border_box(vector pos, vector size, float width, vector color, float al
 
 void sui_drawtext(vector pos, vector size, string text, vector color, float alpha, float flags);
 
+void sui_drawcolortext(vector pos, vector size, string text, float alpha, float flags);
+
 void sui_slider_noop(float value);
 
 float sui_slidercontrol(string id, vector pos, vector size, vector minmaxsteps, float value, void(float value) action);

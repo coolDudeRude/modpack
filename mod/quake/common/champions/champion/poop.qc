@@ -57,7 +57,7 @@ void Poop_PooSpitTouch(entity this, entity toucher)
 
 	if(toucher.takedamage || IS_MONSTER(toucher))
 	{
-		float damage = 15;
+		float damage = (this.dmg) ? this.dmg : 15;
 		T_Damage(toucher, this, this.owner, damage, this.projectiledeathtype);
 		if(toucher.move_movetype != MOVETYPE_PUSH)
 			return;
@@ -102,7 +102,7 @@ void Poop_PooSpitAnim(entity this)
 	}
 }
 
-void Poop_PooSpit(entity this)
+entity Poop_PooSpit(entity this)
 {
 	entity newmis = new(acidspit);
 	newmis.flags = FL_PROJECTILE;
@@ -129,6 +129,8 @@ void Poop_PooSpit(entity this)
 	newmis.nextthink = time + 0.1;
 
 	IL_PUSH(g_projectiles, newmis);
+
+	return newmis;
 }
 
 void Poop_PooSpitProc(entity this)

@@ -300,6 +300,8 @@ float Drag_CanDrag(entity dragger)
 		return false;
 	if(dragger.m_transform)
 		return false;
+	if(STAT(TD_BUILDMODE, dragger))
+		return false;
 	return (dragger.health > 0 && IS_PLAYER(dragger));
 }
 

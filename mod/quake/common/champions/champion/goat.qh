@@ -95,6 +95,7 @@ CLASS(Goat, Champions)
 #ifdef CSQC
     ATTRIB(Goat, message, string, "BAAAAAAAHHHHH");
 #endif
+    ATTRIB(Goat, td_turrets, bool, true);
 ENDCLASS(Goat)
 REGISTER_CHAMPION(Goat, NEW(Goat));
 

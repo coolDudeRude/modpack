@@ -724,6 +724,12 @@ NET_HANDLE(ENT_CLIENT_NAGGER, bool isnew)
 		strcpy(vote_called_vote, ReadString());
 	}
 
+	if(nags & BIT(0))
+		for(int i = 0; i < maxclients;)
+			for(int f = ReadByte(), b = 0; b < 8 && i < maxclients; ++b, ++i)
+				if(playerslots[i])
+					playerslots[i].ready = f & BIT(b);
+
 	return = true;
 
 	vote_waiting = (nags & BIT(2));

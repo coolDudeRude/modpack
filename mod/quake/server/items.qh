@@ -42,6 +42,8 @@ void DropBackpack(entity this);
 
 void BackpackTouch(entity this, entity toucher);
 
+void W_SetModel(entity this, entity wpn);
+
 bool T_Heal(entity e, float healamount, bool ignore);
 
 void bound_other_ammo(entity this);

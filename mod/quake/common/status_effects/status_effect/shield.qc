@@ -13,7 +13,7 @@ METHOD(PowerShield, m_remove, void(StatusEffects this, entity actor, int removal
 METHOD(PowerShield, m_tick, void(StatusEffects this, entity actor))
 {
     float curtime = StatusEffects_gettime(this, actor);
-    if(curtime < time + 3 && !actor.shield_warning)
+    if(curtime < time + 3 && !actor.shield_warning && IS_REAL_CLIENT(actor))
     {
         if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_SHIELD);

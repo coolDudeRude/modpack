@@ -15,3 +15,6 @@ REGISTER_WAYPOINT(Monster, _("Monster"), "", '1 0 0', 1);
 
 REGISTER_WAYPOINT(Death, _("Death"), "", '1 0.5 0', 1);
 REGISTER_WAYPOINT(SkillIssue, _("Skill Issue"), "", '1 0.5 0', 1);
+
+REGISTER_WAYPOINT(Tower, "", "td_tower", '1 0 0', 1);
+REGISTER_WAYPOINT(Monsters, _("Monsters"), "", '1 0 0', 1);

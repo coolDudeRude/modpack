@@ -25,6 +25,7 @@ const string STR_OBSERVER = "observer";
 #define IS_NOT_A_CLIENT(v) (!IS_CLIENT(v))
 
 #define IS_MONSTER(v) (v.flags & FL_MONSTER)
+#define IS_TURRET(v) (v.turretdef != NULL)
 
 #define FOREACH_CLIENTSLOT(cond, body) \
 	MACRO_BEGIN { \

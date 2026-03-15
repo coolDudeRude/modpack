@@ -1,0 +1,79 @@
+#pragma once
+
+// =========
+//  SWARMER
+// =========
+
+CLASS(KeylethSwarmer, Turret)
+#ifdef GAMEQC
+/* spawnflags */ ATTRIB(KeylethSwarmer, spawnflags, int, 0);
+/* mins       */ ATTRIB(KeylethSwarmer, m_mins, vector, '-30 -30 -4');
+/* maxs       */ ATTRIB(KeylethSwarmer, m_maxs, vector, '30 30 32');
+#endif
+#ifdef CSQC
+/* modelname  */ ATTRIB(KeylethSwarmer, mdl, string, "progs/tur_swarmer.mdl");
+/* head_model */ ATTRIB(KeylethSwarmer, head_model, string, "");
+#endif
+/* netname    */ ATTRIB(KeylethSwarmer, netname, string, "swarmer");
+/* fullname   */ ATTRIB(KeylethSwarmer, m_name, string, _("Swarmer"));
+#ifdef GAMEQC
+/* number     */ ATTRIB(KeylethSwarmer, impulse, int, 0);
+/* cost       */ ATTRIB(KeylethSwarmer, tur_cost, float, 70);
+/* units      */ ATTRIB(KeylethSwarmer, tur_units, int, 5);
+/* champion   */ ATTRIB(KeylethSwarmer, m_champion, Champions, CHAMPION_Keyleth);
+#endif
+
+ENDCLASS(KeylethSwarmer)
+REGISTER_TURRET(SWARMER, NEW(KeylethSwarmer));
+
+// ======
+//  FROG
+// ======
+
+CLASS(KeylethFrog, Turret)
+#ifdef GAMEQC
+/* spawnflags */ ATTRIB(KeylethFrog, spawnflags, int, TUR_FLAG_SUPPORT);
+/* mins       */ ATTRIB(KeylethFrog, m_mins, vector, '-16 -16 -24');
+/* maxs       */ ATTRIB(KeylethFrog, m_maxs, vector, '16 16 8');
+#endif
+#ifdef CSQC
+/* modelname  */ ATTRIB(KeylethFrog, mdl, string, "progs/tur_frog.mdl");
+/* head_model */ ATTRIB(KeylethFrog, head_model, string, "");
+#endif
+/* netname    */ ATTRIB(KeylethFrog, netname, string, "frog");
+/* fullname   */ ATTRIB(KeylethFrog, m_name, string, _("Frog"));
+#ifdef GAMEQC
+/* number     */ ATTRIB(KeylethFrog, impulse, int, 1);
+/* cost       */ ATTRIB(KeylethFrog, tur_cost, float, 40);
+/* units      */ ATTRIB(KeylethFrog, tur_units, int, 4);
+/* champion   */ ATTRIB(KeylethFrog, m_champion, Champions, CHAMPION_Keyleth);
+#endif
+
+ENDCLASS(KeylethFrog)
+REGISTER_TURRET(FROG, NEW(KeylethFrog));
+
+// ==========
+//  FLY TRAP
+// ==========
+
+CLASS(KeylethFlyTrap, Turret)
+#ifdef GAMEQC
+/* spawnflags */ ATTRIB(KeylethFlyTrap, spawnflags, int, TUR_FLAG_SUPPORT | TUR_FLAG_NONSOLID);
+/* mins       */ ATTRIB(KeylethFlyTrap, m_mins, vector, '-16 -16 -18');
+/* maxs       */ ATTRIB(KeylethFlyTrap, m_maxs, vector, '16 16 36');
+#endif
+#ifdef CSQC
+/* modelname  */ ATTRIB(KeylethFlyTrap, mdl, string, "progs/tur_flytrap.mdl");
+/* head_model */ ATTRIB(KeylethFlyTrap, head_model, string, "");
+#endif
+/* netname    */ ATTRIB(KeylethFlyTrap, netname, string, "flytrap");
+/* fullname   */ ATTRIB(KeylethFlyTrap, m_name, string, _("Fly Trap"));
+#ifdef GAMEQC
+/* number     */ ATTRIB(KeylethFlyTrap, impulse, int, 2);
+/* cost       */ ATTRIB(KeylethFlyTrap, tur_cost, float, 60);
+/* units      */ ATTRIB(KeylethFlyTrap, tur_units, int, 3);
+/* champion   */ ATTRIB(KeylethFlyTrap, m_champion, Champions, CHAMPION_Keyleth);
+#endif
+
+ENDCLASS(KeylethFlyTrap)
+REGISTER_TURRET(FLYTRAP, NEW(KeylethFlyTrap));

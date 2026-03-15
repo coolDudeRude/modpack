@@ -271,7 +271,7 @@ void monster_start_go(entity this)
 	if(monster_checkspawnedflag(this))
 	{
 		// Yoder, Sept29, horde fix so that preplaced monsters are counted on spawn_tdeath
-		if(gametype == GAMETYPE_HORDE)
+		if(gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD)
 			monsters_total += 1;
 		// end Yoder chunk, back to normal
 		
@@ -530,7 +530,7 @@ void monster_setup(entity this, Monster mon)
 
 bool monster_start(entity this, bool check_appear, Monster mon)
 {
-	if(gametype != GAMETYPE_HORDE && autocvar_skill == 3 && !this.nightmare_checked && !(mon.spawnflags & MONSTER_TYPE_BOSS) && !(mon.spawnflags & MONSTER_TYPE_SWIM) && !(mon.spawnflags & MONSTER_TYPE_UNDEAD) && !(mon.spawnflags & MON_FLAG_STATIONARY))
+	if(gametype != GAMETYPE_HORDE && gametype != GAMETYPE_TD && autocvar_skill == 3 && !this.nightmare_checked && !(mon.spawnflags & MONSTER_TYPE_BOSS) && !(mon.spawnflags & MONSTER_TYPE_SWIM) && !(mon.spawnflags & MONSTER_TYPE_UNDEAD) && !(mon.spawnflags & MON_FLAG_STATIONARY))
 		mon = monster_randomize(this, mon);
 
 	if(check_appear && qonquer_monstercompat(this, mon))
@@ -606,6 +606,11 @@ bool monster_start(entity this, bool check_appear, Monster mon)
 		if(!monster_checkspawnedflag(this) && !(this.flags & FL_DECOY) && !(this.flags & FL_CLONE) && !(this.flags & FL_SPAWNING))
 			monsters_total += 1;
 	}
+	else if(gametype == GAMETYPE_TD)
+	{
+		if(!(this.flags & FL_DECOY) && !(this.flags & FL_CLONE) && !(this.flags & FL_SPAWNING) && this.category != CATEGORY_MONSTER)
+			monsters_total += 1;
+	}
 	else if(!(this.flags & FL_DECOY) && !(this.flags & FL_CLONE) && !(this.flags & FL_SPAWNING))
 		monsters_total += 1;
 
@@ -626,7 +631,7 @@ bool monster_start(entity this, bool check_appear, Monster mon)
 // Monster fade, used to fade out the model a few seconds after deathmatch
 void MonsterFade2(entity this)
 {
-	if(this.alpha > 0)
+	if(this.alpha >= 0.1)
 	{
 		this.alpha = this.alpha - 1 * frametime;
 		//this.think = MonsterFade;
@@ -637,7 +642,7 @@ void MonsterFade2(entity this)
 }
 void MonsterFade(entity this)
 {
-	if(gametype != GAMETYPE_HORDE)
+	if(gametype != GAMETYPE_HORDE && gametype != GAMETYPE_TD)
 	{
 		setthink(this, func_null);
 		return;
@@ -645,7 +650,11 @@ void MonsterFade(entity this)
 	if(!this.alpha)
 		this.alpha = 1;
 	setthink(this, MonsterFade2);
-	this.nextthink = time + 10 + random() * 5; // wait a bit before fading
+	float fadetime = 10 + random() * 5;
+	if(gametype == GAMETYPE_TD)
+		fadetime *= 0.5; // get rid of them sooner!
+
+	this.nextthink = time + fadetime; // wait a bit before fading
 }
 
 // boss controllers

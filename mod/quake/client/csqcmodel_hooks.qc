@@ -15,6 +15,121 @@
 
 .float alpha;
 
+// FEATURE: forcemodel and model color selection (MUST be called BEFORE LOD!)
+.int forceplayermodels_savecolormap;
+
+.vector glowmod;
+
+#ifdef CSQC
+bool teamplay;
+int myteam;
+#endif
+
+void CSQCPlayer_ModelAppearance_PreUpdate(entity this)
+{
+	this.colormap = this.forceplayermodels_savecolormap;
+}
+void CSQCPlayer_ModelAppearance_PostUpdate(entity this)
+{
+	this.forceplayermodels_savecolormap = this.colormap;
+}
+void CSQCPlayer_ModelAppearance_Apply(entity this, bool islocalplayer)
+{
+	int cm = this.forceplayermodels_savecolormap;
+	cm = (cm >= 1024) ? cm : (entcs_GetClientColors(cm - 1) + 1024);
+
+	bool forceplayercolors_enabled = false;
+	#define fpc autocvar_cl_forceplayercolors
+	if (teamplay)
+	{
+		if (((player_localnum + 1) == player_localentnum) && (fpc == 2 || fpc == 4 || fpc == 5))
+			forceplayercolors_enabled = true;
+	}
+	else
+	{
+		if (fpc == 1 || fpc == 2)
+			forceplayercolors_enabled = true;
+	}
+
+	// forceplayercolors too
+	if(teamplay)
+	{
+		// own team's color is never forced
+		int forcecolor_friend = 0, forcecolor_enemy = 0;
+#if 0
+		entity tm;
+#endif
+
+		if(autocvar_cl_forcemyplayercolors)
+			forcecolor_friend = 1024 + autocvar_cl_forcemyplayercolors;
+
+		if(forceplayercolors_enabled)
+			forcecolor_enemy = 1024 + autocvar__cl_color;
+
+		if(forcecolor_enemy && !forcecolor_friend)
+		{
+			// only enemy color is forced?
+			// verify it is not equal to the friend color
+			if(forcecolor_enemy == 1024 + 17 * myteam)
+				forcecolor_enemy = 0;
+		}
+#if 0
+		if(forcecolor_friend && !forcecolor_enemy)
+		{
+			// only friend color is forced?
+			// verify it is not equal to the enemy color
+			for(tm = teams.sort_next; tm; tm = tm.sort_next)
+				// note: we even compare against our own team.
+				// if we rejected because we matched our OWN team color,
+				// this is not bad; we then simply keep our color as is
+				// anyway.
+				if(forcecolor_friend == 1024 + 17 * tm.team)
+					forcecolor_friend = 0;
+		}
+#endif
+
+		if(cm == 1024 + 17 * myteam)
+		{
+			if(forcecolor_friend)
+				this.colormap = forcecolor_friend;
+		}
+		else
+		{
+			if(forcecolor_enemy)
+				this.colormap = forcecolor_enemy;
+		}
+	}
+	else if(deathmatch)
+	{
+		if(autocvar_cl_forcemyplayercolors && islocalplayer)
+			this.colormap = 1024 + autocvar_cl_forcemyplayercolors;
+		else if (autocvar_cl_forceuniqueplayercolors && !islocalplayer)
+		{
+			// Assign each enemy an unique color combination
+			// pick colors from 0 to 14 since 15 is the rainbow color
+			// pl01 0 1, pl02 1 2, ..., pl14 13 14, pl15 14 0
+			// pl16 0 2, pl17 1 3, ..., pl29 13  0, pl30 14 1
+			int num;
+			if (this.isplayermodel & ISPLAYER_CLIENT)
+				num = this.entnum - 1;
+			else
+				num = this.sv_entnum - 1;
+			int c1 = num % 15;
+			int q = floor(num / 15);
+			int c2 = (c1 + 1 + q) % 15;
+			this.colormap = 1024 + (c1 << 4) + c2;
+		}
+		else if(forceplayercolors_enabled)
+			this.colormap = player_localnum + 1;
+	}
+
+	LABEL(skipforcecolors)
+
+	this.glowmod = '0 0 0'; // don't override glow effects in quake
+
+	//printf("CSQCPlayer_ModelAppearance_Apply(): state = %s, colormap = %f, glowmod = %s\n", (this.csqcmodel_isdead ? "DEAD" : "ALIVE"), this.colormap, vtos(this.glowmod));
+}
+
 void SUB_SetFade(entity ent, float vanish_time, float fading_time);
 .vector colormod;
 .float aftereffect_time;
@@ -58,8 +173,6 @@ void CSQCModel_Hook_PreDraw(entity this, bool isplayer);
 
 .float death_time;
 .int modelflags;
-
-.bool isplayermodel;
 
 .entity tag_entity;
 .int tag_index;
@@ -190,6 +303,9 @@ void CSQCModel_Hook_PreDraw(entity this, bool isplayer)
 	else
 		this.drawmask = MASK_NORMAL;
 
+	if((this.isplayermodel & ISPLAYER_MODEL) && this.drawmask) // this checks if it's a player MODEL!
+		CSQCPlayer_ModelAppearance_Apply(this, (this.isplayermodel & ISPLAYER_LOCAL));
+
 	CSQCModel_Effects_Apply(this);
 
 	if(this.entnum >= 1 && this.entnum <= maxclients)
@@ -207,6 +323,8 @@ void CSQCModel_Hook_PreUpdate(entity this, bool isnew, bool isplayer, bool isloc
 	this.iflags |= IFLAG_V_ANGLE_X;
 	// revert to values from server
 	CSQCModel_Effects_PreUpdate(this);
+	if((this.isplayermodel & ISPLAYER_MODEL))
+		CSQCPlayer_ModelAppearance_PreUpdate(this);
 }
 
 void CSQCModel_Hook_PostUpdate(entity this, bool isnew, bool isplayer, bool islocalplayer)
@@ -219,6 +337,10 @@ void CSQCModel_Hook_PostUpdate(entity this, bool isnew, bool isplayer, bool islo
 									|| this.model == "models/player.iqm"
 									|| (substring(this.model, 0, 16) == "models/monsters/" && (this.isplayermodel & BIT(1))));
 	this.isplayermodel = BITSET(this.isplayermodel, ISPLAYER_MODEL, is_playermodel);
+
+	// save values set by server
+	if((this.isplayermodel & ISPLAYER_MODEL))
+		CSQCPlayer_ModelAppearance_PostUpdate(this);
 
 	CSQCModel_Effects_PostUpdate(this);
 

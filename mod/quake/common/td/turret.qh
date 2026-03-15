@@ -1,0 +1,82 @@
+#pragma once
+
+CLASS(Turret, Object)
+	ATTRIB(Turret, m_id, int, 0);
+
+	/** icon */
+	ATTRIB(Turret, m_icon, string);
+	/** short name */
+	ATTRIB(Turret, netname, string);
+	/** human readable name */
+	ATTRIB(Turret, m_name, string, _("Turret"));
+	/** color */
+	ATTRIB(Turret, m_color, vector, '1 1 1');
+#ifdef CSQC
+	/** currently a copy of the model */
+	ATTRIB(Turret, mdl, string);
+	/** full name of tur_head model */
+	ATTRIB(Turret, head_model, string);
+#endif
+
+#ifdef GAMEQC
+	ATTRIB(Turret, spawnflags, int, 0);
+	/** turret hitbox size */
+	ATTRIB(Turret, m_mins, vector, '-0 -0 -0');
+	/** turret hitbox size */
+	ATTRIB(Turret, m_maxs, vector, '0 0 0');
+
+	/** associated champion */
+	ATTRIB(Turret, m_champion, Champions);
+	/** turret's number for cycling */
+	ATTRIB(Turret, impulse, int, 0);
+	/** turret's fuel cost */
+	ATTRIB(Turret, tur_cost, float, 0);
+	/** number of defence units the turret uses */
+	ATTRIB(Turret, tur_units, int, 0);
+#endif
+
+#ifdef GAMEQC
+	/** (BOTH) setup turret data */
+	METHOD(Turret, tr_setup, void(Turret this, entity actor)) { }
+	/** (BOTH) logic to run every frame */
+	METHOD(Turret, tr_think, void(Turret this, entity actor)) { }
+#endif
+#ifdef SVQC
+	/** (SERVER) called when turret dies */
+	METHOD(Turret, tr_death, void(Turret this, entity actor)) { }
+#endif
+#ifdef CSQC
+	/** (CLIENT) draw function called when the turret is selected */
+	METHOD(Turret, tr_drawselected, void(Turret this, entity actor)) { }
+#endif
+#ifdef GAMEQC
+	/** (BOTH) precaches models/sounds used by this turret */
+	METHOD(Turret, tr_precache, void(Turret this)) { }
+#endif
+ENDCLASS(Turret)
+
+// fields:
+.entity tur_head;
+
+// animation states
+.int clientframe;
+.vector anim_idle;
+.vector anim_shoot;
+const int TANIM_IDLE = 0;
+const int TANIM_SHOOT = 1;
+
+// turret capabilities
+const int TUR_FLAG_SUPPORT         = BIT(11); ///< supports other units
+const int TUR_FLAG_NONSOLID        = BIT(12); ///< may overlap with others
+
+// send flags
+const int TNSF_UPDATE  = BIT(1);
+const int TNSF_STATUS  = BIT(2);
+const int TNSF_SETUP   = BIT(3);
+const int TNSF_ANG     = BIT(4);
+const int TNSF_AVEL    = BIT(5);
+const int TNSF_MOVE    = BIT(6);
+//.float anim_start_time;
+const int TNSF_ANIM    = BIT(7);
+
+const int TNSF_FULL_UPDATE = 0xFFFFFF;

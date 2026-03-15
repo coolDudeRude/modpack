@@ -83,7 +83,7 @@ vector tuba_calc_arc(vector org, vector tgt, float ht)
     if(zdist == 0)
         solution_x = solution_y; // solution_x is 0 in this case, so don't use it, but rather use solution_y (which will be sqrt(0.5 * jumpheight / grav), actually)
 
-    float tuba_calcarc_flighttime = 1;
+    float calcarc_flighttime = 1;
     if(zdist < 0)
     {
         // down-jump
@@ -92,14 +92,14 @@ vector tuba_calc_arc(vector org, vector tgt, float ht)
             // almost straight line type
             // jump apex is before the jump
             // we must take the larger one
-            tuba_calcarc_flighttime = solution_y;
+            calcarc_flighttime = solution_y;
         }
         else
         {
             // regular jump
             // jump apex is during the jump
             // we must take the larger one too
-            tuba_calcarc_flighttime = solution_y;
+            calcarc_flighttime = solution_y;
         }
     }
     else
@@ -110,17 +110,17 @@ vector tuba_calc_arc(vector org, vector tgt, float ht)
             // almost straight line type
             // jump apex is after the jump
             // we must take the smaller one
-            tuba_calcarc_flighttime = solution_x;
+            calcarc_flighttime = solution_x;
         }
         else
         {
             // regular jump
             // jump apex is during the jump
             // we must take the larger one
-            tuba_calcarc_flighttime = solution_y;
+            calcarc_flighttime = solution_y;
         }
     }
-    vs = sdist / tuba_calcarc_flighttime;
+    vs = sdist / calcarc_flighttime;
 
     // finally calculate the velocity
     return sdir * vs + '0 0 1' * vz;

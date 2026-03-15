@@ -139,6 +139,8 @@ REGISTER_CHAMPION(Kirby, NEW(Kirby));
 .float kirby_bash_time;
 
 .bool kirby_cannon;
+
+bool autocvar_sv_quake_kirby_reset;
 #endif
 
 // kirby states, for prediction

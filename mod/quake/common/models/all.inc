@@ -95,6 +95,10 @@ MODEL(PROJECTILE_BLIZZARD_SHARD,            "progs/blizzard_shard.mdl");
 MODEL(PROJECTILE_DEMON_SICKLE,              "progs/demon_sickle.mdl");
 MODEL(PROJECTILE_ICE_SPEAR,                 "progs/ice_spear.mdl");
 MODEL(PROJECTILE_ICICLE,                    "progs/icicle.mdl");
+MODEL(PROJECTILE_MORTAR,                    "progs/proj_tur_mortar.mdl");
+MODEL(PROJECTILE_SWARM,                     "progs/swarm.mdl");
+MODEL(PROJECTILE_FROG_SPIT,                 "progs/bilefrag.mdl");
+MODEL(PROJECTILE_BOWLING_BALL,              "progs/proj_tur_bowlingball.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

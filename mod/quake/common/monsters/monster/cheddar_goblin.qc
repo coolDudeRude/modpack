@@ -267,7 +267,8 @@ void cheddar_pain(entity this, entity attacker, float damage, int deathtype)
 		_sound(this, CH_VOICE, "cheddar_goblin/pain2.wav", 1, ATTN_NORM);
 
 	this.pain_finished = time + 1;
-	cheddar_pain1(this);
+	setthink(this, cheddar_pain1);
+	this.nextthink = time;
 }
 
 //===========================================================================

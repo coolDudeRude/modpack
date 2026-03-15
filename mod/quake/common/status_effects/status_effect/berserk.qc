@@ -33,7 +33,7 @@ METHOD(Berserk, m_apply, void(StatusEffects this, entity actor, float eff_time, 
 METHOD(Berserk, m_tick, void(StatusEffects this, entity actor))
 {
     float curtime = StatusEffects_gettime(this, actor);
-    if(curtime < time + 3 && !actor.berserk_warning)
+    if(curtime < time + 3 && !actor.berserk_warning && IS_REAL_CLIENT(actor))
     {
         if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_BERSERK);

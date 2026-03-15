@@ -206,8 +206,6 @@ void knight_pain(entity this, entity attacker, float damage, int deathtype)
 
 void knight_bowend(entity this)
 {
-	minion_spawn(this, this.origin, new(monster), MON_PHANTOM_SWORDSMAN);
-
 	SUB_SetFade(this, time, 0.25);
 }
 
@@ -291,7 +289,10 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	else
 		_sound(this, CH_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
 	if(autocvar_skill >= 2)
+	{
+		minion_spawn(this, this.origin, new(monster), MON_PHANTOM_SWORDSMAN);
 		knight_bow1(this);
+	}
 	else if(random() < 0.5)
 		knight_die1(this);
 	else

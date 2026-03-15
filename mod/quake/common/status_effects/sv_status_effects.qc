@@ -11,6 +11,8 @@ METHOD(StatusEffects, m_active, bool(StatusEffects this, entity actor))
 METHOD(StatusEffects, m_tick, void(StatusEffects this, entity actor))
 {
 	StatusEffects data = actor.statuseffects;
+	if(!data || !actor)
+		return;
 	.int flg = statuseffect_flags[this.m_id];
 	int oldflag = data.(flg);
 	data.(flg) = BITSET(data.(flg), STATUSEFFECT_FLAG_PERSISTENT, this.m_persistent(this, actor));

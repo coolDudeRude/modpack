@@ -29,6 +29,7 @@
 #include "slide/_mod.inc"
 #include "tank/_mod.inc"
 #include "dodgeball/_mod.inc"
+#include "td/_mod.inc"
 //#include "jumpsdonewell/_mod.inc"
 
 #include "wepent.qc"

@@ -226,7 +226,8 @@ void tbaby_checknew(entity this)
 		IL_PUSH(g_damagedbycontents, this);
 	this.damagedbycontents	= true;
 
-	monsters_total += 1;
+	// NOTE: monsters marked as FL_CLONE do not increase the monster counter
+	//monsters_total += 1;
 }
 
 void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
@@ -254,6 +255,8 @@ void tbaby_mitosis(entity targ, entity attacker, float damage, int deathtype)
 		setsize(newSpawn, targ.mins, targ.maxs);
 		newSpawn.solid = SOLID_SLIDEBOX;
 		newSpawn.skin = targ.skin;
+		newSpawn.category = targ.category;
+		newSpawn.movetarget = targ.movetarget;
 		
 		setorigin(newSpawn, targ.origin);
 		setthink(newSpawn, tbaby_checknew);

@@ -736,9 +736,16 @@ void sui_border_box(vector pos, vector size, float width, vector color, float al
 
 void sui_drawtext(vector pos, vector size, string text, vector color, float alpha, float flags)
 {
-	pos = sui_transform_box(pos, vec2(stringwidth(text, 1, size), size.y));
+	pos = sui_transform_box(pos, vec2(stringwidth_nocolors(text, size), size.y));
 	
 	drawstring(pos, text, size, color, alpha, flags);
+}
+
+void sui_drawcolortext(vector pos, vector size, string text,float alpha, float flags)
+{
+	pos = sui_transform_box(pos, vec2(stringwidth_colors(text, size), size.y));
+	
+	drawcolorcodedstring(pos, text, size, alpha, flags);
 }
 
 void sui_slider_noop(float value)

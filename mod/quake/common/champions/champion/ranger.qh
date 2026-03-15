@@ -39,5 +39,6 @@ CLASS(Ranger, Champions)
 #ifdef CSQC
     ATTRIB(Ranger, message, string, "No additional bonus stats");
 #endif
+    ATTRIB(Ranger, td_turrets, bool, true);
 ENDCLASS(Ranger)
 REGISTER_CHAMPION(Ranger, NEW(Ranger));

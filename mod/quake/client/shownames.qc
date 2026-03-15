@@ -162,6 +162,7 @@ void Draw_ShowNames(entity this)
 	drawcolorcodedstring(myPos, s, '1 1 0' * autocvar_hud_shownames_fontsize, a, DRAWFLAG_NORMAL);
 	drawfontscale = '1 1 0';
 	drawfont = oldfont;
+#undef OFF_SCREEN
 }
 
 void Draw_ShowNames_All()

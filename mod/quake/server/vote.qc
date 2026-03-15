@@ -31,6 +31,15 @@ bool Nagger_SendEntity(entity this, entity to, float sendflags)
 		nags |= sendflags & BIT(7);
 	}
 
+	if(gametype == GAMETYPE_TD && td_phase == TD_PHASE_BUILD)
+	{
+		if (readycount)
+		{
+			nags |= BIT(0);
+			if (!to.ready) nags |= BIT(1);
+		}
+	}
+
 	WriteByte(MSG_ENTITY, nags);
 
 	if (nags & BIT(6))
@@ -42,6 +51,18 @@ bool Nagger_SendEntity(entity this, entity to, float sendflags)
 	}
 
 	if (nags & BIT(7)) WriteString(MSG_ENTITY, vote_called_display);
+
+	if (nags & BIT(0))
+	{
+		for (int i = 1; i <= maxclients;)
+		{
+			int f = 0;
+			for (int b = 0; b < 8 && i <= maxclients; ++b, ++i)
+				if (edict_num(i).ready)
+					f |= BIT(b);
+			WriteByte(MSG_ENTITY, f);
+		}
+	}
 
 	return true;
 }
@@ -301,6 +322,37 @@ void VoteThink()
 	{
 		if (time > vote_endtime) // time is up
 			VoteCount(false);
+	}
+}
+
+void ReadyCount()
+{
+	if(!td_ent || intermission_running)
+		return;
+
+	int total_players = 0, human_players = 0, humans_ready = 0;
+	readycount = 0;
+
+	FOREACH_CLIENT(IS_PLAYER(it), {
+		++total_players;
+		if (it.ready) ++readycount;
+		if (IS_REAL_CLIENT(it))
+		{
+			++human_players;
+			if (it.ready) ++humans_ready;
+		}
+	});
+
+	Nagger_ReadyCounted();
+
+	if (total_players < 1)
+	{
+		return;
+	}
+
+	if (humans_ready && humans_ready >= rint(human_players * bound(0.5, autocvar_sv_quake_td_majority_factor, 1)))
+	{
+		td_CombatPhase_Init(td_ent);
 	}
 }
 

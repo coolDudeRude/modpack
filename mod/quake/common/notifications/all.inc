@@ -215,6 +215,13 @@
     MSG_CENTER_NOTIF(COUNTDOWN_GAMESTART,               N_ENABLE,    0, 1, "",               CPID_ROUND,             "1 f1", strcat(_("^BGGame starts in"), "\n", BOLD("^COUNT")), "")
     MSG_CENTER_NOTIF(COUNTDOWN_ROUNDSTART,              N_ENABLE,    0, 2, "f1",             CPID_ROUND,             "1 f2", strcat(_("^BGRound %s starts in"), "\n", BOLD("^COUNT")), "")
 
+    MSG_CENTER_NOTIF(ROUND_CHEDDARPHASE,                 N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K2Cheddar phase")), "")
+    MSG_CENTER_NOTIF(ROUND_CHICKENPHASE,                 N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K2Chicken phase")), "")
+    MSG_CENTER_NOTIF(ROUND_COMBATPHASE,                  N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^BGCombat phase")), "")
+    MSG_CENTER_NOTIF(ROUND_BUILDPHASE,                   N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^BGBuild phase")), "")
+    MSG_CENTER_NOTIF(ROUND_FINALWAVE,                    N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K1Final wave!")), "")
+
+    MSG_CENTER_NOTIF(ROUND_COMPLETE,                     N_ENABLE,    0, 0, "",               CPID_ROUND,            "5 0",  BOLD(_("^BGRound complete!")), "")
     MSG_CENTER_NOTIF(ROUND_START_SOON,                   N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^BGThe round will begin soon...")), "")
     MSG_CENTER_NOTIF(ROUND_WON,                          N_ENABLE,    1, 2, "s1 f1 f2",       CPID_ROUND,            "5 0",  strcat(_("^BG%s team has won!"), "\n", BOLD("^F2Gold %s ^BGx ^F1Green %s")), "")
 
@@ -276,7 +283,14 @@
     MSG_CENTER_NOTIF(KILL_STREAK,                       N_ENABLE,     0, 1, "streak_col f1",           CPID_SPREE, "2 0", _("%s%s^BG kill streak!"), "")
 
     MSG_CENTER_NOTIF(NO_AMMO,                           N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGOut of ammo"), "")
+    MSG_CENTER_NOTIF(NO_FUEL,                           N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGNot enough fuel"), "")
+    MSG_CENTER_NOTIF(NO_PLACE,                          N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGInvalid placement"), "")
+    MSG_CENTER_NOTIF(NO_TARGET,                         N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGAim at a turret"), "")
+    MSG_CENTER_NOTIF(NO_UNITS,                          N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGDefence Unit limit reached"), "")
     MSG_CENTER_NOTIF(NO_WEAPON,                         N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGNo weapon"), "")
+
+    MSG_CENTER_NOTIF(TURRET_FULLHEALTH,                 N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGTurret is full health"), "")
+    MSG_CENTER_NOTIF(TURRET_MAXLEVEL,                   N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGTurret is at the maximum level"), "")
 
     MSG_CENTER_NOTIF(SHOP_OPEN_GREMMY,                         N_ENABLE,     0, 0, "",                         CPID_SHOP, "5.5 0", _("^BGShop is open, speak to the ^F1Gremlin^BG!"), "")
     MSG_CENTER_NOTIF(SHOP_OPEN_DAMION,                         N_ENABLE,     0, 0, "",                         CPID_SHOP, "5.5 0", _("^BGShop is open, speak to ^K1Damion^BG!"), "")
@@ -292,6 +306,9 @@
 
     MSG_CENTER_NOTIF(TANK_ENTER,                        N_ENABLE,     0, 0, "pass_key",                 CPID_TANK, "0 0", _("^BGPress ^F2%s^BG to exit the tank"), "")
     MSG_CENTER_NOTIF(TANK_LOCKON,                       N_ENABLE,     1, 0, "s1",                       CPID_TANK, "0 0", _("^BG%s^BG's plasma has a lock on you!"), "")
+
+    MSG_CENTER_NOTIF(TOWER_UNDERATTACK,                 N_ENABLE,     0, 0, "",                         CPID_TOWER,"5.5 0", BOLD(_("^K1Tower under attack!")), "")
+    MSG_CENTER_NOTIF(TURRET_DESTROYED,                  N_ENABLE,     1, 0, "s1",                       CPID_TURRET,"5.5 0", _("^K1Your ^K2%s^K1 was destroyed!"), "")
 
     MSG_CENTER_NOTIF(PLAYER_WIN,                        N_ENABLE,     1, 0, "s1",                       CPID_ROUND, "5.5 0", _("^BG%s^BG wins!"), "")
 

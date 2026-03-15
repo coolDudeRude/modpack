@@ -15,7 +15,7 @@ void editor_write(entity this, int fh)
 	if(this.target4 && this.target4 != "") fputs(fh, strcat("\"target4\" \"", this.target4, "\"\n"));
 	if(this.targetname && this.targetname != "") fputs(fh, strcat("\"targetname\" \"", this.targetname, "\"\n"));
 	if(this.killtarget && this.killtarget != "") fputs(fh, strcat("\"killtarget\" \"", this.killtarget, "\"\n"));
-	if(this.count) if(this.count) fputs(fh, strcat("\"count\" \"", ftos(this.count), "\"\n"));
+	if(this.count) fputs(fh, strcat("\"count\" \"", ftos(this.count), "\"\n"));
 	fputs(fh, "}\n");
 }
 
@@ -105,6 +105,11 @@ entity editor_validate(string cmd)
 	return e;
 }
 
+.bool path_active;
+.string path_name;
+.int path_index;
+.entity path_prev;
+
 // This must be called in SV_ParseClientCommand
 // input entity this
 // input string cmd: same as in SV_ParseClientCommand
@@ -140,6 +145,51 @@ bool sv_editor_command(entity this, string cmd, float argc)
 					return true;
 				}
 				sprint(this, sprintf("Spawning %s (%d) at your current position and angles\n", ent.classname, num_for_edict(ent)));
+				return true;
+			}
+			case "path":
+			{
+				if(!this.path_active)
+				{
+					if(argv(2) == "")
+					{
+						sprint(this, "You must provide a name for the path targets\n");
+						return true;
+					}
+					this.path_active = true;
+					this.path_index = 0;
+					strcpy(this.path_name, argv(2));
+				}
+				else if(argv(2) == "end")
+				{
+					if(!this.path_active)
+					{
+						sprint(this, "You didn't have an active path network\n");
+						return true;
+					}
+					this.path_prev = NULL;
+					this.path_active = false;
+					this.path_index = 0;
+					strfree(this.path_name);
+					sprint(this, "Finished path\n");
+					return true;
+				}
+				entity ent = editor_create("path_corner", this.origin, this.angles_y);
+				if(!ent)
+				{
+					sprint(this, "You somehow did something wrong, try again!\n");
+					return true;
+				}
+				this.path_index += 1;
+
+				entity prev = this.path_prev;
+				this.path_prev = ent;
+
+				ent.targetname = strzone(strcat(this.path_name, itos(this.path_index)));
+				if(prev)
+					prev.target = strzone(ent.targetname);
+
+				sprint(this, sprintf("Spawning a path_corner (%d) at your current position and angles with targetname %s\n", num_for_edict(ent), ent.targetname));
 				return true;
 			}
 			case "remove":

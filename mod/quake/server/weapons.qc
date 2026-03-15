@@ -408,6 +408,8 @@ entity W_PickNearbyTarget(entity this, entity attacker, float hitrange, bool che
 
 	FOREACH_ENTITY_RADIUS(this.origin, hitrange, !(it.flags & FL_NOTARGET) && it.takedamage && it != attacker && it != this && Damage_ValidTarget(it, attacker) && ((IS_PLAYER(it) || IS_MONSTER(it) || it.classname == "monster_hitbox") || (hitany && it.classname != "door")),
 	{
+		if(it.clipgroup && it.clipgroup == this.clipgroup)
+			continue;
 		if((!(it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) || (mywep.spawnflags & WEP_FLAG_HITUNDEAD)) && !it.charmed)
 		{
 			vector targ_pos = (it.absmin + it.absmax) * 0.5;

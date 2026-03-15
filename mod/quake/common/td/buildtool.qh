@@ -1,0 +1,13 @@
+#pragma once
+
+#ifdef GAMEQC
+entity td_GetSelection(entity this, int number);
+
+void buildtool_frame(entity this);
+#endif
+
+#ifdef CSQC
+void Draw_Cone(vector shotorg, vector shotdir, float crange, float viscone);
+
+void buildtool_draw2d(entity this);
+#endif

@@ -22,6 +22,7 @@
 #include "shop.qh"
 #include "../common/triggers/teleporters.qh"
 #include "../common/triggers/trigger/fog.qh"
+#include "../common/td/sv_td.qh"
 #include "vote.qh"
 #include "../common/weapons/weapon/gravity_gun.qh"
 #include "weapons/weaponsystem.qh"
@@ -142,7 +143,7 @@ void parms_read(entity this)
 
 	// champion stuff
 	Monster mon = Monster_from_name(parms_getdata(myid, "kirby_type"));
-	if(mon != MON_Null && mon.star_valid)
+	if(mon != MON_Null && mon.star_valid && !autocvar_sv_quake_kirby_reset)
 		STAT(KIRBY_TYPE, this) = mon.monsterid;
 	else
 		STAT(KIRBY_TYPE, this) = 0;
@@ -384,7 +385,9 @@ void SetNewParms()
 		start_weapon = WEP_WRENCH;
 		prev_weapon = WEP_PISTOL;
 	}
-	WepSet weps = (WEPSET(PEWPEW) | prev_weapon.m_wepset | start_weapon.m_wepset);
+	WepSet weps = (prev_weapon.m_wepset | start_weapon.m_wepset);
+	if(!deathmatch)
+		weps |= WEPSET(PEWPEW);
 	if(gametype == GAMETYPE_DODGEBALL)
 		weps = start_weapon.m_wepset;
 	else if(gametype == GAMETYPE_INSTAGIB)
@@ -698,7 +701,7 @@ FindIntermission
 Returns the entity to view from
 ============
 */
-entity FindIntermission(entity this)
+entity FindIntermission()
 {
 	if(gametype == GAMETYPE_SKATE || gametype == GAMETYPE_JUMPSDONEWELL)
 		return NULL; // stay at player view
@@ -726,7 +729,7 @@ entity FindIntermission(entity this)
 // testinfo_player_start is only found in regioned levels
 	spot = find(NULL, classname, "testplayerstart");
 	if(!spot)
-		objerror(this, "FindIntermission: no spot");
+		LOG_INFO("FindIntermission: no spot");
 
 	return spot;
 }
@@ -740,6 +743,8 @@ void GotoNextMap()
 	{
 		if(gametype == GAMETYPE_HORDE)
 			changelevel(HordeRandomMap());
+		else if(gametype == GAMETYPE_TD)
+			changelevel("td");
 		else if(deathmatch)
 			changelevel(PickDMMap(true));
 		else
@@ -1222,7 +1227,7 @@ void intermission_frame()
 	if(!intermission_cycletime || time < intermission_cycletime)
 		return;
 
-	entity pos = FindIntermission(NULL);
+	entity pos = FindIntermission();
 
 	intermission_moveplayers(pos);
 
@@ -1235,7 +1240,9 @@ void execute_changelevel(entity this)
 	intermission_running = 1;
 	
 // enforce a wait time before allowing changelevel
-	if(deathmatch || gametype == GAMETYPE_DODGEBALL)
+	if(gametype == GAMETYPE_TD && td_phase == TD_PHASE_LOSE)
+		intermission_exittime = time + 10000000;  // never allow exit
+	else if(deathmatch || gametype == GAMETYPE_DODGEBALL)
 		intermission_exittime = time + 5;
 	else
 		intermission_exittime = time + 2;
@@ -1248,7 +1255,7 @@ void execute_changelevel(entity this)
 	SendCDTrack(NULL, 3);
 #endif
 
-	entity pos = FindIntermission(this);
+	entity pos = FindIntermission();
 
 	intermission_moveplayers(pos);
 
@@ -1777,7 +1784,7 @@ void RunPostPutClientInServer(entity this)
 		player.view_ofs = '0 0 -8'; // not 0 because PlayerPreThink would return out
 		player.velocity = '0 0 0';
 
-		spot = FindIntermission(player);
+		spot = FindIntermission();
 		player.angles = player.v_angle = spot.mangle;
 		player.angles_z = 0; // never spawn tilted even if the spot says to
 		player.fixangle = true;
@@ -1848,6 +1855,9 @@ void PutObserverInServer(entity this)
 	this.watertype = CONTENT_EMPTY;
 	this.pushltime = 0;
 	this.pusher = NULL;
+	this.monster_attack = false;
+
+	this.team = 0;
 
 	STAT(PASSIVES, this) = 0;
 
@@ -1886,6 +1896,8 @@ void PutObserverInServer(entity this)
 	dodgeball_RemovePlayer(this);
 	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_PutObserverInServer(this);
+	else if(gametype == GAMETYPE_TD)
+		td_RemovePlayer(this);
 }
 
 .bool dualwielding_prev;
@@ -1923,6 +1935,7 @@ void PutPlayerInServer(entity this)
 	this.watertype = CONTENT_EMPTY;
 	this.pushltime = 0;
 	this.pusher = NULL;
+	this.monster_attack = true;
 
 	if(Challenge_Active(CHALLENGE_ONEHP))
 	{
@@ -1943,10 +1956,14 @@ void PutPlayerInServer(entity this)
 	this.weaponframe = 0;
 	this.weaponmodel = "";
 
+	this.team = 0;
+
 	if(coop && autocvar_g_player_collisions)
 	{
 		if(gametype == GAMETYPE_DODGEBALL)
 			this.clipgroup = this.team_no;
+		else if(teamplay)
+			this.clipgroup = this.team;
 		else
 			this.clipgroup = CLIPGROUP_PLAYER;
 	}
@@ -2027,7 +2044,7 @@ void PutPlayerInServer(entity this)
 			this.spawn_deferred = time + 5;
 		}
 
-		spot = FindIntermission(this);
+		spot = FindIntermission();
 		this.angles = this.v_angle = spot.mangle;
 		this.angles_z = 0; // never spawn tilted even if the spot says to
 		this.fixangle = true;
@@ -2088,6 +2105,8 @@ void PutPlayerInServer(entity this)
 
 	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_PutPlayerInServer(this);
+	else if(gametype == GAMETYPE_TD)
+		td_PutPlayerInServer(this);
 
 	GrappleReset(this.hook);
 
@@ -2474,6 +2493,8 @@ void PlayerUseKey(entity this)
 {
 	if(this.tank)
 		Tank_Eject(this, false);
+	else if(gametype == GAMETYPE_TD)
+		td_BuildMode_Toggle(this);
 }
 
 /*
@@ -2890,6 +2911,8 @@ void PlayerPostThink(entity this)
 			{ /* do nothing */ }
 		else if(this.tank)
 			Tank_WeaponFrame(this);
+		else if(STAT(TD_BUILDMODE, this))
+			buildtool_frame(this);
 		else
 		{
 			// do weapon stuff
@@ -3928,6 +3951,20 @@ void SV_ParseClientCommand(entity this, string command)
 		return;
 	}
 
+	if(cmd_name == "ready")
+	{
+		if(gametype == GAMETYPE_TD && IS_PLAYER(this) && td_phase == TD_PHASE_BUILD)
+		{
+			if(!this.ready)
+			{
+				bprintf("%s ^7is ready!\n", this.netname);
+				this.ready = true;
+				ReadyCount();
+			}
+		}
+		return;
+	}
+
 	if(cmd_name == "autoswitch")
 	{
 		if (argv(1) != "")
@@ -4223,30 +4260,34 @@ void setcolor(entity this, int clr)
 {
 #if 1
 	this.clientcolors = clr;
-	this.team = (clr & 15) + 1;
+	if(teamplay)
+		this.team = (clr & 15) + 1;
+	else
+		this.team = -1;
 #else
 	builtin_setcolor(this, clr);
 #endif
 }
 
-void SetPlayerColors(entity pl, float _color)
+void SetPlayerColors(entity player, float _color)
 {
-	/*string s;
-	s = ftos(cl);
-	stuffcmd(pl, strcat("color ", s, " ", s, "\n")  );
-	pl.team = cl + 1;
-	//pl.clientcolors = pl.clientcolors - (pl.clientcolors & 15) + cl;
-	pl.clientcolors = 16*cl + cl;*/
-
 	int pants = _color & 0x0F;
 	int shirt = _color & 0xF0;
 
-	setcolor(pl, shirt + pants);
+	if (teamplay)
+	{
+		setcolor(player, 16 * pants + pants);
+	}
+	else
+	{
+		setcolor(player, shirt + pants);
+	}
 }
 
 void SV_ChangeTeam(entity this, float _color)
 {
-	SetPlayerColors(this, _color);
+	if(!teamplay)
+		SetPlayerColors(this, _color);
 
 	if(!IS_CLIENT(this))
 	{

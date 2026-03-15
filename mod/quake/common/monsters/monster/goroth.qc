@@ -540,7 +540,7 @@ METHOD(Goroth, mr_setup, bool(Goroth this, entity actor))
 
     actor.health = 2000;
     actor.gibhealth = -150;
-    if(gametype == GAMETYPE_HORDE || actor.charmed)
+    if(gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD || actor.charmed)
     	actor.scale = 0.18;
     else if(!actor.scale)
     	actor.scale = 0.75;

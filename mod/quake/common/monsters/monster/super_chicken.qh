@@ -12,8 +12,8 @@ MODEL(MON_SUPER_CHICKEN, "progs/chcknbig.mdl");
 
 CLASS(SuperChicken, Monster)
     ATTRIB(SuperChicken, spawnflags, int, MONSTER_TYPE_BOSS | MON_FLAG_EXPLOSIONRESISTANT);
-    ATTRIB(SuperChicken, m_mins, vector, '-48 -48 0');
-    ATTRIB(SuperChicken, m_maxs, vector, '48 48 48');
+    ATTRIB(SuperChicken, m_mins, vector, '-32 -32 0');
+    ATTRIB(SuperChicken, m_maxs, vector, '32 32 84');
 #ifdef GAMEQC
     ATTRIB(SuperChicken, m_model, Model, MDL_MON_SUPER_CHICKEN);
 #endif

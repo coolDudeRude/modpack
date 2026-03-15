@@ -32,7 +32,9 @@ void dryad_leaf_think(entity this)
 	vector ang = vectoangles(this.velocity);
 	this.angles_y = ang.y;
 
-	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it.takedamage && it != this.owner,
+	// NOTE: only hits monsters as leaves are disabled in PvP
+	// and we don't want doors randomly opening!
+	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it.takedamage && IS_MONSTER(it) && it != this.owner,
 	{
 		if(time < it.leaf_dmgtime)
 			continue;

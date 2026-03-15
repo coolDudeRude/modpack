@@ -1,0 +1,27 @@
+#pragma once
+
+// ================
+//  JUMPING CASTLE
+// ================
+
+CLASS(GoatJumpingCastle, Turret)
+#ifdef GAMEQC
+/* spawnflags */ ATTRIB(GoatJumpingCastle, spawnflags, int, TUR_FLAG_SUPPORT | TUR_FLAG_NONSOLID);
+/* mins       */ ATTRIB(GoatJumpingCastle, m_mins, vector, '-82 -82 0');
+/* maxs       */ ATTRIB(GoatJumpingCastle, m_maxs, vector, '82 82 16');
+#endif
+#ifdef CSQC
+/* modelname  */ ATTRIB(GoatJumpingCastle, mdl, string, "progs/tur_jumpingcastle.mdl");
+/* head_model */ ATTRIB(GoatJumpingCastle, head_model, string, "");
+#endif
+/* netname    */ ATTRIB(GoatJumpingCastle, netname, string, "jumpingcastle");
+/* fullname   */ ATTRIB(GoatJumpingCastle, m_name, string, _("Jumping Castle"));
+#ifdef GAMEQC
+/* number     */ ATTRIB(GoatJumpingCastle, impulse, int, 0);
+/* cost       */ ATTRIB(GoatJumpingCastle, tur_cost, float, 100);
+/* units      */ ATTRIB(GoatJumpingCastle, tur_units, int, 10);
+/* champion   */ ATTRIB(GoatJumpingCastle, m_champion, Champions, CHAMPION_Goat);
+#endif
+
+ENDCLASS(GoatJumpingCastle)
+REGISTER_TURRET(JUMPING_CASTLE, NEW(GoatJumpingCastle));

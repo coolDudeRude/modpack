@@ -6,6 +6,8 @@
 #include "monsters/ai_subs.qh"
 #include "monsters/monsters.qh"
 #include "rogue/sphere.qh"
+#include "vote.qh"
+#include "../common/td/sv_td.qh"
 #include "../common/jumpsdonewell/_mod.qh"
 #include "../common/triggers/func/breakable.qh"
 #include "../common/triggers/triggers.qh"
@@ -36,6 +38,8 @@ void playerscale_StartFrame()
 
 	if(!playercount)
 		playercount = 1; // avoid div0
+	if(gametype == GAMETYPE_TD)
+		playercount *= 2; // tower defence acts as double player count
 
 	float difficulty = (0.5 + autocvar_skill * ((1.2 - 0.3) / (2 / playercount)));
 
@@ -261,6 +265,11 @@ bool Damage_ValidTarget(entity targ, entity attacker)
 		return true;
 	// no PvP thank you very much
 	if(coop && IS_PLAYER(targ) && IS_PLAYER(attacker) && gametype != GAMETYPE_DODGEBALL)
+		return false;
+	// no turret damage to players ever!
+	if(gametype == GAMETYPE_TD && IS_PLAYER(targ) && IS_TURRET(attacker))
+		return false;
+	if(gametype == GAMETYPE_TD && IS_PLAYER(attacker) && IS_TURRET(targ))
 		return false;
 	// decoys are never valid targets
 	if(targ.monsterdef && (targ.monsterdef.spawnflags & MONSTER_TYPE_DECOY))
@@ -511,6 +520,8 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 			attacker.frags += 1;
 		if(gametype == GAMETYPE_HORDE && !targ.charmed)
 			Horde_GiveScore(HORDE_TEAMSCORE_KILL);
+		if(gametype == GAMETYPE_TD && !targ.charmed)
+			td_MonsterDies(targ, attacker);
 
 		if(STAT(PASSIVES, attacker) & PASSIVE_BOOMER)
 			explosion_delayed(targ, attacker);
@@ -534,8 +545,6 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 	settouch(targ, func_null);
 	targ.use = func_null;
 
-	targ.category = string_null;
-
 	// fall to ground
 	targ.flags &= ~FL_FLY;
 	targ.flags &= ~FL_SWIM;
@@ -558,6 +567,8 @@ void Killed(entity targ, entity inflictor, entity attacker, int deathtype)
 
 	if(targ.th_die)
 		targ.th_die(targ, inflictor, attacker, deathtype);
+
+	targ.category = string_null;
 }
 
 // ====
@@ -599,6 +610,26 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	// TODO: needs projectile support!
 	if(ai_immunebreakable(attacker, targ))
 		return;
+
+	if(gametype == GAMETYPE_TD)
+	{
+		// players might not have a keybind for it, so let them shoot the tower to start
+		if(targ.classname == "td_tower" && IS_PLAYER(attacker) && td_phase == TD_PHASE_BUILD && !attacker.ready)
+		{
+			bprintf("%s ^7is ready!\n", attacker.netname);
+			attacker.ready = true;
+			ReadyCount();
+			return;
+		}
+		if(targ.classname == "td_tower" && (!IS_MONSTER(attacker) || (attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS)))
+			return;
+		if(IS_TURRET(targ) && !IS_MONSTER(attacker))
+			return;
+		if(IS_TURRET(attacker) && !IS_MONSTER(targ))
+			return;
+		if(IS_MONSTER(targ) && time < targ.invincible_finished)
+			return;
+	}
 
 	if(gametype == GAMETYPE_JUMPSDONEWELL)
 	{
@@ -966,7 +997,11 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 			targ.target3 = string_null;
 	}
 
-	if(IS_MONSTER(targ) && attacker && !(targ.monsterdef.spawnflags & MON_FLAG_NOAGGRO) && !(targ.monsterdef.spawnflags & MON_FLAG_NOTARGET) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && deathtype != DEATH_TRAP.m_id)
+	bool is_trap = DEATH_IS(deathtype, DEATH_TRAP);
+	if(IS_TURRET(attacker) && !targ.movetarget)
+		is_trap = false; // prevent cheese from stationary monsters
+
+	if(IS_MONSTER(targ) && attacker && !(targ.monsterdef.spawnflags & MON_FLAG_NOAGGRO) && !(targ.monsterdef.spawnflags & MON_FLAG_NOTARGET) && !(targ.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) && !is_trap)
 	{
 		// make pets focus the target
 		FOREACH_ENTITY_ENT(charmer, attacker,
@@ -988,11 +1023,11 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		});
 
 	// get mad unless of the same class(except for soldiers)
-		if(targ != attacker && attacker != targ.enemy && targ.charmer != attacker && !targ.charmed && !targ.is_frozen)
+		if(attacker && targ != attacker && attacker != targ.enemy && targ.charmer != attacker && !targ.charmed && !targ.is_frozen)
 		{
 			if(targ.classname != attacker.classname || (targ.monsterdef.spawnflags & MON_FLAG_INFIGHT))
 			{
-				if(coop || gametype == GAMETYPE_HORDE)
+				if(coop || gametype == GAMETYPE_HORDE || (gametype == GAMETYPE_TD && attacker.monster_attack))
 				{
 					// yoder Sept24, 2021
 					// if in horde mode, have enemies obey a reaggro time

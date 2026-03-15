@@ -28,12 +28,12 @@ METHOD(Invisibility, m_apply, void(StatusEffects this, entity actor, float eff_t
 METHOD(Invisibility, m_tick, void(StatusEffects this, entity actor))
 {
     float curtime = StatusEffects_gettime(this, actor);
-    if(actor.invisible_sound < time && !actor.invisible_warning)
+    if(actor.invisible_sound < time && !actor.invisible_warning && IS_REAL_CLIENT(actor))
     {
         _sound(actor, CH_TRIGGER_SINGLE, "items/inv3.wav", 0.5, ATTN_IDLE);
         actor.invisible_sound = time + ((random() * 3) + 1);
     }
-    if(curtime < time + 3 && !actor.invisible_warning)
+    if(curtime < time + 3 && !actor.invisible_warning && IS_REAL_CLIENT(actor))
     {
         if(gametype != GAMETYPE_HORDE)
             Send_Notification(NOTIF_ONE, actor, MSG_MULTI, POWERDOWN_INVISIBLE);

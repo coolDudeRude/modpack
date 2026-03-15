@@ -1039,7 +1039,7 @@ void ThrowHead(entity this, entity inflictor, string gibname, float dm)
 
 void Corpse_Fade(entity this)
 {
-	if(gametype == GAMETYPE_HORDE)
+	if(gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD)
 	{
 		setthink(this, MonsterFade);
 		this.nextthink = time + FADETIME;
@@ -1169,7 +1169,7 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 		GibPlayer(this, inflictor, attacker);
 		if(gametype == GAMETYPE_HORDE)
 		{
-			entity spot = FindIntermission(this);
+			entity spot = FindIntermission();
 			this.angles = this.v_angle = spot.mangle;
 			this.angles_z = 0; // never spawn tilted even if the spot says to
 			this.fixangle = true;

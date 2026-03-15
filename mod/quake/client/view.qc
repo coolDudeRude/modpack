@@ -13,6 +13,7 @@
 #include "../common/viewloc.qh"
 #include "../common/wepent.qh"
 #include "../common/util.qh"
+#include "../common/td/cl_td.qh"
 #include "../common/triggers/target/music.qh"
 #include "../common/triggers/trigger/viewloc.qh"
 #include "../common/triggers/trigger/multi.qh"
@@ -265,7 +266,7 @@ void viewmodel_draw(entity this)
 	wepent_CSQCModel_InterpolateAnimation_Do(this, this.activeweapon.m_delta);
 
 	bool show_viewmodel = true;
-	if(STAT(SKATING) || STAT(SLIDE_ON) || (STAT(ITEMS) & IT_TANK) || STAT(CANNON))
+	if(STAT(SKATING) || STAT(SLIDE_ON) || (STAT(ITEMS) & IT_TANK) || STAT(CANNON) || STAT(TD_BUILDMODE))
 		show_viewmodel = false;
 	if(csqcplayer && csqcplayer.m_champion && csqcplayer.m_champion.m_hideweapon)
 	{
@@ -570,6 +571,8 @@ int WantEventchase(entity this, bool want_vehiclechase)
 		return 0;
 	if(STAT(SKATING) || STAT(SLIDE_ON) || (STAT(ITEMS) & IT_TANK) || STAT(CLOCKWORK))
 		return 1;
+	//if(STAT(TD_BUILDMODE == 1))
+		//return 1; // to ease placement? TODO maybe make this optional
 	//if((player_localnum + 1) != player_localentnum) // spectating)
 		//return 1;
 	if(this.viewloc)
@@ -1000,6 +1003,9 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	View_DemoCamera();
 
+	if(gametype == GAMETYPE_TD)
+		td_UpdateView(local_player);
+
 	// Draw the Crosshair
 	setproperty(VF_DRAWCROSSHAIR, 0);
 
@@ -1031,6 +1037,8 @@ void CSQC_UpdateView(entity this, float w, float h, bool notmenu)
 
 	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		HUD_JumpsDoneWell();
+	else if(gametype == GAMETYPE_TD)
+		HUD_TD(local_player);
 
 	sui_begin(vid_conwidth, vid_conheight);
 

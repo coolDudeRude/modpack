@@ -1,0 +1,74 @@
+#pragma once
+
+float autocvar_sv_quake_td_buildtime = 90;
+float autocvar_sv_quake_td_majority_factor = 1;
+int autocvar_sv_quake_td_wavelimit = 6;
+int autocvar_sv_quake_td_units = 40;
+float autocvar_sv_quake_td_buildrange = 150;
+float autocvar_sv_quake_td_repaircost = 2;
+int autocvar_sv_quake_td_maxfuel = 200;
+int autocvar_sv_quake_td_maxloot = 25;
+
+int td_skill; // storage of skill cvar at load to prevent abuse
+
+.int isloot; // identifier for items dropped as loot
+
+//entity td_ent; // defined by stats
+
+.int td_monsters[REGISTRY_MAX(Monsters)];
+
+const int CLIPGROUP_TD = 67;
+const int CLIPGROUP_TDTURRET = 68;
+
+const int TD_ENT_NOBOSS = BIT(0);
+
+const int TD_SPAWNPOINT_NORMAL = 0;
+const int TD_SPAWNPOINT_FLYING = 1;
+const int TD_SPAWNPOINT_SWIMMING = 2; // for underwater towers
+const int TD_SPAWNPOINT_BOSS = 3;
+
+const int TD_WAVE_SINGLEUSE = BIT(0);
+
+const int TD_CHEST_SINGLEUSE = BIT(0);
+
+void td_BuildPhase_Init(entity this);
+
+void td_MonsterDies(entity targ, entity attacker);
+
+float td_GetMonsterSpeed(entity this, float dist);
+
+void td_DropFuel(vector from, float fuel, entity ignore);
+
+void td_PlayerDropFuel(entity this);
+
+void td_wave_setup(entity this);
+
+void td_CombatPhase_Init(entity this);
+
+bool td_waypointsprite_visible_for_player(entity this, entity player, entity view);
+
+void td_DropItem(entity this);
+
+void td_BuildMode_Clear(entity this);
+
+void td_BuildMode_Toggle(entity this);
+
+void td_RemovePlayer(entity this);
+
+void td_PutPlayerInServer(entity this);
+
+void td_StartFrame();
+
+IntrusiveList g_td_spawns;
+IntrusiveList g_td_waves;
+IntrusiveList g_td_chests;
+IntrusiveList g_td_towers;
+IntrusiveList g_td_fuel;
+STATIC_INIT(TowerDefence)
+{
+    g_td_spawns = IL_NEW();
+    g_td_waves = IL_NEW();
+    g_td_chests = IL_NEW();
+    g_td_towers = IL_NEW();
+    g_td_fuel = IL_NEW();
+}

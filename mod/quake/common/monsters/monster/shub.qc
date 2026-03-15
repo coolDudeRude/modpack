@@ -154,7 +154,7 @@ void finale_intermission(entity this)
 	server_reset();
 
 	// find the intermission spot
-	entity pos = FindIntermission(this);
+	entity pos = FindIntermission();
 	entity pl = find(NULL, classname, "misc_teleporttrain");
 	if(pl)
 	{

@@ -375,6 +375,14 @@ IMPULSE(weapon_best)
 	}
 }
 
+IMPULSE(weapon_drop)
+{
+	if (this.health <= 0) return;
+	
+	if(gametype == GAMETYPE_TD)
+		td_PlayerDropFuel(this);
+}
+
 IMPULSE(weapon_reload)
 {
 	if (this.health <= 0) return;

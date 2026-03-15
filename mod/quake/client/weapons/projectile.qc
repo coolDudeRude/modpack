@@ -87,7 +87,7 @@ void Projectile_DrawTrail(entity this, vector to)
 }
 
 // kirby stars TODO
-.float proj_laststar;
+.float idle_finished;
 void Star_Spawn(vector org, vector ang);
 
 void Projectile_Draw(entity this)
@@ -214,10 +214,10 @@ void Projectile_Draw(entity this)
 		case PROJECTILE_STAR_LARGE:
 		case PROJECTILE_STAR_MEGA:
 		{
-			if(time >= this.proj_laststar && this.velocity != '0 0 0')
+			if(time >= this.idle_finished && this.velocity != '0 0 0')
 			{
 				Star_Spawn(trailorigin, ang);
-				this.proj_laststar = time + (random() * 0.5);
+				this.idle_finished = time + (random() * 0.5);
 			}
 			break;
 		}
@@ -225,6 +225,19 @@ void Projectile_Draw(entity this)
 			// hack to make them look right
 			this.angles_x = 0;
 			break;
+		case PROJECTILE_SWARM:
+		{
+			if(time >= this.idle_finished)
+			{
+				this.idle_finished = time + 0.1;
+				CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
+				this.frame += 1;
+				if(this.frame < 7 || this.frame > 20)
+					this.frame = 7;
+				CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
+			}
+			CSQCModel_InterpolateAnimation_Do(this);
+		}
 		default:
 			break;
 	}
@@ -464,6 +477,10 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(DEMON_SICKLE)       this.traileffect = EFFECT_TR_SICKLE.m_id; this.avelocity = '0 1024 0'; break;
 			HANDLE(ICE_SPEAR)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '0 0 -15'; break;
 			HANDLE(ICICLE)             this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(MORTAR)             this.traileffect = EFFECT_TR_GRENADE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(SWARM)              this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(FROG_SPIT)          this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(BOWLING_BALL)       this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -688,6 +705,23 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				break;
 			case PROJECTILE_ICICLE:
 				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_MORTAR:
+				set_movetype(this, MOVETYPE_TOSS);
+				this.gravity = 1;
+				break;
+			case PROJECTILE_SWARM:
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				this.effects |= EF_FULLBRIGHT;
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_BOWLING_BALL:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.effects |= EF_FULLBRIGHT;
+				this.bouncefactor = 0.99;
+				this.bouncestop = 0.01;
 				break;
 			default:
 				break;

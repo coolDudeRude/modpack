@@ -222,6 +222,9 @@ LEGACY_IMPULSE(weaplast, 11, "weapon_last")
 REGISTER_IMPULSE(weapon_best, 13)
 LEGACY_IMPULSE(weapbest, 13, "weapon_best")
 
+REGISTER_IMPULSE(weapon_drop, 17)
+LEGACY_IMPULSE(dropweapon, 17, "weapon_drop")
+
 REGISTER_IMPULSE(weapon_reload, 20)
 LEGACY_IMPULSE(reload, 20, "weapon_reload")
 

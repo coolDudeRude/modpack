@@ -73,6 +73,7 @@ CLASS(Poop, Champions)
 #ifdef CSQC
     ATTRIB(Poop, message, string, POOP_STATS);
 #endif
+    ATTRIB(Poop, td_turrets, bool, true);
 ENDCLASS(Poop)
 REGISTER_CHAMPION(Poop, NEW(Poop));
 

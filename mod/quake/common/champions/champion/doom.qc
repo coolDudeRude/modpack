@@ -1,12 +1,12 @@
 #include "doom.qh"
 
 #ifdef SVQC
-METHOD(Doom, m_activate, void(Doom this, entity actor))
+METHOD(Doom, m_activate, void(Champions this, entity actor))
 {
 	player_sound(actor, CH_VOICE, "start.wav", ATTN_NORM);
 }
 
-METHOD(Doom, m_takeammo, bool(Doom this, entity actor))
+METHOD(Doom, m_takeammo, bool(Champions this, entity actor))
 {
 	return (random() < 0.2);
 }
@@ -17,7 +17,7 @@ METHOD(Doom, m_killed, void(Champions this, entity targ, entity inflictor, entit
 		targ.health = -100;
 }
 
-METHOD(Doom, m_dealdamage, float(Doom this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))
+METHOD(Doom, m_dealdamage, float(Champions this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))
 {
 	Weapon death_weapon = DEATH_WEAPONOF(deathtype);
 	if(attacker.m_champion == this)

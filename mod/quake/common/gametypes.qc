@@ -7,16 +7,24 @@ void SetGametype()
 
 	// HACK: abuse the spawn queue to tell if horde entities exist this early
 	bool found_horde = false;
-	IL_EACH(g_spawn_queue, it.__spawnfunc_classname == "horde_manager" || it.__spawnfunc_classname == "info_qonquer",
+	bool found_td = false;
+	IL_EACH(g_spawn_queue, true,
 	{
-		found_horde = true;
-		break;
+		if(it.__spawnfunc_classname == "horde_manager" || it.__spawnfunc_classname == "info_qonquer")
+			found_horde = true;
+		if(it.__spawnfunc_classname == "td_manager")
+			found_td = true;
 	});
 
 	if(found_horde && !deathmatch)
 	{
 		// return outside the loop to prevent issues
 		gametype = GAMETYPE_HORDE;
+		return;
+	}
+	else if(found_td)
+	{
+		gametype = GAMETYPE_TD;
 		return;
 	}
 	else if(world.worldtype == WORLDTYPE_SKATE)

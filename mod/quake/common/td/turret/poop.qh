@@ -1,0 +1,27 @@
+#pragma once
+
+// =======
+//  POTTY
+// =======
+
+CLASS(PoopPotty, Turret)
+#ifdef GAMEQC
+/* spawnflags */ ATTRIB(PoopPotty, spawnflags, int, 0);
+/* mins       */ ATTRIB(PoopPotty, m_mins, vector, '-32 -32 -24');
+/* maxs       */ ATTRIB(PoopPotty, m_maxs, vector, '32 32 48');
+#endif
+#ifdef CSQC
+/* modelname  */ ATTRIB(PoopPotty, mdl, string, "progs/tur_potty.mdl");
+/* head_model */ ATTRIB(PoopPotty, head_model, string, "");
+#endif
+/* netname    */ ATTRIB(PoopPotty, netname, string, "potty");
+/* fullname   */ ATTRIB(PoopPotty, m_name, string, _("Potty"));
+#ifdef GAMEQC
+/* number     */ ATTRIB(PoopPotty, impulse, int, 0);
+/* cost       */ ATTRIB(PoopPotty, tur_cost, float, 60);
+/* units      */ ATTRIB(PoopPotty, tur_units, int, 4);
+/* champion   */ ATTRIB(PoopPotty, m_champion, Champions, CHAMPION_Poop);
+#endif
+
+ENDCLASS(PoopPotty)
+REGISTER_TURRET(POTTY, NEW(PoopPotty));

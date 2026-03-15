@@ -463,7 +463,7 @@ void Legond_Pain(entity this, entity attacker, float damage, int deathtype)
 
 void Legond_NextLevel(entity this)
 {
-	if(gametype == GAMETYPE_HORDE || this.charmed)
+	if(gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD || this.charmed)
 		return;
 	if((coop != 2 || world.model == "maps/aopend.bsp") && this.target && this.target != "")
 		NextLevel();

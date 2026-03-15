@@ -194,6 +194,7 @@ entity minion_spawn(entity actor, vector org, entity monster, Monster mon)
 
 	monster.minion_active = true;
 	monster.enemy = targ;
+	monster.movetarget = targ.movetarget;
 	monster.flags = FL_MONSTER | FL_CLONE | FL_MINION; // TODO: clone is temporary to prevent monster counts being affected!
 	monster.category = actor.category;
 	monster.charmed = actor.charmed;

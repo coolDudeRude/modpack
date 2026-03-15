@@ -743,7 +743,8 @@ void horde_armor_touch(entity this, entity toucher)
 		_sound(toucher, CH_TRIGGER_SINGLE, this.noise, 1, ATTN_NORM);
 	else
 		_sound(toucher, CH_TRIGGER_SINGLE, "items/armor1.wav", 1, ATTN_NORM);
-	this.owner.wait = false;
+	if(this.owner)
+		this.owner.wait = false;
 	delete(this);
 }
 
@@ -1091,7 +1092,7 @@ bool health_customize(entity this, entity client);
 void SpawnItem(entity this)
 {
 	entity item = spawn();
-	
+
 	vector pos = this.origin; // set to origin, then offset as needed
 
 	float r = random() * 6; 
@@ -2057,6 +2058,7 @@ void Horde_SetupSquads()
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 ice_queen");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 plantera");
 		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 skeletron");
+		Horde_SpawnSquadEntity(HORDE_FINALBOSS, HORDE_SQUAD_TYPE_FLYING, "1 skeletron_prime");
 	}
 
 	entity shop = find(NULL, classname, "info_horde_shop");
@@ -2124,7 +2126,7 @@ spawnfunc(horde_manager)
 	top_score = stof(db_get(ServerProgsDB, strcat(mapname, "/topscore/", ftos(horde_skill))));
 	
 	this.wait = 1; // waiting before next wave?
-	this.delay = 9; // max number of  squads to spawn in a wave
+	this.delay = 9; // max number of squads to spawn in a wave
 	this.wave = 0;
 
 	if(!this.count)
@@ -2342,8 +2344,10 @@ void horde_spawn_powerup(entity this, entity attacker)
 	if(!powerup_chance)
 		powerup_chance = DEFAULT_POWERUP_CHANCE;
 
+	float powerup_gain = POWERUP_CHANCE_GAIN;
+
 	if(STAT(PASSIVES, attacker) & PASSIVE_LOOTER)
-		powerup_chance *= 0.8;
+		powerup_gain *= 2;
 	
 	if(random() < powerup_chance) // "if(1)" to guarantee powerup drop
 	{
@@ -2397,7 +2401,7 @@ void horde_spawn_powerup(entity this, entity attacker)
 		setsize(powerup, '-12 -12 -12', '12 12 12');
 	}
 	else
-		powerup_chance += POWERUP_CHANCE_GAIN;
+		powerup_chance += powerup_gain;
 }
 
 void tankitem_touch(entity this, entity toucher);

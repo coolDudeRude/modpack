@@ -96,6 +96,8 @@ void mic_note_explode(entity this, entity ignore)
 	int hitenemies = 0;
 	FOREACH_ENTITY_RADIUS(this.origin, 600, it != ignore && !(it.flags & FL_NOTARGET) && it.takedamage && it != this.owner && Damage_ValidTarget(it, this.owner) && ((IS_PLAYER(it) || IS_MONSTER(it)) || (hitany && it.classname != "door")),
 	{
+		if(it.clipgroup && it.clipgroup == this.clipgroup)
+			continue;
 		if((!(it.monsterdef.spawnflags & MONSTER_TYPE_UNDEAD) || mywep.spawnflags & WEP_FLAG_HITUNDEAD))
 		{
 			vector targ_pos = (it.absmin + it.absmax) * 0.5;

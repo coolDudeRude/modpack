@@ -4,6 +4,7 @@
 #include "../common/champions/_mod.qh"
 #include "../common/jumpsdonewell/_mod.qh"
 #include "../common/status_effects/_mod.qh"
+#include "../common/td/td.qh"
 #include "../common/weapons/inventory.qh"
 
 string Sbar_PickWeapon_wepname(Weapon wpn)
@@ -438,10 +439,13 @@ float Sbar_PrintScoreboardItem(int fscore, vector thepos)
 	float theping = ((have_playerslots) ? playerslots[fscore].ping : 0);
 	float thepl = ((have_playerslots) ? playerslots[fscore].ping_packetloss : 0);
 	string thename = entcs_GetName(fscore);
+	int thechar = (myself) ? 13 : ' ';
+	if(have_playerslots && playerslots[fscore].ready && gametype == GAMETYPE_TD && STAT(TD_PHASE) == TD_PHASE_BUILD)
+		thechar = 15;
 	if(theping || thepl)
-		drawcolorcodedstring2(thepos, sprintf("%4d %3d %5d %c%s", bound(0, theping, 9999), bound(0, thepl, 99), thescore, ((myself) ? 13 : ' '), thename), '8 8 0', '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+		drawcolorcodedstring2(thepos, sprintf("%4d %3d %5d %c%s", bound(0, theping, 9999), bound(0, thepl, 99), thescore, thechar, thename), '8 8 0', '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 	else
-		drawcolorcodedstring2(thepos, sprintf("         %5d %c%s", thescore, ((myself) ? 13 : ' '), thename), '8 8 0', '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+		drawcolorcodedstring2(thepos, sprintf("         %5d %c%s", thescore, thechar, thename), '8 8 0', '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 
 	//drawfont = oldfont;
 
@@ -516,6 +520,13 @@ void Sbar_Score(vector thepos, int margin)
 		Sbar_DrawXNum(vec2(-3*12, -12), score, 3, 12, '1 1 1');
 		Sbar_DrawXNum(vec2(-32*4, 0), STAT(HORDE_WAVE), 4, 32, (((STAT(HORDE_WAVE) % 3) == 0) ? '1 0 0 ' : '1 1 1'));
 	}
+	else if(gametype == GAMETYPE_TD && td_ent)
+	{
+		vector wcol = ((td_ent.count > 0 && td_ent.wave >= td_ent.count) ? '1 0 0 ' : '1 1 1');
+		if(td_ent.count > 0)
+			Sbar_DrawXNum(vec2(-3*12, -12), td_ent.count, 3, 12, '1 1 1');
+		Sbar_DrawXNum(vec2(-32*4, 0), td_ent.wave, 4, 32, wcol);
+	}
 	else if(gametype == GAMETYPE_DODGEBALL)
 	{
 		int dteam = STAT(DODGEBALL_TEAM);
@@ -576,7 +587,15 @@ void Sbar_Score(vector thepos, int margin)
 		}
 	}
 
-	if(autocvar_sbar_gametime && (deathmatch || STAT(SKATING) || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL))
+	if(gametype == GAMETYPE_TD)
+	{
+		if(STAT(TD_PHASE) == TD_PHASE_BUILD && STAT(TD_STARTTIME) > 0)
+		{
+			string timestr = seconds_tostring(max(0, STAT(TD_STARTTIME) - time));
+			Sbar_DrawNum_lettersize(vec2(-12 * 3, 32), timestr, strlen(timestr), '1 1 1', 12, '12 12 0');
+		}
+	}
+	else if(autocvar_sbar_gametime && (deathmatch || STAT(SKATING) || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL))
 	{
 		if((deathmatch || gametype == GAMETYPE_DODGEBALL) && STAT(TIMELIMIT))
 		{
@@ -817,6 +836,8 @@ Sbar_IntermissionOverlay
 */
 void Sbar_IntermissionOverlay()
 {
+	if(gametype == GAMETYPE_TD && STAT(TD_PHASE) == TD_PHASE_LOSE)
+		return;
 	if(deathmatch)
 	{
 		Sbar_DeathmatchOverlay();
@@ -969,9 +990,71 @@ void Sbar_DrawSkill(vector pos, vector mySize)
 		case 0: skill_text = "Easy"; break;
 		case 1: skill_text = "Normal"; break;
 		case 2: skill_text = "Hard"; break;
-		case 3: skill_text = "Nightmare"; dcol = '1 0 0'; break;
+		case 3: skill_text = ((autocvar_cl_worldbasename == "dm") ? "InstaGib" : "Nightmare"); dcol = '1 0 0'; break;
 	}
 	vector bgcolor = Sbar_BgColor();
+	drawpic(text_pos, "gfx/quake/backtile", text_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
+	drawstring_aspect(text_pos, skill_text, text_size, dcol, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+
+	drawfont = oldfont;
+}
+
+void Sbar_DrawTD(vector pos, vector mySize)
+{
+	int td_phase = STAT(TD_PHASE);
+
+	int oldfont = drawfont;
+	drawfont = 8 + 1; // FONT_USER
+
+	vector text_size = vec2(mySize.x * 0.25, mySize.y * 0.5);
+	vector fuel_size = vec2(mySize.x - (text_size.x * 2), mySize.y * 0.25);
+	//vector offset = (text_size * 0.25 * 0.5);
+	//offset.y += text_size.y;
+
+	vector text_pos = pos + vec2(0, text_size.y);
+	vector fuel_pos = text_pos + vec2(text_size.x, text_size.y * 0.5);
+	//vector text_pos = pos + offset;
+
+	string skill_text;
+	vector dcol = '0.6 0.2 0';
+	switch(td_phase)
+	{
+		default:
+		case TD_PHASE_INIT: skill_text = "Loading..."; dcol = '1 1 1'; break;
+		case TD_PHASE_BUILD: skill_text = "Build"; dcol = '0 0 1'; break;
+		case TD_PHASE_COMBAT: skill_text = "Combat"; dcol = '1 0 0'; break;
+		case TD_PHASE_WIN: skill_text = "Victory!"; dcol = '0 1 0'; break;
+	}
+	vector bgcolor = Sbar_BgColor();
+	drawpic(text_pos, "gfx/quake/backtile", text_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
+	drawstring_aspect(text_pos, skill_text, text_size, dcol, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+
+	if(td_phase == TD_PHASE_BUILD)
+	{
+		string s;
+		s = sprintf(_("Press %s to build"), getcommandkey(_("(Drop flag)"), "+use"));
+		drawstring_aspect(text_pos + vec2(0, text_size.y * -1.2), s, text_size, '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+
+		s = sprintf(_("Press %s to begin"), getcommandkey(_("(Ready)"), "ready"));
+		drawstring_aspect(text_pos + vec2(mySize.x * 0.75, text_size.y * -1.2), s, text_size, '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+	}
+
+	// draw fuel
+	float fuel = STAT(TD_FUEL);
+	if(fuel)
+		fuel /= TD_FUEL_MAX;
+	// NOTE: not using aspect here - we want it to stretch with the bar!
+	drawpic(fuel_pos, "gfx/quake/backtile", fuel_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
+	HUD_Panel_DrawProgressBar(fuel_pos, fuel_size, "progressbar", fuel, false, 0, '1 1 0', 0.6, DRAWFLAG_NORMAL);
+
+	// fuel text
+	text_pos = pos + vec2((mySize.x * 0.5) - (text_size.x * 0.5), text_size.y);
+	drawstring_aspect(text_pos, sprintf("%d", STAT(TD_FUEL)), text_size, '0.5 0.2 0', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+
+	// draw units
+	text_pos = pos + vec2(mySize.x - text_size.x, text_size.y);
+	skill_text = sprintf("DU: %d/%d", td_ent.tur_units, td_ent.currentammo);
+	dcol = (td_ent.tur_units >= td_ent.currentammo) ? '1 0 0 ' : '0.5 0.2 0';
 	drawpic(text_pos, "gfx/quake/backtile", text_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
 	drawstring_aspect(text_pos, skill_text, text_size, dcol, autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 
@@ -1419,6 +1502,8 @@ void Sbar_Draw()
 
 				if(!deathmatch && STAT(HAVE_SETSKILL))
 					Sbar_DrawSkill(pos - vec2(0, mySize.y), mySize);
+				else if(gametype == GAMETYPE_TD && td_ent)
+					Sbar_DrawTD(pos - vec2(0, mySize.y), mySize);
 			}
 
 			if(sb_lines)
@@ -1510,6 +1595,15 @@ void Sbar_Draw()
 					sbar = '0 0 0';
 					drawpic_aspect(pos, "gfx/quake/backtile", icon_size, bgcolor, autocvar_sbar_alpha_bg, DRAWFLAG_NORMAL);
 					Sbar_DrawNum_lettersize(pos + vec2(icon_size.x, 0), itos(ceil(STAT(STAMINA))), 3, ((STAT(STAMINA) <= 10) ? '1 0 0' : '1 1 1'), icon_size.x, icon_size);
+					sbar = oldsbar;
+				}
+				else if(gametype == GAMETYPE_TD && STAT(TD_BUILDMODE))
+				{
+					int ammo = STAT(TD_FUEL);
+					//Sbar_DrawPic('224 0 0', strcat("gfx/quake/", pic));
+					//Sbar_DrawNum('248 0 0', itos(Sbar_ItemStat(ammotype)), 3, ((Sbar_ItemStat(ammotype) <= 10) ? '1 0 0' : '1 1 1'));
+					sbar = '0 0 0';
+					Sbar_DrawNum_lettersize(ammo_pos, itos(ammo), 4, '1 1 0', icon_size.x, icon_size);
 					sbar = oldsbar;
 				}
 				else if(thiswep.activeweapon.spawnflags & WEP_FLAG_MANA)

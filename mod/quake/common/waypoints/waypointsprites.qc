@@ -211,6 +211,7 @@ string spritelookuptext(entity this, string s)
     if (s == WP_Exit.netname) return strcat(WP_Exit.m_name, ((this.wp_extra) ? sprintf(" (%d/%d)", this.wp_extra, this.wp_extra2) : ""));
     if (s == WP_Entity.netname) return strcat("Entity ", ftos(this.wp_extra));
     if (s == WP_Monster.netname) return get_monsterinfo(this.wp_extra).m_name;
+    if (s == WP_Monsters.netname) return strcat(WP_Monsters.m_name, ((this.wp_extra) ? sprintf(" (%d)", this.wp_extra) : ""));
 
     // need to loop, as our netname could be one of three
     FOREACH(Waypoints, it.netname == s, {

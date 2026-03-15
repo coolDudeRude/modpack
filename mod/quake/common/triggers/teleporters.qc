@@ -28,8 +28,10 @@ void tdeath_touch(entity this, entity toucher)
 
 	if(toucher == this.owner)
 		return;
+	if(gametype == GAMETYPE_TD)
+		return; // nope!
 
-	if((gametype == GAMETYPE_HORDE || autocvar_g_friendlyfire_virtual) && IS_PLAYER(toucher))
+	if((gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD || autocvar_g_friendlyfire_virtual) && IS_PLAYER(toucher))
 		return;
 
 	// Check if found a breakable than cannot be broken

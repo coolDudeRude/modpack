@@ -40,7 +40,12 @@ void mushroom_think(entity this)
 	{
 		if(IS_MONSTER(it) && it.health > 0 && it.enemy && !it.charmed && !(it.effects & EF_NODRAW) && !it.is_frozen && !it.elec && it.enemy.classname != this.classname && !wasfreed(it.enemy))
 		{
+			if(gametype == GAMETYPE_TD)
+				continue;
 			if(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
+				continue;
+			// low chance to aggro monsters each frame
+			if(random() > 0.25)
 				continue;
 			if(!checkpvs(this.origin, it))
 				continue;
@@ -73,7 +78,8 @@ void mushroom_setup(entity this)
 	this.max_health = this.health;
 	this.takedamage = DAMAGE_AIM;
 	this.angles = '0 0 0';
-	this.monster_attack = true;
+	if(gametype != GAMETYPE_TD)
+		this.monster_attack = true;
 	this.delay = time + 0.49; // somewhat sync with animation
 	this.th_die = mushroom_die;
 	this.classname = "mushroom";

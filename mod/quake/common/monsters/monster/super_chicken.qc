@@ -177,6 +177,14 @@ void egg_think(entity this)
 	setthink(this, egg_think);
 	this.nextthink = time;
 
+	// owner may have died and despawned
+	if(!this.realowner || wasfreed(this.realowner))
+	{
+		Send_Effect(EFFECT_EXPLOSION, this.origin + '0 0 16', '0 0 0', 1);
+		delete(this);
+		return;
+	}
+
 	if(this.wait && time > this.wait)
 	{
 		Send_Effect(EFFECT_EXPLOSION, this.origin + '0 0 16', '0 0 0', 1);

@@ -1462,6 +1462,8 @@ void SetMod()
 
 	//bool fullstatus = autocvar_g_full_getstatus_responses;
 	string s = ((coop) ? "coop" : "dm"); // the gametype
+	if(gametype == GAMETYPE_TD)
+		s = "td";
 	s = strcat(s, ":", autocvar_g_xonoticversion);
 	s = strcat(s, ":P", ftos(cvar_purechanges_count));
 	s = strcat(s, ":S", ftos(nJoinAllowed(NULL, NULL)));
@@ -1590,6 +1592,17 @@ spawnfunc(worldspawn)
 		wantdeathmatch = true;
 		deathmatch = 1;
 		coop = 0;
+		teamplay = 0;
+
+		// abuse spawn queue to check if it's a CTF map
+		bool have_ctf = false;
+		IL_EACH(g_spawn_queue, it.__spawnfunc_classname == "item_flag_team1" || it.__spawnfunc_classname == "item_flag_team2" || it.__spawnfunc_classname == "item_flag",
+		{
+			have_ctf = true;
+			break;
+		});
+		if(have_ctf)
+			teamplay = 2;
 	}
 
 	SetGametype();
@@ -1625,6 +1638,7 @@ spawnfunc(worldspawn)
 	if(wantdeathmatch)
 	{
 		cvar_settemp("deathmatch", "1");
+		cvar_settemp("teamplay", ftos(teamplay));
 		cvar_settemp("coop", "0");
 		cvar_settemp("timelimit", ftos(autocvar_sv_quake_timelimit));
 		cvar_settemp("fraglimit", ftos(autocvar_sv_quake_fraglimit));
@@ -1832,7 +1846,7 @@ void monsters_StartFrame()
 	IL_EACH(g_moveables, IS_MONSTER(it),
 	{
 		// TODO: better location for this hack
-		if((it.charmed || it.category == CATEGORY_MONSTER) && !it.grinch_max && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
+		if((it.charmed || (it.category == CATEGORY_MONSTER && gametype == GAMETYPE_HORDE)) && !it.grinch_max && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
 		{
 			float hitamount = 1;
 			float hitdelay = 0.25;
@@ -2130,6 +2144,9 @@ void StartFrame()
 	playerscale_StartFrame();
 
 	monsters_StartFrame();
+
+	if(gametype == GAMETYPE_TD)
+		td_StartFrame();
 
 	FixPhysics();
 

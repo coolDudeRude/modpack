@@ -70,7 +70,7 @@ void fishbounce(entity this, entity toucher)
 void shockwave(entity proj, vector point, float radius, float kick)
 {
 	float damgidx = kick / radius;
-	FOREACH_ENTITY_RADIUS(point, radius, it.takedamage && it.move_movetype != MOVETYPE_NONE && it.classname != "door",
+	FOREACH_ENTITY_RADIUS(point, radius, it.takedamage && it.move_movetype != MOVETYPE_NONE && it.classname != "door" && !IS_TURRET(it),
 	{
 		if(it != proj.owner && it.clipgroup && it.clipgroup == proj.clipgroup)
 			continue;

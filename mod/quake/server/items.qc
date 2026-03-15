@@ -457,6 +457,12 @@ void armor_touch(entity this, entity toucher)
 		this.nextthink = time + 20;
 		setthink(this, SUB_regen);
 	}
+	else if(gametype == GAMETYPE_TD)
+	{
+		settouch(this, func_null);
+		setthink(this, SUB_Remove);
+		this.nextthink = time;
+	}
 
 	if(toucher.m_champion && toucher.m_champion.m_pickup_armor)
 		toucher.m_champion.m_pickup_armor(toucher.m_champion, toucher, this);
@@ -1116,11 +1122,8 @@ Weapon W_RandomizeWeapon(Weapon wpn)
 	return RandomSelection_chosen_ent;
 }
 
-void weapon_defaultspawnfunc(entity this, Weapon wpn)
+void W_SetModel(entity this, Weapon wpn)
 {
-	if((autocvar_skill == 3 && !IsQBJMap()) || deathmatch)
-		wpn = W_RandomizeWeapon(wpn);
-
 	string simplemdl = strcat("progs/g_", wpn.mdl, "_simple.mdl");
 
 	string mymdl = strcat("progs/g_", wpn.mdl, ".mdl");
@@ -1131,7 +1134,8 @@ void weapon_defaultspawnfunc(entity this, Weapon wpn)
 	}
 	else if(wpn == WEP_HAMMER)
 	{
-		this.hammer_skin = bound(1, floor(random() * SKIN_LAST), SKIN_LAST);
+		if(!this.hammer_skin)
+			this.hammer_skin = bound(1, floor(random() * SKIN_LAST), SKIN_LAST);
 		mymdl = strcat("progs/g_", hammer_getskin(this.hammer_skin), ".mdl");
 	}
 	else if(IsQBJMap())
@@ -1145,6 +1149,14 @@ void weapon_defaultspawnfunc(entity this, Weapon wpn)
 	}
 	precache_model(mymdl); // TODO: model registry
 	_setmodel(this, mymdl);
+}
+
+void weapon_defaultspawnfunc(entity this, Weapon wpn)
+{
+	if((autocvar_skill == 3 && !IsQBJMap()) || deathmatch)
+		wpn = W_RandomizeWeapon(wpn);
+
+	W_SetModel(this, wpn);
 	this.weapon = wpn.m_id;
 	this.netname = wpn.m_name;
 	settouch(this, weapon_touch);
@@ -2396,6 +2408,8 @@ void powerup_touch(entity this, entity toucher)
 		return;
 	if(toucher.m_transform && this.berserk_finished)
 		return; // no go TODO
+	if(STAT(TD_BUILDMODE, toucher) && this.berserk_finished)
+		return; // nope
 
 	string pname = (this.netname != "") ? this.netname : "Powerup";
 	Send_Notification(NOTIF_ONE, toucher, MSG_MULTI, ITEM_POWERUP_GOT, pname);
@@ -3064,6 +3078,9 @@ void BackpackTouch(entity this, entity toucher)
 		//newitem = toucher.weapon;
 	.entity weaponentity = weaponentities[0];
 
+	if(this.hammer_skin)
+		toucher.(weaponentity).hammer_skin = this.hammer_skin;
+
 	if(this.ammo_shells)
 		SendItemPickup(toucher, IT_SHELLS, this.ammo_shells);
 	if(this.ammo_nails)
@@ -3117,7 +3134,7 @@ void BackpackTouch(entity this, entity toucher)
 		wep = this.champion_weapon;
 
 // change to the weapon
-	if(wep != WEP_Null && toucher.cvar_cl_autoswitch)
+	if(wep != WEP_Null && toucher.cvar_cl_autoswitch && wepmsg != "")
 	{
 		if((toucher.flags & FL_INWATER) && wep == WEP_LIGHTNING)
 			return; // lol
@@ -3146,6 +3163,17 @@ DropBackpack
 */
 void DropBackpack(entity this)
 {
+	if(gametype == GAMETYPE_SLIDE)
+		return;
+	if(STAT(SKATING, this))
+		return; // skaters don't drop loot!
+	if(this.charmed)
+		return; // no pet looting thank you very much
+	// Yoder Sept24 2021 Horde Merge
+	// don't drop backpacks in horde mode
+	if(gametype == GAMETYPE_HORDE)
+		return;
+
 	bool have_weapon = false;
 	if(this.inventory)
 	{
@@ -3159,19 +3187,13 @@ void DropBackpack(entity this)
 	if(!have_weapon && !(this.ammo_shells + this.ammo_nails + this.ammo_rockets + this.ammo_cells + this.ammo_lava_nails + this.ammo_multi_rockets + this.ammo_plasma + this.ammo_drills))
 		return;	// nothing in it
 
-	if(STAT(SKATING, this))
-		return; // skaters don't drop loot!
-	if(this.charmed)
-		return; // no pet looting thank you very much
-
-	// Yoder Sept24 2021 Horde Merge
-	// don't drop backpacks in horde mode
-	if(gametype == GAMETYPE_HORDE)
-		return;
-
 	entity item = spawn();
+	item.classname = "backpack";
 	traceline(this.origin, this.origin - '0 0 24', MOVE_NORMAL, this);
 	setorigin(item, trace_endpos);
+
+	Weapon mywep = WEP_Null;
+	int toomany = 0;
 
 	if(this.inventory)
 	{
@@ -3179,12 +3201,22 @@ void DropBackpack(entity this)
 
 		FOREACH(Weapons, it != WEP_Null && !(it.spawnflags & WEP_FLAG_CHAMPION) && Inventory_have(it, this, ITEM_OWNED),
 		{
+			if(!(it.spawnflags & WEP_FLAG_ROGUE) && it != WEP_BALL && it != WEP_BERSERKER_FISTS)
+			{
+				mywep = it;
+				toomany += 1;
+			}
 			Inventory_add(it, item, ITEM_OWNED);
 		});
 	}
 
+	if(toomany > 1 || IS_PLAYER(this))
+		mywep = WEP_Null;
+
 	.entity weaponentity = weaponentities[0];
 	Weapon wep = this.(weaponentity).m_weapon;
+	if(!wep || wep == WEP_Null)
+		wep = mywep;
 	if(wep.spawnflags & WEP_FLAG_CHAMPION)
 	{
 		item.champion_weapon = wep;
@@ -3219,6 +3251,21 @@ void DropBackpack(entity this)
 	item.ammo_plasma = this.ammo_plasma;
 	item.ammo_drills = this.ammo_drills;
 
+	if(wep != WEP_Null && wep.aflag > 0)
+	{
+		switch(wep.ammo_type)
+		{
+			//case IT_SHELLS: if(this.ammo_shells < wep.aflag) item.ammo_shells = wep.aflag; break;
+			//case IT_NAILS: if(this.ammo_nails < wep.aflag) item.ammo_nails = wep.aflag; break;
+			//case IT_ROCKETS: if(this.ammo_rockets < wep.aflag) item.ammo_rockets = wep.aflag; break;
+			//case IT_CELLS: if(this.ammo_cells < wep.aflag) item.ammo_cells = wep.aflag; break;
+			case IT_LAVA_NAILS: if(this.ammo_lava_nails < wep.aflag) item.ammo_lava_nails = wep.aflag; break;
+			case IT_MULTI_ROCKETS: if(this.ammo_multi_rockets < wep.aflag) item.ammo_multi_rockets = wep.aflag; break;
+			case IT_PLASMA_AMMO: if(this.ammo_plasma < wep.aflag) item.ammo_plasma = wep.aflag; break;
+			case IT_DRILLS: if(this.ammo_drills < wep.aflag) item.ammo_drills = wep.aflag; break;
+		}
+	}
+
 	item.velocity_z = 300;
 	item.velocity_x = -100 +(random() * 200);
 	item.velocity_y = -100 +(random() * 200);
@@ -3226,10 +3273,13 @@ void DropBackpack(entity this)
 	item.flags |= FL_ITEM;
 	item.effects |= EF_FULLBRIGHT;
 	item.owner = this;
+	item.spawn_time = time;
 
 	item.solid = SOLID_TRIGGER;
 	set_movetype(item, MOVETYPE_TOSS);
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/backpack_simple.mdl"))
+	if(mywep && mywep != WEP_Null)
+		W_SetModel(item, mywep);
+	else if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/backpack_simple.mdl"))
 		_setmodel(item, "progs/backpack_simple.mdl");
 	else
 		_setmodel(item, "progs/backpack.mdl");
@@ -3252,7 +3302,7 @@ void DropBackpack(entity this)
 	settouch(item, BackpackTouch);
 
 	float backpack_lifetime = 360;
-	if(autocvar_sv_quake_instance_backpacks && IS_PLAYER(this) && IS_REAL_CLIENT(this))
+	if(autocvar_sv_quake_instance_backpacks && IS_PLAYER(this) && IS_REAL_CLIENT(this) && !deathmatch)
 	{
 		item.realowner = this;
 		if(this.crypto_idfp)
