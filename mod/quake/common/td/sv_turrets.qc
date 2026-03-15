@@ -77,7 +77,8 @@ void turret_die(entity this, entity inflictor, entity attacker, int deathtype)
 	{
 		// an easter egg
 		string theirname = (tur == TUR_JUMPING_CASTLE) ? "^3J^1u^5m^3p^1i^5n^3g ^5C^3a^1s^5t^3l^1e" : tur.m_name;
-		Send_Notification(NOTIF_ONE, this.realowner, MSG_CENTER, CENTER_TURRET_DESTROYED, theirname);
+		Send_Notification(NOTIF_ONE_ONLY, this.realowner, MSG_CENTER, CENTER_TURRET_DESTROYED_SELF, theirname);
+		Send_Notification(NOTIF_ALL_EXCEPT, this.realowner, MSG_CENTER, CENTER_TURRET_DESTROYED, theirname);
 	}
 
 	if(td_ent)

@@ -617,6 +617,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		if(targ.classname == "td_tower" && IS_PLAYER(attacker) && td_phase == TD_PHASE_BUILD && !attacker.ready)
 		{
 			bprintf("%s ^7is ready!\n", attacker.netname);
+			Send_Notification(NOTIF_ALL_EXCEPT, attacker, MSG_CENTER, CENTER_READY, attacker.netname);
 			attacker.ready = true;
 			ReadyCount();
 			return;

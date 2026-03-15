@@ -1817,6 +1817,12 @@ void PutObserverInServer(entity this)
 		entcs_update_players(this);
 	}
 
+	if(gametype == GAMETYPE_TD)
+	{
+		this.ready = false;
+		ReadyCount();
+	}
+
 	Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
 	Inventory_update(this);
 
@@ -3181,6 +3187,12 @@ void ClientDisconnect(entity this)
 		GameLogEcho(strcat(":part:", ftos(this.playerid)));
 	_sound(this, CH_PLAYER, "player/tornoff2.wav", 1, ATTN_NONE);
 	this.effects = 0;
+
+	if(gametype == GAMETYPE_TD)
+	{
+		this.ready = false;
+		ReadyCount();
+	}
 
 	chat_grabber_ClientDisconnect(this);
 

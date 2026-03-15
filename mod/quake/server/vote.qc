@@ -31,7 +31,7 @@ bool Nagger_SendEntity(entity this, entity to, float sendflags)
 		nags |= sendflags & BIT(7);
 	}
 
-	if(gametype == GAMETYPE_TD && td_phase == TD_PHASE_BUILD)
+	if(gametype == GAMETYPE_TD)
 	{
 		if (readycount)
 		{

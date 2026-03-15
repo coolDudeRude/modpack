@@ -289,6 +289,8 @@
     MSG_CENTER_NOTIF(NO_UNITS,                          N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGDefence Unit limit reached"), "")
     MSG_CENTER_NOTIF(NO_WEAPON,                         N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGNo weapon"), "")
 
+    MSG_CENTER_NOTIF(READY,                             N_ENABLE,     1, 0, "s1",                       CPID_Null, "0 0", _("^BG%s^BG is ready!"), "")
+
     MSG_CENTER_NOTIF(TURRET_FULLHEALTH,                 N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGTurret is full health"), "")
     MSG_CENTER_NOTIF(TURRET_MAXLEVEL,                   N_ENABLE,     0, 0, "",                         CPID_AMMO, "0 0", _("^BGTurret is at the maximum level"), "")
 
@@ -308,7 +310,8 @@
     MSG_CENTER_NOTIF(TANK_LOCKON,                       N_ENABLE,     1, 0, "s1",                       CPID_TANK, "0 0", _("^BG%s^BG's plasma has a lock on you!"), "")
 
     MSG_CENTER_NOTIF(TOWER_UNDERATTACK,                 N_ENABLE,     0, 0, "",                         CPID_TOWER,"5.5 0", BOLD(_("^K1Tower under attack!")), "")
-    MSG_CENTER_NOTIF(TURRET_DESTROYED,                  N_ENABLE,     1, 0, "s1",                       CPID_TURRET,"5.5 0", _("^K1Your ^K2%s^K1 was destroyed!"), "")
+    MSG_CENTER_NOTIF(TURRET_DESTROYED_SELF,             N_ENABLE,     1, 0, "s1",                       CPID_TURRET,"5.5 0", _("^K1Your ^K2%s^K1 was destroyed!"), "")
+    MSG_CENTER_NOTIF(TURRET_DESTROYED,                  N_ENABLE,     1, 0, "s1",                       CPID_TURRET,"5.5 0", _("^K1A ^K2%s^K1 was destroyed!"), "")
 
     MSG_CENTER_NOTIF(PLAYER_WIN,                        N_ENABLE,     1, 0, "s1",                       CPID_ROUND, "5.5 0", _("^BG%s^BG wins!"), "")
 
