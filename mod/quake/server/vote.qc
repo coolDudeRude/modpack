@@ -33,11 +33,11 @@ bool Nagger_SendEntity(entity this, entity to, float sendflags)
 
 	if(gametype == GAMETYPE_TD)
 	{
-		if (readycount)
-		{
+		//if (readycount)
+		//{
 			nags |= BIT(0);
 			if (!to.ready) nags |= BIT(1);
-		}
+		//}
 	}
 
 	WriteByte(MSG_ENTITY, nags);
