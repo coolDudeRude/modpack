@@ -3970,6 +3970,7 @@ void SV_ParseClientCommand(entity this, string command)
 			if(!this.ready)
 			{
 				bprintf("%s ^7is ready!\n", this.netname);
+				Send_Notification(NOTIF_ALL_EXCEPT, this, MSG_CENTER, CENTER_READY, this.netname);
 				this.ready = true;
 				ReadyCount();
 			}
