@@ -254,7 +254,7 @@ void slicendice_hitbox_touch(entity this, entity toucher)
 		return;
 
 	toucher.slicendice_dmgtime = time + 0.25; // TODO?
-	float damage = 25 * turret_getpower(this.tur_level, 0.25);
+	float damage = 14 * turret_getpower(this.tur_level, 0.25);
 
 	_sound(toucher, CH_SHOTS, "enviro/physics/trcut.wav", 1, ATTN_NORM);
 
