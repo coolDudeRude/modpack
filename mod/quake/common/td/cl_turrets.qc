@@ -226,12 +226,10 @@ void turret_construct(entity this, bool isNew)
 
 	this.tur_head.classname  = "turret_head";
 	this.tur_head.owner      = this;
-	set_movetype(this.tur_head, MOVETYPE_NOCLIP);
-	set_movetype(this, MOVETYPE_NOCLIP);
+	set_movetype(this, MOVETYPE_TOSS); // was noclip
+	set_movetype(this.tur_head, this.move_movetype);
 	this.tur_head.angles     = this.angles;
 	this.health = 255;
-	set_movetype(this, MOVETYPE_NOCLIP);
-	set_movetype(this.tur_head, MOVETYPE_NOCLIP);
 	this.draw                = turret_draw;
 	this.entremove           = turret_remove;
 	this.drawmask            = MASK_NORMAL;

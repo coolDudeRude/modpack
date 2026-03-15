@@ -246,7 +246,7 @@ bool turret_initialize(entity this, Turret tur)
 	this.max_health             = this.health;
 	this.solid                  = SOLID_BBOX;
 	this.takedamage             = DAMAGE_AIM;
-	set_movetype(this, MOVETYPE_NOCLIP);
+	set_movetype(this, MOVETYPE_TOSS); // was noclip
 	this.view_ofs               = '0 0 0';
 	this.th_pain                = turret_damage;
 	this.th_die                 = turret_die;

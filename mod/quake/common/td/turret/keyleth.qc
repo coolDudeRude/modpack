@@ -73,10 +73,10 @@ void Swarm_Launch(entity this, vector org, entity targ)
 	setorigin(missile, org);
 	missile.velocity = dir * 400;
 	missile.nextthink = time;
-	missile.count = time + 5;
+	missile.count = time + 3.6;
 	setthink(missile, SwarmHome);
 	missile.enemy = targ;
-	missile.dmg = 15 * turret_getpower(this.tur_level, 0.2);
+	missile.dmg = 7 * turret_getpower(this.tur_level, 0.2);
 	missile.cnt = 256 * turret_getpower(this.tur_level, 0.2);
 
 	IL_PUSH(g_projectiles, missile);
@@ -92,7 +92,7 @@ METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer thistur, entity actor))
 {
 	if(time <= actor.attack_finished)
 		return;
-	actor.attack_finished = time + max(0.03, (1.2 / turret_getpower(actor.tur_level, 0.25)));
+	actor.attack_finished = time + max(0.03, (1.5 / turret_getpower(actor.tur_level, 0.25)));
 
 	// pick a random nearby target each time we attack
 	// make sure it matches drawn values!

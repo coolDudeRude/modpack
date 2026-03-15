@@ -280,7 +280,7 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 
 bool t_walkmove(entity this, float yaw, float dist)
 {
-	if(gametype == GAMETYPE_TD)
+	if(gametype == GAMETYPE_TD && !this.charmed)
 		dist *= td_GetMonsterSpeed(this, dist);
 
 	if(StatusEffects_active(STATUSEFFECT_Slowness, this))
@@ -400,7 +400,7 @@ void t_newchasedir(entity this, entity targ, float dist)
 
 void t_movetogoal(entity this, float dist)
 {
-	if(gametype == GAMETYPE_TD)
+	if(gametype == GAMETYPE_TD && !this.charmed)
 		dist *= td_GetMonsterSpeed(this, dist);
 
 	if(StatusEffects_active(STATUSEFFECT_Slowness, this))
@@ -1348,7 +1348,7 @@ bool FindTarget(entity this)
 	// really seeing the player, not another monster getting angry
 
 	// in tower defence, bosses always fight players
-	if(gametype == GAMETYPE_TD && !(this.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
+	if(gametype == GAMETYPE_TD && !this.charmed && !(this.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
 	{
 		entity selected = NULL;
 		float dist = 256;

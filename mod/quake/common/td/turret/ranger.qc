@@ -12,7 +12,7 @@ void barricade_hitbox_touch(entity this, entity toucher)
 		return;
 
 	toucher.barricade_dmgtime = time + 0.5; // TODO?
-	float damage = 20 * turret_getpower(this.tur_level, 0.25);
+	float damage = 10 * turret_getpower(this.tur_level, 0.25);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -90,7 +90,7 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 			entity newmis = launch_spike(actor, org, dir);
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = dir * 1000;
-			newmis.dmg = 9 * turret_getpower(actor.tur_level, 0.15);
+			newmis.dmg = 6 * turret_getpower(actor.tur_level, 0.15);
 			CSQCProjectile(newmis, true, PROJECTILE_BULLET, true);
 		}
 	}

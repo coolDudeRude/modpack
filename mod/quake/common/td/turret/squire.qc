@@ -12,7 +12,7 @@ void spikeblockade_hitbox_touch(entity this, entity toucher)
 		return;
 
 	toucher.spikeblockade_dmgtime = time + 0.5; // TODO?
-	float damage = 20 * turret_getpower(this.tur_level, 0.25);
+	float damage = 10 * turret_getpower(this.tur_level, 0.25);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -70,7 +70,7 @@ void bouncer_hitbox_touch(entity this, entity toucher)
 		return;
 
 	toucher.bouncer_dmgtime = time + 0.5; // TODO?
-	float damage = 60 * turret_getpower(this.tur_level, 0.25);
+	float damage = 40 * turret_getpower(this.tur_level, 0.25);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -198,7 +198,7 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 			missile.count = time + 12;
 			missile.cnt = 32;
 			settouch(missile, crossbow_bolt_touch);
-			missile.dmg = 18 * turret_getpower(actor.tur_level, 0.15);;
+			missile.dmg = 9 * turret_getpower(actor.tur_level, 0.15);;
 			missile.classname = "crossbow_bolt"; // identifier for spike touch TODO: clean this mess up
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			//_setmodel(missile, "progs/proj_impalespike.mdl");
@@ -477,7 +477,7 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 			missile.velocity = dir * 200;
 			set_movetype(missile, MOVETYPE_BOUNCE);
 			settouch(missile, bowlingball_touch);
-			missile.dmg = 16 * turret_getpower(actor.tur_level, 0.2);;
+			missile.dmg = 12 * turret_getpower(actor.tur_level, 0.2);;
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			setsize(missile, '0 0 0', '0 0 0');
 			missile.bouncefactor = 0.99;
