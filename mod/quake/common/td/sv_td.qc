@@ -422,6 +422,8 @@ void td_CombatPhase_Tick(entity this)
 		int monstercount = 0;
 		FOREACH_ENTITY_STRING(category, CATEGORY_MONSTER,
 		{
+			if(it.charmed)
+				continue;
 			if(it.health > 0)
 				monstercount += 1;
 		});

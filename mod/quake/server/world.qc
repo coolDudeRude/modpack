@@ -1846,7 +1846,10 @@ void monsters_StartFrame()
 	IL_EACH(g_moveables, IS_MONSTER(it),
 	{
 		// TODO: better location for this hack
-		if((it.charmed || (it.category == CATEGORY_MONSTER && gametype == GAMETYPE_HORDE)) && !it.grinch_max && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
+		bool is_temp = (it.category && gametype == GAMETYPE_HORDE);
+		if(gametype == GAMETYPE_TD && monsters_killed >= monsters_total)
+			is_temp = true;
+		if((it.charmed || is_temp) && !it.grinch_max && it.health > 0 && time > it.charmed_healthcheck && !Challenge_Active(CHALLENGE_ONEHP))
 		{
 			float hitamount = 1;
 			float hitdelay = 0.25;
