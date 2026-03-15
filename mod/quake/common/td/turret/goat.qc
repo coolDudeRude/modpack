@@ -27,7 +27,7 @@ void jumpingcastle_hitbox_touch(entity this, entity toucher)
 	else
 		_sound(toucher, CH_VOICE, "turrets/jumpingcastle_bounce3.wav", 1, ATTN_NORM);
 
-	if(IS_MONSTER(toucher))
+	if(IS_MONSTER(toucher) && toucher.health > 0)
 	{
 		this.enemy = toucher;
 		this.cnt += 1;

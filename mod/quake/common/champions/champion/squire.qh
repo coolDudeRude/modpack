@@ -62,7 +62,7 @@ PRECACHE(Squire)
     precache_sound("player_squire/foot4.wav");
     precache_sound("player_squire/foot5.wav");
 
-    precache_sound("player_squire/falling.wav");
+    //precache_sound("player_squire/falling.wav");
 
     precache_sound("player_squire/reee.wav");
     precache_sound("player_squire/rage_activate.wav");

@@ -303,7 +303,7 @@ void cheddar_die(entity this, entity inflictor, entity attacker, int deathtype)
 			ThrowGib(this, inflictor, "progs/gib2.mdl", this.health);
 			ThrowGib(this, inflictor, "progs/gib3.mdl", this.health);
 
-			for(int j = 0; j < 12; ++j)
+			for(int j = 0; j < 4; ++j)
 			{
 				cheddar_spit(this, 0, true);
 			}

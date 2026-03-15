@@ -105,7 +105,7 @@ METHOD(Squire, m_killed, void(Champions this, entity targ, entity inflictor, ent
 
 METHOD(Squire, m_cannon_launch, void(Champions this, entity actor, entity cannon))
 {
-	player_sound(actor, CH_TRIGGER_SINGLE, "falling.wav", ATTN_NORM);
+	player_sound(actor, CH_TRIGGER_SINGLE, "start4.wav", ATTN_NORM);
 	actor.squire_cannon = true;
 }
 
@@ -175,7 +175,7 @@ METHOD(Squire, m_overlay, void(Champions this))
 	{
 		string s;
 		s = ftos(max(0, rint(STAT(QCC_ABILITYTIME) - time)));
-		drawstring_aspect(pos - vec2(0, mySize.y * 0.5), s, vec2(mySize.x, mySize.y * 0.33), '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
+		drawstring_aspect(pos - vec2(0, mySize.y * 0.5), s, vec2(mySize.x, mySize.y * 0.7), '1 1 1', autocvar_sbar_alpha_fg, DRAWFLAG_NORMAL);
 	}
 
 	HUD_Panel_DrawProgressBar(pos + vec2(mySize.x * 0.08, mySize.y * 0.25), vec2(mySize.x * 0.92, mySize.y * 0.5), "progressbar", charge, false, 0, col, 0.6, DRAWFLAG_NORMAL);

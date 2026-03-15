@@ -500,6 +500,8 @@ METHOD(SquireBowlingBall, tr_setup, void(SquireBowlingBall this, entity actor))
 {
 	actor.health = 700;
 	actor.max_health = actor.health;
+
+	actor.view_ofs = '0 0 42';
 }
 #endif // SVQC
 #ifdef CSQC
@@ -518,5 +520,7 @@ METHOD(SquireBowlingBall, tr_setup, void(SquireBowlingBall this, entity actor))
 {
 	actor.anim_idle = '0 0 0';
 	actor.anim_shoot = '1 5 1';
+
+	actor.view_ofs = '0 0 42';
 }
 #endif // CSQC
