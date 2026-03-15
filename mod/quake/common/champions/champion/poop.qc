@@ -52,8 +52,13 @@ void Poop_PooSpitTouch(entity this, entity toucher)
 		return;
 	}
 
-	particle(this.origin, '0 0 0', 57, 50);
-	_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
+	if(time >= this.spamtime)
+	{
+		this.spamtime = time + 0.2; // prevent spam
+
+		particle(this.origin, '0 0 0', 57, 50);
+		_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
+	}
 
 	if(toucher.takedamage || IS_MONSTER(toucher))
 	{

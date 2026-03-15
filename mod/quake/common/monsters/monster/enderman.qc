@@ -225,6 +225,8 @@ METHOD(Enderman, mr_setup, bool(Enderman this, entity actor))
 	precache_sound("enderman/idle3.wav");
 	precache_sound("enderman/idle4.wav");
 
+	precache_sound("enderman/stare.wav");
+
 	actor.spawnflags |= SPAWNFLAG_NEARSIGHTED;
 
 	actor.yaw_speed = 90;
