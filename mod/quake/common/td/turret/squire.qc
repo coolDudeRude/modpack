@@ -40,7 +40,7 @@ METHOD(SquireSpikeBlockade, tr_think, void(SquireSpikeBlockade thistur, entity a
 	makevectors(actor.angles);
 	vector myorg = (actor.absmin + actor.absmax) * 0.5;
 
-	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && it.health > 0 && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
 	{
 		vector targ_org = (it.absmin + it.absmin) * 0.5;
 		vector vec = normalize(targ_org - myorg);
@@ -117,7 +117,7 @@ METHOD(SquireBouncer, tr_think, void(SquireBouncer thistur, entity actor))
 	emin -= extrasize;
 	emax += extrasize;
 
-	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && it.health > 0 && !it.charmed && it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY,
 	{
 		bouncer_hitbox_touch(actor, it);
 	});

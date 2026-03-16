@@ -36,7 +36,7 @@ METHOD(RangerBarricade, tr_think, void(RangerBarricade thistur, entity actor))
 	emin -= extrasize;
 	emax += extrasize;
 
-	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && !it.charmed,
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != actor && IS_MONSTER(it) && it.health > 0 && !it.charmed,
 	{
 		if (it.move_nomonsters != MOVE_NOMONSTERS && it.move_nomonsters != MOVE_WORLDONLY)
 			barricade_hitbox_touch(actor, it);
