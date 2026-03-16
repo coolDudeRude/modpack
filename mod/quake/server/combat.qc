@@ -379,6 +379,9 @@ int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deatht
 	else if(inflictor.classname == "cauldron")
 		killed_type = KILLED_GIBBED;
 
+	if((gametype == GAMETYPE_TD || gametype == GAMETYPE_HORDE) && killed_type == KILLED_GIBBED)
+		killed_type = KILLED_SIMPLEGIB;
+
 	return killed_type;
 }
 
@@ -394,11 +397,6 @@ void Death_SpecialHandle(entity targ, int killed_type)
 	targ.takedamage = DAMAGE_NO;
 	settouch(targ, func_null);
 
-	if(gametype == GAMETYPE_TD && killed_type == KILLED_GIBBED)
-	{
-		SimpleGib(targ);
-		return;
-	}
 
 	switch(killed_type)
 	{
@@ -409,6 +407,7 @@ void Death_SpecialHandle(entity targ, int killed_type)
 		case KILLED_HAPPY: HappyDeath(targ); break;
 		case KILLED_ZAPPED: ZappyDeath(targ); break;
 		case KILLED_SWALLOWED: Swallow(targ); break;
+		case KILLED_SIMPLEGIB: SimpleGib(targ); break;
 	}
 }
 
