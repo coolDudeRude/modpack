@@ -15,6 +15,8 @@ EFFECT(0, SMOKE_RING,               "smoke_ring")
 
 EFFECT(0, CHEER,                    "damage_dissolve")
 
+EFFECT(0, GIB,                      "particlegibs_damage_dissolve")
+
 //EFFECT(0, FLAMER,                   "flamethrower")
 EFFECT(0, EF_FLAME,                 "EF_FLAME")
 EFFECT(0, EF_STARDUST,              "EF_STARDUST")

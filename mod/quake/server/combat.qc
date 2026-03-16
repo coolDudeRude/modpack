@@ -344,6 +344,12 @@ void Swallow(entity this)
 		this.scale = 1;
 }
 
+void SimpleGib(entity this)
+{
+	soundat(NULL, this.origin, CH_VOICE, "player/udeath.wav", 1, ATTEN_NORM);
+	Send_Effect(EFFECT_GIB, this.origin, '0 0 0', 1);
+}
+
 int Death_SpecialType(entity targ, entity inflictor, entity attacker, int deathtype)
 {
 	int killed_type = KILLED_NORMAL;
@@ -387,6 +393,12 @@ void Death_SpecialHandle(entity targ, int killed_type)
 	targ.solid = SOLID_NOT;
 	targ.takedamage = DAMAGE_NO;
 	settouch(targ, func_null);
+
+	if(gametype == GAMETYPE_TD && killed_type == KILLED_GIBBED)
+	{
+		SimpleGib(targ);
+		return;
+	}
 
 	switch(killed_type)
 	{

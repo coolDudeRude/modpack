@@ -288,7 +288,7 @@ void knight_die(entity this, entity inflictor, entity attacker, int deathtype)
 	}
 	else
 		_sound(this, CH_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
-	if(autocvar_skill >= 2)
+	if(autocvar_skill >= 2 && gametype != GAMETYPE_TD)
 	{
 		minion_spawn(this, this.origin, new(monster), MON_PHANTOM_SWORDSMAN);
 		knight_bow1(this);
