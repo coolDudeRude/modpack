@@ -21,8 +21,8 @@ bool td_badplacement(entity this, Turret tur, vector org)
 			vector extrasize = '0 0 0';
 			if(it.classname == "td_tower")
 				extrasize = '256 256 256'; // not close thank you
-			else if(it.classname == "td_spawnpoint")
-				extrasize = '256 256 256'; // no spawncamping
+			//else if(it.classname == "td_spawnpoint")
+				//extrasize = '256 256 256'; // no spawncamping
 			if(boxesoverlap(org + tur.m_mins, org + tur.m_maxs, it.absmin - extrasize, it.absmax + extrasize))
 			{
 				bad = true;
