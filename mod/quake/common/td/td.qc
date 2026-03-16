@@ -10,7 +10,7 @@ bool td_badplacement(entity this, Turret tur, vector org)
 		if(it.turretdef || it.classname == "td_chest" || it.classname == "td_tower" || it.classname == "td_spawnpoint")
 		{
 			// skip non-solid turrets if they're not matching
-			if(it.turretdef != tur && (it.solid != SOLID_BBOX || (tur.spawnflags & TUR_FLAG_NONSOLID)))
+			if(it.turretdef && it.turretdef != tur && (it.solid != SOLID_BBOX || (tur.spawnflags & TUR_FLAG_NONSOLID)))
 				continue;
 
 			vector extrasize = '0 0 0';
