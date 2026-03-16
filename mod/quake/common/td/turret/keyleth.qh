@@ -20,6 +20,9 @@ CLASS(KeylethSwarmer, Turret)
 /* number     */ ATTRIB(KeylethSwarmer, impulse, int, 0);
 /* cost       */ ATTRIB(KeylethSwarmer, tur_cost, float, 70);
 /* units      */ ATTRIB(KeylethSwarmer, tur_units, int, 5);
+/* health     */ ATTRIB(KeylethSwarmer, tur_health, float, 350);
+/* damage     */ ATTRIB(KeylethSwarmer, tur_dmg, float, 4);
+/* dmg scale  */ ATTRIB(KeylethSwarmer, tur_dmgscale, float, 0.15);
 /* champion   */ ATTRIB(KeylethSwarmer, m_champion, Champions, CHAMPION_Keyleth);
 #endif
 
@@ -46,6 +49,7 @@ CLASS(KeylethFrog, Turret)
 /* number     */ ATTRIB(KeylethFrog, impulse, int, 1);
 /* cost       */ ATTRIB(KeylethFrog, tur_cost, float, 40);
 /* units      */ ATTRIB(KeylethFrog, tur_units, int, 4);
+/* health     */ ATTRIB(KeylethFrog, tur_health, float, 200);
 /* champion   */ ATTRIB(KeylethFrog, m_champion, Champions, CHAMPION_Keyleth);
 #endif
 
@@ -72,6 +76,7 @@ CLASS(KeylethFlyTrap, Turret)
 /* number     */ ATTRIB(KeylethFlyTrap, impulse, int, 2);
 /* cost       */ ATTRIB(KeylethFlyTrap, tur_cost, float, 60);
 /* units      */ ATTRIB(KeylethFlyTrap, tur_units, int, 3);
+/* health     */ ATTRIB(KeylethFlyTrap, tur_health, float, 180);
 /* champion   */ ATTRIB(KeylethFlyTrap, m_champion, Champions, CHAMPION_Keyleth);
 #endif
 

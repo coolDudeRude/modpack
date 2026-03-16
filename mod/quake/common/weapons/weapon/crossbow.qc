@@ -95,11 +95,10 @@ void crossbow_bolt_think(entity this)
 	this.nextthink = time;
 	//this.velocity = this.pos2 * this.speed;
 
-	if(time <= this.crossbow_dmgtime)
-		return; // cooldown to prevent damage spam
-
 	FOREACH_ENTITY_RADIUS(this.origin, this.cnt, it.takedamage && it != this.owner,
 	{
+		if(time <= it.crossbow_dmgtime)
+			continue;
 		if(it.clipgroup && it.clipgroup == this.clipgroup)
 			continue;
 		float damg = ((this.dmg) ? this.dmg : 25);
@@ -111,7 +110,7 @@ void crossbow_bolt_think(entity this)
 		spawn_touchblood(this, damg, it);
 		T_Damage(it, this, this.owner, damg, this.projectiledeathtype);
 
-		this.crossbow_dmgtime = time + 0.1; // prevent instant death
+		it.crossbow_dmgtime = time + 0.2; // prevent instant death
 
 		float r = random();
 		if(r > 0.66)

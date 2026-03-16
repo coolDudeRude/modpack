@@ -11,8 +11,9 @@ void spikeblockade_hitbox_touch(entity this, entity toucher)
 	if(time < toucher.spikeblockade_dmgtime)
 		return;
 
+	Turret tur = this.turretdef;
 	toucher.spikeblockade_dmgtime = time + 0.5; // TODO?
-	float damage = 10 * turret_getpower(this.tur_level, 0.25);
+	float damage = tur.tur_dmg * turret_getpower(this.tur_level, tur.tur_dmgscale);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -51,11 +52,6 @@ METHOD(SquireSpikeBlockade, tr_think, void(SquireSpikeBlockade thistur, entity a
 		spikeblockade_hitbox_touch(actor, it);
 	});
 }
-METHOD(SquireSpikeBlockade, tr_setup, void(SquireSpikeBlockade this, entity actor))
-{
-	actor.health = 1000;
-	actor.max_health = actor.health;
-}
 #endif // SVQC
 
 // =========
@@ -69,8 +65,9 @@ void bouncer_hitbox_touch(entity this, entity toucher)
 	if(time < toucher.bouncer_dmgtime)
 		return;
 
+	Turret tur = this.turretdef;
 	toucher.bouncer_dmgtime = time + 0.5; // TODO?
-	float damage = 16 * turret_getpower(this.tur_level, 0.25);
+	float damage = tur.tur_dmg * turret_getpower(this.tur_level, tur.tur_dmgscale);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -87,7 +84,7 @@ void bouncer_hitbox_touch(entity this, entity toucher)
 	T_Damage(toucher, this, this, damage, DEATH_TRAP.m_id);
 }
 
-METHOD(SquireBouncer, tr_precache, void(SquireHarpoon thistur))
+METHOD(SquireBouncer, tr_precache, void(SquireBouncer thistur))
 {
 	precache_sound("turrets/bouncer_fire1.wav");
 	precache_sound("turrets/bouncer_fire2.wav");
@@ -121,11 +118,6 @@ METHOD(SquireBouncer, tr_think, void(SquireBouncer thistur, entity actor))
 	{
 		bouncer_hitbox_touch(actor, it);
 	});
-}
-METHOD(SquireBouncer, tr_setup, void(SquireBouncer this, entity actor))
-{
-	actor.health = 666;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
@@ -198,7 +190,7 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 			missile.count = time + 12;
 			missile.cnt = 32;
 			settouch(missile, crossbow_bolt_touch);
-			missile.dmg = 8 * turret_getpower(actor.tur_level, 0.15);;
+			missile.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 			missile.classname = "crossbow_bolt"; // identifier for spike touch TODO: clean this mess up
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			//_setmodel(missile, "progs/proj_impalespike.mdl");
@@ -216,11 +208,6 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 		actor.idle_finished = time + 0.5;
 		actor.enemy = turret_findtarget(actor, viscone, myrange);
 	}
-}
-METHOD(SquireHarpoon, tr_setup, void(SquireHarpoon this, entity actor))
-{
-	actor.health = 250;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
@@ -253,8 +240,9 @@ void slicendice_hitbox_touch(entity this, entity toucher)
 	if(time < toucher.slicendice_dmgtime)
 		return;
 
+	Turret tur = this.turretdef;
 	toucher.slicendice_dmgtime = time + 0.25; // TODO?
-	float damage = 8 * turret_getpower(this.tur_level, 0.25);
+	float damage = tur.tur_dmg * turret_getpower(this.tur_level, tur.tur_dmgscale);
 
 	_sound(toucher, CH_SHOTS, "enviro/physics/trcut.wav", 1, ATTN_NORM);
 
@@ -312,11 +300,6 @@ METHOD(SquireSliceNDice, tr_think, void(SquireSliceNDice thistur, entity actor))
 		head.avelocity = avel;
 		actor.SendFlags |= TNSF_AVEL;
 	}
-}
-METHOD(SquireSliceNDice, tr_setup, void(SquireSliceNDice this, entity actor))
-{
-	actor.health = 700;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
@@ -461,7 +444,7 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 
 		if(time > actor.attack_finished && dot > viscone && isvisible)
 		{
-			actor.attack_finished = time + max(0.03, (1.3 / turret_getpower(actor.tur_level, 0.5)));
+			actor.attack_finished = time + max(0.03, (2 / turret_getpower(actor.tur_level, 0.5)));
 			actor.clientframe = TANIM_SHOOT;
 
 			if(random() < 0.33)
@@ -477,7 +460,7 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 			missile.velocity = dir * 200;
 			set_movetype(missile, MOVETYPE_BOUNCE);
 			settouch(missile, bowlingball_touch);
-			missile.dmg = 12 * turret_getpower(actor.tur_level, 0.2);;
+			missile.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			setsize(missile, '0 0 0', '0 0 0');
 			missile.bouncefactor = 0.99;
@@ -498,9 +481,6 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 }
 METHOD(SquireBowlingBall, tr_setup, void(SquireBowlingBall this, entity actor))
 {
-	actor.health = 700;
-	actor.max_health = actor.health;
-
 	actor.view_ofs = '0 0 42';
 }
 #endif // SVQC

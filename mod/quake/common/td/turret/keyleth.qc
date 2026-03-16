@@ -58,6 +58,8 @@ void Swarm_Launch(entity this, vector org, entity targ)
 {
 	vector dir = normalize(CENTER_OR_VIEWOFS(targ) - org);
 
+	Turret tur = this.turretdef;
+
 	entity missile = spawn();
 	missile.flags = FL_PROJECTILE;
 	missile.classname = "swarm";
@@ -76,7 +78,7 @@ void Swarm_Launch(entity this, vector org, entity targ)
 	missile.count = time + 3.6;
 	setthink(missile, SwarmHome);
 	missile.enemy = targ;
-	missile.dmg = 7 * turret_getpower(this.tur_level, 0.2);
+	missile.dmg = tur.tur_dmg * turret_getpower(this.tur_level, tur.tur_dmgscale);
 	missile.cnt = 256 * turret_getpower(this.tur_level, 0.2);
 
 	IL_PUSH(g_projectiles, missile);
@@ -107,11 +109,6 @@ METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer thistur, entity actor))
 		Swarm_Launch(actor, org, targ);
 		actor.lastvictim = targ;
 	}
-}
-METHOD(KeylethSwarmer, tr_setup, void(KeylethSwarmer this, entity actor))
-{
-	actor.health = 400;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
@@ -221,11 +218,6 @@ METHOD(KeylethFrog, tr_think, void(KeylethFrog thistur, entity actor))
 		actor.enemy = turret_findtarget(actor, viscone, myrange);
 	}
 }
-METHOD(KeylethFrog, tr_setup, void(KeylethFrog this, entity actor))
-{
-	actor.health = 250;
-	actor.max_health = actor.health;
-}
 #endif // SVQC
 #ifdef CSQC
 METHOD(KeylethFrog, tr_drawselected, void(KeylethFrog this, entity actor))
@@ -314,13 +306,12 @@ METHOD(KeylethFlyTrap, tr_think, void(KeylethFlyTrap thistur, entity actor))
 
 		// we also take a small amount of damage from the projectile
 		float damage = (targ.dmg) ? targ.dmg * 0.5 : 10;
+		damage = min(damage, 10); // cap it to prevent instant break!
 		T_Damage(actor, targ, oldown, damage, DEATH_TRAP.m_id);
 	}
 }
 METHOD(KeylethFlyTrap, tr_setup, void(KeylethFlyTrap this, entity actor))
 {
-	actor.health = 180;
-	actor.max_health = actor.health;
 	actor.monster_attack = false;
 
 	actor.solid = SOLID_TRIGGER;

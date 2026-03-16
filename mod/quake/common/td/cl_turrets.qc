@@ -52,7 +52,9 @@ void turret_draw(entity this)
 
 	this.tur_head.angles += dt * this.tur_head.avelocity;
 
-	if (this.health < 127)
+	float mhealth = (this.max_health > 0) ? this.max_health : 255;
+
+	if (this.health < (mhealth * 0.5))
 	{
 		dt = random();
 
@@ -60,11 +62,11 @@ void turret_draw(entity this)
 			te_spark(this.origin + '0 0 40', randomvec() * 256 + '0 0 256', 16);
 	}
 
-	if (this.health < 85
+	if (this.health < (mhealth * 0.33)
 	&& dt < 0.01)
 		pointparticles(EFFECT_SMOKE_LARGE, (this.origin + (randomvec() * 80)), '0 0 0', 1);
 
-	if (this.health < 32
+	if (this.health < (mhealth * 0.12)
 	&& dt < 0.015)
 		pointparticles(EFFECT_SMOKE_SMALL, (this.origin + (randomvec() * 80)), '0 0 0', 1);
 
@@ -173,7 +175,8 @@ void turret_draw2d(entity this)
 		t *= 1 - (1 - waypointsprite_crosshairfadescale) * (1 - bound(0, crosshairdistance / waypointsprite_crosshairfadedistance, 1));
 	}
 
-	bool draw_healthbar = ((this.helpme && time < this.helpme) || this.health < 255);
+	float mhealth = (this.max_health > 0) ? this.max_health : 255;
+	bool draw_healthbar = ((this.helpme && time < this.helpme) || this.health < mhealth);
 
 	if (this.tur_level > 0 && pic != "")
 		o = drawsprite_TextOrIcon(false, o, M_PI, 0, '1 1 1', a, autocvar_g_waypointsprite_iconsize * '1 1 0', pic);
@@ -181,7 +184,7 @@ void turret_draw2d(entity this)
 		drawhealthbar(
 			o,
 			0,
-			this.health / 255,
+			this.health / mhealth,
 			'0 0 0',
 			'0 0 0',
 			0.5 * t * SPRITE_HEALTHBAR_WIDTH,
@@ -229,7 +232,8 @@ void turret_construct(entity this, bool isNew)
 	set_movetype(this, MOVETYPE_TOSS); // was noclip
 	set_movetype(this.tur_head, this.move_movetype);
 	this.tur_head.angles     = this.angles;
-	this.health = 255;
+	//this.health = 255;
+	this.health = this.max_health;
 	this.draw                = turret_draw;
 	this.entremove           = turret_remove;
 	this.drawmask            = MASK_NORMAL;
@@ -264,7 +268,9 @@ NET_HANDLE(ENT_CLIENT_TURRET, bool isNew)
 	if (sf & TNSF_SETUP)
 	{
 		this.turretdef = ReadRegistered(Turrets);
+		this.max_health = ReadFloat();
 		this.clipgroup = ReadByte();
+		this.tur_units = ReadByte();
 
 		setorigin(this, ReadVector());
 
@@ -312,10 +318,15 @@ NET_HANDLE(ENT_CLIENT_TURRET, bool isNew)
 		this.lerpfrac = 0; // reset frames
 	}
 
-	if (sf & TNSF_STATUS)
+	if (sf & TNSF_LEVEL)
 	{
 		this.tur_level = ReadByte();
-		int _tmp = ReadByte();
+		this.max_health = ReadFloat();
+	}
+
+	if (sf & TNSF_STATUS)
+	{
+		int _tmp = ReadFloat();
 		float myhp = this.health;
 		if (_tmp == 0 && myhp != 0)
 			turret_die(this);

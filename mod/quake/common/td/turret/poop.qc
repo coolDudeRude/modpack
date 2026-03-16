@@ -41,7 +41,7 @@ METHOD(PoopPotty, tr_think, void(PoopPotty thistur, entity actor))
 
 		if(time > actor.attack_finished && dot > 0.3 && isvisible)
 		{
-			actor.attack_finished = time + max(0.03, (0.5 / turret_getpower(actor.tur_level, 0.25)));
+			actor.attack_finished = time + max(0.03, (0.7 / turret_getpower(actor.tur_level, 0.25)));
 			actor.clientframe = TANIM_SHOOT;
 
 			float r = floor(random() * 6);
@@ -65,7 +65,7 @@ METHOD(PoopPotty, tr_think, void(PoopPotty thistur, entity actor))
 			newmis.velocity = dir * 400;
 			newmis.velocity_z += 100;
 			setorigin(newmis, org);
-			newmis.dmg = 15 * turret_getpower(actor.tur_level, 0.15);
+			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 		}
 	}
 	
@@ -74,11 +74,6 @@ METHOD(PoopPotty, tr_think, void(PoopPotty thistur, entity actor))
 		actor.idle_finished = time + 0.5;
 		actor.enemy = turret_findtarget(actor, 0.3, myrange);
 	}
-}
-METHOD(PoopPotty, tr_setup, void(PoopPotty this, entity actor))
-{
-	actor.health = 600;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC

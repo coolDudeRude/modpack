@@ -140,6 +140,7 @@ void Draw_Cone(vector shotorg, vector shotdir, float crange, float viscone)
 }
 
 entity dropmark;
+.float max_health;
 
 PRECACHE(BuildTool)
 {
@@ -172,10 +173,42 @@ void buildtool_DrawInfo(entity this)
 	sui_drawtext(pos, '16 16 0', ((tur.m_name != "") ? tur.m_name : "Turret"), '0.3 1 0.3', 1, 0);
 
 	sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_START));
-	pos.y += 24;
-	sui_drawtext(pos, '16 16 0', sprintf("Level: %d", this.tur_level), '1 1 1', 1, 0);
-	pos.y += 64;
-	if(this.tur_level >= 5)
+	pos.y += 8; // extra padding
+
+	pos.y += 16;
+	if(this.health < this.max_health)
+		sui_drawcolortext(pos, '16 16 0', sprintf("^7Health: ^1%d ^7/ ^1%d", this.health, this.max_health), 1, 0);
+	else
+		sui_drawcolortext(pos, '16 16 0', sprintf("^7Health: ^1%d", this.health), 1, 0);
+
+	if(tur.tur_dmg)
+	{
+		pos.y += 16;
+		float damage = tur.tur_dmg;
+		if(tur.tur_dmgscale)
+			damage *= turret_getpower(this.tur_level, tur.tur_dmgscale);
+		sui_drawcolortext(pos, '16 16 0', sprintf("^7Damage: ^3%d", damage), 1, 0);
+	}
+
+	if(tur.tr_getinfo)
+		pos = tur.tr_getinfo(tur, this, pos);
+
+	pos.y += 16;
+	int myunits = (this.tur_units) ? this.tur_units : tur.tur_units;
+	string col = "^5";
+	if(this.classname == "buildtool_dropmark" && (myunits + td_ent.tur_units) > td_ent.currentammo)
+		col = "^1";
+	sui_drawcolortext(pos, '16 16 0', sprintf("^7Defense Units: %s%d", col, myunits), 1, 0);
+
+	sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_END));
+	pos = '0 -24 0';
+
+	if(this.classname == "buildtool_dropmark")
+	{
+		string fcol = (STAT(TD_FUEL) < tur.tur_cost) ? "^1" : "^3";
+		sui_drawcolortext(pos, '16 16 0', sprintf("^7Cost: %s%d", fcol, tur.tur_cost), 1, 0);
+	}
+	else if(this.tur_level >= 5)
 		sui_drawtext(pos, '16 16 0', "At maximum level", '1 1 0', 1, 0);
 	else
 	{
@@ -268,11 +301,11 @@ void buildtool_selectframe(entity this)
 	entity targ = NULL;
 	if(trace_ent.turretdef)
 	{
-		// NOTE: client side turrets scale health to a byte
+		float mhealth = (trace_ent.max_health > 0) ? trace_ent.max_health : 255;
 		switch(buildmode)
 		{
 			default:
-			case 0: if(trace_ent.health < 255) targ = trace_ent; break;
+			case 0: if(trace_ent.health < mhealth) targ = trace_ent; break;
 			case 1: if(trace_ent.tur_level < 5 && STAT(TD_FUEL) >= td_UpgradeCost(trace_ent.tur_level + 1)) targ = trace_ent; break;
 			case 2: targ = trace_ent; break;
 		}
@@ -338,6 +371,9 @@ void buildtool_frame(entity this)
 	// ping it to keep it active
 	dropmark.owner = this;
 	dropmark.cnt = time + 0.2;
+	dropmark.turretdef = tur;
+	dropmark.health = tur.tur_health;
+	dropmark.max_health = dropmark.health;
 
 	if(dropmark.model != tur.mdl)
 	{
@@ -384,6 +420,8 @@ void buildtool_frame(entity this)
 
 	if(tur.tr_drawselected)
 		tur.tr_drawselected(tur, dropmark);
+
+	buildtool_targ = dropmark;
 }
 #endif
 

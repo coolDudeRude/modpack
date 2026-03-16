@@ -33,6 +33,12 @@ CLASS(Turret, Object)
 	ATTRIB(Turret, tur_cost, float, 0);
 	/** number of defence units the turret uses */
 	ATTRIB(Turret, tur_units, int, 0);
+	/** base health of the turret */
+	ATTRIB(Turret, tur_health, float, 0);
+	/** base damage of the turret */
+	ATTRIB(Turret, tur_dmg, float, 0);
+	/** scale of damage per level */
+	ATTRIB(Turret, tur_dmgscale, float, 0);
 #endif
 
 #ifdef GAMEQC
@@ -48,6 +54,9 @@ CLASS(Turret, Object)
 #ifdef CSQC
 	/** (CLIENT) draw function called when the turret is selected */
 	METHOD(Turret, tr_drawselected, void(Turret this, entity actor)) { }
+
+	/** (CLIENT) pulls info about the turret, increase pos.y before each entry */
+	METHOD(Turret, tr_getinfo, vector(Turret this, entity actor, vector pos)) { return pos; }
 #endif
 #ifdef GAMEQC
 	/** (BOTH) precaches models/sounds used by this turret */
@@ -70,7 +79,7 @@ const int TUR_FLAG_SUPPORT         = BIT(11); ///< supports other units
 const int TUR_FLAG_NONSOLID        = BIT(12); ///< may overlap with others
 
 // send flags
-const int TNSF_UPDATE  = BIT(1);
+const int TNSF_LEVEL  = BIT(1);
 const int TNSF_STATUS  = BIT(2);
 const int TNSF_SETUP   = BIT(3);
 const int TNSF_ANG     = BIT(4);

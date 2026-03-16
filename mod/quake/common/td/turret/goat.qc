@@ -70,8 +70,6 @@ METHOD(GoatJumpingCastle, tr_think, void(GoatJumpingCastle thistur, entity actor
 }
 METHOD(GoatJumpingCastle, tr_setup, void(GoatJumpingCastle this, entity actor))
 {
-	actor.health = 1000;
-	actor.max_health = actor.health;
 	actor.solid = SOLID_TRIGGER;
 	actor.monster_attack = false;
 }

@@ -20,6 +20,9 @@ CLASS(SquireSpikeBlockade, Turret)
 /* number     */ ATTRIB(SquireSpikeBlockade, impulse, int, 0);
 /* cost       */ ATTRIB(SquireSpikeBlockade, tur_cost, float, 30);
 /* units      */ ATTRIB(SquireSpikeBlockade, tur_units, int, 3);
+/* health     */ ATTRIB(SquireSpikeBlockade, tur_health, float, 1000);
+/* damage     */ ATTRIB(SquireSpikeBlockade, tur_dmg, float, 3);
+/* dmg scale  */ ATTRIB(SquireSpikeBlockade, tur_dmgscale, float, 0.25);
 /* champion   */ ATTRIB(SquireSpikeBlockade, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -46,6 +49,9 @@ CLASS(SquireBouncer, Turret)
 /* number     */ ATTRIB(SquireBouncer, impulse, int, 1);
 /* cost       */ ATTRIB(SquireBouncer, tur_cost, float, 40);
 /* units      */ ATTRIB(SquireBouncer, tur_units, int, 4);
+/* health     */ ATTRIB(SquireBouncer, tur_health, float, 666);
+/* damage     */ ATTRIB(SquireBouncer, tur_dmg, float, 15);
+/* dmg scale  */ ATTRIB(SquireBouncer, tur_dmgscale, float, 0.2);
 /* champion   */ ATTRIB(SquireBouncer, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -72,6 +78,9 @@ CLASS(SquireHarpoon, Turret)
 /* number     */ ATTRIB(SquireHarpoon, impulse, int, 2);
 /* cost       */ ATTRIB(SquireHarpoon, tur_cost, float, 80);
 /* units      */ ATTRIB(SquireHarpoon, tur_units, int, 4);
+/* health     */ ATTRIB(SquireHarpoon, tur_health, float, 250);
+/* damage     */ ATTRIB(SquireHarpoon, tur_dmg, float, 8);
+/* dmg scale  */ ATTRIB(SquireHarpoon, tur_dmgscale, float, 0.15);
 /* champion   */ ATTRIB(SquireHarpoon, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -98,6 +107,9 @@ CLASS(SquireSliceNDice, Turret)
 /* number     */ ATTRIB(SquireSliceNDice, impulse, int, 3);
 /* cost       */ ATTRIB(SquireSliceNDice, tur_cost, float, 140);
 /* units      */ ATTRIB(SquireSliceNDice, tur_units, int, 8);
+/* health     */ ATTRIB(SquireSliceNDice, tur_health, float, 600);
+/* damage     */ ATTRIB(SquireSliceNDice, tur_dmg, float, 6);
+/* dmg scale  */ ATTRIB(SquireSliceNDice, tur_dmgscale, float, 0.25);
 /* champion   */ ATTRIB(SquireSliceNDice, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -124,6 +136,9 @@ CLASS(SquireBowlingBall, Turret)
 /* number     */ ATTRIB(SquireBowlingBall, impulse, int, 4);
 /* cost       */ ATTRIB(SquireBowlingBall, tur_cost, float, 110);
 /* units      */ ATTRIB(SquireBowlingBall, tur_units, int, 7);
+/* health     */ ATTRIB(SquireBowlingBall, tur_health, float, 400);
+/* damage     */ ATTRIB(SquireBowlingBall, tur_dmg, float, 9);
+/* dmg scale  */ ATTRIB(SquireBowlingBall, tur_dmgscale, float, 0.2);
 /* champion   */ ATTRIB(SquireBowlingBall, m_champion, Champions, CHAMPION_Squire);
 #endif
 

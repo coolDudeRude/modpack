@@ -9,22 +9,24 @@ entity turret_findtarget_ignore(entity this, float viscone, float trange, entity
 
 	entity best = NULL;
 	float bestdist = 0;
-	FOREACH_ENTITY_RADIUS(this.origin, trange, IS_MONSTER(it) && it.takedamage && !it.charmed && it != ignore,
+	vector org = this.origin + this.view_ofs;
+	FOREACH_ENTITY_RADIUS(org, trange, IS_MONSTER(it) && it.takedamage && !it.charmed && it != ignore,
 	{
 		if(it.health < 1 || it.exptime != 0)
 			continue;
 		if(time < it.invincible_finished)
 			continue;
+		vector targ_org = (it.absmin + it.absmax) * 0.5;
 		if(viscone > 0)
 		{
-			vector vec = normalize(it.origin - this.origin);
+			vector vec = normalize(targ_org - org);
 			float dot = vec * v_forward;
 			if(dot < viscone)
 				continue;
 		}
-		if(!checkpvs(this.origin, it))
+		if(!checkpvs(org, it))
 			continue;
-		float newdist = vlen2(it.origin - this.origin);
+		float newdist = vlen2(targ_org - org);
 		if(!best || newdist <= bestdist)
 		{
 			bestdist = newdist;
@@ -45,8 +47,9 @@ void turret_levelup(entity this)
 	float mypower = turret_getpower(this.tur_level, 0.2);
 	this.max_health *= mypower;
 	this.health = this.max_health;
-	// TODO: per-turret update function
+	// TODO: per-turret update function?
 	this.SendFlags |= TNSF_STATUS;
+	this.SendFlags |= TNSF_LEVEL;
 }
 
 // Generic damage handling
@@ -139,7 +142,9 @@ bool turret_send(entity this, entity to, int sf)
 	if (sf & TNSF_SETUP)
 	{
 		WriteRegistered(Turrets, MSG_ENTITY, this.turretdef);
+		WriteFloat(MSG_ENTITY, this.max_health);
 		WriteByte(MSG_ENTITY, this.clipgroup);
+		WriteByte(MSG_ENTITY, this.tur_units);
 
 		WriteVector(MSG_ENTITY, this.origin);
 
@@ -170,13 +175,19 @@ bool turret_send(entity this, entity to, int sf)
 		WriteByte(MSG_ENTITY, this.clientframe);
 	}
 
-	if (sf & TNSF_STATUS)
+	if (sf & TNSF_LEVEL)
 	{
 		WriteByte(MSG_ENTITY, this.tur_level);
-		if (this.health <= 0)
-			WriteByte(MSG_ENTITY, 0);
-		else
-			WriteByte(MSG_ENTITY, ceil((this.health / this.max_health) * 255));
+		WriteFloat(MSG_ENTITY, this.max_health);
+	}
+
+	if (sf & TNSF_STATUS)
+	{
+		WriteFloat(MSG_ENTITY, max(0, this.health));
+		//if (this.health <= 0)
+			//WriteByte(MSG_ENTITY, 0);
+		//else
+			//WriteByte(MSG_ENTITY, ceil((this.health / this.max_health) * 255));
 	}
 
 	return true;
@@ -238,6 +249,9 @@ bool turret_initialize(entity this, Turret tur)
 
 	//_setmodel(this, tur.mdl);
 	setsize(this, tur.m_mins, tur.m_maxs);
+
+	if(!this.health)
+		this.health = tur.tur_health;
 
 	this.turretdef              = tur;
 	this.active                 = ACTIVE_ACTIVE;

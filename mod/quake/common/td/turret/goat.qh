@@ -20,6 +20,7 @@ CLASS(GoatJumpingCastle, Turret)
 /* number     */ ATTRIB(GoatJumpingCastle, impulse, int, 0);
 /* cost       */ ATTRIB(GoatJumpingCastle, tur_cost, float, 100);
 /* units      */ ATTRIB(GoatJumpingCastle, tur_units, int, 10);
+/* health     */ ATTRIB(GoatJumpingCastle, tur_health, float, 1000);
 /* champion   */ ATTRIB(GoatJumpingCastle, m_champion, Champions, CHAMPION_Goat);
 #endif
 

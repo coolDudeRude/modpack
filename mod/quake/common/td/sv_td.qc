@@ -893,6 +893,7 @@ spawnfunc(td_wave)
 	td_wave_setup(this);
 }
 
+void td_spawnpoint_sendtracer(vector org, entity targ);
 void td_tracer_think(entity this)
 {
 	this.nextthink = time;
@@ -909,9 +910,24 @@ void td_tracer_think(entity this)
 	if(!this.goalentity || vdist(this.origin - targ_org, <=, 64))
 	{
 		if(this.goalentity.target && this.goalentity.target != "")
-			this.goalentity = find(NULL, targetname, this.goalentity.target);
+		{
+			bool first = false;
+			FOREACH_ENTITY_STRING(targetname, this.goalentity.target,
+			{
+				// we get the first found
+				if(!first)
+				{
+					this.goalentity = it;
+					first = true;
+					continue;
+				}
+				// at converging paths, send off another tracer!
+				td_spawnpoint_sendtracer(this.origin, it);
+			});
+		}
 		else
 			this.goalentity = NULL;
+
 		if(!this.goalentity)
 		{
 			delete(this);
@@ -924,25 +940,28 @@ void td_tracer_think(entity this)
 	this.velocity = dir * 500;
 }
 
-void td_spawnpoint_sendtracer(entity this)
+void td_spawnpoint_sendtracer(vector org, entity targ)
 {
-	entity targ = find(NULL, targetname, this.target);
-	if(!targ)
-		return; // uhh...
-
 	entity tracer = spawn();
 	tracer.classname = "tracer";
 	set_movetype(tracer, MOVETYPE_NOCLIP);
 	setmodel(tracer, MDL_Null);
 	setsize(tracer, '-4 -4 -4', '4 4 4');
-	setorigin(tracer, this.origin);
+	setorigin(tracer, org);
 	tracer.goalentity = targ;
-	tracer.owner = this;
 	tracer.effects = EF_LOWPRECISION;
 	tracer.alpha = 1;
 	tracer.traileffectnum = _particleeffectnum("nade_red");
 	setthink(tracer, td_tracer_think);
 	tracer.nextthink = time;
+}
+
+void td_spawnpoint_tracers(entity this)
+{
+	FOREACH_ENTITY_STRING(targetname, this.target,
+	{
+		td_spawnpoint_sendtracer(this.origin, it);
+	});
 }
 
 void td_spawnpoint_think(entity this)
@@ -964,7 +983,7 @@ void td_spawnpoint_think(entity this)
 	if(this.target && this.target != "" && td_phase == TD_PHASE_BUILD && time >= this.attack_finished)
 	{
 		this.attack_finished = time + 3;
-		td_spawnpoint_sendtracer(this);
+		td_spawnpoint_tracers(this);
 	}
 }
 
@@ -1010,7 +1029,9 @@ void td_spawnpoint_setup(entity this)
 	WaypointSprite_SpawnFixed(WP_Monsters, (this.absmin + this.absmax) * 0.5, this, sprite, NULL);
 	this.sprite.waypointsprite_visible_for_player = td_waypointsprite_visible_for_player;
 
-	Net_LinkEntity(this, false, 0, td_spawnpoint_send);
+	// bosses aren't so worried about turrets
+	if(this.cnt != TD_SPAWNPOINT_BOSS)
+		Net_LinkEntity(this, false, 0, td_spawnpoint_send);
 
 	IL_PUSH(g_td_spawns, this);
 }

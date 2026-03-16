@@ -200,6 +200,8 @@ entity minion_spawn(entity actor, vector org, entity monster, Monster mon)
 	monster.colormod = actor.colormod;
 	monster.charmer = actor.charmer;
 	monster.clipgroup = actor.clipgroup;
+	monster.movetarget = actor.movetarget;
+	monster.goalentity = actor.goalentity;
 
 	monster.owner = actor;
 
@@ -207,22 +209,6 @@ entity minion_spawn(entity actor, vector org, entity monster, Monster mon)
 
 	if(!monster)
 		return NULL;
-
-	// done after spawning to not be overridden
-	monster.movetarget = actor.movetarget;
-	monster.goalentity = actor.goalentity;
-
-	if(monster.enemy)
-		{ /* do nothing */ }
-	else if(monster.goalentity)
-	{
-		monster.pausetime = 0;
-		if(monster.th_walk)
-		{
-			setthink(monster, monster.th_walk);
-			monster.nextthink = time;
-		}
-	}
 
 	if(IS_MONSTER(actor))
 		update_minioncount(actor, 1);

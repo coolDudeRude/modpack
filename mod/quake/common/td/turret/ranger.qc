@@ -11,8 +11,9 @@ void barricade_hitbox_touch(entity this, entity toucher)
 	if(time < toucher.barricade_dmgtime)
 		return;
 
+	Turret tur = this.turretdef;
 	toucher.barricade_dmgtime = time + 0.5; // TODO?
-	float damage = 10 * turret_getpower(this.tur_level, 0.25);
+	float damage = tur.tur_dmg * turret_getpower(this.tur_level, tur.tur_dmgscale);
 
 	// also push enemy away
 	if(!(toucher.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(toucher.monsterdef.spawnflags & MON_FLAG_STATIONARY))
@@ -42,11 +43,6 @@ METHOD(RangerBarricade, tr_think, void(RangerBarricade thistur, entity actor))
 			barricade_hitbox_touch(actor, it);
 	});
 }
-METHOD(RangerBarricade, tr_setup, void(RangerBarricade this, entity actor))
-{
-	actor.health = 700;
-	actor.max_health = actor.health;
-}
 #endif // SVQC
 
 // ========
@@ -64,14 +60,16 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
 	if(actor.enemy)
 	{
+		vector myorg = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
 		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
+		vector vec = normalize(targ_org - myorg);
 		float dot = vec * v_forward;
 
 		bool isvisible = visible(actor, actor.enemy);
 		if(isvisible || dot < 0.3)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
@@ -85,12 +83,12 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 
 			_sound(actor, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 0.5, ATTN_NORM);
 
-			vector org = actor.origin + '0 0 4' + v_right * offset;
+			vector org = myorg + v_right * offset;
 			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
 			entity newmis = launch_spike(actor, org, dir);
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = dir * 1000;
-			newmis.dmg = 6 * turret_getpower(actor.tur_level, 0.15);
+			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 			CSQCProjectile(newmis, true, PROJECTILE_BULLET, true);
 		}
 	}
@@ -103,8 +101,7 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 }
 METHOD(RangerNailer, tr_setup, void(RangerNailer this, entity actor))
 {
-	actor.health = 200;
-	actor.max_health = actor.health;
+	actor.view_ofs = '0 0 4';
 }
 #endif // SVQC
 #ifdef CSQC
@@ -131,7 +128,7 @@ vector mortar_calc_velocity(entity actor, vector org, entity targ)
 {
 	//vector oldvel = normalize(actor.enemy.origin - org) * 500 + v_up * 500;
 
-	vector tpos1 = targ.origin;
+	vector tpos1 = (targ.absmin + targ.absmax) * 0.5;
 	vector v = org;
 
 	traceline(v, v + '0 0 1' * 65535, MOVE_WORLDONLY, actor);
@@ -178,7 +175,7 @@ METHOD(RangerMortar, tr_think, void(RangerMortar thistur, entity actor))
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = mortar_calc_velocity(newmis, org, actor.enemy);
 			newmis.gravity = 1;
-			newmis.dmg = 50 * turret_getpower(actor.tur_level, 0.15);
+			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 			set_movetype(newmis, MOVETYPE_TOSS);
 			settouch(newmis, T_MissileTouch);
 			CSQCProjectile(newmis, true, PROJECTILE_MORTAR, true);
@@ -194,8 +191,6 @@ METHOD(RangerMortar, tr_think, void(RangerMortar thistur, entity actor))
 METHOD(RangerMortar, tr_setup, void(RangerMortar this, entity actor))
 {
 	actor.view_ofs = '0 0 8'; // for line of sight checks
-	actor.health = 300;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
@@ -251,7 +246,7 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 			vector dir;
 			vector myorg = actor.origin + '0 0 30';
 			vector targ_org = CENTER_OR_VIEWOFS(actor.enemy);
-			float damage = 9 * turret_getpower(actor.tur_level, 0.15);
+			float damage = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
 			entity newmis;
 			// left eye
 			org = myorg + v_right * 6;
@@ -274,11 +269,6 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 		actor.idle_finished = time + 0.5;
 		actor.enemy = turret_findtarget(actor, viscone, myrange);
 	}
-}
-METHOD(RangerLaser, tr_setup, void(RangerLaser this, entity actor))
-{
-	actor.health = 250;
-	actor.max_health = actor.health;
 }
 #endif // SVQC
 #ifdef CSQC
