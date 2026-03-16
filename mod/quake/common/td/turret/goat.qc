@@ -18,6 +18,8 @@ void jumpingcastle_hitbox_touch(entity this, entity toucher)
 
 	toucher.velocity = randomvec() * (100 * pushforce);
 	toucher.velocity_z = (jheight * pushforce);
+	UNSET_ONGROUND(toucher);
+	toucher.oldvelocity = toucher.velocity;
 
 	float r = random();
 	if(r < 0.33)
@@ -27,7 +29,7 @@ void jumpingcastle_hitbox_touch(entity this, entity toucher)
 	else
 		_sound(toucher, CH_VOICE, "turrets/jumpingcastle_bounce3.wav", 1, ATTN_NORM);
 
-	if(IS_MONSTER(toucher) && toucher.health > 0)
+	if(IS_MONSTER(toucher) && toucher.health > 0 && gametype == GAMETYPE_TD)
 	{
 		this.enemy = toucher;
 		this.cnt += 1;
