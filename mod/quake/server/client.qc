@@ -1820,7 +1820,7 @@ void PutObserverInServer(entity this)
 	if(gametype == GAMETYPE_TD)
 	{
 		this.ready = false;
-		ReadyCount();
+		ReadyCount(this);
 	}
 
 	Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
@@ -3191,7 +3191,7 @@ void ClientDisconnect(entity this)
 	if(gametype == GAMETYPE_TD)
 	{
 		this.ready = false;
-		ReadyCount();
+		ReadyCount(this);
 	}
 
 	chat_grabber_ClientDisconnect(this);
@@ -3972,7 +3972,7 @@ void SV_ParseClientCommand(entity this, string command)
 				bprintf("%s ^7is ready!\n", this.netname);
 				Send_Notification(NOTIF_ALL_EXCEPT, this, MSG_CENTER, CENTER_READY, this.netname);
 				this.ready = true;
-				ReadyCount();
+				ReadyCount(NULL);
 			}
 		}
 		return;

@@ -63,7 +63,7 @@ entity nagger;
 int readycount;                    // amount of players who are ready
 .bool ready;                       // flag for if a player is ready
 void VoteCount(float first_count);
-void ReadyCount();
+void ReadyCount(entity ignore);
 void Nagger_Init();
 
 string GetCallerName(entity caller);

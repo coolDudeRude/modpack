@@ -619,7 +619,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 			bprintf("%s ^7is ready!\n", attacker.netname);
 			Send_Notification(NOTIF_ALL_EXCEPT, attacker, MSG_CENTER, CENTER_READY, attacker.netname);
 			attacker.ready = true;
-			ReadyCount();
+			ReadyCount(NULL);
 			return;
 		}
 		if(targ.classname == "td_tower" && (!IS_MONSTER(attacker) || (attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS) || attacker.charmed))

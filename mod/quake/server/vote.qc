@@ -325,7 +325,7 @@ void VoteThink()
 	}
 }
 
-void ReadyCount()
+void ReadyCount(entity ignore)
 {
 	if(!td_ent || intermission_running)
 		return;
@@ -333,7 +333,7 @@ void ReadyCount()
 	int total_players = 0, human_players = 0, humans_ready = 0;
 	readycount = 0;
 
-	FOREACH_CLIENT(IS_PLAYER(it), {
+	FOREACH_CLIENT(IS_PLAYER(it) && it != ignore, {
 		++total_players;
 		if (it.ready) ++readycount;
 		if (IS_REAL_CLIENT(it))
