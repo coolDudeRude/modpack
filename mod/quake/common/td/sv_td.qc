@@ -1019,7 +1019,7 @@ void td_spawnpoint_setup(entity this)
 
 	this.classname = "td_spawnpoint";
 	this.solid = SOLID_TRIGGER; // thanks engine
-	setsize(this, '-256 -256 -24', '256 256 256');
+	setsize(this, '-256 -256 -256', '256 256 256');
 	set_movetype(this, MOVETYPE_NONE);
 
 	setthink(this, td_spawnpoint_think);
