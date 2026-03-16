@@ -110,7 +110,7 @@ void cheddar_spit_touch(entity this, entity toucher)
 
 	if(time >= this.spamtime)
 	{
-		this.spamtime = time + 0.2; // prevent spam
+		this.spamtime = time + 1; // prevent spam
 
 		particle(this.origin, '0 0 0', 57, 50);
 		_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
@@ -152,11 +152,16 @@ void cheddar_spit_anim(entity this)
 {
 	setthink(this, cheddar_spit_anim);
 	this.nextthink = time + 0.1;
-	particle(this.origin, '0 0 0', 57, 10);
+	if(time >= this.attack2_finished)
+	{
+		particle(this.origin, '0 0 0', 57, 10);
+		this.attack2_finished = time + 1;
+	}
 	this.walkframe += 1;
 	if(this.walkframe > 5)
 		this.walkframe = 0;
 	this.frame = this.walkframe;
+
 	if(this.velocity == '0 0 0')
 		delete(this);
 }

@@ -36,9 +36,12 @@ void Poop_AcidPoolAnim(entity this)
 			return;
 		}
 	}
-	else
+	else if(time >= this.attack2_finished)
+	{
+		this.attack2_finished = time + 1;
 		particle(this.origin, '0 0 0', 57, 10);
 		//Send_Effect(EFFECT_POOP_STINK, this.origin, '0 0 0', 1);
+	}
 }
 
 void Poop_PooSpitTouch(entity this, entity toucher)
@@ -54,7 +57,7 @@ void Poop_PooSpitTouch(entity this, entity toucher)
 
 	if(time >= this.spamtime)
 	{
-		this.spamtime = time + 0.2; // prevent spam
+		this.spamtime = time + 0.5; // prevent spam
 
 		particle(this.origin, '0 0 0', 57, 50);
 		_sound(this, CH_WEAPON_SINGLE, "blob/land1.wav", 1, ATTN_NORM);
@@ -95,7 +98,11 @@ void Poop_PooSpitAnim(entity this)
 {
 	setthink(this, Poop_PooSpitAnim);
 	this.nextthink = time + 0.1;
-	particle(this.origin, '0 0 0', 57, 10);
+	if(time >= this.attack2_finished)
+	{
+		particle(this.origin, '0 0 0', 57, 10);
+		this.attack2_finished = time + 1;
+	}
 	this.walkframe += 1;
 	if(this.walkframe > 5)
 		this.walkframe = 0;
