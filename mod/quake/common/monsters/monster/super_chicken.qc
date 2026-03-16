@@ -66,24 +66,28 @@ void superchicken_layegg3(entity this) { set_anim(this, 3, superchicken_layegg4)
 void superchicken_layegg2(entity this) { set_anim(this, 2, superchicken_layegg3); ai_face_reverse(this); }
 void superchicken_layegg1(entity this) { set_anim(this, 1, superchicken_layegg2); ai_face_reverse(this); }
 
-void superchicken_gib(entity this, entity inflictor)
+void superchicken_gib(entity this, entity inflictor, bool dropgibs)
 {
 	_sound(this, CH_VOICE, "chicken/chickdie.wav", 1, ATTEN_MIN);
-	float dm = -50;
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/mangib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/mangib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/mangib3.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+
+	if(dropgibs)
+	{
+		float dm = -50;
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/mangib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/mangib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/mangib3.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+	}
 
 	// feathery mess
 	Send_Effect(EFFECT_SUPERCHICKEN_DIE, this.origin + '0 0 24', '0 0 0', 1);
@@ -95,15 +99,17 @@ void superchicken_die(entity this, entity inflictor, entity attacker, int deatht
 	switch(killed_type)
 	{
 		case KILLED_NORMAL: break; // normal death
+		case KILLED_SIMPLEGIB:
 		case KILLED_GIBBED:
 		{
-			superchicken_gib(this, inflictor);
-			// fall through to special handling
+			superchicken_gib(this, inflictor, (killed_type == KILLED_GIBBED));
+			delete(this);
+			break;
 		}
 		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
-	superchicken_gib(this, inflictor);
+	superchicken_gib(this, inflictor, true);
 
 	delete(this);
 }

@@ -397,7 +397,6 @@ void Death_SpecialHandle(entity targ, int killed_type)
 	targ.takedamage = DAMAGE_NO;
 	settouch(targ, func_null);
 
-
 	switch(killed_type)
 	{
 		default:

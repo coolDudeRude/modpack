@@ -40,15 +40,18 @@ void chicken_peck3(entity this) { set_anim(this, 3, chicken_peck4); ai_melee(thi
 void chicken_peck2(entity this) { set_anim(this, 2, chicken_peck3); ai_face(this); }
 void chicken_peck1(entity this) { set_anim(this, 1, chicken_peck2); ai_face(this); }
 
-void chicken_gib(entity this, entity inflictor)
+void chicken_gib(entity this, entity inflictor, bool dropgibs)
 {
 	sound7(this, CH_VOICE, "chicken/chickdie.wav", 1, ATTN_NORM, CHICKEN_PITCH, 0);
 
-	float dm = -15;
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
-	ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+	if(dropgibs)
+	{
+		float dm = -15;
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib1.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib2.mdl", dm);
+		ThrowGib(this, inflictor, "progs/gib3.mdl", dm);
+	}
 
 	// feathery mess
 	Send_Effect(EFFECT_CHICKEN_DIE, this.origin + '0 0 16', '0 0 0', 1);
@@ -60,15 +63,17 @@ void chicken_die(entity this, entity inflictor, entity attacker, int deathtype)
 	switch(killed_type)
 	{
 		case KILLED_NORMAL: break; // normal death
+		case KILLED_SIMPLEGIB: // they just burst anyway
 		case KILLED_GIBBED:
 		{
-			chicken_gib(this, inflictor);
-			// fall through to special handling
+			chicken_gib(this, inflictor, (killed_type == KILLED_GIBBED));
+			delete(this);
+			break;
 		}
 		default: Death_SpecialHandle(this, killed_type); return;
 	}
 
-	chicken_gib(this, inflictor);
+	chicken_gib(this, inflictor, true);
 
 	delete(this);
 }
