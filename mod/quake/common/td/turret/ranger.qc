@@ -251,7 +251,7 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 			vector dir;
 			vector myorg = actor.origin + '0 0 30';
 			vector targ_org = CENTER_OR_VIEWOFS(actor.enemy);
-			float damage = 15 * turret_getpower(actor.tur_level, 0.15);
+			float damage = 9 * turret_getpower(actor.tur_level, 0.15);
 			entity newmis;
 			// left eye
 			org = myorg + v_right * 6;

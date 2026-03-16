@@ -1501,7 +1501,7 @@ void td_FuelCleanup()
 	{
 		fuelcount += 1;
 		float mytime = it.spawn_time - time;
-		if(!chosen || mytime <= chosen_time)
+		if(!chosen || mytime >= chosen_time)
 		{
 			chosen = it;
 			chosen_time = mytime;
@@ -1523,7 +1523,7 @@ void td_BackpackCleanup()
 	{
 		bcount += 1;
 		float mytime = it.spawn_time - time;
-		if(!chosen || mytime <= chosen_time)
+		if(!chosen || mytime >= chosen_time)
 		{
 			chosen = it;
 			chosen_time = mytime;

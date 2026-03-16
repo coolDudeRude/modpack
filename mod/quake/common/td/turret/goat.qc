@@ -73,6 +73,12 @@ METHOD(GoatJumpingCastle, tr_setup, void(GoatJumpingCastle this, entity actor))
 	actor.solid = SOLID_TRIGGER;
 	actor.monster_attack = false;
 }
+
+spawnfunc(turret_jumpingcastle)
+{
+	if (!turret_initialize(this, TUR_JUMPING_CASTLE))
+		delete(this);
+}
 #endif // SVQC
 #ifdef CSQC
 METHOD(GoatJumpingCastle, tr_setup, void(GoatJumpingCastle this, entity actor))

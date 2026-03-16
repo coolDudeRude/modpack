@@ -373,7 +373,7 @@ void buildtool_frame(entity this)
 	tracebox(trace_endpos + '0 0 1', dropmark.mins, dropmark.maxs, trace_endpos - '0 0 150', MOVE_NOMONSTERS, this);
 
 	dropmark.colormod = '1 1 1';
-	if(trace_startsolid || STAT(TD_FUEL) < tur.tur_cost || ((tur.tur_units + td_ent.tur_units) > td_ent.currentammo) || td_badplacement(this, tur, trace_endpos))
+	if(trace_startsolid || trace_fraction == 1 || STAT(TD_FUEL) < tur.tur_cost || ((tur.tur_units + td_ent.tur_units) > td_ent.currentammo) || td_badplacement(this, tur, trace_endpos))
 		dropmark.colormod = '1 0 0';
 
 	if(dropmark.tur_head)
@@ -575,7 +575,7 @@ void BuildTool_Fire(entity actor)
 	if(trace_startsolid)
 		return;
 	tracebox(trace_endpos + '0 0 1', tur.m_mins, tur.m_maxs, trace_endpos - '0 0 150', MOVE_NOMONSTERS, actor);
-	if(trace_startsolid)
+	if(trace_startsolid || trace_fraction == 1)
 		return;
 
 	// regardless of what happens, add a delay to prevent spam
@@ -584,7 +584,7 @@ void BuildTool_Fire(entity actor)
 	if(td_badplacement(actor, tur, trace_endpos))
 	{
 		Send_Notification(NOTIF_ONE_ONLY, actor, MSG_CENTER, CENTER_NO_PLACE);
-		return; // TODO: notify
+		return; // TODO: notify for different types of blockage
 	}
 
 	entity turret = spawn();

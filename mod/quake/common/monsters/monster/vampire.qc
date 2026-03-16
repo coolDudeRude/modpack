@@ -269,7 +269,8 @@ void vampire_pain(entity this, entity attacker, float damage, int deathtype)
 	this.pain_finished = time + 1.1;
 	this.colormod = '1 0.9 0.9';
 
-	vampire_pain1(this);
+	setthink(this, vampire_pain1);
+	this.nextthink = time;
 }
 
 //===========================================================================
