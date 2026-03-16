@@ -12,9 +12,9 @@ METHOD(Poisoned, m_tick, void(StatusEffects this, entity actor))
         this.m_remove(this, actor, STATUSEFFECT_REMOVE_NORMAL);
         return;
     }
-    Send_Effect(EFFECT_POOP_STINK, actor.origin, '0 0 0', 1);
     if(time > actor.poisoned_time)
     {
+        Send_Effect(EFFECT_POOP_STINK, actor.origin, '0 0 0', 1);
         float poison_dmg = 1;
         if(IS_MONSTER(actor) || deathmatch)
             poison_dmg = 5;
