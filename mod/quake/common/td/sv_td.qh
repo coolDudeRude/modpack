@@ -55,6 +55,8 @@ void td_BuildMode_Toggle(entity this);
 
 void td_RemovePlayer(entity this);
 
+void td_PlayerDies(entity this);
+
 void td_PutPlayerInServer(entity this);
 
 void td_StartFrame();

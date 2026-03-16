@@ -1768,12 +1768,36 @@ void td_BuildMode_Toggle(entity this)
 
 void td_RemovePlayer(entity this)
 {
+	if(intermission_running || gameover)
+		return;
+
 	STAT(TD_BUILDMODE, this) = false;
+	float amount = STAT(TD_FUEL, this);
+	if(td_phase == TD_PHASE_COMBAT)
+		amount *= 0.5; // only half if you leave in combat!
+	if(amount > 0)
+		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this);
+
+	STAT(TD_FUEL, this) = 0;
+}
+
+void td_PlayerDies(entity this)
+{
+	if(intermission_running || gameover)
+		return;
+	if(td_phase != TD_PHASE_COMBAT)
+		return;
+
+	STAT(TD_BUILDMODE, this) = false;
+	float amount = STAT(TD_FUEL, this) * 0.5;
+	if(amount > 0)
+		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this);
+
 	STAT(TD_FUEL, this) = 0;
 }
 
 void td_PutPlayerInServer(entity this)
 {
 	STAT(TD_BUILDMODE, this) = false;
-	STAT(TD_FUEL, this) = 0;
+	//STAT(TD_FUEL, this) = 0;
 }

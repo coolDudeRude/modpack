@@ -1118,6 +1118,9 @@ void PlayerDie(entity this, entity inflictor, entity attacker, int deathtype)
 
 	cannon_clear(this);
 
+	if(gametype == GAMETYPE_TD)
+		td_PlayerDies(this);
+
 	// rogue fields
 	this.gravity = 1.0;
 

@@ -1430,6 +1430,8 @@ void ClientKill(entity this)
 	Tank_PlayerDie(this);
 	slide_PlayerDies(this);
 	cannon_clear(this);
+	if(gametype == GAMETYPE_TD)
+		td_PlayerDies(this);
 	this.modelindex = this.modelindex_player;
 	WaypointSprite_PlayerDead(this);
 	set_suicide_frame(this);
@@ -3218,6 +3220,8 @@ void ClientDisconnect(entity this)
 
 	if(gametype == GAMETYPE_JUMPSDONEWELL)
 		JDW_ClientDisconnect(this);
+	else if(gametype == GAMETYPE_TD)
+		td_RemovePlayer(this);
 
 	set_suicide_frame(this);
 
