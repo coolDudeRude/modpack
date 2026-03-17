@@ -213,10 +213,11 @@ void CastCookie(entity this)
 	settouch(newmis, T_MissileTouch);
 	newmis.dmg = 20;
 	newmis.projectiledeathtype = DEATH_MONSTER_SHAMBLER.m_id;
-	_setmodel(newmis, "progs/cookie.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');		
 	newmis.velocity = vec*300;
 	_sound(this, CH_WEAPON_SINGLE, "hknight/attack1.wav", 1, ATTN_NORM);
+
+	CSQCProjectile(newmis, true, PROJECTILE_COOKIE, true);
 }
 
 void CastLightning(entity this)

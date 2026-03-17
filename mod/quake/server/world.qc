@@ -204,6 +204,11 @@ bool IsImpelMap()
 	return (substring(world.model, 0, 8) == "maps/aop");
 }
 
+bool IsMCJMap()
+{
+	return (world.model == "maps/village-rush.bsp" || substring(world.model, 0, 9) == "maps/mcj_");
+}
+
 // copper-specific lighting hack
 string light_str(float f)
 {
@@ -869,7 +874,7 @@ PRECACHE(Junk)
 	precache_sound("items/sharp2.wav");
 
 	// check if backpack exists to validate all items?
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/backpack_simple.mdl"))
+	if(IsMCJMap() && fexists("progs/backpack_simple.mdl"))
 	{
 		precache_model("progs/backpack_simple.mdl");
 		precache_sound("items/equip_iron3.wav");
@@ -1313,7 +1318,7 @@ bool Copper_OnEntityPreSpawn(entity this)
 	// since coop only stuff relies entirely on there being multiple players, we must sadly turn it off
 	bool forcecoop = false;
 	// some maps require co-op to function correctly (ironically), so force enable it here
-	if(world.model == "maps/rmx_rj.bsp" || substring(world.model, 0, 9) == "maps/mcj_")
+	if(world.model == "maps/rmx_rj.bsp" || IsMCJMap())
 		forcecoop = true;
 	if(forcecoop)
 	{

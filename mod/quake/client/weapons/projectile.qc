@@ -481,6 +481,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(SWARM)              this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(FROG_SPIT)          this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(BOWLING_BALL)       this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(COOKIE)             this.traileffect = EFFECT_TR_GRENADE.m_id; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");

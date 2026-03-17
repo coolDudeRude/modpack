@@ -92,42 +92,43 @@ void td_SetMonsters_Easy(entity wave_ent)
 {
 	switch(wave_ent.wave)
 	{
-		default:
 		case 1:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("15 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("13 grunt 2 enforcer 2 knight", 1, 1);
 			break;
 		}
 		case 2:
 		{
 			RandomSelection_AddString("1 ogre 3 knight", 1, 1);
+			RandomSelection_AddString("2 ogre", 1, 1);
 			break;
 		}
 		case 3:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("2 ogre 1 hknight", 1, 1);
+			RandomSelection_AddString("4 enforcer 1 hknight", 1, 1);
 			break;
 		}
 		case 4:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("1 shalrath", 1, 1);
 			break;
 		}
 		case 5:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("2 ogre 1 hknight 1 demon", 1, 1);
 			break;
 		}
 		case 6:
 		{
-			// we add bosses separately
-			//RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("1 shambler 1 demon", 1, 1);
 			break;
 		}
 		default:
 		case 7:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("3 knight 4 ogre 1 hknight 1 demon", 1, 1);
 			break;
 		}
 	}
@@ -228,10 +229,10 @@ void td_SetMonsters_Nightmare(entity wave_ent)
 		case 1:
 		{
 			RandomSelection_AddString("24 grunt 6 enforcer 3 axegrunt 2 ogre 1 bambler", 1, 1);
-			RandomSelection_AddString("6 ogre 3 knight 2 hknight 1 hogremac", 1, 1);
-			RandomSelection_AddString("2 hknight 1 demon 1 shambler", 1, 1);
-			RandomSelection_AddString("2 sam 6 enforcer 2 grunt 3 hogreham", 1, 1);
-			RandomSelection_AddString("1 shambler 2 cacodemon", 1, 1);
+			RandomSelection_AddString("10 knight 6 ogre 3 knight 2 hknight 1 hogremac", 1, 1);
+			RandomSelection_AddString("10 knight 2 hknight 1 demon 1 shambler", 1, 1);
+			RandomSelection_AddString("10 knight 2 sam 6 enforcer 2 grunt 3 hogreham", 1, 1);
+			RandomSelection_AddString("5 knight 1 shambler 2 cacodemon 1 mutant", 1, 1);
 			break;
 		}
 		case 2:
@@ -241,23 +242,22 @@ void td_SetMonsters_Nightmare(entity wave_ent)
 		}
 		case 3:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("1 juggernaut 2 minotaur 1 arachnofloyd 3 demon 1 tortoise", 1, 1);
 			break;
 		}
 		case 4:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("2 dfury 3 gug 1 biter 1 justice", 1, 1);
 			break;
 		}
 		case 5:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("4 dknight 1 mutant 3 bambler 1 shambler 2 hogreham 1 hogremac 1 justice", 1, 1);
 			break;
 		}
 		case 6:
 		{
-			// we add bosses separately
-			//RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("1 edie 2 mancubus 2 dknight 2 shalrath", 1, 1);
 			break;
 		}
 		default:
@@ -1622,6 +1622,11 @@ void td_DropHealth(entity from, entity this, string item)
 			this.noise = "items/r_item1.wav";
 			this.healamount = 15;
 			this.healtype = 0;
+			if(IsMCJMap() && fexists("maps/b_bh10_simple.bsp"))
+			{
+				this.mdl = "maps/b_bh10_simple.bsp";
+				this.noise = "items/burp.wav";
+			}
 			break;
 		}
 		case "health25":
@@ -1630,6 +1635,11 @@ void td_DropHealth(entity from, entity this, string item)
 			this.noise = "items/health1.wav";
 			this.healamount = 25;
 			this.healtype = 1;
+			if(IsMCJMap() && fexists("maps/b_bh25_simple.bsp"))
+			{
+				this.mdl = "maps/b_bh25_simple.bsp";
+				this.noise = "items/burp.wav";
+			}
 			break;
 		}
 		case "health100":
@@ -1638,6 +1648,11 @@ void td_DropHealth(entity from, entity this, string item)
 			this.noise = "items/r_item2.wav";
 			this.healamount = 100;
 			this.healtype = 2;
+			if(IsMCJMap() && fexists("maps/b_bh100_simple.bsp"))
+			{
+				this.mdl = "maps/b_bh100_simple.bsp";
+				this.noise = "items/burp.wav";
+			}
 			break;
 		}
 	}

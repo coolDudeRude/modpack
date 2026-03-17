@@ -1825,8 +1825,11 @@ void PutObserverInServer(entity this)
 		ReadyCount(this);
 	}
 
-	Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
-	Inventory_update(this);
+	if(this.inventory)
+	{
+		Inventory_clear(this.inventory, ITEM_OWNED | ITEM_DUALWIELD);
+		Inventory_update(this);
+	}
 
 	WaypointSprite_PlayerDead(this);
 

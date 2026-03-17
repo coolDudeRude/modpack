@@ -457,7 +457,7 @@ Monster monster_randomize(entity this, Monster mon)
 		return mon; // never replace hidden monsters
 
 	bool floyd = (substring(world.model, 0, 9) == "maps/ffj_");
-	bool minecraft = (substring(world.model, 0, 9) == "maps/mcj_");
+	bool minecraft = IsMCJMap();
 
 	RandomSelection_Init();
 	FOREACH(Monsters, it != MON_Null,

@@ -99,6 +99,7 @@ MODEL(PROJECTILE_MORTAR,                    "progs/proj_tur_mortar.mdl");
 MODEL(PROJECTILE_SWARM,                     "progs/swarm.mdl");
 MODEL(PROJECTILE_FROG_SPIT,                 "progs/bilefrag.mdl");
 MODEL(PROJECTILE_BOWLING_BALL,              "progs/proj_tur_bowlingball.mdl");
+MODEL(PROJECTILE_COOKIE,                    "progs/cookie.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

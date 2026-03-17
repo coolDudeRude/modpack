@@ -264,7 +264,7 @@ spawnfunc(item_health)
 		this.healamount = 15;
 		this.healtype = 0;
 
-		if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_bh10_simple.bsp"))
+		if(IsMCJMap() && fexists("maps/b_bh10_simple.bsp"))
 		{
 			this.mdl = "maps/b_bh10_simple.bsp";
 			this.noise = "items/burp.wav";
@@ -277,7 +277,7 @@ spawnfunc(item_health)
 		this.healamount = 100;
 		this.healtype = 2;
 
-		if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_bh100_simple.bsp"))
+		if(IsMCJMap() && fexists("maps/b_bh100_simple.bsp"))
 		{
 			this.mdl = "maps/b_bh100_simple.bsp";
 			this.noise = "items/burp.wav";
@@ -290,7 +290,7 @@ spawnfunc(item_health)
 		this.healamount = 25;
 		this.healtype = 1;
 
-		if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_bh25_simple.bsp"))
+		if(IsMCJMap() && fexists("maps/b_bh25_simple.bsp"))
 		{
 			this.mdl = "maps/b_bh25_simple.bsp";
 			this.noise = "items/burp.wav";
@@ -470,7 +470,7 @@ void armor_touch(entity this, entity toucher)
 	// NOTE: disabling spammy message as you already know from the HUD that you got it!
 	//sprint(toucher, "You got armor\n");
 // armor touch sound
-	if(substring(world.model, 0, 9) == "maps/mcj_" && this.armor_simple)
+	if(IsMCJMap() && this.armor_simple)
 		_sound(toucher, CH_TRIGGER_SINGLE, "items/equip_iron3.wav", 1, ATTN_NORM);
 	else if(this.noise && this.noise != "")
 		_sound(toucher, CH_TRIGGER_SINGLE, this.noise, 1, ATTN_NORM);
@@ -498,7 +498,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor1.wav";
 			this.skin = 0;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/armor_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/armor_simple.mdl";
@@ -512,7 +512,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor1.wav";
 			this.skin = 1;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/armor_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/armor_simple.mdl";
@@ -526,7 +526,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor1.wav";
 			this.skin = 2;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/armor_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/armor_simple.mdl";
@@ -540,7 +540,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor_mage.wav";
 			this.skin = 0;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_mage_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/armor_mage_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/armor_mage_simple.mdl";
@@ -554,7 +554,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor_tech.wav";
 			this.skin = 0;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/armor_tech_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/armor_tech_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/armor_tech_simple.mdl";
@@ -568,7 +568,7 @@ void armor_init(entity this, int armor_type)
 			this.noise = "items/armor_heavy.wav";
 			this.skin = 0;
 
-			if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/item_armor_heavy_simple.mdl"))
+			if(IsMCJMap() && fexists("progs/item_armor_heavy_simple.mdl"))
 			{
 				this.armor_simple = true;
 				this.mdl = "progs/item_armor_heavy_simple.mdl";
@@ -821,7 +821,7 @@ void pulserifle_touch(entity this, entity toucher)
 		if(!(STAT(PASSIVES, toucher) & PASSIVE_PULSERIFLE))
 			centerprint(toucher, "[ ARMOR LASER SYSTEM ACTIVATED ]\n");
 	}
-	else if(substring(world.model, 0, 9) == "maps/mcj_")
+	else if(IsMCJMap())
 		_sound(toucher, CHAN_ITEM, "items/pop.wav", 1, ATTN_NORM);
 	else
 		_sound(toucher, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
@@ -941,7 +941,7 @@ void weapon_touch(entity this, entity toucher)
 			{ /* do nothing */ }
 		else if(this.target && this.target != "")
 		{
-			if(substring(world.model, 0, 9) == "maps/mcj_")
+			if(IsMCJMap())
 				_sound(toucher, CHAN_ITEM, "items/pop.wav", 1, ATTN_NORM);
 			else
 				_sound(toucher, CH_TRIGGER_SINGLE, "weapons/pkup.wav", 1, ATTN_NORM);
@@ -977,7 +977,7 @@ void weapon_touch(entity this, entity toucher)
 			Send_Notification(NOTIF_ONE, toucher, MSG_INFO, INFO_ITEM_WEAPON_PICKUP);
 	}
 // weapon touch sound
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 		_sound(toucher, CHAN_ITEM, "items/pop.wav", 1, ATTN_NORM);
 	else
 		_sound(toucher, CH_TRIGGER_SINGLE, "weapons/pkup.wav", 1, ATTN_NORM);
@@ -1127,7 +1127,7 @@ void W_SetModel(entity this, Weapon wpn)
 	string simplemdl = strcat("progs/g_", wpn.mdl, "_simple.mdl");
 
 	string mymdl = strcat("progs/g_", wpn.mdl, ".mdl");
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists(simplemdl))
+	if(IsMCJMap() && fexists(simplemdl))
 	{
 		precache_sound("items/pop.wav");
 		mymdl = simplemdl;
@@ -1358,7 +1358,7 @@ spawnfunc(item_shells)
 	this.netname = "shells";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_shell0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1414,7 +1414,7 @@ spawnfunc(item_spikes)
 	this.netname = "nails";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_nail0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1470,7 +1470,7 @@ spawnfunc(item_lava_spikes)
 	this.netname = "lava nails";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_lnail0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1527,7 +1527,7 @@ spawnfunc(item_rockets)
 	this.netname = "rockets";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_rock0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1584,7 +1584,7 @@ spawnfunc(item_multi_rockets)
 	this.netname = "multi rockets";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_mrock0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1647,7 +1647,7 @@ spawnfunc(item_cells)
 	this.netname = "cells";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_batt0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1703,7 +1703,7 @@ spawnfunc(item_plasma)
 	this.netname = "plasma";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_plas0_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -1759,7 +1759,7 @@ spawnfunc(item_drills)
 	this.netname = "drills";
 	this.noise = "weapons/lock4.wav";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_")
+	if(IsMCJMap())
 	{
 		string simplemdl = "progs/b_mdrill1_simple.mdl";
 		if(this.spawnflags & WEAPON_BIG2)
@@ -2870,7 +2870,7 @@ spawnfunc(item_backpack)
 
 	this.mdl = "progs/backpack.mdl";
 
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/backpack_simple.mdl"))
+	if(IsMCJMap() && fexists("progs/backpack_simple.mdl"))
 		this.mdl = "progs/backpack_simple.mdl";
 
 	this.flags = FL_ITEM;
@@ -3279,7 +3279,7 @@ void DropBackpack(entity this)
 	set_movetype(item, MOVETYPE_TOSS);
 	if(mywep && mywep != WEP_Null)
 		W_SetModel(item, mywep);
-	else if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("progs/backpack_simple.mdl"))
+	else if(IsMCJMap() && fexists("progs/backpack_simple.mdl"))
 		_setmodel(item, "progs/backpack_simple.mdl");
 	else
 		_setmodel(item, "progs/backpack.mdl");

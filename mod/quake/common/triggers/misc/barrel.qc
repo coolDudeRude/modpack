@@ -52,7 +52,7 @@ void barrel_spawn(entity this)
 {
 	if(!this.mdl || this.mdl == "")
 	{
-		if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_explob_tnt.bsp"))
+		if(IsMCJMap() && fexists("maps/b_explob_tnt.bsp"))
 			this.mdl = "maps/b_explob_tnt.bsp";
 		else
 			this.mdl = "maps/b_explob.bsp";
@@ -95,7 +95,7 @@ TESTING THING
 spawnfunc(misc_explobox)
 {
 	this.mdl = "maps/b_explob.bsp";
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_explob_tnt.bsp"))
+	if(IsMCJMap() && fexists("maps/b_explob_tnt.bsp"))
 		this.mdl = "maps/b_explob_tnt.bsp";
 
 	barrel_spawn(this);
@@ -119,7 +119,7 @@ Smaller exploding box, REGISTERED ONLY
 spawnfunc(misc_explobox2)
 {
 	this.mdl = "maps/b_exbox2.bsp";
-	if(substring(world.model, 0, 9) == "maps/mcj_" && fexists("maps/b_exbox2_tnt.bsp"))
+	if(IsMCJMap() && fexists("maps/b_exbox2_tnt.bsp"))
 		this.mdl = "maps/b_exbox2_tnt.bsp";
 	barrel_spawn(this);
 }

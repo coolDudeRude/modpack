@@ -67,6 +67,7 @@ NET_HANDLE(ENT_CLIENT_TD_CHEST, bool isnew)
 
 	this.state = (sf & SF_TD_CHEST_OPEN);
 
+	this.effects = EF_FULLBRIGHT;
 	this.solid = SOLID_BBOX;
 	string fallbackmdl = string_null;
 	string fallbacknoise = string_null;
