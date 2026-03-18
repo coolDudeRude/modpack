@@ -157,7 +157,7 @@ NET_HANDLE(ENT_CLIENT_TD_SPAWNPOINT, bool isnew)
 
 	this.classname = "td_spawnpoint"; // for identification
 	this.solid = SOLID_TRIGGER;
-	setsize(this, '-256 -256 -256', '256 256 256');
+	setsize(this, '-150 -150 -150', '150 150 150');
 	set_movetype(this, MOVETYPE_NONE);
 
 	return = true;
