@@ -528,7 +528,7 @@ void td_MonsterSetup(entity this, Monster mon)
 		return;
 
 	// only a minor step up per wave as otherwise they'll be impossible to kill!
-	float myscale = td_ent.scale * 0.1;
+	float myscale = td_ent.scale * 0.05;
 	this.health = this.health * (1 + (myscale * (td_skill + 1)) * td_ent.wave);
 }
 
@@ -1835,7 +1835,7 @@ float td_GetMonsterSpeed(entity this, float dist)
 
 	// only 10% boost per wave!
 	// we also bound it as Quake may break if speed is too high
-	float myscale = td_ent.scale * 0.1;
+	float myscale = td_ent.scale * 0.04;
 	return bound(1, 1 * (1 + (myscale * (td_skill + 1)) * td_ent.wave), 5);
 }
 
