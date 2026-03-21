@@ -677,13 +677,13 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	
 	if(gametype == GAMETYPE_TD && td_ent && td_ent.wave > 0 && td_ent.scale > 0)
 	{
-		if(IS_MONSTER(attacker) && !(attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
+		if(IS_MONSTER(attacker) && !(attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && !(attacker.owner.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
 		{
 			// no cap... good luck
 			// scale only by a small amount per wave or things will get impossible fast
 			float myscale = td_ent.scale * 0.05;
 			float increase = (1 + (myscale * (td_skill + 1)) * td_ent.wave);
-			damage += (damage * increase);
+			damage *= increase;
 		}
 	}
 
