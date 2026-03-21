@@ -1,6 +1,10 @@
 // generated file; do not modify
+#include "clippy.qh"
+#include "dryad.qh"
+#include "duke.qh"
 #include "goat.qh"
 #include "keyleth.qh"
+#include "pepsiman.qh"
 #include "poop.qh"
 #include "ranger.qh"
 #include "squire.qh"

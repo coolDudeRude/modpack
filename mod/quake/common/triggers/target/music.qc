@@ -11,6 +11,15 @@ STATIC_INIT(g_targetmusic_list)
 	g_targetmusic_list = IL_NEW();
 }
 
+void TempSound(string snd, float stime)
+{
+	if(!snd || snd == "")
+		return; // TODO?
+	WriteHeader(MSG_BROADCAST, TE_CSQC_TEMPSOUND);
+	WriteString(MSG_BROADCAST, snd);
+	WriteFloat(MSG_BROADCAST, stime);
+}
+
 // values:
 //   volume
 //   noise
@@ -155,12 +164,15 @@ spawnfunc(trigger_music)
 entity TargetMusic_list;
 STATIC_INIT(TargetMusic_list)
 {
-	TargetMusic_list = LL_NEW();
+	TargetMusic_list = IL_NEW();
 }
 
 void TargetMusic_Advance()
 {
+	TDMusic_Advance(); // before bosses so they take priority!
 	BossMusic_Advance();
+
+	TempSound_Advance();
 
 	// run AFTER all the thinks!
 	entity best = music_default;
@@ -172,7 +184,7 @@ void TargetMusic_Advance()
 	{
 		best = music_trigger;
 	}
-	LL_EACH(TargetMusic_list, it.noise, {
+	IL_EACH(TargetMusic_list, it.noise, {
 		const float vol0 = (getsoundtime(it, CH_BGM_SINGLE) >= 0) ? it.lastvol : -1;
 		if (it == best)
 		{
@@ -245,10 +257,10 @@ void Net_TargetMusic()
 	const string noi = engine_fixsound(ReadString());
 
 	entity e = NULL;
-	LL_EACH(TargetMusic_list, it.count == id, { e = it; break; });
+	IL_EACH(TargetMusic_list, it.count == id, { e = it; break; });
 	if (!e)
 	{
-		LL_PUSH(TargetMusic_list, e = new_pure(TargetMusic));
+		IL_PUSH(TargetMusic_list, e = new_pure(TargetMusic));
 		e.count = id;
 	}
 	if(!noi || noi == "" || !fexists(noi))
@@ -358,9 +370,77 @@ NET_HANDLE(ENT_CLIENT_TRIGGER_MUSIC, bool isnew)
 	this.draw = Ent_TriggerMusic_Think;
 	if(isnew)
 	{
-		LL_PUSH(TargetMusic_list, this);
+		IL_PUSH(TargetMusic_list, this);
 		IL_PUSH(g_drawables, this);
 	}
+	return true;
+}
+
+.float wait;
+void tempsound_clear()
+{
+	if(!tempsound)
+		return;
+
+	sound(tempsound, CH_BGM_SINGLE, SND_Null, 1, 0);
+	delete(tempsound);
+	tempsound = NULL;
+}
+
+void TempSound_Advance()
+{
+	if(!tempsound)
+		return;
+
+	if(time >= tempsound.delay)
+	{
+		// prevent looping
+		tempsound.lastvol = 0; // also reset
+		strcpy(tempsound.noise, "misc/null.wav");
+		_sound(tempsound, CH_BGM_SINGLE, tempsound.noise, 0, ATTEN_NONE);
+	}
+
+	if(time >= tempsound.wait)
+	{
+		tempsound_clear();
+		return;
+	}
+
+	music_trigger = tempsound;
+}
+
+NET_HANDLE(TE_CSQC_TEMPSOUND, bool isNew)
+{
+	Net_Accept(tempsound);
+
+	string s = engine_fixsound(ReadString());
+	float stime = ReadFloat();
+
+	if(!fexists(s))
+	{
+		delete(this);
+		return true;
+	}
+
+	if(tempsound)
+		tempsound_clear();
+
+	precache_sound(s);
+	tempsound = this;
+	strcpy(tempsound.noise, s);
+	tempsound.volume = 1;
+	tempsound.fade_time = 0;
+	tempsound.fade_rate = 0;
+	tempsound.active = ACTIVE_ACTIVE;
+	float slength = soundlength(s);
+	tempsound.delay = time + slength;
+	if(stime <= 0)
+		tempsound.wait = time + slength;
+	else
+		tempsound.wait = time + stime;
+
+	IL_PUSH(TargetMusic_list, tempsound);
+
 	return true;
 }
 
@@ -390,7 +470,7 @@ bool bossmusic_spawn(Monster mon)
 		
 	mon.musicdef = bmusic;
 
-	LL_PUSH(TargetMusic_list, bmusic);
+	IL_PUSH(TargetMusic_list, bmusic);
 
 	return true;
 }

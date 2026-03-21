@@ -48,7 +48,18 @@ void td_RoundWon(entity this)
 {
 	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_ROUND_COMPLETE);
 	if(this.noise4 != "")
-		_sound(this, CH_INFO, this.noise4, 1, ATTN_NONE);
+	{
+		if(autocvar_sv_quake_enginemusic)
+			_sound(this, CH_INFO, this.noise4, 1, ATTN_NONE);
+		else
+			TempSound(this.noise4, 5);
+	}
+
+	IL_EACH(g_turrets, it.turretdef == TUR_ANGRY_NIMBUS,
+	{
+		it.clientframe = NANIM_WIN;
+		it.attack_finished = time + 2;
+	});
 
 	// final wave was beaten, end the match!
 	if(this.count > 0 && this.wave >= this.count)
@@ -76,6 +87,12 @@ void td_RoundLost(entity this)
 	// manager ticks will stop once intermission is reached
 	mapname = "td";
 	NextLevel();
+
+	IL_EACH(g_turrets, it.turretdef == TUR_ANGRY_NIMBUS,
+	{
+		it.clientframe = NANIM_LOSE;
+		it.attack_finished = time + 2;
+	});
 
 	// reset server after some time
 	if(this)
@@ -117,7 +134,7 @@ void td_SetMonsters_Easy(entity wave_ent)
 		}
 		case 5:
 		{
-			RandomSelection_AddString("2 ogre 1 hknight 1 demon", 1, 1);
+			RandomSelection_AddString("2 ogre 1 hknight 4 wizard 1 demon", 1, 1);
 			break;
 		}
 		case 6:
@@ -160,19 +177,18 @@ void td_SetMonsters_Normal(entity wave_ent)
 		}
 		case 5:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("8 grunt 4 wizard 1 jim 2 enforcer 1 bambler 1 demon", 1, 1);
 			break;
 		}
 		case 6:
 		{
-			// we add bosses separately
-			//RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("2 shambler 2 demon", 1, 1);
 			break;
 		}
 		default:
 		case 7:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("3 knight 4 ogre 1 hknight 1 demon", 1, 1);
 			break;
 		}
 	}
@@ -204,19 +220,18 @@ void td_SetMonsters_Hard(entity wave_ent)
 		}
 		case 5:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("12 grunt 8 wizard 2 jim 2 enforcer 1 shambler", 1, 1);
 			break;
 		}
 		case 6:
 		{
-			// we add bosses separately
-			//RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("1 shambler 1 demon", 1, 1);
 			break;
 		}
 		default:
 		case 7:
 		{
-			RandomSelection_AddString("8 grunt 2 enforcer", 1, 1);
+			RandomSelection_AddString("3 knight 5 ogre 3 hknight 2 demon", 1, 1);
 			break;
 		}
 	}
@@ -242,17 +257,17 @@ void td_SetMonsters_Nightmare(entity wave_ent)
 		}
 		case 3:
 		{
-			RandomSelection_AddString("1 juggernaut 2 minotaur 1 arachnofloyd 3 demon 1 tortoise", 1, 1);
+			RandomSelection_AddString("1 juggernaut 2 minotaur 1 arachnofloyd 3 demon 1 tortoise 5 boil", 1, 1);
 			break;
 		}
 		case 4:
 		{
-			RandomSelection_AddString("2 dfury 3 gug 1 biter 1 justice", 1, 1);
+			RandomSelection_AddString("2 dfury 3 gug 1 biter 3 octa 2 wizard 2 gaunt 1 justice", 1, 1);
 			break;
 		}
 		case 5:
 		{
-			RandomSelection_AddString("4 dknight 1 mutant 3 bambler 1 shambler 2 hogreham 1 hogremac 1 justice", 1, 1);
+			RandomSelection_AddString("4 dknight 1 mutant 10 wizard 4 jim 3 bambler 1 amalgam 1 shambler 2 hogreham 1 hogremac 1 justice", 1, 1);
 			break;
 		}
 		case 6:
@@ -318,14 +333,14 @@ string td_GetLoot(entity this)
 {
 	// always drop ammo
 	RandomSelection_Init();
-	RandomSelection_AddString("ammo_shells", 1, 1);
-	RandomSelection_AddString("ammo_nails", 1, 1);
-	RandomSelection_AddString("ammo_rockets", 1, 1);
-	RandomSelection_AddString("ammo_cells", 1, 1);
-	RandomSelection_AddString("ammo_lava_nails", 1, 1);
-	RandomSelection_AddString("ammo_multi_rockets", 1, 1);
-	RandomSelection_AddString("ammo_plasma", 1, 1);
-	RandomSelection_AddString("ammo_drills", 1, 1);
+	RandomSelection_AddString("ammo_shells", 1.5, 1);
+	RandomSelection_AddString("ammo_nails", 2, 1);
+	RandomSelection_AddString("ammo_rockets", 1.5, 1);
+	RandomSelection_AddString("ammo_cells", 1.5, 1);
+	RandomSelection_AddString("ammo_lava_nails", 1.5, 1);
+	RandomSelection_AddString("ammo_multi_rockets", 1.5, 1);
+	RandomSelection_AddString("ammo_plasma", 1.5, 1);
+	RandomSelection_AddString("ammo_drills", 1.5, 1);
 
 	// armor depends on wave?
 	RandomSelection_AddString("armor1", 0.5, 1);
@@ -497,10 +512,24 @@ void td_BuildPhase_Tick(entity this)
 		float time_left = td_starttime - time;
 		if(time_left < 11 && floor(time_left - frametime) != floor(time_left))
 		{
-			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, floor(time_left), this.wave);
+			Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, this.wave, floor(time_left));
 			_sound(this, CH_INFO, "misc/talk.wav", 1, ATTEN_NONE);
 		}
 	}
+}
+
+void td_MonsterSetup(entity this, Monster mon)
+{
+	if(mon.spawnflags & MONSTER_TYPE_BOSS)
+		return;
+	if(!td_ent)
+		return;
+	if(td_ent.scale <= 0)
+		return;
+
+	// only a minor step up per wave as otherwise they'll be impossible to kill!
+	float myscale = td_ent.scale * 0.1;
+	this.health = this.health * (1 + (myscale * (td_skill + 1)) * td_ent.wave);
 }
 
 int td_CountMonsters(entity this, entity sp)
@@ -603,7 +632,11 @@ void td_BuildPhase_Init(entity this)
 	bool chickens = false, cheddar = false;
 	int chickenbosses = 0;
 	float chicken_chance = 0.075;
-	if((this.wave < this.count || this.count <= 0) && random() < chicken_chance)
+	bool have_flying = false;
+	bool bosswave = (this.count > 0 && this.wave == this.count);
+	if(this.wave > this.lip && random() < 0.075)
+		bosswave = true;
+	else if((this.wave < this.count || this.count <= 0) && random() < chicken_chance)
 	{
 		if(random() > 0.5)
 			chickens = true;
@@ -620,6 +653,14 @@ void td_BuildPhase_Init(entity this)
 		else if(this.noise1 != "")
 			_sound(this, CH_INFO, this.noise1, 1, ATTN_NONE);
 		Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_ROUND_FINALWAVE);
+	}
+	else if(bosswave)
+	{
+		if(this.noise3 != "")
+			_sound(this, CH_INFO, this.noise3, 1, ATTN_NONE);
+		else if(this.noise1 != "")
+			_sound(this, CH_INFO, this.noise1, 1, ATTN_NONE);
+		Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_ROUND_BOSSWAVE);
 	}
 	else if(cheddar)
 	{
@@ -710,13 +751,20 @@ void td_BuildPhase_Init(entity this)
 			if(it.wave != this.wave)
 				spawncount += rint(((this.wave - it.wave) * this.wave) * 0.5);
 
-			monsters_total += td_DistributeMonsters(this, it, mon, spawncount);
+			if(!(mon.spawnflags & MONSTER_TYPE_BOSS) && this.scale > 0)
+				spawncount = rint(spawncount * this.scale);
+
+			int addedmonsters = td_DistributeMonsters(this, it, mon, spawncount);
+			monsters_total += addedmonsters;
+			if((mon.spawnflags & MONSTER_TYPE_FLY) && addedmonsters > 0)
+				have_flying = true;
+
 			j += 1; // skip the next token
 		}
 
 		// final wave: boss!
 		// TODO: do this outside of the wave logic?
-		if(this.count > 0 && this.wave == this.count && bosscount < 1 && !(this.spawnflags & TD_ENT_NOBOSS))
+		if(bosswave && bosscount < 1 && !(this.spawnflags & TD_ENT_NOBOSS))
 		{
 			Monster mon = td_PickBoss();
 			if(mon && mon != MON_Null)
@@ -756,6 +804,12 @@ void td_BuildPhase_Init(entity this)
 
 	bprintf("Wave %d monsters: %d\n", this.wave, monsters_total);
 
+	if(have_flying && !this.attack_released)
+	{
+		this.attack_released = true;
+		Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_BEWARE_SKIES);
+	}
+
 	setthink(this, td_BuildPhase_Tick);
 	this.nextthink = time;
 }
@@ -763,6 +817,11 @@ void td_BuildPhase_Init(entity this)
 bool td_manager_send(entity this, entity to, int sf)
 {
 	WriteHeader(MSG_ENTITY, ENT_CLIENT_TD_ENT);
+
+	// only send music if it exists!
+	if(!this.music || this.music == "")
+		sf &= ~SF_TD_ENT_MUSIC;
+
 	WriteByte(MSG_ENTITY, sf);
 
 	if(sf & SF_TD_ENT_COUNTS)
@@ -773,8 +832,14 @@ bool td_manager_send(entity this, entity to, int sf)
 
 	if(sf & SF_TD_ENT_LIMITS)
 	{
-		WriteByte(MSG_ENTITY, this.count); // wave limit
+		int wlimit = (this.count > 0) ? this.count : 0;
+		WriteByte(MSG_ENTITY, wlimit); // wave limit
 		WriteShort(MSG_ENTITY, this.currentammo); // max units
+	}
+
+	if(sf & SF_TD_ENT_MUSIC)
+	{
+		WriteString(MSG_ENTITY, this.music);
 	}
 
 	return true;
@@ -860,6 +925,11 @@ spawnfunc(td_manager)
 	// available units for defence placement
 	if(!this.currentammo)
 		this.currentammo = autocvar_sv_quake_td_units;
+
+	// overall difficulty/monster scale of the map
+	// setting it to a negative value disables enemy health/damage scaling
+	if(!this.scale)
+		this.scale = 1;
 
 	// HACK: we increase the wave count later, but mappers may set a starting wave
 	// so reduce the wave counter by 1 so it starts at the mapper's intended wave
@@ -1256,7 +1326,7 @@ void td_chest_touch(entity this, entity toucher)
 	// TODO: allow customisation of chest fuel amounts
 	float startwave = (td_ent && td_ent.lip > 0) ? td_ent.lip : 1;
 	float amount = this.count * startwave * (autocvar_skill + 1);
-	td_DropFuel(this.origin + '0 0 16', amount, NULL);
+	td_DropFuel(this.origin + '0 0 16', amount, NULL, true);
 
 	int myloot = floor(random() * 4) + 1;
 	for(int j = 0; j < myloot; ++j)
@@ -1410,7 +1480,13 @@ void td_fuel_think(entity this)
 		if(this.distance)
 			set_movetype(this, MOVETYPE_TOSS);
 		this.distance = 0;
-		this.enemy = td_fuel_findtarget(this);
+		if(time >= this.pain_finished)
+		{
+			// a slight delay is added since there will be a lot of fuel
+			// this does delay their homing slightly, but reduces lag greatly!
+			this.pain_finished = time + 0.1;
+			this.enemy = td_fuel_findtarget(this);
+		}
 		return;
 	}
 
@@ -1465,19 +1541,23 @@ void td_DropFuelAmount(vector from, int ftype, float amount, entity ignore)
 	IL_PUSH(g_td_fuel, item);
 }
 
-void td_DropFuel(vector from, int fuel, entity ignore)
+void td_DropFuel(vector from, int fuel, entity ignore, bool ischest)
 {
 	fuel = rint(fuel);
 
-	while(fuel >= 2000)
+	// chests only drop a maximum size of 50 so other players have a chance to gather it
+	if(!ischest)
 	{
-		td_DropFuelAmount(from, TD_FUEL_MEGA, 2000, ignore);
-		fuel -= 2000;
-	}
-	while(fuel >= 500)
-	{
-		td_DropFuelAmount(from, TD_FUEL_LARGE, 500, ignore);
-		fuel -= 500;
+		while(fuel >= 2000)
+		{
+			td_DropFuelAmount(from, TD_FUEL_MEGA, 2000, ignore);
+			fuel -= 2000;
+		}
+		while(fuel >= 500)
+		{
+			td_DropFuelAmount(from, TD_FUEL_LARGE, 500, ignore);
+			fuel -= 500;
+		}
 	}
 	while(fuel >= 50)
 	{
@@ -1509,7 +1589,7 @@ void td_PlayerDropFuel(entity this)
 		return;
 
 	_sound(this, CH_TRIGGER_SINGLE, "enviro/physics/glassbit.wav", 1, 0.5);
-	td_DropFuel(CENTER_OR_VIEWOFS(this), fuel, this);
+	td_DropFuel(CENTER_OR_VIEWOFS(this), fuel, this, false);
 	STAT(TD_FUEL, this) = max(STAT(TD_FUEL, this) - fuel, 0);
 }
 
@@ -1521,7 +1601,7 @@ void td_FuelCleanup()
 	IL_EACH(g_td_fuel, true,
 	{
 		fuelcount += 1;
-		float mytime = it.spawn_time - time;
+		float mytime = time - it.spawn_time;
 		if(!chosen || mytime >= chosen_time)
 		{
 			chosen = it;
@@ -1543,7 +1623,7 @@ void td_BackpackCleanup()
 	IL_EACH(g_moveables, (it.classname == "backpack" || it.isloot) && !IS_PLAYER(it.owner),
 	{
 		bcount += 1;
-		float mytime = it.spawn_time - time;
+		float mytime = time - it.spawn_time;
 		if(!chosen || mytime >= chosen_time)
 		{
 			chosen = it;
@@ -1559,6 +1639,9 @@ void td_BackpackCleanup()
 
 void td_StartFrame()
 {
+	if(td_phase == TD_PHASE_BUILD)
+		return; // allow some leeway while setting up
+
 	td_FuelCleanup();
 
 	td_BackpackCleanup();
@@ -1696,14 +1779,14 @@ void td_DropItem(entity this)
 		switch(item)
 		{
 			default: return; // not valid
-			case "ammo_shells": targ.ammo_shells = 5; break;
-			case "ammo_nails": targ.ammo_nails = 20; break;
-			case "ammo_nails": targ.ammo_rockets = 5; break;
-			case "ammo_cells": targ.ammo_cells = 15; break;
-			case "ammo_lava_nails": targ.ammo_lava_nails = 20; break;
-			case "ammo_multi_rockets": targ.ammo_multi_rockets = 5; break;
-			case "ammo_plasma": targ.ammo_plasma = 15; break;
-			case "ammo_drills": targ.ammo_drills = 5; break;
+			case "ammo_shells": targ.ammo_shells = 20; break;
+			case "ammo_nails": targ.ammo_nails = 50; break;
+			case "ammo_nails": targ.ammo_rockets = 10; break;
+			case "ammo_cells": targ.ammo_cells = 20; break;
+			case "ammo_lava_nails": targ.ammo_lava_nails = 50; break;
+			case "ammo_multi_rockets": targ.ammo_multi_rockets = 10; break;
+			case "ammo_plasma": targ.ammo_plasma = 20; break;
+			case "ammo_drills": targ.ammo_drills = 10; break;
 			// armor drops
 			case "armor1":
 			case "armor2":
@@ -1734,7 +1817,7 @@ void td_MonsterDies(entity targ, entity attacker)
 
 	float fuel = (mhealth / 1000) * 100;
 
-	td_DropFuel(targ.origin + '0 0 24', fuel, NULL);
+	td_DropFuel(targ.origin + '0 0 24', fuel, NULL, false);
 
 	if(random() < 0.15) // TODO: custom chances
 		td_DropItem(targ);
@@ -1744,7 +1827,16 @@ float td_GetMonsterSpeed(entity this, float dist)
 {
 	if(this.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
 		return 1;
-	return (0.5 + td_skill * ((1.2 - 0.3) / 2.5));
+	if(!td_ent)
+		return 1;
+	// incase of no scale, we just go by difficulty
+	if(td_ent.scale <= 0)
+		return (0.5 + td_skill * ((1.2 - 0.3) / 2.5));
+
+	// only 10% boost per wave!
+	// we also bound it as Quake may break if speed is too high
+	float myscale = td_ent.scale * 0.1;
+	return bound(1, 1 * (1 + (myscale * (td_skill + 1)) * td_ent.wave), 5);
 }
 
 void td_BuildMode_Clear(entity this)
@@ -1791,7 +1883,7 @@ void td_RemovePlayer(entity this)
 	if(td_phase == TD_PHASE_COMBAT)
 		amount *= 0.5; // only half if you leave in combat!
 	if(amount > 0)
-		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this);
+		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this, false);
 
 	STAT(TD_FUEL, this) = 0;
 }
@@ -1806,7 +1898,7 @@ void td_PlayerDies(entity this)
 	STAT(TD_BUILDMODE, this) = false;
 	float amount = STAT(TD_FUEL, this) * 0.5;
 	if(amount > 0)
-		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this);
+		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this, false);
 
 	STAT(TD_FUEL, this) = 0;
 }

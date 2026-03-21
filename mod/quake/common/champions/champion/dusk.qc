@@ -10,6 +10,7 @@ bool Dusk_Reap_Monster(entity this, entity targ)
 	newmon.classname = "monster";
 	newmon.variant = targ.variant;
 	newmon.spawnflags = targ.spawnflags;
+	newmon.spawn_time = time;
 	newmon = horn_spawnmonster(newmon, targ.origin, this, targ.monsterdef);
 	if(newmon)
 	{
@@ -126,10 +127,38 @@ METHOD(Dusk, m_playerspawn, void(Champions this, entity actor))
 	actor.skin = bound(0, (etof(actor) % 6) - 1, 5);
 }
 
+.float dusk_cleanup;
 METHOD(Dusk, m_playerthink, void(Dusk this, entity actor))
 {
+	if(!IS_PLAYER(actor))
+		return;
+
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor) && actor.health > 25)
 		Dusk_Reap(actor);
+
+	if(time >= actor.dusk_cleanup)
+	{
+		actor.dusk_cleanup = time + 0.5;
+		int moncount = 0;
+		entity chosen = NULL;
+		float chosen_time = 0;
+		FOREACH_ENTITY_FLAGS(flags, FL_MONSTER,
+		{
+			float mytime = time - it.spawn_time;
+			if(it.health > 0 && it.charmed && it.charmer == actor && it.dusk_revived)
+			{
+				moncount += 1;
+				if(!chosen || mytime >= chosen_time)
+				{
+					chosen = it;
+					chosen_time = mytime;
+				}
+			}
+		});
+
+		if(moncount > 10 && chosen)
+			T_Damage(chosen, NULL, NULL, chosen.health + chosen.max_health, DEATH_GENERIC.m_id);
+	}
 }
 
 METHOD(Dusk, m_clear, void(Dusk this, entity actor))

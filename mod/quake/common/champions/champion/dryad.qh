@@ -111,6 +111,7 @@ CLASS(Dryad, Champions)
 #ifdef CSQC
     ATTRIB(Dryad, message, string, DRYAD_STATS);
 #endif
+    ATTRIB(Dryad, td_turrets, bool, true);
 ENDCLASS(Dryad)
 REGISTER_CHAMPION(Dryad, NEW(Dryad));
 

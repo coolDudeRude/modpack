@@ -1,0 +1,24 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_MCSLIME,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was slimed by a Slime"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_MCSLIME,               1,  NULL,           INFO_DEATH_SELF_MON_MCSLIME,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_MCSLIME,           DEATH_SELF_MON_MCSLIME,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_MCSLIME, "progs/slime.mdl");
+#endif
+
+CLASS(MCSlime, Monster)
+    ATTRIB(MCSlime, spawnflags, int, MON_FLAG_BLOCKY);
+    ATTRIB(MCSlime, m_mins, vector, '-32 -32 -24');
+    ATTRIB(MCSlime, m_maxs, vector, '32 32 60');
+#ifdef GAMEQC
+    ATTRIB(MCSlime, m_model, Model, MDL_MON_MCSLIME);
+#endif
+    ATTRIB(MCSlime, netname, string, "mcslime");
+    ATTRIB(MCSlime, m_name, string, _("Slime"));
+ENDCLASS(MCSlime)
+
+REGISTER_MONSTER(MCSLIME, NEW(MCSlime));

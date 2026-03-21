@@ -426,6 +426,8 @@ void armor_touch(entity this, entity toucher)
 {
 	if(toucher.m_transform)
 		return; // gets reset when transforming back
+	if(toucher.armortype == ARMOR_TECH)
+		return; // regenerates
 	if(!CanTouchItem(this, toucher))
 		return;
 

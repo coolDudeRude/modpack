@@ -641,9 +641,11 @@ void dfury_magica_shot(entity this, float offset)
 		newmis.projectiledeathtype = DEATH_MONSTER_FURY_KNIGHT.m_id;
 		newmis.classname = "dfury_spike";
 		//newmis.dmg = 20;
-		_setmodel(newmis, "progs/proj_fury2.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');		
 		newmis.velocity = dir * 400;
+
+		CSQCProjectile(newmis, true, PROJECTILE_DFURY_MAGICA, true);
+
 		shotcount -= 1;
 	}
 }
@@ -683,17 +685,19 @@ void dfury_magicb_shot(entity this)
 		// Straight line velocity from source to target
 		vector dir = normalize(v_forward);
 		dir.z = 0 - dir.z + (random() - 0.5)*0.1;	// Slight wiggle up/down
-		vector avel = randomvec() * 200;
+		//vector avel = randomvec() * 200;
 		
 		// Variable speed based on skill level with extra random spice
 		entity newmis = launch_spike(this, soffset, dir);
 		newmis.projectiledeathtype = DEATH_MONSTER_FURY_KNIGHT.m_id;
 		newmis.classname = "dfury_spike";
 		newmis.dmg = 20;
-		newmis.avelocity = avel;
-		_setmodel(newmis, "progs/proj_fury1.mdl");
+		//newmis.avelocity = avel;
 		setsize(newmis, '0 0 0', '0 0 0');		
 		newmis.velocity = dir * 400;
+
+		CSQCProjectile(newmis, true, PROJECTILE_DFURY_MAGICB, true);
+
 		offset += 4;
 		shotcount -= 1;
 	}
@@ -1086,9 +1090,6 @@ METHOD(FuryKnight, mr_setup, bool(FuryKnight this, entity actor))
 	precache_model("progs/w_dfurysword1.mdl");
 	precache_model("progs/w_dfurysword2.mdl");
 	precache_model("progs/gib_knfoot_r.mdl");
-
-	precache_model("progs/proj_fury1.mdl");
-	precache_model("progs/proj_fury2.mdl");
 
 	precache_model("progs/mon_dfury_glow.mdl");
 

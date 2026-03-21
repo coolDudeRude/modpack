@@ -281,7 +281,7 @@ spawnfunc(monster_tarbaby)
 		else
 		{
 			if(random() < 0.5)
-				monster_start(this, true, MON_SLIME);
+				monster_start(this, true, MON_MCSLIME);
 			else
 				monster_start(this, true, MON_MAGMACUBE);
 		}

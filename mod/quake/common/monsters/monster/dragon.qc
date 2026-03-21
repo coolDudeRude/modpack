@@ -402,9 +402,15 @@ void dragon_fireball(entity this)
 		dir = dir + v_right * distortion;
 
 		if(fireType == FIRE_FIREBALL)
-			launch_fireball(this, org, dir);
+		{
+			entity newmis = launch_fireball(this, org, dir);
+			CSQCProjectile(newmis, true, PROJECTILE_LAVABALL, true);
+		}
 		else
-			launch_plasma(this, org, dir);
+		{
+			entity newmis = launch_plasma(this, org, dir);
+			CSQCProjectile(newmis, true, PROJECTILE_PLASMA, true);
+		}
 
 		fireCount = fireCount - 1;
 	}

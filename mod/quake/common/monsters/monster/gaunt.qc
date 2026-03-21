@@ -226,11 +226,11 @@ void gaunt_plasma(entity this)
 	newmis.dmg = 10;
 	newmis.angles = vectoangles(newmis.velocity);
 	newmis.avelocity = '0 0 0';
-	if(this.poisonous)
-		_setmodel(newmis, "progs/proj_gaplasmagrn.mdl");
-	else
-		_setmodel(newmis, "progs/proj_gaplasma.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
+	if(this.poisonous)
+		CSQCProjectile(newmis, true, PROJECTILE_GAUNT_POISON, true);
+	else
+		CSQCProjectile(newmis, true, PROJECTILE_GAUNT_PLASMA, true);
 }
 
 //----------------------------------------------------------------------

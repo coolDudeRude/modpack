@@ -57,21 +57,6 @@ void mw_greek_fire_touch(entity this, entity toucher)
 	}
 }
 
-void mw_greek_fire_think(entity this)
-{
-	if(time >= this.count)
-	{
-		delete(this);
-		return;
-	}
-
-	this.nextthink = time + 0.1;
-
-	this.frame += 1;
-	if(this.frame > 5)
-		this.frame = 0;
-}
-
 void mw_greek_fire(entity this)
 {
 	_sound(this, CH_WEAPON_A, "mourning_wood/greek_fire.wav", 1, ATTN_BOSS);
@@ -86,11 +71,10 @@ void mw_greek_fire(entity this)
 		newmis.dmg = 3; // low damage because burny
 		newmis.classname = "greek_fire";
 		settouch(newmis, mw_greek_fire_touch);
-		_setmodel(newmis, "progs/mourning_wood_flame.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');
-		setthink(newmis, mw_greek_fire_think);
-		newmis.nextthink = time + 0.1;
-		newmis.count = time + 7;
+		setthink(newmis, SUB_Remove);
+		newmis.nextthink = time + 7;
+		//newmis.count = time + 7;
 		newmis.gravity = 0.3;
 		set_movetype(newmis, MOVETYPE_TOSS);
 		newmis.angles = '0 0 0';
@@ -99,6 +83,8 @@ void mw_greek_fire(entity this)
 
 		newmis.velocity = randomvec() * 200;
 		newmis.velocity_z = 300;
+
+		CSQCProjectile(newmis, true, PROJECTILE_GREEK_FIRE, true);
 	}	
 }
 
@@ -115,17 +101,18 @@ void mw_flamewood_fire(entity this)
 	_sound(this, CH_WEAPON_A, "mourning_wood/wood_fire.wav", 1, ATTN_BOSS);
 
 	vector org = CENTER_OR_VIEWOFS(this);
-	vector dir = normalize(this.enemy.origin - this.origin);
+	vector dir = normalize(CENTER_OR_VIEWOFS(this.enemy) - org);
 
 	entity newmis = launch_spike(this, org, dir);
 	newmis.projectiledeathtype = DEATH_MONSTER_MOURNING_WOOD.m_id;
 	newmis.classname = "flamewood";
-	newmis.avelocity_z = random() * 90;
+	//newmis.avelocity_z = random() * 90;
 	//newmis.modelflags |= MF_GRENADE;
 	newmis.dmg = 20;
-	_setmodel(newmis, "progs/mourning_wood_flamewood.mdl");
 	setsize(newmis, '0 0 0', '0 0 0');
 	newmis.velocity = dir * 500;
+
+	CSQCProjectile(newmis, true, PROJECTILE_FLAME_WOOD, true);
 }
 
 void mw_run1(entity this);
@@ -262,8 +249,6 @@ METHOD(MourningWood, mr_setup, bool(MourningWood this, entity actor))
 	precache_model("progs/bone.mdl");
 	precache_model("progs/bone2.mdl");
 	precache_model("progs/rawbone2.mdl");
-	precache_model("progs/mourning_wood_flame.mdl");
-	precache_model("progs/mourning_wood_flamewood.mdl");
 	precache_sound("mourning_wood/death.wav");
 	precache_sound("mourning_wood/pain.wav");
 	precache_sound("mourning_wood/greek_fire.wav");

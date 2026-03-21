@@ -5,7 +5,7 @@
 #ifdef GAMEQC
 MODEL(Pepsiman, "progs/player_pepsiman.mdl");
 
-MODEL(CAN, "progs/can.md3");
+//MODEL(CAN, "progs/can.md3");
 
 SOUND(Pepsiman_Pain1, "player_pepsiman/pain1");
 SOUND(Pepsiman_Pain2, "player_pepsiman/pain2");
@@ -84,6 +84,7 @@ CLASS(Pepsiman, Champions)
 #ifdef CSQC
     ATTRIB(Pepsiman, message, string, PEPSIMAN_STATS);
 #endif
+    ATTRIB(Pepsiman, td_turrets, bool, true);
 ENDCLASS(Pepsiman)
 REGISTER_CHAMPION(Pepsiman, NEW(Pepsiman));
 

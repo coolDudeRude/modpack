@@ -5,3 +5,5 @@ entity buildtool_targ;
 void td_UpdateView(entity this);
 
 void HUD_TD(entity this);
+
+void TDMusic_Advance();

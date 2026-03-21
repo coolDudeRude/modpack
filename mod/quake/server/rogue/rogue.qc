@@ -17,7 +17,6 @@ PRECACHE(Rogue)
 {
 	precache_sound("enforcer/enfstop.wav");    // shield impact
 	precache_sound("plasma/explode.wav");
-	precache_sound("plasma/flight.wav");			
 	precache_sound("plasma/fire.wav");
 	precache_sound("shield/hit.wav");
 	precache_sound("belt/use.wav");

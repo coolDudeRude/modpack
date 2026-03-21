@@ -305,8 +305,8 @@ METHOD(KeylethFlyTrap, tr_think, void(KeylethFlyTrap thistur, entity actor))
 		}
 
 		// we also take a small amount of damage from the projectile
-		float damage = (targ.dmg) ? targ.dmg * 0.5 : 10;
-		damage = min(damage, 10); // cap it to prevent instant break!
+		float damage = (targ.dmg) ? targ.dmg * 0.5 : 5;
+		damage = min(damage, 5); // cap it to prevent instant break!
 		T_Damage(actor, targ, oldown, damage, DEATH_TRAP.m_id);
 	}
 }

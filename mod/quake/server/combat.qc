@@ -632,7 +632,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 			ReadyCount(NULL);
 			return;
 		}
-		if(targ.classname == "td_tower" && (!IS_MONSTER(attacker) || (attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS) || attacker.charmed))
+		if(targ.classname == "td_tower" && (!IS_MONSTER(attacker) || (attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS) || (attacker.owner.monsterdef.spawnflags & MONSTER_TYPE_BOSS) || attacker.charmed))
 			return;
 		if(IS_TURRET(targ) && (!IS_MONSTER(attacker) || attacker.charmed))
 			return;
@@ -673,6 +673,18 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		float reduction = min((player_scale / PLAYER_SCALE_MAX), dmgcap);
 		//LOG_INFO("Reducing damage by ", ftos(damage * reduction));
 		damage -= (damage * reduction);
+	}
+	
+	if(gametype == GAMETYPE_TD && td_ent && td_ent.wave > 0 && td_ent.scale > 0)
+	{
+		if(IS_MONSTER(attacker) && !(attacker.monsterdef.spawnflags & MONSTER_TYPE_BOSS))
+		{
+			// no cap... good luck
+			// scale only by a small amount per wave or things will get impossible fast
+			float myscale = td_ent.scale * 0.05;
+			float increase = (1 + (myscale * (td_skill + 1)) * td_ent.wave);
+			damage += (damage * increase);
+		}
 	}
 
 	// major hack to keep the high push force

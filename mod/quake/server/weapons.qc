@@ -923,6 +923,8 @@ void LightningReflection(vector lstart, entity lsource, float ldamage, int death
 		vector dir = normalize(trace_endpos - lstart);
 		entity missile = launch_plasma(lsource, lstart, dir);
 		missile.projectiledeathtype = deathtype;
+
+		CSQCProjectile(missile, true, PROJECTILE_PLASMA, true);
 	}
 	else
 	{

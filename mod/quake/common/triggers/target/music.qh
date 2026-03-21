@@ -22,6 +22,8 @@ entityclass(TargetMusic);
 classfield(TargetMusic) .int state;
 classfield(TargetMusic) .float lastvol;
 
+entity tempsound; // temporary sound buffer for fanfares, only one can exist
+
 void TargetMusic_Advance();
 
 void Net_TargetMusic();
@@ -31,6 +33,8 @@ void Ent_TriggerMusic_Think(entity this);
 void Ent_TriggerMusic_Remove(entity this);
 
 void BossMusic_Advance();
+
+void TempSound_Advance();
 
 #elif defined(SVQC)
 void target_music_kill();

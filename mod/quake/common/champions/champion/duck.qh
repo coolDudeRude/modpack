@@ -24,7 +24,6 @@ Sound SND_Duck_Death_Random() {
     return REGISTRY_GET(Sounds, SND_Duck_Death1.m_id + rint(random() * 4));
 }
 
-MODEL(Grape, "progs/grape.mdl");
 PRECACHE(Duck)
 {
 #ifdef CSQC

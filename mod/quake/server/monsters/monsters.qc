@@ -506,6 +506,8 @@ void monster_setup(entity this, Monster mon)
 
 	if(Challenge_Active(CHALLENGE_ONEHP))
 		this.health = 1;
+	else if(gametype == GAMETYPE_TD)
+		td_MonsterSetup(this, mon);
 
 	this.max_health = this.health;
 

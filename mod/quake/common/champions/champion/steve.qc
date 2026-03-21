@@ -158,6 +158,7 @@ METHOD(Steve, m_clear, void(Champions this, entity actor))
 	});
 }
 
+.float steve_cleanup;
 METHOD(Steve, m_playerthink, void(Champions this, entity actor))
 {
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
@@ -194,6 +195,30 @@ METHOD(Steve, m_playerthink, void(Champions this, entity actor))
 
 		Steve_PlaceBlock(actor);
 		STAT(QCC_ABILITYTIME, actor) = time + 0.33;
+	}
+
+	if(time >= actor.steve_cleanup)
+	{
+		actor.steve_cleanup = time + 0.5;
+		int moncount = 0;
+		entity chosen = NULL;
+		float chosen_time = 0;
+		FOREACH_ENTITY_FLAGS(flags, FL_MONSTER,
+		{
+			float mytime = time - it.spawn_time;
+			if(it.health > 0 && it.charmed && it.charmer == actor && it.steve_spawned)
+			{
+				moncount += 1;
+				if(!chosen || mytime >= chosen_time)
+				{
+					chosen = it;
+					chosen_time = mytime;
+				}
+			}
+		});
+
+		if(moncount > 10 && chosen)
+			T_Damage(chosen, NULL, NULL, chosen.health + chosen.max_health, DEATH_GENERIC.m_id);
 	}
 }
 

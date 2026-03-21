@@ -100,6 +100,38 @@ MODEL(PROJECTILE_SWARM,                     "progs/swarm.mdl");
 MODEL(PROJECTILE_FROG_SPIT,                 "progs/bilefrag.mdl");
 MODEL(PROJECTILE_BOWLING_BALL,              "progs/proj_tur_bowlingball.mdl");
 MODEL(PROJECTILE_COOKIE,                    "progs/cookie.mdl");
+MODEL(PROJECTILE_FLAK_CANNON,               "progs/missile.mdl");
+MODEL(PROJECTILE_RECYCLEBIN,                "progs/proj_tur_recyclebin.mdl");
+MODEL(PROJECTILE_MIME_BALL,                 "progs/ball.mdl");
+MODEL(PROJECTILE_GRAPE,                     "progs/grape.mdl");
+MODEL(PROJECTILE_BOGLORD,                   "progs/proj_blord1b.mdl");
+MODEL(PROJECTILE_BOGLORD_STRONG,            "progs/proj_blord2b.mdl");
+MODEL(PROJECTILE_DFURY_MAGICA,              "progs/proj_fury2.mdl");
+MODEL(PROJECTILE_DFURY_MAGICB,              "progs/proj_fury1.mdl");
+MODEL(PROJECTILE_GARGOYLE,                  "progs/proj_gargoyle.mdl");
+MODEL(PROJECTILE_GARGOYLE_POISON,           "progs/proj_gargoylegrn.mdl");
+MODEL(PROJECTILE_GREEK_FIRE,                "progs/mourning_wood_flame.mdl");
+MODEL(PROJECTILE_FLAME_WOOD,                "progs/mourning_wood_flamewood.mdl");
+MODEL(PROJECTILE_PLASMA,                    "progs/plasma.mdl");
+MODEL(PROJECTILE_MINOTAUR_PLASMA,           "progs/proj_minoplasma.mdl");
+MODEL(PROJECTILE_MINOTAUR_BLOOD,            "progs/proj_minoblood.mdl");
+MODEL(PROJECTILE_MINOTAUR_POISON,           "progs/proj_minopoison.mdl");
+MODEL(PROJECTILE_GAUNT_PLASMA,              "progs/proj_gaplasma.mdl");
+MODEL(PROJECTILE_GAUNT_POISON,              "progs/proj_gaplasmagrn.mdl");
+MODEL(PROJECTILE_SMG,                       "progs/ee_p_pm_yl.mdl");
+MODEL(PROJECTILE_DRILL,                     "progs/drill.mdl");
+MODEL(PROJECTILE_EGG_NORMAL,                "progs/egg.iqm");
+MODEL(PROJECTILE_EGG_FIRE,                  "progs/egg.iqm");
+MODEL(PROJECTILE_EGG_GRENADE,               "progs/egg.iqm");
+MODEL(PROJECTILE_EGG_ICE,                   "progs/egg.iqm");
+MODEL(PROJECTILE_EGG_CLOCKWORK,             "progs/egg.iqm");
+MODEL(PROJECTILE_EGG_GOLD,                  "progs/egg.iqm");
+MODEL(PROJECTILE_FEATHER,                   "progs/proj_tur_harpyperch.mdl");
+MODEL(PROJECTILE_MOSS_HORNET,               "progs/proj_tur_hornetsnest.mdl");
+MODEL(PROJECTILE_SLIME,                     "progs/mon_slime.mdl");
+MODEL(PROJECTILE_NIMBUS,                    "progs/nimbus.mdl");
+MODEL(PROJECTILE_CAN,                       "progs/can.md3");
+MODEL(PROJECTILE_CAN_SMALL,                 "progs/can.md3");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

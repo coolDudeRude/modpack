@@ -1047,6 +1047,8 @@ void Gremlin_FireRocket(entity this)
 //   GremlinRecoil(dir,-1000);
 
 	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_ROCKET, true);
 }
 
 /*
@@ -1069,6 +1071,8 @@ void Gremlin_FireNailGun(entity this, float ox)
 	dir = normalize(dir);
 	entity missile = launch_spike(this, this.origin + '0 0 16', dir);
 	missile.projectiledeathtype = WEP_NAILGUN.m_id;
+
+	CSQCProjectile(missile, true, PROJECTILE_BULLET, true);
 }
 
 /*

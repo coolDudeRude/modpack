@@ -94,3 +94,5 @@ SOUND(LASER_RICOCHET, "hipweap/laserric");
 SOUND(CHEER, "misc/cheer");
 
 SOUND(BOMB_FUSE, "kirby/bomb_fuse");
+
+SOUND(PLASMA_FLIGHT, "plasma/flight");

@@ -11,8 +11,9 @@ void BallTouch(entity this, entity toucher)
 	if(this.attack_finished < time)
 		_sound(this, CH_WEAPON_SINGLE, "player_mime/bounce.wav", 0.7, ATTN_NORM);	// bounce sound
 	this.attack_finished = time + 0.1;
-	if(this.velocity == '0 0 0')
-		this.avelocity = '0 0 0';
+	
+	if(toucher)
+		UpdateCSQCProjectile(this);
 }
 
 void Mime_ThrowBall(entity this)
@@ -48,19 +49,20 @@ void Mime_ThrowBall(entity this)
 	
 // set missile duration
 	missile.scale = 0.75; // TODO: resize model!
-	vector mycolor;
-	mycolor.x = max(0.25, random() * 5);
-	mycolor.y = max(0.25, random() * 5);
-	mycolor.z = max(0.25, random() * 5);
-	missile.colormod = mycolor;
+	//vector mycolor;
+	//mycolor.x = max(0.25, random() * 5);
+	//mycolor.y = max(0.25, random() * 5);
+	//mycolor.z = max(0.25, random() * 5);
+	//missile.colormod = mycolor;
 	missile.nextthink = time + 7;
 	setthink(missile, SUB_Remove);
 
-	_setmodel(missile, "progs/ball.mdl");
 	setsize(missile, '0 0 0', '0 0 0');		
 	setorigin(missile, W_Shotorg(this, weaponentity));
 
 	IL_PUSH(g_projectiles, missile);
+
+	CSQCProjectile(missile, true, PROJECTILE_MIME_BALL, true);
 }
 
 METHOD(Mime, m_activate, void(Champions this, entity actor))

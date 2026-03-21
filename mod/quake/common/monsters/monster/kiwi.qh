@@ -1,0 +1,26 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_KIWI,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was kibbled by a Kiwi"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_KIWI,               1,  NULL,           INFO_DEATH_SELF_MON_KIWI,              CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_KIWI,           DEATH_SELF_MON_KIWI,           DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_KIWI, "progs/kiwi.mdl");
+#endif
+
+CLASS(Kiwi, Monster)
+    ATTRIB(Kiwi, spawnflags, int, 0);
+    ATTRIB(Kiwi, m_mins, vector, '-16 -16 -24');
+    ATTRIB(Kiwi, m_maxs, vector, '16 16 32');
+#ifdef GAMEQC
+    ATTRIB(Kiwi, m_model, Model, MDL_MON_KIWI);
+#endif
+    ATTRIB(Kiwi, netname, string, "kiwi");
+    ATTRIB(Kiwi, m_name, string, _("Kiwi"));
+    /* kirby power (by technicality) */
+    ATTRIB(Kiwi, star_valid, bool, true);
+ENDCLASS(Kiwi)
+
+REGISTER_MONSTER(KIWI, NEW(Kiwi));

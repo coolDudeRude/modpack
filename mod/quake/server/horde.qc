@@ -708,8 +708,10 @@ void horde_health_touch(entity this, entity toucher)
 
 void horde_armor_touch(entity this, entity toucher)
 {
-	if(this.m_transform)
+	if(toucher.m_transform)
 		return; // gets reset when transforming back
+	if(toucher.armortype == ARMOR_TECH)
+		return; // regenerates
 	if(!CanTouchItem(this, toucher))
 		return;
 
@@ -1755,7 +1757,7 @@ void Countdown4(entity this)
 void Countdown3(entity this)
 {
 	//centerprint_all("1");
-	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, 1, this.wave);
+	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, this.wave, 1);
 	setthink(this, Countdown4);
 	this.nextthink = time + 1;
 	_sound(this, CH_INFO, "misc/talk.wav", 1, ATTN_NONE);
@@ -1763,7 +1765,7 @@ void Countdown3(entity this)
 void Countdown2(entity this)
 {
 	//centerprint_all("2");
-	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, 2, this.wave);
+	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, this.wave, 2);
 	setthink(this, Countdown3);
 	this.nextthink = time + 1;
 	_sound(this, CH_INFO, "misc/talk.wav", 1, ATTN_NONE);
@@ -1779,7 +1781,7 @@ void Countdown(entity this)
 	}
 	
 	//centerprint_all("3");
-	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, 3, this.wave);
+	Send_Notification(NOTIF_ALL, NULL, MSG_CENTER, CENTER_COUNTDOWN_ROUNDSTART, this.wave, 3);
 	setthink(this, Countdown2);
 	this.nextthink = time + 1;
 	

@@ -206,6 +206,8 @@
 // MSG_CENTER_NOTIFICATIONS
     //MSG_CENTER_NOTIF(ALONE,                             N_ENABLE,    0, 0, "",               CPID_Null,              "0 0",  _("^F4You are now alone!"), "")
 
+    MSG_CENTER_NOTIF(BEWARE_SKIES,                      N_ENABLE,    0, 0, "",               CPID_Null,              "0 0",  BOLD(_("^K2Beware the skies!")), "")
+
     MSG_CENTER_NOTIF(COINTOSS,                          N_ENABLE,    1, 0, "s1",             CPID_Null,              "0 0",  _("^F2Throwing coin... Result: %s^F2!"), "")
 
     MSG_CENTER_NOTIF(COMPETITION_START,                 N_ENABLE,    0, 0, "",               CPID_Null,              "0 0",  BOLD(_("^BGFreestyle Competition has started!")), "")
@@ -215,6 +217,7 @@
     MSG_CENTER_NOTIF(COUNTDOWN_GAMESTART,               N_ENABLE,    0, 1, "",               CPID_ROUND,             "1 f1", strcat(_("^BGGame starts in"), "\n", BOLD("^COUNT")), "")
     MSG_CENTER_NOTIF(COUNTDOWN_ROUNDSTART,              N_ENABLE,    0, 2, "f1",             CPID_ROUND,             "1 f2", strcat(_("^BGRound %s starts in"), "\n", BOLD("^COUNT")), "")
 
+    MSG_CENTER_NOTIF(ROUND_BOSSWAVE,                     N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K1Boss wave!")), "")
     MSG_CENTER_NOTIF(ROUND_CHEDDARPHASE,                 N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K2Cheddar phase")), "")
     MSG_CENTER_NOTIF(ROUND_CHICKENPHASE,                 N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^K2Chicken phase")), "")
     MSG_CENTER_NOTIF(ROUND_COMBATPHASE,                  N_ENABLE,    0, 0, "",               CPID_ROUND,            "0 0",  BOLD(_("^BGCombat phase")), "")

@@ -1,6 +1,10 @@
 // generated file; do not modify
+#include "clippy.qc"
+#include "dryad.qc"
+#include "duke.qc"
 #include "goat.qc"
 #include "keyleth.qc"
+#include "pepsiman.qc"
 #include "poop.qc"
 #include "ranger.qc"
 #include "squire.qc"

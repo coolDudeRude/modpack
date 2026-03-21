@@ -190,6 +190,14 @@ void buildtool_DrawInfo(entity this)
 		sui_drawcolortext(pos, '16 16 0', sprintf("^7Damage: ^3%d", damage), 1, 0);
 	}
 
+	if(tur.healamount)
+	{
+		pos.y += 16;
+		// NOTE: hardcoded the 20%
+		float healing = tur.healamount * turret_getpower(this.tur_level, 0.2);
+		sui_drawcolortext(pos, '16 16 0', sprintf("^7Healing: ^2%d", healing), 1, 0);
+	}
+
 	if(tur.tr_getinfo)
 		pos = tur.tr_getinfo(tur, this, pos);
 
@@ -403,6 +411,7 @@ void buildtool_frame(entity this)
 		precache_model(tur.head_model);
 		_setmodel(dropmark.tur_head, tur.head_model);
 		setsize(dropmark.tur_head, '0 0 0', '0 0 0');
+		setorigin(dropmark.tur_head, '0 0 0');
 	}
 
 	tracebox(view_origin, dropmark.mins, dropmark.maxs, view_origin + view_forward * 150, MOVE_NOMONSTERS, this);

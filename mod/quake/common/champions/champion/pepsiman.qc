@@ -23,9 +23,37 @@ void can_think(entity this)
 			continue;
 		if(!boxesoverlap(it.absmin, it.absmax, this.absmin, this.absmax))
 			continue;
-		float damage = (IS_PLAYER(it) ? 30 : 60);
+		float damage = this.dmg;
+		if(IS_PLAYER(it))
+			this.dmg *= 0.5;
 		T_Damage(it, this, this.owner, damage, DEATH_CRUSH.m_id);
 	});
+}
+
+entity can_launch(entity this, vector org, vector dir)
+{
+	entity can = new(can);
+	can.owner = this;
+	setorigin(can, org);
+	set_movetype(can, MOVETYPE_NOCLIP);
+	can.angles_y = this.angles_y;
+	can.avelocity = '-180 0 0';
+	//setmodel(can, MDL_CAN);
+	can.cnt = 96; // rough bounding box for cheaper math, update if hitbox is changed!
+	setsize(can, '-48 -48 0', '48 48 48');
+	//SUB_SetFade(can, time + 1, 0.7);
+	can.fade_rate = 1.4;
+	setthink(can, can_think);
+	can.nextthink = time;
+	can.delay = time + 1;
+	can.wait = time + 1.7;
+	can.velocity = dir * 500;
+	can.dmg = 60;
+	//settouch(can, can_touch); // due to collision issues (TODO?) touch interactions don't work
+
+	can.fade_time = can.delay;
+
+	return can;
 }
 
 void Pepsiman_ThrowCan(entity this)
@@ -35,23 +63,9 @@ void Pepsiman_ThrowCan(entity this)
 	vector org = this.origin - v_forward * 150;
 	//org.z -= 24;
 
-	entity can = new(can);
-	can.owner = this;
-	setorigin(can, org);
-	set_movetype(can, MOVETYPE_NOCLIP);
-	can.angles_y = this.angles_y;
-	can.avelocity = '-180 0 0';
-	setmodel(can, MDL_CAN);
-	can.cnt = 96; // rough bounding box for cheaper math, update if hitbox is changed!
-	setsize(can, '-48 -48 0', '48 48 48');
-	//SUB_SetFade(can, time + 1, 0.7);
-	can.fade_rate = 1.4;
-	setthink(can, can_think);
-	can.nextthink = time;
-	can.delay = time + 1;
-	can.wait = time + 1.7;
-	can.velocity = v_forward * 500;
-	//settouch(can, can_touch); // due to collision issues (TODO?) touch interactions don't work
+	entity can = can_launch(this, org, v_forward);
+
+	CSQCProjectile(can, true, PROJECTILE_CAN, true);
 
 	_sound(can, CH_TRIGGER_SINGLE, "player_pepsiman/can_roll.wav", 1, 0.5);
 }

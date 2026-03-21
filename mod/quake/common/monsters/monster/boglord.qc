@@ -206,9 +206,9 @@ entity bogl_Launch_Missile(entity this, vector org, vector dir, vector avel, flo
 	newmis.poisonous = this.poisonous;
 
 	if(this.spawnflags & MON_BOGL_STRONG)
-		_setmodel(newmis, "progs/proj_blord2b.mdl");
+		CSQCProjectile(newmis, true, PROJECTILE_BOGLORD_STRONG, true);
 	else
-		_setmodel(newmis, "progs/proj_blord1b.mdl");
+		CSQCProjectile(newmis, true, PROJECTILE_BOGLORD, true);
 
 	newmis.frame = 7;
 	return newmis;

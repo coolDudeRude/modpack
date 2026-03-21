@@ -138,6 +138,9 @@ void PlasmaTouch(entity this, entity toucher)
 		// Switch around this to make sure reflection happens once
 		entity newmis = launch_plasma(toucher, org, dir);
 		newmis.projectiledeathtype = this.projectiledeathtype;
+
+		if(this.csqcprojectile_type)
+			CSQCProjectile(newmis, true, this.csqcprojectile_type, true);
 	}
 	else if(IS_PLAYER(this.realowner)) // only do an area explosion if it wasn't reflected?
 		PlasmaGroundOut(this);
@@ -146,8 +149,8 @@ void PlasmaTouch(entity this, entity toucher)
 
 void PlasmaLaunch(entity this)
 {
-	this.velocity = normalize(this.velocity);
-	this.velocity = this.velocity * 1250;
+	this.velocity = normalize(this.velocity) * 1250;
+	UpdateCSQCProjectile(this);
 
 	this.nextthink = time + 5;
 	setthink(this, SUB_Remove);
@@ -175,14 +178,9 @@ entity launch_plasma(entity this, vector org, vector dir)
 	//missile.avelocity = '300 300 300';
 	//missile.angles = vectoangles(missile.velocity);
 	settouch(missile, PlasmaTouch);
-	
-	_setmodel(missile, "progs/plasma.mdl");
+
 	setsize(missile, '0 0 0', '0 0 0');		
 	setorigin(missile, org);
-
-	_sound(missile, CH_WEAPON_SINGLE, "plasma/flight.wav", 1, ATTN_NORM);
-	if(!deathmatch && !coop)
-		missile.effects = EF_BRIGHTLIGHT;
 	
 // set missile duration
 	setthink(missile, PlasmaLaunch);
@@ -220,6 +218,8 @@ void W_FirePlasma(entity this, .entity weaponentity)
 	//launch_plasma(this, this.origin + v_forward*24 + '0 0 16', dir);//seven's postion fix -ooppee edit out
 	entity plasma = launch_plasma(this, this.origin + v_forward * 24 + this.view_ofs + v_up * -10, dir); //seven's fix applied
 	setorigin(plasma, W_Shotorg(this, weaponentity) + v_forward * 24 + v_up * -10);
+
+	CSQCProjectile(plasma, true, PROJECTILE_PLASMA, true);
 }
 
 METHOD(PlasmaGun, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

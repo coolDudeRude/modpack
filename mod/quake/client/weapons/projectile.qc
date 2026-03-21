@@ -90,6 +90,14 @@ void Projectile_DrawTrail(entity this, vector to)
 .float idle_finished;
 void Star_Spawn(vector org, vector ang);
 
+void Nimbus_Rain(vector org)
+{
+	if(vdist(view_origin - org, >=, 1024))
+		return; // reduce lag!
+
+	te_particlerain(org - '16 16 24', org + '16 16 8', '0 0 -400', floor(1 * drawframetime + random()), 12);
+}
+
 void Projectile_Draw(entity this)
 {
 	vector rot;
@@ -141,6 +149,7 @@ void Projectile_Draw(entity this)
 			default: break;
 			case PROJECTILE_ROCKET:
 			case PROJECTILE_JIM_ROCKET:
+			case PROJECTILE_DRILL:
 				rot = '0 0 720'; // spinning
 				break;
 			case PROJECTILE_CROSSBOW_BOLT:
@@ -151,6 +160,18 @@ void Projectile_Draw(entity this)
 				break;
 			case PROJECTILE_DEMON_SICKLE:
 				rot = '0 1024 0'; // spinning
+				break;
+			case PROJECTILE_EGG_NORMAL:
+			case PROJECTILE_EGG_FIRE:
+			case PROJECTILE_EGG_GRENADE:
+			case PROJECTILE_EGG_ICE:
+			case PROJECTILE_EGG_CLOCKWORK:
+			case PROJECTILE_EGG_GOLD:
+				// these projectiles are big and spammy so fade them in
+				this.alphamod = (time - this.spawntime) * 5;
+				break;
+			case PROJECTILE_FEATHER:
+				rot = '0 0 128'; // spinning
 				break;
 		}
 
@@ -193,6 +214,11 @@ void Projectile_Draw(entity this)
 			trailorigin.x += crandom() * 24;
 			trailorigin.y += crandom() * 24;
 			trailorigin.z += crandom() * 12;
+			break;
+		case PROJECTILE_EGG_FIRE:
+		case PROJECTILE_EGG_ICE:
+			makevectors(ang);
+			trailorigin += v_up * 16;
 			break;
 	}
 
@@ -237,6 +263,52 @@ void Projectile_Draw(entity this)
 				CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
 			}
 			CSQCModel_InterpolateAnimation_Do(this);
+			break;
+		}
+		case PROJECTILE_GREEK_FIRE:
+		{
+			// hack to make them look right
+			this.angles_x = 0;
+			if(time >= this.idle_finished)
+			{
+				this.idle_finished = time + 0.1;
+				CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
+				this.frame += 1;
+				if(this.frame > 5)
+					this.frame = 0;
+				CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
+			}
+			CSQCModel_InterpolateAnimation_Do(this);
+			break;
+		}
+		case PROJECTILE_MOSS_HORNET:
+		{
+			if(time >= this.idle_finished)
+			{
+				this.idle_finished = time + 0.1;
+				CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
+				this.frame += 1;
+				if(this.frame > 33)
+					this.frame = 0;
+				CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
+			}
+			CSQCModel_InterpolateAnimation_Do(this);
+			break;
+		}
+		case PROJECTILE_NIMBUS:
+		{
+			Nimbus_Rain(trailorigin);
+			if(time >= this.idle_finished)
+			{
+				this.idle_finished = time + 0.1;
+				CSQCModel_InterpolateAnimation_1To2_PreNote(this, BIT(23));
+				this.frame += 1;
+				if(this.frame > 28 || this.frame < 19)
+					this.frame = 19;
+				CSQCModel_InterpolateAnimation_1To2_Note(this, BIT(23), true);
+			}
+			CSQCModel_InterpolateAnimation_Do(this);
+			break;
 		}
 		default:
 			break;
@@ -482,6 +554,38 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(FROG_SPIT)          this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(BOWLING_BALL)       this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
 			HANDLE(COOKIE)             this.traileffect = EFFECT_TR_GRENADE.m_id; break;
+			HANDLE(FLAK_CANNON)        this.traileffect = EFFECT_TR_GRENADE.m_id; this.scale = 0.5; break;
+			HANDLE(RECYCLEBIN)         this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(MIME_BALL)          this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; this.scale = 0.75; break;
+			HANDLE(GRAPE)              this.traileffect = EFFECT_Null.m_id; this.avelocity = randomvec() * 200; break;
+			HANDLE(BOGLORD)            this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.frame = 7; break;
+			HANDLE(BOGLORD_STRONG)     this.traileffect = EFFECT_TR_WIZSPIKE.m_id; this.frame = 7; break;
+			HANDLE(DFURY_MAGICA)       this.traileffect = EFFECT_TR_WIZSPIKE.m_id; break;
+			HANDLE(DFURY_MAGICB)       this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; this.avelocity = randomvec() * 200; break;
+			HANDLE(GARGOYLE)           this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; break;
+			HANDLE(GARGOYLE_POISON)    this.traileffect = EFFECT_TR_WIZSPIKE.m_id; break;
+			HANDLE(GREEK_FIRE)         this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(FLAME_WOOD)         this.traileffect = EFFECT_TR_GRENADE.m_id; this.avelocity_z = random() * 90; break;
+			HANDLE(PLASMA)             this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; break;
+			HANDLE(MINOTAUR_PLASMA)    this.traileffect = EFFECT_SNOWBALL_TRAIL.m_id; break;
+			HANDLE(MINOTAUR_BLOOD)     this.traileffect = EFFECT_TR_KNIGHTSPIKE.m_id; break;
+			HANDLE(MINOTAUR_POISON)    this.traileffect = EFFECT_TR_WIZSPIKE.m_id; break;
+			HANDLE(GAUNT_PLASMA)       this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(GAUNT_POISON)       this.traileffect = EFFECT_TR_WIZSPIKE.m_id; break;
+			HANDLE(SMG)                this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(DRILL)              this.traileffect = EFFECT_TR_DRILL.m_id; break;
+			HANDLE(EGG_NORMAL)         this.traileffect = EFFECT_Null.m_id; this.scale = 0.6; break;
+			HANDLE(EGG_FIRE)           this.traileffect = EFFECT_TR_GRENADE.m_id; this.scale = 0.6; break;
+			HANDLE(EGG_GRENADE)        this.traileffect = EFFECT_Null.m_id; this.scale = 0.6; break;
+			HANDLE(EGG_ICE)            this.traileffect = EFFECT_TR_DRILL.m_id; this.scale = 0.6; break;
+			HANDLE(EGG_CLOCKWORK)      this.traileffect = EFFECT_Null.m_id; this.scale = 0.6; break;
+			HANDLE(EGG_GOLD)           this.traileffect = EFFECT_Null.m_id; this.scale = 0.6; break;
+			HANDLE(FEATHER)            this.traileffect = EFFECT_Null.m_id; this.angles_z =  random() * 360; break;
+			HANDLE(MOSS_HORNET)        this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(SLIME)              this.traileffect = EFFECT_Null.m_id; this.scale = 0.7; break;
+			HANDLE(NIMBUS)             this.traileffect = EFFECT_Null.m_id; break;
+			HANDLE(CAN)                this.traileffect = EFFECT_Null.m_id; this.avelocity = '180 0 0'; break;
+			HANDLE(CAN_SMALL)          this.traileffect = EFFECT_Null.m_id; this.scale = 0.25; this.avelocity = '360 0 0'; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -723,6 +827,107 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.effects |= EF_FULLBRIGHT;
 				this.bouncefactor = 0.99;
 				this.bouncestop = 0.01;
+				break;
+			case PROJECTILE_RECYCLEBIN:
+				set_movetype(this, MOVETYPE_TOSS);
+				this.gravity = 1;
+				break;
+			case PROJECTILE_MIME_BALL:
+				set_movetype(this, MOVETYPE_BOUNCE);
+				settouch(this, func_null);
+				this.bouncefactor = 1;
+				this.bouncestop = 0.1;
+				vector mimecolor;
+				mimecolor.x = max(0.25, random() * 5);
+				mimecolor.y = max(0.25, random() * 5);
+				mimecolor.z = max(0.25, random() * 5);
+				this.colormod = mimecolor;
+				break;
+			case PROJECTILE_GREEK_FIRE:
+				set_movetype(this, MOVETYPE_TOSS);
+				settouch(this, func_null);
+				this.gravity = 0.3;
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_NOSELFSHADOW;
+				this.effects |= EF_NOSHADOW;
+				break;
+			case PROJECTILE_FLAME_WOOD:
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_NOSELFSHADOW;
+				this.effects |= EF_NOSHADOW;
+				break;
+			case PROJECTILE_PLASMA:
+				loopsound(this, CH_SHOTS_SINGLE, SND_PLASMA_FLIGHT, VOL_BASE, ATTEN_NORM);
+				this.effects |= EF_FULLBRIGHT;
+				this.effects |= EF_BRIGHTLIGHT;
+				break;
+			case PROJECTILE_MINOTAUR_PLASMA:
+			case PROJECTILE_MINOTAUR_BLOOD:
+			case PROJECTILE_MINOTAUR_POISON:
+				this.effects |= EF_FULLBRIGHT;
+				//this.effects |= EF_BRIGHTLIGHT;
+				break;
+			case PROJECTILE_GAUNT_PLASMA:
+			case PROJECTILE_GAUNT_POISON:
+				this.effects |= EF_FULLBRIGHT;
+				//this.effects |= EF_BRIGHTLIGHT;
+				break;
+			case PROJECTILE_SMG:
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_DRILL:
+				this.dphitcontentsmask = DPCONTENTS_SOLID;
+				this.solid = SOLID_TRIGGER;
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				settouch(this, func_null);
+				this.effects |= EF_FULLBRIGHT;
+				break;
+			case PROJECTILE_EGG_NORMAL:
+				this.skin = 0;
+				break;
+			case PROJECTILE_EGG_FIRE:
+				this.skin = 1;
+				break;
+			case PROJECTILE_EGG_GRENADE:
+				this.skin = 2;
+				break;
+			case PROJECTILE_EGG_ICE:
+				this.skin = 3;
+				break;
+			case PROJECTILE_EGG_CLOCKWORK:
+				this.skin = 4;
+				set_movetype(this, MOVETYPE_TOSS);
+				break;
+			case PROJECTILE_EGG_GOLD:
+				this.skin = 5;
+				break;
+			case PROJECTILE_MOSS_HORNET:
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				this.effects |= EF_FULLBRIGHT;
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_SLIME:
+				set_movetype(this, MOVETYPE_TOSS);
+				this.gravity = 1;
+				break;
+			case PROJECTILE_NIMBUS:
+				set_movetype(this, MOVETYPE_FLYMISSILE);
+				this.effects |= EF_FULLBRIGHT;
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_CAN:
+				set_movetype(this, MOVETYPE_NOCLIP);
+				setsize(this, '-48 -48 0', '48 48 48');
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
+				break;
+			case PROJECTILE_CAN_SMALL:
+				set_movetype(this, MOVETYPE_NOCLIP);
+				setsize(this, '-12 -12 0', '12 12 12');
+				this.solid = SOLID_TRIGGER;
+				settouch(this, func_null);
 				break;
 			default:
 				break;

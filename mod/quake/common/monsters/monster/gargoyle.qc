@@ -106,17 +106,17 @@ void garg_fbthrow(entity this)
 
 	entity newmis = launch_spike(this, org, dir);
 	newmis.poisonous = this.poisonous;
-	if(newmis.poisonous)
-		_setmodel(newmis, "progs/proj_gargoylegrn.mdl");
-	else
-		_setmodel(newmis, "progs/proj_gargoyle.mdl");
 	newmis.avelocity = '0 0 0';
 	newmis.dmg = 20;
 	setsize(newmis, '0 0 0', '0 0 0');		
 	newmis.velocity = dir * (500 + (autocvar_skill * 150));
 	settouch(newmis, T_MissileTouch); // rocket explosion
-	newmis.effects = EF_DIMLIGHT;
 	newmis.projectiledeathtype = DEATH_MONSTER_GARGOYLE.m_id;
+
+	if(newmis.poisonous)
+		CSQCProjectile(newmis, true, PROJECTILE_GARGOYLE_POISON, true);
+	else
+		CSQCProjectile(newmis, true, PROJECTILE_GARGOYLE, true);
 }
 
 //----------------------------------------------------------------------
@@ -527,9 +527,6 @@ METHOD(Gargoyle, mr_setup, bool(Gargoyle this, entity actor))
 	precache_model("progs/gib_gargwing1.mdl");
 	precache_model("progs/gib_gargwing2.mdl");
 	precache_model("progs/proj_gargball.mdl");
-	precache_model("progs/proj_gargoyle.mdl");
-	precache_model("progs/proj_gargoylegrn.mdl");
-	precache_model("progs/proj_gargoyle.mdl");
 
 	precache_sound("gargoyle/idle1.wav");
 	precache_sound("gargoyle/perch1.wav");

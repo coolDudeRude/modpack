@@ -32,6 +32,7 @@ enum {
 
 const int SF_TD_ENT_COUNTS = BIT(0);
 const int SF_TD_ENT_LIMITS = BIT(1);
+const int SF_TD_ENT_MUSIC = BIT(2);
 
 const int SF_TD_CHEST_OPEN = BIT(0);
 const int SF_TD_CHEST_MDL = BIT(1);

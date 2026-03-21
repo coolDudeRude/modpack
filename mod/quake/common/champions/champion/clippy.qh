@@ -82,6 +82,7 @@ CLASS(Clippy, Champions)
 #ifdef CSQC
     ATTRIB(Clippy, message, string, "It looks like you're having trouble choosing a champion, let me help you!");
 #endif
+    ATTRIB(Clippy, td_turrets, bool, true);
 ENDCLASS(Clippy)
 REGISTER_CHAMPION(Clippy, NEW(Clippy));
 

@@ -10,7 +10,6 @@ PRECACHE(BreegullBlaster)
 {
 	precache_model("progs/g_breegull.mdl");
 	precache_model("progs/v_breegull.mdl");
-    precache_model("progs/egg.iqm");
 	precache_model("progs/clockwork.mdl");
 
     precache_sound("weapons/egg0_fire.wav");
@@ -314,7 +313,6 @@ void W_BreegullBlaster_Fire(entity this, .entity weaponentity)
 
 	entity newmis = launch_spike(this, org, dir);
 	newmis.scale = 0.6;
-	_setmodel(newmis, "progs/egg.iqm");
 	setsize(newmis, '0 0 0', '0 0 0');
 	newmis.skin = eggtype;
 	newmis.dmg = 30;
@@ -329,17 +327,18 @@ void W_BreegullBlaster_Fire(entity this, .entity weaponentity)
 	switch(eggtype)
 	{
 		default:
-		case 0: snd = "weapons/egg0_fire.wav"; break;
-		case 1: snd = "weapons/egg1_fire.wav"; newmis.dmg = 20; newmis.modelflags = MF_ROCKET; break;
+		case 0: snd = "weapons/egg0_fire.wav"; CSQCProjectile(newmis, true, PROJECTILE_EGG_NORMAL, true); break;
+		case 1: snd = "weapons/egg1_fire.wav"; newmis.dmg = 20; CSQCProjectile(newmis, true, PROJECTILE_EGG_FIRE, true); break;
 		case 2:
 		{
 			snd = "weapons/egg2_fire.wav";
 			newmis.noise = "drole/r_explode.wav";
 			settouch(newmis, T_MissileTouch);
 			newmis.dmg = 60;
+			CSQCProjectile(newmis, true, PROJECTILE_EGG_GRENADE, true);
 			break;
 		}
-		case 3: snd = "weapons/egg3_fire.wav"; newmis.dmg = 20; newmis.modelflags = MF_TRACER; break;
+		case 3: snd = "weapons/egg3_fire.wav"; newmis.dmg = 20; CSQCProjectile(newmis, true, PROJECTILE_EGG_ICE, true); break;
 		case 4:
 		{
 			snd = "weapons/egg4_fire.wav";
@@ -352,9 +351,10 @@ void W_BreegullBlaster_Fire(entity this, .entity weaponentity)
 			newmis.velocity = dir * 400 + v_up * 60;
 			setthink(newmis, W_BreegullBlaster_ClockworkExplode);
 			settouch(newmis, W_BreegullBlaster_ClockworkTouch);
+			CSQCProjectile(newmis, true, PROJECTILE_EGG_CLOCKWORK, true);
 			break;
 		}
-		case 5: snd = "weapons/egg5_fire.wav"; newmis.dmg = 10; break;
+		case 5: snd = "weapons/egg5_fire.wav"; newmis.dmg = 10; CSQCProjectile(newmis, true, PROJECTILE_EGG_GOLD, true); break;
 	}
 
 	_sound(this, CH_WEAPON_SINGLE, snd, 1, ATTN_NORM);

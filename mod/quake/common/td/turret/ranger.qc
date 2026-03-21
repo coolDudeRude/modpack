@@ -10,6 +10,8 @@ void barricade_hitbox_touch(entity this, entity toucher)
 {
 	if(time < toucher.barricade_dmgtime)
 		return;
+	if(time < toucher.invincible_finished)
+		return;
 
 	Turret tur = this.turretdef;
 	toucher.barricade_dmgtime = time + 0.5; // TODO?

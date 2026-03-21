@@ -6,8 +6,6 @@ PRECACHE(SubMachineGun)
 	precache_model("progs/v_smg.mdl");
 	precache_model("progs/g_smg.mdl");
 
-	precache_model("progs/ee_p_pm_yl.mdl");
-
 	//precache_sound("weapons/dsfirxpl.wav");
 	precache_sound("weapons/hplasma.wav");
 }
@@ -47,16 +45,19 @@ void W_FireSubMachineGun(entity this, float ox, .entity weaponentity)
 
 	_sound(this, CH_WEAPON_SINGLE, "weapons/hplasma.wav", 1, ATTN_NORM);
 	ATTACK_FINISHED(this, weaponentity) = time + 0.1;
-	vector dir = qc_aim(this, 4000);
+	float bullet_speed = 4000;
+	vector org = W_Shotorg(this, weaponentity) + v_right * ox;
+	vector dir = qc_aim_fromorg(this, org, bullet_speed);
 	// NOTE: position fix by Seven and Sajt applied here
-	entity missile = launch_spike(this, W_Shotorg(this, weaponentity) + v_right * ox, dir);
-	missile.velocity = dir * 4000;
+	entity missile = launch_spike(this, org, dir);
+	missile.velocity = dir * bullet_speed;
 	missile.classname = "smg_bolt";
 	missile.projectiledeathtype = WEP_SMG.m_id;
-	_setmodel(missile, "progs/ee_p_pm_yl.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 	//missile.noise = "weapons/dsfirxpl.wav";
 	missile.dmg = 15;
+
+	CSQCProjectile(missile, true, PROJECTILE_SMG, true);
 
 	this.punchangle_x = -2 * autocvar_sv_quake_recoil;
 }

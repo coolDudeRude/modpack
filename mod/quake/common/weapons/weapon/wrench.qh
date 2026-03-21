@@ -3,7 +3,7 @@
 CLASS(Wrench, Weapon)
 /* ammotype  */ ATTRIB(Wrench, ammo_type, int, 0);
 /* impulse   */ ATTRIB(Wrench, impulse, int, 1);
-/* spawnflags*/ ATTRIB(Wrench, spawnflags, int, WEP_FLAG_MELEE | WEP_FLAG_NOAGGRO | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL);
+/* spawnflags*/ ATTRIB(Wrench, spawnflags, int, WEP_FLAG_MELEE | WEP_FLAG_NOAGGRO | WEP_FLAG_NOSTEAL | WEP_FLAG_HITUNDEAD | WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
 /* ammo */      ATTRIB(Wrench, aflag, int, 0);
 /* modelname */ ATTRIB(Wrench, mdl, string, "wrench");
 /* crosshair */ ATTRIB(Wrench, w_crosshair, string, "gfx/crosshairlaser");

@@ -163,10 +163,24 @@ NET_HANDLE(ENT_CLIENT_TD_SPAWNPOINT, bool isnew)
 	return = true;
 }
 
+void TDMusic_Advance()
+{
+	if(!td_ent)
+		return;
+	if(!td_ent.active)
+		return; // easy check for music activation
+	if(STAT(TD_PHASE) != TD_PHASE_COMBAT)
+		return;
+
+	music_trigger = td_ent;
+}
+
 void td_ent_remove(entity this)
 {
 	if(td_ent == this)
 		td_ent = NULL;
+
+	strfree(this.noise);
 }
 
 NET_HANDLE(ENT_CLIENT_TD_ENT, bool isnew)
@@ -183,6 +197,22 @@ NET_HANDLE(ENT_CLIENT_TD_ENT, bool isnew)
 	{
 		this.count = ReadByte();
 		this.currentammo = ReadShort();
+	}
+
+	if(sf & SF_TD_ENT_MUSIC)
+	{
+		string s = engine_fixsound(ReadString());
+		if(fexists(s))
+		{
+			precache_sound(s);
+			strcpy(this.noise, s);
+			this.volume = 1;
+			this.fade_time = 1;
+			this.fade_rate = 1;
+			this.active = ACTIVE_ACTIVE;
+
+			IL_PUSH(TargetMusic_list, this);
+		}
 	}
 
 	td_ent = this;

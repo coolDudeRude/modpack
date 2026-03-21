@@ -104,7 +104,7 @@ void superchicken_die(entity this, entity inflictor, entity attacker, int deatht
 		{
 			superchicken_gib(this, inflictor, (killed_type == KILLED_GIBBED));
 			delete(this);
-			break;
+			return;
 		}
 		default: Death_SpecialHandle(this, killed_type); return;
 	}

@@ -78,6 +78,8 @@ void SCOURGE_FireSpikes(entity this, float ox)
 	entity missile = launch_spike(this, src, vec);
 	missile.projectiledeathtype = DEATH_MONSTER_CENTROID.m_id;
 
+	CSQCProjectile(missile, true, PROJECTILE_BULLET, true);
+
 	this.attack_finished = time + 0.2;
 }
 

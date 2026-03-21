@@ -153,12 +153,16 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 			else
 			{
 				targ = this.enemy;
+				if(!targ)
+					targ = this.goalentity;
 				if(j == 0 && targ)
 				{
 					float dz = this.origin.z - targ.origin.z;
 					float maxheight = 40;
 					if((this.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && vdist(this.origin - targ.origin, >, 300))
 						maxheight = 250;
+					else if(!this.enemy)
+						maxheight = 1;
 
 					if((this.monsterdef == MON_PUMPKING || this.monsterdef == MON_SKELETRON_PRIME) && vdist(this.origin - targ.origin, >, 300))
 						dz = this.origin.z - (targ.origin.z + 64);
@@ -1265,6 +1269,7 @@ checked each frame.  This means multi player games will have slightly
 slower noticing monsters.
 ============
 */
+.float last_teleport; // for charmed monsters, to reduce lag
 bool FindTarget(entity this)
 {
 	entity client = NULL;
@@ -1304,8 +1309,11 @@ bool FindTarget(entity this)
 			float tp_maxrange = 1024;
 			if(this.grinch_max) // TODO: allow customising
 				tp_maxrange = 512;
-			if(IS_PLAYER(this.charmer) && CanTeleportToTarget(this, this.charmer, tp_maxrange))
+			if(IS_PLAYER(this.charmer) && time >= this.charmer.last_teleport && CanTeleportToTarget(this, this.charmer, tp_maxrange))
+			{
+				this.charmer.last_teleport = time + 0.25;
 				TeleportToTarget(this, this.charmer, true);
+			}
 
 			UpdateCharmerGoal(this);
 //          this.goalentity = this.charmer;

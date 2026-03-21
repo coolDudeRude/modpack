@@ -150,6 +150,7 @@ CLASS(Duke, Champions)
 #ifdef CSQC
     ATTRIB(Duke, message, string, DUKE_STATS);
 #endif
+    ATTRIB(Duke, td_turrets, bool, true);
 ENDCLASS(Duke)
 REGISTER_CHAMPION(Duke, NEW(Duke));
 

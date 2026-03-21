@@ -2,18 +2,18 @@
 
 #include "../all.qh"
 
-MSG_INFO_NOTIF(DEATH_SELF_MON_SLIME,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was slimed by a Slime"), "")
+MSG_INFO_NOTIF(DEATH_SELF_MON_SLIME,                    1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 had both kidneys stolen by a Slime"), "")
 MSG_MULTI_NOTIF(DEATH_SELF_MON_SLIME,               1,  NULL,           INFO_DEATH_SELF_MON_SLIME,              CENTER_DEATH_SELF_MONSTER)
 REGISTER_DEATHTYPE(MONSTER_SLIME,           DEATH_SELF_MON_SLIME,           DEATH_MURDER_MONSTER,           "monster")
 
 #ifdef GAMEQC
-MODEL(MON_SLIME, "progs/slime.mdl");
+MODEL(MON_SLIME, "progs/mon_slime.mdl");
 #endif
 
 CLASS(Slime, Monster)
-    ATTRIB(Slime, spawnflags, int, MON_FLAG_BLOCKY);
-    ATTRIB(Slime, m_mins, vector, '-32 -32 -24');
-    ATTRIB(Slime, m_maxs, vector, '32 32 60');
+    ATTRIB(Slime, spawnflags, int, 0);
+    ATTRIB(Slime, m_mins, vector, '-16 -16 0');
+    ATTRIB(Slime, m_maxs, vector, '16 16 24');
 #ifdef GAMEQC
     ATTRIB(Slime, m_model, Model, MDL_MON_SLIME);
 #endif

@@ -23,6 +23,7 @@
 #include "keen.qh"
 #include "keyleth.qh"
 #include "kirby.qh"
+#include "kiwi.qh"
 #include "mario.qh"
 #include "mermaid.qh"
 #include "mime.qh"

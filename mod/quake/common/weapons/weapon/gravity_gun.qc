@@ -201,6 +201,8 @@ bool Drag_IsDraggable(entity draggee, entity dragger)
 			return false;
 		if(draggee.classname == "item_sigil")
 			return false;
+		if(draggee.classname == "backpack" && IS_PLAYER(draggee.owner) && draggee.owner != dragger)
+			return false;
 		if(draggee.weapon && !weapon_customize(draggee, dragger))
 			return false;
 		return true;

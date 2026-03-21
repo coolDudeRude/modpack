@@ -458,6 +458,15 @@ void W_Star_Swallow(entity actor, .entity weaponentity)
 		actor.transform_health = 200;
 		actor.m_transform = CHAMPION_FloydChamp;
 	}
+	else if(actor.star_power == MON_KIWI)
+	{
+		actor.star_consumed -= 1; // don't give health too
+		// special case: eating floyd turns you into floyd!
+		te_teleport(actor.origin);
+		actor.transform_limited = time + 20;
+		actor.transform_health = 120;
+		actor.m_transform = CHAMPION_KiwiChamp;
+	}
 	else if(actor.star_power == MON_GOATLING || actor.star_power == MON_GOAT)
 	{
 		actor.star_consumed -= 1; // don't give health too

@@ -7,7 +7,6 @@ PRECACHE(Driller)
 	//precache_model("progs/g_driller.mdl");
 
 	precache_model("progs/s_drill_explode.spr");
-	precache_model("progs/drill.mdl");
 
 	precache_sound("weapons/drill_shot.wav");
 	precache_sound("weapons/drill_loop.wav");
@@ -85,6 +84,7 @@ void drill_think(entity this)
 	this.nextthink = time;
 	float myspeed = (time <= this.drill_dmgtime) ? 20 : this.speed;
 	this.velocity = this.pos2 * myspeed;
+	UpdateCSQCProjectile(this);
 
 	if(time <= this.drill_dmgtime)
 		return; // cooldown to prevent damage spam
@@ -130,12 +130,13 @@ void W_FireDriller(entity this, .entity weaponentity)
 	missile.dmg = 25;
 	missile.classname = "drill";
 	missile.projectiledeathtype = WEP_DRILLER.m_id;
-	_setmodel(missile, "progs/drill.mdl");
 	setsize(missile, '0 0 0', '0 0 0');
 	missile.modelflags = MF_TRACER;
 
 	setthink(missile, drill_think);
 	missile.nextthink = time;
+
+	CSQCProjectile(missile, false, PROJECTILE_DRILL, true);
 }
 
 METHOD(Driller, wr_think, void(entity thiswep, entity actor, .entity weaponentity, int fire))

@@ -448,6 +448,11 @@ void minotaur_fire(entity this, vector orgofs, float angofs)
 			_setmodel(newmis, "progs/proj_minoblood.mdl");
 		setsize(newmis, '0 0 0', '0 0 0');
 		newmis.velocity = dir * (500 + (autocvar_skill * 150));
+
+		if(newmis.poisonous)
+			CSQCProjectile(newmis, true, PROJECTILE_MINOTAUR_POISON, true);
+		else
+			CSQCProjectile(newmis, true, PROJECTILE_MINOTAUR_BLOOD, true);
 	}
 	else
 	{
@@ -456,6 +461,8 @@ void minotaur_fire(entity this, vector orgofs, float angofs)
 		entity plasma = launch_plasma(this, org, dir);
 		plasma.projectiledeathtype = DEATH_MONSTER_MINOTAUR.m_id;
 		plasma.velocity = dir * (300 + (autocvar_skill * 150));
+
+		CSQCProjectile(plasma, true, PROJECTILE_MINOTAUR_PLASMA, true);
 	}
 }
 

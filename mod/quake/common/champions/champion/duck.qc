@@ -15,7 +15,6 @@ void grape_launch(entity this)
 	dir += (crandom() * spread.x) * v_right + (crandom() * spread.y) * v_up;
 	entity newmis = launch_spike(player, player.origin + player.view_ofs, dir);
 	newmis.classname = "grape";
-	setmodel(newmis, MDL_Grape);
 	newmis.avelocity = randomvec() * 200;
 	newmis.dmg = 20;
 	setsize(newmis, '0 0 0', '0 0 0');
@@ -27,6 +26,8 @@ void grape_launch(entity this)
 	newmis.projectiledeathtype = DEATH_GRAPE.m_id;
 	newmis.clipgroup = player.clipgroup;
 	newmis.flags = FL_PROJECTILE;
+
+	CSQCProjectile(newmis, true, PROJECTILE_GRAPE, true);
 
 	delete(this);
 }

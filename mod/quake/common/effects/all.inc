@@ -1541,3 +1541,35 @@ STATIC_INIT(Effect_VORTEX_EXPLOSION)
 	registercvar("cl_particle_VORTEX_EXPLOSION_sparks_velocityoffset", "0 0 80");
 }
 #endif
+
+EFFECT(1, TR_DRILL,             "TR_DRILL")
+#ifdef CSQC
+STATIC_INIT(Effect_TR_DRILL)
+{
+	registercvar("cl_particle_TR_DRILL", "trail smoke");
+
+	registercvar("cl_particle_TR_DRILL_trail_type", "static");
+	registercvar("cl_particle_TR_DRILL_trail_alpha", "256 256 968");
+	registercvar("cl_particle_TR_DRILL_trail_color", "0x404040 0x404040");
+	registercvar("cl_particle_TR_DRILL_trail_lightcolor", "1.5 3 6");
+	registercvar("cl_particle_TR_DRILL_trail_lightradius", "90");
+	registercvar("cl_particle_TR_DRILL_trail_size", "3 3");
+	registercvar("cl_particle_TR_DRILL_trail_tex", "62 62");
+	registercvar("cl_particle_TR_DRILL_trail_trailspacing", "4");
+	registercvar("cl_particle_TR_DRILL_trail_velocitymultiplier", "-0.100000");
+
+	registercvar("cl_particle_TR_DRILL_smoke_type", "snow");
+	registercvar("cl_particle_TR_DRILL_smoke_airfriction", "12");
+	registercvar("cl_particle_TR_DRILL_smoke_alpha", "444 512 1866");
+	registercvar("cl_particle_TR_DRILL_smoke_bounce", "1");
+	registercvar("cl_particle_TR_DRILL_smoke_color", "0x404040 0x404040");
+	registercvar("cl_particle_TR_DRILL_smoke_count", "1.500000");
+	registercvar("cl_particle_TR_DRILL_smoke_originjitter", "1 1 1");
+	registercvar("cl_particle_TR_DRILL_smoke_sizeincrease", "-20");
+	registercvar("cl_particle_TR_DRILL_smoke_size", "2 4");
+	registercvar("cl_particle_TR_DRILL_smoke_tex", "42 42");
+	registercvar("cl_particle_TR_DRILL_smoke_trailspacing", "12");
+	registercvar("cl_particle_TR_DRILL_smoke_velocityjitter", "50 50 50");
+	registercvar("cl_particle_TR_DRILL_smoke_velocityoffset", "0 0 15");
+}
+#endif
