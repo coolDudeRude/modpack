@@ -333,14 +333,14 @@ string td_GetLoot(entity this)
 {
 	// always drop ammo
 	RandomSelection_Init();
-	RandomSelection_AddString("ammo_shells", 1.5, 1);
-	RandomSelection_AddString("ammo_nails", 2, 1);
-	RandomSelection_AddString("ammo_rockets", 1.5, 1);
-	RandomSelection_AddString("ammo_cells", 1.5, 1);
-	RandomSelection_AddString("ammo_lava_nails", 1.5, 1);
-	RandomSelection_AddString("ammo_multi_rockets", 1.5, 1);
-	RandomSelection_AddString("ammo_plasma", 1.5, 1);
-	RandomSelection_AddString("ammo_drills", 1.5, 1);
+	RandomSelection_AddString("ammo_shells", 2.5, 1);
+	RandomSelection_AddString("ammo_nails", 4, 1);
+	RandomSelection_AddString("ammo_rockets", 2.5, 1);
+	RandomSelection_AddString("ammo_cells", 2.5, 1);
+	RandomSelection_AddString("ammo_lava_nails", 2.5, 1);
+	RandomSelection_AddString("ammo_multi_rockets", 2.5, 1);
+	RandomSelection_AddString("ammo_plasma", 2.5, 1);
+	RandomSelection_AddString("ammo_drills", 2.5, 1);
 
 	// armor depends on wave?
 	RandomSelection_AddString("armor1", 0.5, 1);
