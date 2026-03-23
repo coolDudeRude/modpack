@@ -21,7 +21,7 @@ CLASS(DukeFlakCannon, Turret)
 /* cost       */ ATTRIB(DukeFlakCannon, tur_cost, float, 60);
 /* units      */ ATTRIB(DukeFlakCannon, tur_units, int, 5);
 /* health     */ ATTRIB(DukeFlakCannon, tur_health, float, 180);
-/* damage     */ ATTRIB(DukeFlakCannon, tur_dmg, float, 18);
+/* damage     */ ATTRIB(DukeFlakCannon, tur_dmg, float, 21);
 /* dmg scale  */ ATTRIB(DukeFlakCannon, tur_dmgscale, float, 0.2);
 /* champion   */ ATTRIB(DukeFlakCannon, m_champion, Champions, CHAMPION_Duke);
 #endif
@@ -50,7 +50,7 @@ CLASS(DukeTwinGun, Turret)
 /* cost       */ ATTRIB(DukeTwinGun, tur_cost, float, 60);
 /* units      */ ATTRIB(DukeTwinGun, tur_units, int, 4);
 /* health     */ ATTRIB(DukeTwinGun, tur_health, float, 200);
-/* damage     */ ATTRIB(DukeTwinGun, tur_dmg, float, 5);
+/* damage     */ ATTRIB(DukeTwinGun, tur_dmg, float, 7);
 /* dmg scale  */ ATTRIB(DukeTwinGun, tur_dmgscale, float, 0.15);
 /* champion   */ ATTRIB(DukeTwinGun, m_champion, Champions, CHAMPION_Duke);
 #endif
@@ -79,7 +79,7 @@ CLASS(DukeRocketLauncher, Turret)
 /* cost       */ ATTRIB(DukeRocketLauncher, tur_cost, float, 110);
 /* units      */ ATTRIB(DukeRocketLauncher, tur_units, int, 7);
 /* health     */ ATTRIB(DukeRocketLauncher, tur_health, float, 200);
-/* damage     */ ATTRIB(DukeRocketLauncher, tur_dmg, float, 25);
+/* damage     */ ATTRIB(DukeRocketLauncher, tur_dmg, float, 30);
 /* dmg scale  */ ATTRIB(DukeRocketLauncher, tur_dmgscale, float, 0.15);
 /* champion   */ ATTRIB(DukeRocketLauncher, m_champion, Champions, CHAMPION_Duke);
 #endif
