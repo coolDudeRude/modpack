@@ -567,10 +567,15 @@ void BuildTool_Fire(entity actor)
 					refund *= bound(0, hpscale, 1);
 					// also refund SOME of the upgrade cost
 					if(tur.tur_level > 0)
-						refund += (td_UpgradeCost(tur.tur_level) * 0.5);
+					{
+						for(int j = 1; j <= tur.tur_level; ++j)
+						{
+							refund += (td_UpgradeCost(j) * 0.5);
+						}
+					}
 					refund = rint(refund);
 					if(refund > 0)
-						STAT(TD_FUEL, actor) = min(STAT(TD_FUEL, actor) + refund, TD_FUEL_MAX);
+						td_DropFuel(CENTER_OR_VIEWOFS(trace_ent), refund, NULL, false);
 
 					sound(trace_ent, CH_SHOTS, SND_ROCKET_EXPLOSION, VOL_BASE, ATTEN_NORM);
 					pointparticles(EFFECT_EXPLOSION, trace_ent.origin, '0 0 0', 1);
