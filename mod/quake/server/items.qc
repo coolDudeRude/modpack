@@ -3223,6 +3223,8 @@ void DropBackpack(entity this)
 	{
 		item.champion_weapon = wep;
 		wep = REGISTRY_GET(Weapons, this.(weaponentity).cnt);
+		if(wep.spawnflags & WEP_FLAG_CHAMPION)
+			wep = WEP_Null;
 	}
 	else
 		item.champion_weapon = WEP_Null;
