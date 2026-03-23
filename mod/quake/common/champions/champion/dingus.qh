@@ -70,6 +70,7 @@ REGISTER_CHAMPION(Dingus, NEW(Dingus));
 
 #ifdef SVQC
 string autocvar_sv_allow_customplayermodels_dingus = "";
+float autocvar_sv_quake_dingus_time = 0.5;
 
 .bool dingus_cannon;
 .float dingus_bash_delay;

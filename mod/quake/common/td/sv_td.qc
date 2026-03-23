@@ -262,12 +262,12 @@ void td_SetMonsters_Nightmare(entity wave_ent)
 		}
 		case 4:
 		{
-			RandomSelection_AddString("2 dfury 3 gug 1 biter 3 octa 2 wizard 2 gaunt 1 justice", 1, 1);
+			RandomSelection_AddString("2 dfury 1 gug 1 biter 3 octa 2 wizard 2 gaunt 1 justice", 1, 1);
 			break;
 		}
 		case 5:
 		{
-			RandomSelection_AddString("4 dknight 1 mutant 10 wizard 4 jim 3 bambler 1 amalgam 1 shambler 2 hogreham 1 hogremac 1 justice", 1, 1);
+			RandomSelection_AddString("4 dknight 3 mutant 10 wizard 4 jim 3 bambler 1 amalgam 1 shambler 2 hogreham 1 hogremac 1 justice", 1, 1);
 			break;
 		}
 		case 6:

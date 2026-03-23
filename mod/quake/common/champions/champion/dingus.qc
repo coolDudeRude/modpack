@@ -59,7 +59,7 @@ METHOD(Dingus, m_touch, void(Champions this, entity actor, entity toucher))
 		T_Damage(toucher, actor, actor, thedamage, DEATH_CRUSH.m_id);
 		player_sound(actor, CH_VOICE, "oops.wav", ATTN_NORM);
 
-		actor.dingus_bash_delay = time + 0.5;
+		actor.dingus_bash_delay = time + autocvar_sv_quake_dingus_time;
 	}
 }
 #endif
