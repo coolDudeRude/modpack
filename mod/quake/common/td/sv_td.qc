@@ -528,7 +528,7 @@ void td_MonsterSetup(entity this, Monster mon)
 		return;
 
 	// only a minor step up per wave as otherwise they'll be impossible to kill!
-	float myscale = td_ent.scale * 0.05;
+	float myscale = td_ent.scale * 0.02;
 	this.health = this.health * (1 + (myscale * (td_skill + 1)) * td_ent.wave);
 }
 

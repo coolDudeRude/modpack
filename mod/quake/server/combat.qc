@@ -681,7 +681,7 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		{
 			// no cap... good luck
 			// scale only by a small amount per wave or things will get impossible fast
-			float myscale = td_ent.scale * 0.02;
+			float myscale = td_ent.scale * 0.01;
 			float increase = (1 + (myscale * (td_skill + 1)) * td_ent.wave);
 			damage *= increase;
 		}
