@@ -5,7 +5,7 @@
 // =============
 
 #ifdef SVQC
-.float worldtree_healtime; // antispam
+//.float worldtree_healtime; // antispam
 bool worldtree_heal(entity this, entity toucher)
 {	
 	if(toucher.tank)
@@ -14,8 +14,8 @@ bool worldtree_heal(entity this, entity toucher)
 		return false;
 	if(toucher.m_transform)
 		return false;
-	if(time < toucher.worldtree_healtime)
-		return false;
+	//if(time < toucher.worldtree_healtime)
+		//return false;
 	
 	float healing = this.turretdef.healamount * turret_getpower(this.tur_level, 0.2);
 	if(IS_PLAYER(toucher))
@@ -24,7 +24,7 @@ bool worldtree_heal(entity this, entity toucher)
 		return false;
 
 	toucher.healthrot_nextcheck = time + 2;
-	toucher.worldtree_healtime = time + 0.3;
+	//toucher.worldtree_healtime = time + 0.3;
 
 	if(IS_TURRET(toucher))
 		toucher.SendFlags |= TNSF_STATUS;
