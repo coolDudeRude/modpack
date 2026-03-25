@@ -74,8 +74,8 @@ CLASS(KeylethFlyTrap, Turret)
 /* fullname   */ ATTRIB(KeylethFlyTrap, m_name, string, _("Fly Trap"));
 #ifdef GAMEQC
 /* number     */ ATTRIB(KeylethFlyTrap, impulse, int, 2);
-/* cost       */ ATTRIB(KeylethFlyTrap, tur_cost, float, 60);
-/* units      */ ATTRIB(KeylethFlyTrap, tur_units, int, 3);
+/* cost       */ ATTRIB(KeylethFlyTrap, tur_cost, float, 40);
+/* units      */ ATTRIB(KeylethFlyTrap, tur_units, int, 2);
 /* health     */ ATTRIB(KeylethFlyTrap, tur_health, float, 180);
 /* champion   */ ATTRIB(KeylethFlyTrap, m_champion, Champions, CHAMPION_Keyleth);
 #endif

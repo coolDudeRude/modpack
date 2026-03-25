@@ -281,6 +281,19 @@ bool sv_editor_command(entity this, string cmd, float argc)
 				sprint(this, sprintf("Angles of %s updated to your current yaw angle\n", e.classname));
 				return true;
 			}
+			case "v_angle":
+			{
+				entity e = editor_validate(argv(2));
+				if(!e)
+				{
+					sprint(this, "Invalid entity\n");
+					return true;
+				}
+				e.angles = this.v_angle;
+				e.SendFlags |= 1;
+				sprint(this, sprintf("Angles of %s updated to your current view angle\n", e.classname));
+				return true;
+			}
 			case "target":
 			{
 				entity e = editor_validate(argv(2));
