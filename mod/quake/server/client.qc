@@ -444,7 +444,7 @@ void DecodeLevelParms(entity this)
 		|| world.worldtype == WORLDTYPE_HUB || gametype == GAMETYPE_SLIDE || gametype == GAMETYPE_DODGEBALL || need_reset
 		|| world.model == "maps/hipstart.bsp" || world.model == "maps/hip1m1.bsp" || world.model == "maps/hip2m1.bsp" || world.model == "maps/hip3m1.bsp"
 		|| world.model == "maps/rstart.bsp" || world.model == "maps/r2m1.bsp" || world.model == "maps/aop2m1.bsp"
-		|| gametype == GAMETYPE_HORDE || deathmatch)
+		|| gametype == GAMETYPE_HORDE || gametype == GAMETYPE_TD || deathmatch)
 	{
 		// take away all stuff on starting new episode
 		// or when starting special missions
