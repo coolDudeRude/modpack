@@ -83,7 +83,11 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 			float offset = (actor.cnt) ? 4 : -4;
 			actor.cnt = (actor.cnt) ? 0 : 1;
 
-			_sound(actor, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 0.5, ATTN_NORM);
+			if(time >= actor.spamtime)
+			{
+				actor.spamtime = time + 0.1;
+				_sound(actor, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 0.5, ATTN_NORM);
+			}
 
 			vector org = myorg + v_right * offset;
 			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);

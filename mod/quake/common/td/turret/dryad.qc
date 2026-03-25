@@ -5,7 +5,7 @@
 // =============
 
 #ifdef SVQC
-//.float worldtree_healtime; // antispam
+.float worldtree_healtime; // antispam
 bool worldtree_heal(entity this, entity toucher)
 {	
 	if(toucher.tank)
@@ -24,7 +24,6 @@ bool worldtree_heal(entity this, entity toucher)
 		return false;
 
 	toucher.healthrot_nextcheck = time + 2;
-	//toucher.worldtree_healtime = time + 0.3;
 
 	if(IS_TURRET(toucher))
 		toucher.SendFlags |= TNSF_STATUS;
@@ -33,7 +32,11 @@ bool worldtree_heal(entity this, entity toucher)
 	//_sound(toucher, CH_TRIGGER_SINGLE, "items/r_item1.wav", 1, ATTN_NORM);
 
 	//particle(toucher.origin, '0 0 0', 26, 32);
-	Send_Effect(EFFECT_QCC_MUSHROOM, (toucher.absmin + toucher.absmax) * 0.5, '0 0 0', 1);
+	if(time >= toucher.worldtree_healtime)
+	{
+		Send_Effect(EFFECT_QCC_MUSHROOM, (toucher.absmin + toucher.absmax) * 0.5, '0 0 0', 1);
+		toucher.worldtree_healtime = time + 1;
+	}
 	
 	//this.model = string_null;
 	//this.solid = SOLID_NOT;
