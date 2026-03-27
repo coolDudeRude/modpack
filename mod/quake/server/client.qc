@@ -4182,6 +4182,23 @@ void SV_ParseClientCommand(entity this, string command)
 		return;
 	}
 
+	if(cmd_name == "transform")
+	{
+		if(!autocvar_sv_cheats && !this.maycheat)
+			return;
+		string arg = argv(1);
+		if(arg == "clear")
+		{
+			QCC_ClearTransform(this);
+			sprint(this, "Transformation cleared!\n");
+			return;
+		}
+		Champions champ = Champion_FromString(arg);
+		this.m_transform = champ;
+		sprint(this, strcat("Transformed into ", champ.m_name, "\n"));
+		return;
+	}
+
 	if(cmd_name == "effect")
 	{
 		if(!autocvar_sv_cheats && !this.maycheat)

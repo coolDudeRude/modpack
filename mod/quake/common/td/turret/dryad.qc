@@ -44,14 +44,14 @@ bool worldtree_heal(entity this, entity toucher)
 	return true;
 }
 
-METHOD(DryadWorldTree, tr_think, void(DryadWorldTree thistur, entity actor))
+METHOD(DryadWorldTree, tr_think, void(DryadWorldTree this, entity actor))
 {
 	if(time < actor.idle_finished)
 		return;
 
 	actor.idle_finished = time + 0.33; // delay mostly to prevent lag
 
-	FOREACH_ENTITY_RADIUS(actor.origin + actor.view_ofs, 256, it != actor && it.turretdef != TUR_WORLD_TREE && (IS_PLAYER(it) || IS_TURRET(it)) && it.health > 0,
+	FOREACH_ENTITY_RADIUS(actor.origin + actor.view_ofs, this.target_range, it != actor && it.turretdef != TUR_WORLD_TREE && (IS_PLAYER(it) || IS_TURRET(it)) && it.health > 0,
 	{
 		if(it.exptime != 0)
 			continue;
@@ -71,27 +71,11 @@ METHOD(DryadWorldTree, tr_setup, void(DryadWorldTree this, entity actor))
 #ifdef CSQC
 METHOD(DryadWorldTree, tr_drawselected, void(DryadWorldTree this, entity actor))
 {
-	float myrange = 256;
+	float myrange = this.target_range;
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 2';
 
-	//Draw_Cone(org, v_forward, myrange, 0.3);
-
-	for(int counter = 1; counter <= 8; ++counter)
-	{
-		makevectors('0 360 0' * (counter / 8));
-		Draw_CylindricLine(org, org + v_forward * myrange, 6, "", 0.25, 0, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
-	}
-
-	// draw lines in each direction so we know roughly where it'll hit (TODO)
-	// forward
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "", 0.25, 0, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
-	// back
-	//Draw_CylindricLine(org, org - v_forward * myrange, 6, "", 0.25, 0, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
-	// left
-	//Draw_CylindricLine(org, org - v_right * myrange, 6, "", 0.25, 0, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
-	// right
-	//Draw_CylindricLine(org, org + v_right * myrange, 6, "", 0.25, 0, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Circle(org, myrange);
 }
 METHOD(DryadWorldTree, tr_setup, void(DryadWorldTree this, entity actor))
 {
@@ -187,7 +171,7 @@ METHOD(DryadHornetsNest, tr_precache, void(DryadHornetsNest thistur))
 {
 	precache_sound("turrets/hornetsnest_swarm.wav");
 }
-METHOD(DryadHornetsNest, tr_think, void(DryadHornetsNest thistur, entity actor))
+METHOD(DryadHornetsNest, tr_think, void(DryadHornetsNest this, entity actor))
 {
 	if(time <= actor.attack_finished)
 		return;
@@ -195,8 +179,8 @@ METHOD(DryadHornetsNest, tr_think, void(DryadHornetsNest thistur, entity actor))
 
 	// pick a random nearby target each time we attack
 	// make sure it matches drawn values!
-	float myrange = 320 * turret_getpower(actor.tur_level, 0.2);
-	entity targ = turret_findtarget_ignore(actor, 0.15, myrange, actor.lastvictim);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	entity targ = turret_findtarget_ignore(actor, 0, 0, myrange, actor.lastvictim);
 	if(targ)
 	{
 		//actor.attack_finished = time + max(0.03, (1.2 / turret_getpower(actor.tur_level, 0.25)));
@@ -215,14 +199,10 @@ METHOD(DryadHornetsNest, tr_setup, void(DryadHornetsNest this, entity actor))
 #ifdef CSQC
 METHOD(DryadHornetsNest, tr_drawselected, void(DryadHornetsNest this, entity actor))
 {
-	float myrange = 320 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
 	vector org = actor.origin + ((actor.mins + actor.maxs) * 0.5) + '0 0 8';
-	makevectors(actor.angles);
 
-	Draw_Cone(org, v_forward, myrange, 0.15);
-
-	// TODO: circle
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Circle(org, myrange);
 }
 METHOD(DryadHornetsNest, tr_setup, void(DryadHornetsNest this, entity actor))
 {
@@ -240,21 +220,19 @@ METHOD(DryadHarpyPerch, tr_precache, void(DryadHarpyPerch thistur))
 {
 	precache_sound("turrets/harpyperch_fire.wav");
 }
-METHOD(DryadHarpyPerch, tr_think, void(DryadHarpyPerch thistur, entity actor))
+METHOD(DryadHarpyPerch, tr_think, void(DryadHarpyPerch this, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
-	float viscone = 0.3;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
 		vector org = actor.origin + actor.view_ofs;
 		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
-		vector dir = normalize(targ_org - org);
-		float dot = dir * v_forward;
-
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
 		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(org - targ_org, >, myrange * 1.5))
 		{
@@ -262,15 +240,16 @@ METHOD(DryadHarpyPerch, tr_think, void(DryadHarpyPerch thistur, entity actor))
 			return; // won't find a new target this frame
 		}
 
-		if(time > actor.attack_finished && dot > viscone && isvisible)
+		if(time > actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (0.33 / turret_getpower(actor.tur_level, 0.5)));
 			actor.clientframe = TANIM_SHOOT;
 
 			_sound(actor, CH_WEAPON_SINGLE, "turrets/harpyperch_fire.wav", 1, ATTN_NORM);
 
+			vector dir = normalize(targ_org - org);
 			entity missile = launch_spike(actor, org, dir);
-			missile.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			missile.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			setsize(missile, '0 0 0', '0 0 0');
 
@@ -281,7 +260,7 @@ METHOD(DryadHarpyPerch, tr_think, void(DryadHarpyPerch thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 METHOD(DryadHarpyPerch, tr_setup, void(DryadHarpyPerch this, entity actor))
@@ -292,11 +271,13 @@ METHOD(DryadHarpyPerch, tr_setup, void(DryadHarpyPerch this, entity actor))
 #ifdef CSQC
 METHOD(DryadHarpyPerch, tr_drawselected, void(DryadHarpyPerch this, entity actor))
 {
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 48';
 
-	Draw_Cone(org, v_forward, myrange, 0.3);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
@@ -327,12 +308,15 @@ void slimepit_touch(entity this, entity toucher)
 	float mydmg = (this.dmg) ? this.dmg : 5;
 	float damg = mydmg + random() * (mydmg * 0.2);
 	
-	if(toucher.health)
+	if(toucher.takedamage)
 	{
-		float efftime = 3;
-		float curtime = StatusEffects_gettime(STATUSEFFECT_Slowness, toucher);
-		if((time + efftime) > curtime)
-			StatusEffects_apply(STATUSEFFECT_Slowness, toucher, time + efftime, 0);
+		if(!IS_MONSTER(toucher))
+		{
+			float efftime = 3;
+			float curtime = StatusEffects_gettime(STATUSEFFECT_Slowness, toucher);
+			if((time + efftime) > curtime)
+				StatusEffects_apply(STATUSEFFECT_Slowness, toucher, time + efftime, 0);
+		}
 
 		T_Damage(toucher, this, this.owner, damg, this.projectiledeathtype);
 	}
@@ -354,11 +338,11 @@ void slimepit_touch(entity this, entity toucher)
 }
 
 vector tuba_calc_arc(vector org, vector tgt, float ht); // saves some copy-pasta
-vector slimepit_calc_velocity(entity actor, vector org, entity targ)
+vector slimepit_calc_velocity(entity actor, vector org, vector targ_org)
 {
 	//vector oldvel = normalize(actor.enemy.origin - org) * 500 + v_up * 500;
 
-	vector tpos1 = (targ.absmin + targ.absmax) * 0.5;
+	vector tpos1 = targ_org;
 	vector v = org;
 
 	traceline(v, v + '0 0 1' * 65535, MOVE_WORLDONLY, actor);
@@ -379,16 +363,18 @@ METHOD(DryadSlimePit, tr_precache, void(DryadSlimePit thistur))
 	precache_sound("turrets/slimepit_impact1.wav");
 	precache_sound("turrets/slimepit_impact2.wav");
 }
-METHOD(DryadSlimePit, tr_think, void(DryadSlimePit thistur, entity actor))
+METHOD(DryadSlimePit, tr_think, void(DryadSlimePit this, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 420 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
 	if(actor.enemy)
 	{
+		vector org = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
 		bool isvisible = visible(actor, actor.enemy);
 		if(isvisible)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(org - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
@@ -406,12 +392,11 @@ METHOD(DryadSlimePit, tr_think, void(DryadSlimePit thistur, entity actor))
 			else
 				_sound(actor, CH_WEAPON_SINGLE, "turrets/slimepit_fire3.wav", 1, ATTN_NORM);
 
-			vector org = actor.origin + actor.view_ofs;
 			entity newmis = launch_spike(actor, org, '0 0 1');
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
-			newmis.velocity = slimepit_calc_velocity(newmis, org, actor.enemy);
+			newmis.velocity = slimepit_calc_velocity(newmis, org, targ_org);
 			newmis.gravity = 1;
-			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			newmis.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			set_movetype(newmis, MOVETYPE_TOSS);
 			settouch(newmis, slimepit_touch);
 			CSQCProjectile(newmis, true, PROJECTILE_SLIME, true);
@@ -421,7 +406,7 @@ METHOD(DryadSlimePit, tr_think, void(DryadSlimePit thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, 0, myrange);
+		actor.enemy = turret_findtarget(actor, 0, 0, myrange);
 	}
 }
 METHOD(DryadSlimePit, tr_setup, void(DryadSlimePit this, entity actor))
@@ -445,12 +430,11 @@ METHOD(DryadSlimePit, tr_think, void(DryadSlimePit this, entity actor))
 }
 METHOD(DryadSlimePit, tr_drawselected, void(DryadSlimePit this, entity actor))
 {
-	//float myrange = 420 * turret_getpower(actor.tur_level, 0.2);
-	//makevectors(actor.angles);
-	//vector org = actor.origin + '0 0 4';
+	float myrange = this.target_range;
+	makevectors(actor.angles);
+	vector org = actor.origin + '0 0 4';
 
-	// TODO: cone?
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Circle(org, myrange);
 }
 #endif // CSQC
 
@@ -542,7 +526,7 @@ METHOD(DryadAngryNimbus, tr_precache, void(DryadAngryNimbus thistur))
 {
 	precache_sound("turrets/hornetsnest_swarm.wav");
 }
-METHOD(DryadAngryNimbus, tr_think, void(DryadAngryNimbus thistur, entity actor))
+METHOD(DryadAngryNimbus, tr_think, void(DryadAngryNimbus this, entity actor))
 {
 	if(time <= actor.attack_finished)
 		return;
@@ -550,8 +534,10 @@ METHOD(DryadAngryNimbus, tr_think, void(DryadAngryNimbus thistur, entity actor))
 
 	// pick a random nearby target each time we attack
 	// make sure it matches drawn values!
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
-	entity targ = turret_findtarget_ignore(actor, 0.15, myrange, actor.lastvictim);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
+	entity targ = turret_findtarget_ignore(actor, maxpitch, maxrot, myrange, actor.lastvictim);
 	if(targ)
 	{
 		actor.clientframe = NANIM_SPAWN;
@@ -578,11 +564,13 @@ METHOD(DryadAngryNimbus, tr_precache, void(DryadAngryNimbus thistur))
 .float idle_finished;
 METHOD(DryadAngryNimbus, tr_drawselected, void(DryadAngryNimbus this, entity actor))
 {
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	vector org = actor.origin + '0 0 48';
 	makevectors(actor.angles);
 
-	Draw_Cone(org, v_forward, myrange, 0.15);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	if(actor.classname == "buildtool_dropmark" && actor.tur_head && actor.tur_head.origin != '0 0 48')
 		setorigin(actor.tur_head, '0 0 48');

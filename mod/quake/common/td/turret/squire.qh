@@ -16,6 +16,7 @@ CLASS(SquireSpikeBlockade, Turret)
 #endif
 /* netname    */ ATTRIB(SquireSpikeBlockade, netname, string, "spikeblockade");
 /* fullname   */ ATTRIB(SquireSpikeBlockade, m_name, string, _("Spike Blockade"));
+/* description*/ ATTRIB(SquireSpikeBlockade, m_description, string, "Damages and pushes back enemies in front of it");
 #ifdef GAMEQC
 /* number     */ ATTRIB(SquireSpikeBlockade, impulse, int, 0);
 /* cost       */ ATTRIB(SquireSpikeBlockade, tur_cost, float, 30);
@@ -45,6 +46,7 @@ CLASS(SquireBouncer, Turret)
 #endif
 /* netname    */ ATTRIB(SquireBouncer, netname, string, "bouncer");
 /* fullname   */ ATTRIB(SquireBouncer, m_name, string, _("Bouncer Blockade"));
+/* description*/ ATTRIB(SquireBouncer, m_description, string, "Periodically lashes out sending all nearby\nenemies flying in pain");
 #ifdef GAMEQC
 /* number     */ ATTRIB(SquireBouncer, impulse, int, 1);
 /* cost       */ ATTRIB(SquireBouncer, tur_cost, float, 40);
@@ -52,6 +54,7 @@ CLASS(SquireBouncer, Turret)
 /* health     */ ATTRIB(SquireBouncer, tur_health, float, 666);
 /* damage     */ ATTRIB(SquireBouncer, tur_dmg, float, 15);
 /* dmg scale  */ ATTRIB(SquireBouncer, tur_dmgscale, float, 0.2);
+/* range      */ ATTRIB(SquireBouncer, target_range, float, 96);
 /* champion   */ ATTRIB(SquireBouncer, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -74,6 +77,7 @@ CLASS(SquireHarpoon, Turret)
 #endif
 /* netname    */ ATTRIB(SquireHarpoon, netname, string, "harpoon");
 /* fullname   */ ATTRIB(SquireHarpoon, m_name, string, _("Harpoon Turret"));
+/* description*/ ATTRIB(SquireHarpoon, m_description, string, "Fires piercing bolts");
 #ifdef GAMEQC
 /* number     */ ATTRIB(SquireHarpoon, impulse, int, 2);
 /* cost       */ ATTRIB(SquireHarpoon, tur_cost, float, 80);
@@ -81,6 +85,9 @@ CLASS(SquireHarpoon, Turret)
 /* health     */ ATTRIB(SquireHarpoon, tur_health, float, 250);
 /* damage     */ ATTRIB(SquireHarpoon, tur_dmg, float, 8);
 /* dmg scale  */ ATTRIB(SquireHarpoon, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(SquireHarpoon, target_range, float, 800);
+/* max rotate */ ATTRIB(SquireHarpoon, aim_maxrot, float, 45);
+/* max pitch  */ ATTRIB(SquireHarpoon, aim_maxpitch, float, 45);
 /* champion   */ ATTRIB(SquireHarpoon, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -103,6 +110,7 @@ CLASS(SquireSliceNDice, Turret)
 #endif
 /* netname    */ ATTRIB(SquireSliceNDice, netname, string, "slicendice");
 /* fullname   */ ATTRIB(SquireSliceNDice, m_name, string, _("Slice N Dice Blockade"));
+/* description*/ ATTRIB(SquireSliceNDice, m_description, string, "Spins up when enemies are nearby\nrapidly slicing everything around it");
 #ifdef GAMEQC
 /* number     */ ATTRIB(SquireSliceNDice, impulse, int, 3);
 /* cost       */ ATTRIB(SquireSliceNDice, tur_cost, float, 140);
@@ -110,6 +118,7 @@ CLASS(SquireSliceNDice, Turret)
 /* health     */ ATTRIB(SquireSliceNDice, tur_health, float, 600);
 /* damage     */ ATTRIB(SquireSliceNDice, tur_dmg, float, 6);
 /* dmg scale  */ ATTRIB(SquireSliceNDice, tur_dmgscale, float, 0.25);
+/* range      */ ATTRIB(SquireSliceNDice, target_range, float, 120);
 /* champion   */ ATTRIB(SquireSliceNDice, m_champion, Champions, CHAMPION_Squire);
 #endif
 
@@ -132,6 +141,7 @@ CLASS(SquireBowlingBall, Turret)
 #endif
 /* netname    */ ATTRIB(SquireBowlingBall, netname, string, "bowlingball");
 /* fullname   */ ATTRIB(SquireBowlingBall, m_name, string, _("Bowling Ball Turret"));
+/* description*/ ATTRIB(SquireBowlingBall, m_description, string, "Spits out stone balls that\nbounce around and hurt enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(SquireBowlingBall, impulse, int, 4);
 /* cost       */ ATTRIB(SquireBowlingBall, tur_cost, float, 110);
@@ -139,6 +149,9 @@ CLASS(SquireBowlingBall, Turret)
 /* health     */ ATTRIB(SquireBowlingBall, tur_health, float, 400);
 /* damage     */ ATTRIB(SquireBowlingBall, tur_dmg, float, 9);
 /* dmg scale  */ ATTRIB(SquireBowlingBall, tur_dmgscale, float, 0.2);
+/* range      */ ATTRIB(SquireBowlingBall, target_range, float, 900);
+/* max rotate */ ATTRIB(SquireBowlingBall, aim_maxrot, float, 15);
+/* max pitch  */ ATTRIB(SquireBowlingBall, aim_maxpitch, float, 15);
 /* champion   */ ATTRIB(SquireBowlingBall, m_champion, Champions, CHAMPION_Squire);
 #endif
 

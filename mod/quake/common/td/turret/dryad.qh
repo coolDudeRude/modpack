@@ -16,12 +16,14 @@ CLASS(DryadWorldTree, Turret)
 #endif
 /* netname    */ ATTRIB(DryadWorldTree, netname, string, "worldtree");
 /* fullname   */ ATTRIB(DryadWorldTree, m_name, string, _("World Tree"));
+/* description*/ ATTRIB(DryadWorldTree, m_description, string, "Slowly heals nearby defenses and players");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadWorldTree, impulse, int, 0);
 /* cost       */ ATTRIB(DryadWorldTree, tur_cost, float, 20);
 /* units      */ ATTRIB(DryadWorldTree, tur_units, int, 2);
 /* health     */ ATTRIB(DryadWorldTree, tur_health, float, 420);
 /* damage     */ ATTRIB(DryadWorldTree, healamount, float, 2);
+/* range      */ ATTRIB(DryadWorldTree, target_range, float, 256);
 /* champion   */ ATTRIB(DryadWorldTree, m_champion, Champions, CHAMPION_Dryad);
 #endif
 
@@ -44,6 +46,7 @@ CLASS(DryadHornetsNest, Turret)
 #endif
 /* netname    */ ATTRIB(DryadHornetsNest, netname, string, "hornetsnest");
 /* fullname   */ ATTRIB(DryadHornetsNest, m_name, string, _("Moss Hornet's Nest"));
+/* description*/ ATTRIB(DryadHornetsNest, m_description, string, "Releases a Moss Hornet that poisons enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadHornetsNest, impulse, int, 1);
 /* cost       */ ATTRIB(DryadHornetsNest, tur_cost, float, 30);
@@ -51,6 +54,7 @@ CLASS(DryadHornetsNest, Turret)
 /* health     */ ATTRIB(DryadHornetsNest, tur_health, float, 300);
 /* damage     */ ATTRIB(DryadHornetsNest, tur_dmg, float, 5);
 /* dmg scale  */ ATTRIB(DryadHornetsNest, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DryadHornetsNest, target_range, float, 320);
 /* champion   */ ATTRIB(DryadHornetsNest, m_champion, Champions, CHAMPION_Dryad);
 #endif
 
@@ -73,6 +77,7 @@ CLASS(DryadHarpyPerch, Turret)
 #endif
 /* netname    */ ATTRIB(DryadHarpyPerch, netname, string, "harpyperch");
 /* fullname   */ ATTRIB(DryadHarpyPerch, m_name, string, _("Harpy's Perch"));
+/* description*/ ATTRIB(DryadHarpyPerch, m_description, string, "Rapidly launches feathers");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadHarpyPerch, impulse, int, 2);
 /* cost       */ ATTRIB(DryadHarpyPerch, tur_cost, float, 40);
@@ -80,6 +85,9 @@ CLASS(DryadHarpyPerch, Turret)
 /* health     */ ATTRIB(DryadHarpyPerch, tur_health, float, 250);
 /* damage     */ ATTRIB(DryadHarpyPerch, tur_dmg, float, 9);
 /* dmg scale  */ ATTRIB(DryadHarpyPerch, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DryadHarpyPerch, target_range, float, 600);
+/* max rotate */ ATTRIB(DryadHarpyPerch, aim_maxrot, float, 55);
+/* max pitch  */ ATTRIB(DryadHarpyPerch, aim_maxpitch, float, 55);
 /* champion   */ ATTRIB(DryadHarpyPerch, m_champion, Champions, CHAMPION_Dryad);
 #endif
 
@@ -102,6 +110,7 @@ CLASS(DryadSlimePit, Turret)
 #endif
 /* netname    */ ATTRIB(DryadSlimePit, netname, string, "slimepit");
 /* fullname   */ ATTRIB(DryadSlimePit, m_name, string, _("Slime Pit"));
+/* description*/ ATTRIB(DryadSlimePit, m_description, string, "Lobs Slimes that slow enemies briefly");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadSlimePit, impulse, int, 3);
 /* cost       */ ATTRIB(DryadSlimePit, tur_cost, float, 40);
@@ -109,6 +118,7 @@ CLASS(DryadSlimePit, Turret)
 /* health     */ ATTRIB(DryadSlimePit, tur_health, float, 300);
 /* damage     */ ATTRIB(DryadSlimePit, tur_dmg, float, 9);
 /* dmg scale  */ ATTRIB(DryadSlimePit, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DryadSlimePit, target_range, float, 420);
 /* champion   */ ATTRIB(DryadSlimePit, m_champion, Champions, CHAMPION_Dryad);
 #endif
 
@@ -131,6 +141,7 @@ CLASS(DryadAngryNimbus, Turret)
 #endif
 /* netname    */ ATTRIB(DryadAngryNimbus, netname, string, "angrynimbus");
 /* fullname   */ ATTRIB(DryadAngryNimbus, m_name, string, _("Angry Nimbus"));
+/* description*/ ATTRIB(DryadAngryNimbus, m_description, string, "Sends out an Angry Nimbus that\nchases targets and rains pain on all below it");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadAngryNimbus, impulse, int, 4);
 /* cost       */ ATTRIB(DryadAngryNimbus, tur_cost, float, 60);
@@ -138,6 +149,9 @@ CLASS(DryadAngryNimbus, Turret)
 /* health     */ ATTRIB(DryadAngryNimbus, tur_health, float, 320);
 /* damage     */ ATTRIB(DryadAngryNimbus, tur_dmg, float, 4);
 /* dmg scale  */ ATTRIB(DryadAngryNimbus, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DryadAngryNimbus, target_range, float, 500);
+/* max rotate */ ATTRIB(DryadAngryNimbus, aim_maxrot, float, 75);
+/* max pitch  */ ATTRIB(DryadAngryNimbus, aim_maxpitch, float, 75);
 /* champion   */ ATTRIB(DryadAngryNimbus, m_champion, Champions, CHAMPION_Dryad);
 #endif
 

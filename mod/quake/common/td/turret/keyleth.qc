@@ -1,4 +1,4 @@
-#include "poop.qh"
+#include "keyleth.qh"
 
 // =========
 //  SWARMER
@@ -90,7 +90,7 @@ METHOD(KeylethSwarmer, tr_precache, void(KeylethSwarmer thistur))
 {
 	precache_sound("turrets/swarmer_swarm.wav");
 }
-METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer thistur, entity actor))
+METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer this, entity actor))
 {
 	if(time <= actor.attack_finished)
 		return;
@@ -98,8 +98,10 @@ METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer thistur, entity actor))
 
 	// pick a random nearby target each time we attack
 	// make sure it matches drawn values!
-	float myrange = 320 * turret_getpower(actor.tur_level, 0.2);
-	entity targ = turret_findtarget_ignore(actor, 0.15, myrange, actor.lastvictim);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
+	entity targ = turret_findtarget_ignore(actor, maxpitch, maxrot, myrange, actor.lastvictim);
 	if(targ)
 	{
 		//actor.attack_finished = time + max(0.03, (1.2 / turret_getpower(actor.tur_level, 0.25)));
@@ -114,14 +116,13 @@ METHOD(KeylethSwarmer, tr_think, void(KeylethSwarmer thistur, entity actor))
 #ifdef CSQC
 METHOD(KeylethSwarmer, tr_drawselected, void(KeylethSwarmer this, entity actor))
 {
-	float myrange = 320 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	vector org = actor.origin + ((actor.mins + actor.maxs) * 0.5) + '0 0 8';
 	makevectors(actor.angles);
 
-	Draw_Cone(org, v_forward, myrange, 0.15);
-
-	// TODO: circle
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 }
 METHOD(KeylethSwarmer, tr_setup, void(KeylethSwarmer this, entity actor))
 {
@@ -172,27 +173,26 @@ METHOD(KeylethFrog, tr_precache, void(KeylethFrog thistur))
 	precache_sound("turrets/frog_attack2.wav");
 	precache_sound("weapons/grape_impact.wav");
 }
-METHOD(KeylethFrog, tr_think, void(KeylethFrog thistur, entity actor))
+METHOD(KeylethFrog, tr_think, void(KeylethFrog this, entity actor))
 {
-	// make sure it matches drawn values!
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.15);
-	float viscone = 0.3;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector org = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(org - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time >= actor.attack_finished && dot > viscone && isvisible)
+		if(time >= actor.attack_finished && isinfront && isvisible)
 		{
 			actor.clientframe = TANIM_SHOOT;
 			actor.attack_finished = time + max(0.03, (5 / turret_getpower(actor.tur_level, 0.15)));
@@ -201,8 +201,7 @@ METHOD(KeylethFrog, tr_think, void(KeylethFrog thistur, entity actor))
 			else
 				_sound(actor, CH_WEAPON_SINGLE, "turrets/frog_attack2.wav", 1, ATTN_NORM);
 
-			vector org = actor.origin;
-			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
+			vector dir = normalize(targ_org - org);
 			entity newmis = launch_spike(actor, org, dir);
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = dir * 600;
@@ -215,21 +214,20 @@ METHOD(KeylethFrog, tr_think, void(KeylethFrog thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 #endif // SVQC
 #ifdef CSQC
 METHOD(KeylethFrog, tr_drawselected, void(KeylethFrog this, entity actor))
 {
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin;
 
-	Draw_Cone(org, v_forward, myrange, 0.3);
-
-	// TODO: cone?
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 }
 METHOD(KeylethFrog, tr_setup, void(KeylethFrog this, entity actor))
 {
@@ -248,23 +246,22 @@ METHOD(KeylethFlyTrap, tr_precache, void(KeylethFlyTrap thistur))
 	precache_sound("turrets/flytrap_spit1.wav");
 	precache_sound("turrets/flytrap_spit2.wav");
 }
-METHOD(KeylethFlyTrap, tr_think, void(KeylethFlyTrap thistur, entity actor))
+METHOD(KeylethFlyTrap, tr_think, void(KeylethFlyTrap this, entity actor))
 {
-	// make sure it matches drawn values!
-	float myrange = 150;
-	float viscone = 0.3;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	vector org = actor.origin + '0 0 24';
 
 	// copy of the parry code
-	makevectors(actor.angles);
 	entity targ = NULL;
 	float bestdist = 0;
 	FOREACH_ENTITY_RADIUS(org, myrange, (it.flags & FL_PROJECTILE) && time > it.parry_time && time > it.parry_cooldown && IS_MONSTER(it.owner),
 	{
 		if(it.clipgroup == actor.clipgroup || it.velocity == '0 0 0')
 			continue;
-		float dot = normalize(it.origin - org) * v_forward;
-		if(dot <= viscone) { continue; }
+		if(!turret_infront(actor, it, maxpitch, maxrot))
+			continue;
 
 		float mydist = vlen2(it.origin - org);
 		if(!targ || mydist <= bestdist)
@@ -320,14 +317,13 @@ METHOD(KeylethFlyTrap, tr_setup, void(KeylethFlyTrap this, entity actor))
 #ifdef CSQC
 METHOD(KeylethFlyTrap, tr_drawselected, void(KeylethFlyTrap this, entity actor))
 {
-	float myrange = 150;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 24';
 
-	Draw_Cone(org, v_forward, myrange, 0.3);
-
-	// TODO: cone?
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 }
 METHOD(KeylethFlyTrap, tr_setup, void(KeylethFlyTrap this, entity actor))
 {

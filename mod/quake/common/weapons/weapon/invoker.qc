@@ -148,42 +148,27 @@ NET_HANDLE(TE_CSQC_INVOKERTRAIL, bool isNew)
 #endif
 
 #ifdef SVQC
-void wep_invoker_shot2(entity this) { wep_set_anim(this, 2, w_ready); }
-void wep_invoker_shot1(entity this) { wep_set_anim(this, 1, wep_invoker_shot2); this.owner.effects |= EF_MUZZLEFLASH; }
-
-// for railgun damage (hitting multiple enemies)
-.bool railgunhit;
-.float railgunhitsolidbackup;
-.vector railgunhitloc;
-
-.float invokerhit;
-
-// defined elsewhere
-//IntrusiveList g_railgunhit;
-//STATIC_INIT(g_railgunhit) { g_railgunhit = IL_NEW(); }
-
-PRECACHE(Invoker)
+bool invoked_SendEntity(entity this, entity to, int sf)
 {
-	precache_model("progs/v_invoker.mdl");
-	precache_model("progs/g_invoker.mdl");
+	WriteHeader(MSG_ENTITY, ENT_CLIENT_INVOKED);
 
-	precache_model("progs/proj_chain.mdl");
-	precache_model("progs/fx/invoked_chain.mdl");
+	int f = 0;
+	if(this.angles != '0 0 0')
+		f |= BIT(0);
 
-	precache_sound("invoker/magic07.wav");
-	precache_sound("invoker/magic08.wav");
-	precache_sound("invoker/magic21.wav");
-	precache_sound("invoker/magic26.wav");
+	WriteByte(MSG_ENTITY, f);
+	WriteShort(MSG_ENTITY, this.modelindex);
+	WriteByte(MSG_ENTITY, this.skin);
+	WriteByte(MSG_ENTITY, this.frame);
+	WriteVector(MSG_ENTITY, this.origin);
+	if(f & BIT(0))
+	{
+		WriteAngleVector(MSG_ENTITY, this.angles);
+	}
 
-	precache_sound("invoker/invoker_firerail.wav");
-
-	precache_sound("invoker/energy_charge.wav");
-	precache_sound("invoker/energy_hit1.wav");
-	precache_sound("invoker/energy_hit2.wav");
-	precache_sound("invoker/energy_hit3.wav");
-	precache_sound("invoker/energy_hit4.wav");
+	return true;
 }
-
+#elif defined(CSQC)
 void anim_invoked(entity this)
 {
 	float fade_rate = 0.05 - 0.33 * 0.03;
@@ -207,26 +192,75 @@ void anim_invoked(entity this)
 	this.nextthink = time + 0.05;
 }
 
+NET_HANDLE(ENT_CLIENT_INVOKED, bool isnew)
+{
+	make_pure(this);
+
+	int f = ReadByte();
+
+	entity e = new(invokedeffect);
+	e.model = "from network";
+	e.modelindex = ReadShort();
+	setmodelindex(e, e.modelindex); // pulls absmin/absmax
+	e.skin = ReadByte();
+	e.frame = ReadByte();
+	e.frame1time = time;
+	e.origin = ReadVector();
+	setorigin(e, e.origin);
+	if(f & BIT(0))
+	{
+		e.angles = ReadAngleVector();
+	}
+
+	e.alpha = 1;
+	e.effects = EF_ADDITIVE | EF_FULLBRIGHT | EF_NOSHADOW | EF_NOSELFSHADOW;
+	e.colormod = '1 0 0';
+	setthink(e, anim_invoked);
+	e.nextthink = time + 0.1;
+	e.drawmask = MASK_NORMAL;
+
+	if (!isnew) delete(e); // yes, this IS stupid, but I don't need to duplicate all the read* stuff then
+	return true;
+}
+#endif
+
+#ifdef SVQC
+void wep_invoker_shot2(entity this) { wep_set_anim(this, 2, w_ready); }
+void wep_invoker_shot1(entity this) { wep_set_anim(this, 1, wep_invoker_shot2); this.owner.effects |= EF_MUZZLEFLASH; }
+
+PRECACHE(Invoker)
+{
+	precache_model("progs/v_invoker.mdl");
+	precache_model("progs/g_invoker.mdl");
+
+	precache_model("progs/proj_chain.mdl");
+	precache_model("progs/fx/invoked_chain.mdl");
+
+	precache_sound("invoker/magic07.wav");
+	precache_sound("invoker/magic08.wav");
+	precache_sound("invoker/magic21.wav");
+	precache_sound("invoker/magic26.wav");
+
+	precache_sound("invoker/invoker_firerail.wav");
+
+	precache_sound("invoker/energy_charge.wav");
+	precache_sound("invoker/energy_hit1.wav");
+	precache_sound("invoker/energy_hit2.wav");
+	precache_sound("invoker/energy_hit3.wav");
+	precache_sound("invoker/energy_hit4.wav");
+}
+
 void FX_Invoked(entity targ)
 {
-	entity fx = spawn();
-	set_movetype(fx, MOVETYPE_NONE);
-	fx.solid = SOLID_NOT;
-	fx.classname = "impact";
-	fx.frame = targ.frame;
-	fx.angles = targ.angles;
-	fx.effects = EF_ADDITIVE | EF_NOMODELFLAGS;
-	fx.colormod = '1 0 0';
-	fx.alpha = 1;
-	fx.scale = targ.scale;
-	
-	setthink(fx, anim_invoked);
-	fx.nextthink = time + 0.1;
-
-	_setmodel(fx, targ.model);
-	setsize(fx, targ.mins, targ.maxs);
-
-	setorigin(fx, targ.origin);
+	// copied from modeleffect code
+	entity e = new(invokedeffect);
+	_setmodel(e, targ.model);
+	e.frame = targ.frame;
+	setorigin(e, targ.origin);
+	e.angles = targ.angles;
+	e.skin = targ.skin;
+	setsize(e, targ.mins, targ.maxs);
+	Net_LinkEntity(e, false, 0.1, invoked_SendEntity);
 }
 //==============================================
 

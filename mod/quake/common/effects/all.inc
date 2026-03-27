@@ -16,6 +16,7 @@ EFFECT(0, SMOKE_RING,               "smoke_ring")
 EFFECT(0, CHEER,                    "damage_dissolve")
 
 EFFECT(0, GIB,                      "particlegibs_damage_dissolve")
+EFFECT(0, MEATSPRAY,                "particlegibs_damage_hit")
 
 //EFFECT(0, FLAMER,                   "flamethrower")
 EFFECT(0, EF_FLAME,                 "EF_FLAME")
@@ -1571,5 +1572,47 @@ STATIC_INIT(Effect_TR_DRILL)
 	registercvar("cl_particle_TR_DRILL_smoke_trailspacing", "12");
 	registercvar("cl_particle_TR_DRILL_smoke_velocityjitter", "50 50 50");
 	registercvar("cl_particle_TR_DRILL_smoke_velocityoffset", "0 0 15");
+}
+#endif
+
+EFFECT(0, TE_FUEL,           "TE_FUEL")
+#ifdef CSQC
+STATIC_INIT(Effect_TE_FUEL)
+{
+	registercvar("cl_particle_TE_FUEL", "sparks sprite smoke");
+
+	registercvar("cl_particle_TE_FUEL_sparks_countabsolute", "4");
+	registercvar("cl_particle_TE_FUEL_sparks_type", "spark");
+	registercvar("cl_particle_TE_FUEL_sparks_color", "0x733723 0xcf8f2b");
+	registercvar("cl_particle_TE_FUEL_sparks_tex", "62 64");
+	registercvar("cl_particle_TE_FUEL_sparks_size", "0.5 1");
+	registercvar("cl_particle_TE_FUEL_sparks_stretchfactor", "2");
+	registercvar("cl_particle_TE_FUEL_sparks_alpha", "32 192 128");
+	registercvar("cl_particle_TE_FUEL_sparks_originjitter", "8 8 16");
+	registercvar("cl_particle_TE_FUEL_sparks_velocityjitter", "32 32 32");
+	registercvar("cl_particle_TE_FUEL_sparks_airfriction", "0.5");
+
+	registercvar("cl_particle_TE_FUEL_sprite_countabsolute", "4");
+	registercvar("cl_particle_TE_FUEL_sprite_type", "spark");
+	registercvar("cl_particle_TE_FUEL_sprite_color", "0x733723 0xcf8f2b");
+	registercvar("cl_particle_TE_FUEL_sprite_tex", "62 64");
+	registercvar("cl_particle_TE_FUEL_sprite_size", "0.5 1");
+	registercvar("cl_particle_TE_FUEL_sprite_stretchfactor", "8");
+	registercvar("cl_particle_TE_FUEL_sprite_alpha", "32 192 120");
+	registercvar("cl_particle_TE_FUEL_sprite_originjitter", "8 8 16");
+	registercvar("cl_particle_TE_FUEL_sprite_velocityjitter", "16 16 16");
+	registercvar("cl_particle_TE_FUEL_sprite_airfriction", "0.5");
+
+	registercvar("cl_particle_TE_FUEL_smoke_count", "8");
+	registercvar("cl_particle_TE_FUEL_smoke_type", "smoke");
+	registercvar("cl_particle_TE_FUEL_smoke_color", "0x733723 0xcf8f2b");
+	registercvar("cl_particle_TE_FUEL_smoke_tex", "8 16");
+	registercvar("cl_particle_TE_FUEL_smoke_size", "1 2");
+	registercvar("cl_particle_TE_FUEL_smoke_sizeincrease", "8");
+	registercvar("cl_particle_TE_FUEL_smoke_alpha", "32 96 120");
+	registercvar("cl_particle_TE_FUEL_smoke_originjitter", "8 8 8");
+	registercvar("cl_particle_TE_FUEL_smoke_velocityjitter", "8 8 8");
+	registercvar("cl_particle_TE_FUEL_smoke_airfriction", "0.2");
+	registercvar("cl_particle_TE_FUEL_smoke_rotate", "0 360 5 15");
 }
 #endif

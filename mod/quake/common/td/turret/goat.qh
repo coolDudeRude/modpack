@@ -4,6 +4,22 @@
 //  JUMPING CASTLE
 // ================
 
+#define GOAT \
+"⠀⠀⠀⠀⠀⠀⠀⠠⠴⠶⠾⠿⠿⠿⢶⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢿⣿⣆⠐⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠿⠿⠆⠹⠦⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣤⣀⠐⣶⣶⣶⣶⣶⣶⡀⢀⣀⣀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⢿⣿⡆⢹⡿⠻⢿⣿⣿⣷⠈⠿⠛⠁⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣴⣾⣷⣤⣉⣠⣾⣷⣦⣼⣿⣿⣿⣧⠀⠀⠀⠀⠀\n" \
+"⠀⣶⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣛⠻⢧⣘⡷⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⣉⠛⠿⣷⣦⣌⠁⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⣠⠘⠀⠀⢹⣿⣶⣶⠀⠀⠀⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⢺⣿⠀⠀⠀⠘⣿⣿⡟⠀⠀⠀⠀⠀⠀\n" \
+"⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠁⠀⠀⠀⠀⠻⡟⠃⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠛⠛⠛⠛⠛⠛⠛⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
+
 CLASS(GoatJumpingCastle, Turret)
 #ifdef GAMEQC
 /* spawnflags */ ATTRIB(GoatJumpingCastle, spawnflags, int, TUR_FLAG_SUPPORT | TUR_FLAG_NONSOLID);
@@ -16,6 +32,7 @@ CLASS(GoatJumpingCastle, Turret)
 #endif
 /* netname    */ ATTRIB(GoatJumpingCastle, netname, string, "jumpingcastle");
 /* fullname   */ ATTRIB(GoatJumpingCastle, m_name, string, _("Jumping Castle"));
+/* description*/ ATTRIB(GoatJumpingCastle, m_description, string, GOAT);
 #ifdef GAMEQC
 /* number     */ ATTRIB(GoatJumpingCastle, impulse, int, 0);
 /* cost       */ ATTRIB(GoatJumpingCastle, tur_cost, float, 100);
@@ -23,6 +40,8 @@ CLASS(GoatJumpingCastle, Turret)
 /* health     */ ATTRIB(GoatJumpingCastle, tur_health, float, 1000);
 /* champion   */ ATTRIB(GoatJumpingCastle, m_champion, Champions, CHAMPION_Goat);
 #endif
+
+#undef GOAT
 
 ENDCLASS(GoatJumpingCastle)
 REGISTER_TURRET(JUMPING_CASTLE, NEW(GoatJumpingCastle));

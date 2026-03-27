@@ -14,18 +14,18 @@ METHOD(PepsimanVendingMachine, tr_precache, void(PepsimanVendingMachine thistur)
 METHOD(PepsimanVendingMachine, tr_think, void(PepsimanVendingMachine thistur, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 400; // doesn't get extended by levels
-	float viscone = 0.6;
+	float myrange = thistur.target_range; // doesn't get extended by levels
+	float maxpitch = thistur.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = thistur.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
 		makevectors(actor.angles);
 		vector org = actor.origin + '0 0 8';
 		vector targ_org = actor.enemy.origin;
-		vector vec = normalize(targ_org - org);
-		float dot = vec * v_forward;
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
 		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(org - targ_org, >, myrange * 1.5))
 		{
@@ -33,7 +33,7 @@ METHOD(PepsimanVendingMachine, tr_think, void(PepsimanVendingMachine thistur, en
 			return; // won't find a new target this frame
 		}
 
-		if(time > actor.attack_finished && dot > viscone && isvisible)
+		if(time > actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (1 / turret_getpower(actor.tur_level, 0.25)));
 			actor.clientframe = TANIM_SHOOT;
@@ -54,18 +54,20 @@ METHOD(PepsimanVendingMachine, tr_think, void(PepsimanVendingMachine thistur, en
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 #endif // SVQC
 #ifdef CSQC
 METHOD(PepsimanVendingMachine, tr_drawselected, void(PepsimanVendingMachine this, entity actor))
 {
-	float myrange = 400;
+	float myrange = this.target_range;
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 8';
 
-	Draw_Cone(org, v_forward, myrange, 0.6);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);

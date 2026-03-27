@@ -10,7 +10,7 @@ REGISTER_DEATHTYPE(BALL_SENTRY,               DEATH_SELF_BALL_SENTRY,           
 
 #ifdef SVQC
 .entity builder;
-.int level;
+.int sentry_level;
 
 void SentryFindTarget(entity this);
 

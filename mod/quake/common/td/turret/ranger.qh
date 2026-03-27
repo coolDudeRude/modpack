@@ -16,6 +16,7 @@ CLASS(RangerBarricade, Turret)
 #endif
 /* netname    */ ATTRIB(RangerBarricade, netname, string, "barricade");
 /* fullname   */ ATTRIB(RangerBarricade, m_name, string, _("Barricade"));
+/* description*/ ATTRIB(RangerBarricade, m_description, string, "Damages and pushes back approaching enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(RangerBarricade, impulse, int, 0);
 /* cost       */ ATTRIB(RangerBarricade, tur_cost, float, 30);
@@ -45,13 +46,17 @@ CLASS(RangerNailer, Turret)
 #endif
 /* netname    */ ATTRIB(RangerNailer, netname, string, "nailer");
 /* fullname   */ ATTRIB(RangerNailer, m_name, string, _("Nailer"));
+/* description*/ ATTRIB(RangerNailer, m_description, string, "Rapidly shoots nearby enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(RangerNailer, impulse, int, 1);
 /* cost       */ ATTRIB(RangerNailer, tur_cost, float, 40);
 /* units      */ ATTRIB(RangerNailer, tur_units, int, 4);
 /* health     */ ATTRIB(RangerNailer, tur_health, float, 200);
-/* damage     */ ATTRIB(RangerNailer, tur_dmg, float, 4);
+/* damage     */ ATTRIB(RangerNailer, tur_dmg, float, 6);
 /* dmg scale  */ ATTRIB(RangerNailer, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(RangerNailer, target_range, float, 600);
+/* max rotate */ ATTRIB(RangerNailer, aim_maxrot, float, 55);
+/* max pitch  */ ATTRIB(RangerNailer, aim_maxpitch, float, 55);
 /* champion   */ ATTRIB(RangerNailer, m_champion, Champions, CHAMPION_Ranger);
 #endif
 
@@ -74,6 +79,7 @@ CLASS(RangerMortar, Turret)
 #endif
 /* netname    */ ATTRIB(RangerMortar, netname, string, "mortar");
 /* fullname   */ ATTRIB(RangerMortar, m_name, string, _("Mortar"));
+/* description*/ ATTRIB(RangerMortar, m_description, string, "Lobs bombs that explode in an area");
 #ifdef GAMEQC
 /* number     */ ATTRIB(RangerMortar, impulse, int, 2);
 /* cost       */ ATTRIB(RangerMortar, tur_cost, float, 60);
@@ -81,6 +87,9 @@ CLASS(RangerMortar, Turret)
 /* health     */ ATTRIB(RangerMortar, tur_health, float, 300);
 /* damage     */ ATTRIB(RangerMortar, tur_dmg, float, 20);
 /* dmg scale  */ ATTRIB(RangerMortar, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(RangerMortar, target_range, float, 420);
+/* max rotate */ ATTRIB(RangerMortar, aim_maxrot, float, 40);
+/* max pitch  */ ATTRIB(RangerMortar, aim_maxpitch, float, 40);
 /* champion   */ ATTRIB(RangerMortar, m_champion, Champions, CHAMPION_Ranger);
 #endif
 
@@ -103,6 +112,7 @@ CLASS(RangerLaser, Turret)
 #endif
 /* netname    */ ATTRIB(RangerLaser, netname, string, "laser");
 /* fullname   */ ATTRIB(RangerLaser, m_name, string, _("Laser"));
+/* description*/ ATTRIB(RangerLaser, m_description, string, "Fires a pair of long range lasers");
 #ifdef GAMEQC
 /* number     */ ATTRIB(RangerLaser, impulse, int, 3);
 /* cost       */ ATTRIB(RangerLaser, tur_cost, float, 110);
@@ -110,6 +120,9 @@ CLASS(RangerLaser, Turret)
 /* health     */ ATTRIB(RangerLaser, tur_health, float, 250);
 /* damage     */ ATTRIB(RangerLaser, tur_dmg, float, 9);
 /* dmg scale  */ ATTRIB(RangerLaser, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(RangerLaser, target_range, float, 900);
+/* max rotate */ ATTRIB(RangerLaser, aim_maxrot, float, 25);
+/* max pitch  */ ATTRIB(RangerLaser, aim_maxpitch, float, 25);
 /* champion   */ ATTRIB(RangerLaser, m_champion, Champions, CHAMPION_Ranger);
 #endif
 

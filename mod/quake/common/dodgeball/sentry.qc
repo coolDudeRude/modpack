@@ -7,7 +7,7 @@ void lvl1_sentry_stand(entity this)
 	SentryFindTarget(this);
 	if(this.frags >= 2)
 	{
-		this.level = 1;
+		this.sentry_level = 1;
 		this.health = 180;
 		lvl2_sentry_stand(this);
 	}
@@ -18,7 +18,7 @@ void lvl2_sentry_stand(entity this)
 	SentryFindTarget(this);
 	if(this.frags >= 4)
 	{
-		this.level = 2;
+		this.sentry_level = 2;
 		this.health = 216;
 		lvl3_sentry_stand(this);
 	}
@@ -61,7 +61,7 @@ void SentryFindTarget(entity this)
 	if(found)
 	{
 		this.enemy = found;
-		switch(this.level)
+		switch(this.sentry_level)
 		{
 			case 0: setthink(this, lvl1_sentry_atk1); this.nextthink = time + 0.1; break;
 			case 1: setthink(this, lvl2_sentry_atk1); this.nextthink = time + 0.1; break;

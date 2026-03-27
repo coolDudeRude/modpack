@@ -35,104 +35,60 @@ int td_UpgradeCost(int thelevel)
 #endif
 
 #ifdef CSQC
-// copied from Xonotic's abandoned Shockwave prototype
-const float SW_DISTTOMIN = 5;
-void Draw_Cone(vector shotorg, vector shotdir, float crange, float viscone)
+void Draw_Circle(vector shotorg, float crange)
 {
 	float a = 0.2;
 	vector sw_color = '1 0 0';
-	float spread_max = 360;
 
-	// TODO: figure out a proper range for it
-	if(viscone)
-		spread_max /= viscone;
+	int subdivisions = 20;
+	float angle_step = 2 * M_PI / subdivisions;
 
-	float spread_min = spread_max * 0.5;
+	R_BeginPolygon("", DRAWFLAG_NORMAL, false);
 
-	vector endpos = (shotorg + (shotdir * crange));
+	for(int j = 0; j <= subdivisions; ++j)
+	{
+		vector p1 = shotorg;
+		p1.x += cos(j * angle_step) * crange;
+		p1.y += sin(j * angle_step) * crange;
+
+		R_PolygonVertex(p1, '0 0 0', sw_color, a);
+	}
+
+	R_EndPolygon();
+}
+
+void Draw_Cone(vector shotorg, vector shotdir, float crange, float maxpitch, float maxrot)
+{
+	float a = 0.2;
+	vector sw_color = '1 0 0';
 
 	vector _forward, right, up;
 	VECTOR_VECTORS(shotdir, _forward, right, up);
 
-	// WEAPONTODO: combine and simplify these calculations
-	vector min_end = ((shotorg + (shotdir * SW_DISTTOMIN)) + (up * spread_min));
-	vector max_end = (endpos + (up * spread_max));
-	float spread_to_min = vlen(normalize(min_end - shotorg) - shotdir);
-	float spread_to_max = vlen(normalize(max_end - min_end) - shotdir);
+	float angleradians = maxrot * (M_PI / 180);
+	float rotradius = crange * tan(angleradians);
 
-	vector first_min_end = '0 0 0', prev_min_end = '0 0 0', new_min_end = '0 0 0';
-	vector first_max_end = '0 0 0', prev_max_end = '0 0 0', new_max_end = '0 0 0';
-	float new_max_dist, new_min_dist;
+	angleradians = maxpitch * (M_PI / 180);
+	float pitchradius = crange * tan(angleradians);
 
-	vector deviation, angle = '0 0 0';
-	float counter, divisions = 20;
-	for(counter = 0; counter < divisions; ++counter)
+	vector tip = shotorg;
+	vector org = shotorg + shotdir * crange;
+	int segments = 20;
+	for(int j = 1; j <= segments; ++j)
 	{
-		// perfect circle effect lines
-		makevectors('0 360 0' * (counter / divisions));
-		angle.y = v_forward.x;
-		angle.z = v_forward.y;
+		float base = (j / segments) * 2 * M_PI;
+		// current base point
+		vector p1 = org + right * cos(base) * rotradius + up * sin(base) * pitchradius;
+		// next base point
+		base = ((j + 1) / segments) * 2 * M_PI;
+		vector p2 = org + right * cos(base) * rotradius + up * sin(base) * pitchradius;
 
-		// first do the spread_to_min effect
-		deviation = angle * spread_to_min;
-		deviation = ((shotdir + (right * deviation.y) + (up * deviation.z)));
-		new_min_dist = SW_DISTTOMIN;
-		new_min_end = (shotorg + (deviation * new_min_dist));
-		//te_lightning2(NULL, new_min_end, shotorg);
-
-		// then calculate spread_to_max effect
-		deviation = angle * spread_to_max;
-		deviation = ((shotdir + (right * deviation.y) + (up * deviation.z)));
-		new_max_dist = vlen(new_min_end - endpos);
-		new_max_end = (new_min_end + (deviation * new_max_dist));
-		//te_lightning2(NULL, new_end, prev_min_end);
-
-
-		if(counter == 0)
-		{
-			first_min_end = new_min_end;
-			first_max_end = new_max_end;
-		}
-
-		if(counter >= 1)
-		{
-			// draw from shot origin to min spread radius
-			R_BeginPolygon("", DRAWFLAG_NORMAL, false);
-			R_PolygonVertex(prev_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(new_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(shotorg, '0 0 0', sw_color, a);
-			R_EndPolygon();
-
-			// draw from min spread radius to max spread radius
-			R_BeginPolygon("", DRAWFLAG_NORMAL, false);
-			R_PolygonVertex(new_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(prev_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(prev_max_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(new_max_end, '0 0 0', sw_color, a);
-			R_EndPolygon();
-		}
-
-		prev_min_end = new_min_end;
-		prev_max_end = new_max_end;
-
-		// last division only
-		if((counter + 1) == divisions)
-		{
-			// draw from shot origin to min spread radius
-			R_BeginPolygon("", DRAWFLAG_NORMAL, false);
-			R_PolygonVertex(prev_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(first_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(shotorg, '0 0 0', sw_color, a);
-			R_EndPolygon();
-
-			// draw from min spread radius to max spread radius
-			R_BeginPolygon("", DRAWFLAG_NORMAL, false);
-			R_PolygonVertex(first_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(prev_min_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(prev_max_end, '0 0 0', sw_color, a);
-			R_PolygonVertex(first_max_end, '0 0 0', sw_color, a);
-			R_EndPolygon();
-		}
+		// draw triangles (tip, p1, p2)
+		R_BeginPolygon("", DRAWFLAG_NORMAL, false);
+		R_PolygonVertex(tip, '0 0 0', sw_color, a);
+		R_PolygonVertex(p1, '0 0 0', sw_color, a);
+		R_PolygonVertex(p2, '0 0 0', sw_color, a);
+		R_EndPolygon();
 	}
 
 	// also draw a line for indication of range
@@ -171,6 +127,22 @@ void buildtool_DrawInfo(entity this)
 	vector pos = '0 0 0';
 	sui_set_align(vec2(SUI_ALIGN_CENTER, SUI_ALIGN_START));
 	sui_drawtext(pos, '16 16 0', ((tur.m_name != "") ? tur.m_name : "Turret"), '0.3 1 0.3', 1, 0);
+
+	if(this.classname != "buildtool_dropmark" && tur != TUR_JUMPING_CASTLE)
+	{
+		pos.y += 16;
+		sui_drawtext(pos, '12 12 0', sprintf("Summoned by %s", tur.m_champion.m_name), '1 1 1', 1, 0);
+	}
+	else if(tur.m_description && tur.m_description != "")
+	{
+		pos.y += 4;
+		int linecount = tokenizebyseparator(tur.m_description, "\n");
+		for(int j = 0; j < linecount; ++j)
+		{
+			pos.y += 12;
+			sui_drawtext(pos, '12 12 0', argv(j), '1 1 1', 1, 0);
+		}
+	}
 
 	sui_set_align(vec2(SUI_ALIGN_START, SUI_ALIGN_START));
 	pos.y += 8; // extra padding
@@ -575,7 +547,7 @@ void BuildTool_Fire(entity actor)
 					}
 					refund = rint(refund);
 					if(refund > 0)
-						td_DropFuel(CENTER_OR_VIEWOFS(trace_ent), refund, NULL, false);
+						td_DropFuel(trace_ent, refund, NULL, false);
 
 					sound(trace_ent, CH_SHOTS, SND_ROCKET_EXPLOSION, VOL_BASE, ATTEN_NORM);
 					pointparticles(EFFECT_EXPLOSION, trace_ent.origin, '0 0 0', 1);

@@ -219,3 +219,72 @@ NET_HANDLE(ENT_CLIENT_TD_ENT, bool isnew)
 
 	return = true;
 }
+
+PRECACHE(Fuel)
+{
+	precache_model("progs/td_fuel_1.mdl");
+	precache_model("progs/td_fuel_2.mdl");
+	precache_model("progs/td_fuel_3.mdl");
+	precache_model("progs/td_fuel_4.mdl");
+	precache_model("progs/td_fuel_5.mdl");
+}
+
+void td_fuel_remove(entity this)
+{
+	//__pointparticles(_particleeffectnum("TE_WIZSPIKE"), this.origin + ((this.mins + this.maxs) * 0.5), '0 0 0', 1);
+	pointparticles(EFFECT_TE_FUEL, this.origin + ((this.mins + this.maxs) * 0.5), '0 0 0', 1);
+}
+
+void td_fuel_draw(entity this)
+{
+	Movetype_Physics_NoMatchTicrate(this, frametime, true);
+
+	int mytype = (this.cnt) ? this.cnt : 1;
+	float spin = -120 / mytype;
+
+	this.angles += vec3(0, spin, 0) * frametime; // MOVETYPE_TOSS does this while it's moving
+}
+
+NET_HANDLE(ENT_CLIENT_TD_FUEL, bool isnew)
+{
+	int sf = ReadByte();
+
+	if(sf & SF_TD_FUEL_TYPE)
+	{
+		this.cnt = ReadByte();
+		this.solid = SOLID_TRIGGER;
+		this.effects = EF_FULLBRIGHT;
+		this.flags = FL_ITEM;
+		//this.avelocity = '0 -90 0';
+		this.gravity = 1;
+		set_movetype(this, MOVETYPE_TOSS);
+		this.drawmask = MASK_NORMAL;
+		if(!IL_CONTAINS(g_drawables, this))
+			IL_PUSH(g_drawables, this);
+		this.draw = td_fuel_draw;
+		this.entremove = td_fuel_remove;
+		switch(this.cnt)
+		{
+			default:
+			case TD_FUEL_TINY: _setmodel(this, "progs/td_fuel_1.mdl"); break;
+			case TD_FUEL_SMALL: _setmodel(this, "progs/td_fuel_2.mdl"); break;
+			case TD_FUEL_MEDIUM: _setmodel(this, "progs/td_fuel_3.mdl"); break;
+			case TD_FUEL_LARGE: _setmodel(this, "progs/td_fuel_4.mdl"); break;
+			case TD_FUEL_MEGA: _setmodel(this, "progs/td_fuel_5.mdl"); break;
+		}
+		setsize(this, '-16 -16 -8', '16 16 24');
+	}
+
+	if(sf & SF_TD_FUEL_ORIGIN)
+	{
+		vector org = ReadVector();
+		setorigin(this, org);
+	}
+
+	if(sf & SF_TD_FUEL_VELOCITY)
+	{
+		this.velocity = ReadVector();
+	}
+
+	return = true;
+}

@@ -39,7 +39,7 @@ void td_MonsterSetup(entity this, entity mon);
 
 float td_GetMonsterSpeed(entity this, float dist);
 
-void td_DropFuel(vector from, float fuel, entity ignore, bool ischest);
+void td_DropFuel(entity this, float fuel, entity ignore, bool ischest);
 
 void td_PlayerDropFuel(entity this);
 

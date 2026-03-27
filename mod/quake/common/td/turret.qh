@@ -9,6 +9,8 @@ CLASS(Turret, Object)
 	ATTRIB(Turret, netname, string);
 	/** human readable name */
 	ATTRIB(Turret, m_name, string, _("Turret"));
+	/** brief description of the turret's capabilities, may contain new lines */
+	ATTRIB(Turret, m_description, string);
 	/** color */
 	ATTRIB(Turret, m_color, vector, '1 1 1');
 #ifdef CSQC
@@ -39,6 +41,12 @@ CLASS(Turret, Object)
 	ATTRIB(Turret, tur_dmg, float, 0);
 	/** scale of damage per level */
 	ATTRIB(Turret, tur_dmgscale, float, 0);
+	/** maximum aiming rotation */
+	ATTRIB(Turret, aim_maxrot, float, 90);
+	/** maximum aiming pitch */
+	ATTRIB(Turret, aim_maxpitch, float, 20);
+	/** max range of the turret */
+	ATTRIB(Turret, target_range, float, 0);
 #endif
 
 #ifdef GAMEQC

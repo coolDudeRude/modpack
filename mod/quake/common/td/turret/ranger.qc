@@ -56,20 +56,18 @@ METHOD(RangerNailer, tr_precache, void(RangerNailer thistur))
 {
 	precache_sound("weapons/rocket1i.wav");
 }
-METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
+METHOD(RangerNailer, tr_think, void(RangerNailer this, entity actor))
 {
-	// make sure it matches drawn values!
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
 		vector myorg = actor.origin + actor.view_ofs;
 		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
-		makevectors(actor.angles);
-		vector vec = normalize(targ_org - myorg);
-		float dot = vec * v_forward;
-
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < 0.3)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
 		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
@@ -77,9 +75,9 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 			return; // won't find a new target this frame
 		}
 
-		if(time >= actor.attack_finished && dot > 0.3 && isvisible)
+		if(time >= actor.attack_finished && isinfront && isvisible)
 		{
-			actor.attack_finished = time + max(0.03, (0.15 / turret_getpower(actor.tur_level, 0.3)));
+			actor.attack_finished = time + max(0.03, (0.33 / turret_getpower(actor.tur_level, 0.3)));
 			float offset = (actor.cnt) ? 4 : -4;
 			actor.cnt = (actor.cnt) ? 0 : 1;
 
@@ -94,7 +92,7 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 			entity newmis = launch_spike(actor, org, dir);
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
 			newmis.velocity = dir * 1000;
-			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			newmis.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			CSQCProjectile(newmis, true, PROJECTILE_BULLET, true);
 		}
 	}
@@ -102,7 +100,7 @@ METHOD(RangerNailer, tr_think, void(RangerNailer thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, 0.3, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 METHOD(RangerNailer, tr_setup, void(RangerNailer this, entity actor))
@@ -113,11 +111,13 @@ METHOD(RangerNailer, tr_setup, void(RangerNailer this, entity actor))
 #ifdef CSQC
 METHOD(RangerNailer, tr_drawselected, void(RangerNailer this, entity actor))
 {
-	float myrange = 600 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 4';
 
-	Draw_Cone(org, v_forward, myrange, 0.3);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
@@ -130,11 +130,11 @@ METHOD(RangerNailer, tr_drawselected, void(RangerNailer this, entity actor))
 
 #ifdef SVQC
 vector tuba_calc_arc(vector org, vector tgt, float ht); // saves some copy-pasta
-vector mortar_calc_velocity(entity actor, vector org, entity targ)
+vector mortar_calc_velocity(entity actor, vector org, vector targ_org)
 {
 	//vector oldvel = normalize(actor.enemy.origin - org) * 500 + v_up * 500;
 
-	vector tpos1 = (targ.absmin + targ.absmax) * 0.5;
+	vector tpos1 = targ_org;
 	vector v = org;
 
 	traceline(v, v + '0 0 1' * 65535, MOVE_WORLDONLY, actor);
@@ -150,38 +150,38 @@ METHOD(RangerMortar, tr_precache, void(RangerMortar thistur))
 {
 	precache_sound("weapons/grenade.wav");
 }
-METHOD(RangerMortar, tr_think, void(RangerMortar thistur, entity actor))
+METHOD(RangerMortar, tr_think, void(RangerMortar this, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 420 * turret_getpower(actor.tur_level, 0.2);
-	float viscone = 0.4;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector myorg = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time >= actor.attack_finished && dot > viscone && isvisible)
+		if(time >= actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (1.7 / turret_getpower(actor.tur_level, 0.33)));
 
 			_sound(actor, CH_WEAPON_SINGLE, "weapons/grenade.wav", 1, ATTN_NORM);
 
-			vector org = actor.origin + actor.view_ofs;
+			vector org = myorg;
 			entity newmis = launch_spike(actor, org, '0 0 1');
 			newmis.projectiledeathtype = DEATH_TRAP.m_id;
-			newmis.velocity = mortar_calc_velocity(newmis, org, actor.enemy);
+			newmis.velocity = mortar_calc_velocity(actor, org, targ_org);
 			newmis.gravity = 1;
-			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			newmis.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			set_movetype(newmis, MOVETYPE_TOSS);
 			settouch(newmis, T_MissileTouch);
 			CSQCProjectile(newmis, true, PROJECTILE_MORTAR, true);
@@ -191,7 +191,7 @@ METHOD(RangerMortar, tr_think, void(RangerMortar thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 METHOD(RangerMortar, tr_setup, void(RangerMortar this, entity actor))
@@ -202,11 +202,13 @@ METHOD(RangerMortar, tr_setup, void(RangerMortar this, entity actor))
 #ifdef CSQC
 METHOD(RangerMortar, tr_drawselected, void(RangerMortar this, entity actor))
 {
-	float myrange = 420 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 8';
 
-	Draw_Cone(org, v_forward, myrange, 0.4);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
@@ -222,27 +224,26 @@ METHOD(RangerLaser, tr_precache, void(RangerLaser thistur))
 {
 	precache_sound("hipweap/laserg.wav");
 }
-METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
+METHOD(RangerLaser, tr_think, void(RangerLaser this, entity actor))
 {
-	// make sure it matches drawn values!
-	float myrange = 800 * turret_getpower(actor.tur_level, 0.2);
-	float viscone = 0.5;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector myorg = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time >= actor.attack_finished && dot > viscone && isvisible)
+		if(time >= actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (1 / turret_getpower(actor.tur_level, 0.5)));
 
@@ -250,9 +251,7 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 
 			vector org;
 			vector dir;
-			vector myorg = actor.origin + '0 0 30';
-			vector targ_org = CENTER_OR_VIEWOFS(actor.enemy);
-			float damage = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			float damage = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			damage *= 0.5; // since we're in 2 parts
 			entity newmis;
 			// left eye
@@ -274,20 +273,23 @@ METHOD(RangerLaser, tr_think, void(RangerLaser thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
+}
+METHOD(RangerLaser, tr_setup, void(RangerLaser this, entity actor))
+{
+	actor.view_ofs = '0 0 30'; // for line of sight checks
 }
 #endif // SVQC
 #ifdef CSQC
 METHOD(RangerLaser, tr_drawselected, void(RangerLaser this, entity actor))
 {
-	float myrange = 800 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 32';
 
-	Draw_Cone(org, v_forward, myrange, 0.5);
-
-	// TODO: cone?
-	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 }
 #endif // CSQC

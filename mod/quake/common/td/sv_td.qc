@@ -1326,7 +1326,7 @@ void td_chest_touch(entity this, entity toucher)
 	// TODO: allow customisation of chest fuel amounts
 	float startwave = (td_ent && td_ent.lip > 0) ? td_ent.lip : 1;
 	float amount = this.count * startwave * (autocvar_skill + 1);
-	td_DropFuel(this.origin + '0 0 16', amount, NULL, true);
+	td_DropFuel(this, amount, NULL, true);
 
 	int myloot = floor(random() * 4) + 1;
 	for(int j = 0; j < myloot; ++j)
@@ -1363,27 +1363,36 @@ spawnfunc(td_chest)
 	Net_LinkEntity(this, false, 0, td_chest_send);
 }
 
-enum {
-	TD_FUEL_TINY,
-	TD_FUEL_SMALL,
-	TD_FUEL_MEDIUM,
-	TD_FUEL_LARGE,
-	TD_FUEL_MEGA
-};
-
 PRECACHE(td_fuel)
 {
-	precache_model("progs/td_fuel_1.mdl");
-	precache_model("progs/td_fuel_2.mdl");
-	precache_model("progs/td_fuel_3.mdl");
-	precache_model("progs/td_fuel_4.mdl");
-	precache_model("progs/td_fuel_5.mdl");
-
 	precache_sound("items/vamppickup1.wav");
 	precache_sound("items/vamppickup2.wav");
 	precache_sound("items/vamppickup3.wav");
 
 	precache_sound("enviro/physics/glassbit.wav");
+}
+
+bool td_fuel_send(entity this, entity to, int sf)
+{
+	WriteHeader(MSG_ENTITY, ENT_CLIENT_TD_FUEL);
+	WriteByte(MSG_ENTITY, sf);
+
+	if(sf & SF_TD_FUEL_TYPE)
+	{
+		WriteByte(MSG_ENTITY, this.cnt);
+	}
+
+	if(sf & SF_TD_FUEL_ORIGIN)
+	{
+		WriteVector(MSG_ENTITY, this.origin);
+	}
+
+	if(sf & SF_TD_FUEL_VELOCITY)
+	{
+		WriteVector(MSG_ENTITY, this.velocity);
+	}
+
+	return true;
 }
 
 void td_fuel_touch(entity this, entity toucher)
@@ -1409,50 +1418,6 @@ void td_fuel_touch(entity this, entity toucher)
 	delete(this);
 }
 
-void vampglobe_CalculateVelocity(entity this, vector to, vector from, float turnrate, float fly_velocity, float fly_turnrate);
-
-void td_fuel_home(entity this, entity targ)
-{
-	float home_radius = 150;
-	vector targ_origin = (0.5 * (targ.absmin + targ.absmax));
-	if(vdist(this.origin - targ_origin, >, home_radius))
-	{
-		if(this.distance)
-			set_movetype(this, MOVETYPE_TOSS);
-		this.distance = 0;
-		return;
-	}
-
-	if(!this.distance)
-	{
-		set_movetype(this, MOVETYPE_FLY);
-		// for the sake of this check, exclude Z axis
-		this.distance = vlen((('1 0 0' * targ_origin.x) + ('0 1 0' * targ_origin.y)) - (('1 0 0' *  this.origin.x) + ('0 1 0' *  this.origin.y)));
-	}
-	float myweight = (this.cnt) ? this.cnt : 1;
-	vampglobe_CalculateVelocity(this, targ_origin, this.origin, false, 600 / myweight, 50);
-}
-
-entity td_fuel_findtarget(entity this)
-{
-	float best_dist = 0;
-	entity best = NULL;
-	FOREACH_ENTITY_RADIUS(this.origin, 150, IS_PLAYER(it) && it.health > 0 && it.exptime == 0 && this.buddy != it,
-	{
-		if(STAT(TD_FUEL, it) >= TD_FUEL_MAX)
-			continue;
-
-		float mydist = vlen2(this.origin - it.origin);
-		if(!best || mydist <= best_dist)
-		{
-			best_dist = mydist;
-			best = it;
-		}
-	});
-
-	return best;
-}
-
 void td_fuel_think(entity this)
 {
 	this.nextthink = time;
@@ -1472,38 +1437,43 @@ void td_fuel_think(entity this)
 	if(this.buddy && time >= this.attack2_finished)
 		this.buddy = NULL;
 
+	if(this.origin != this.oldorigin)
+	{
+		this.oldorigin = this.origin;
+		this.SendFlags |= SF_TD_FUEL_ORIGIN;
+	}
+
 	if(time < this.delay)
 		return;
 
-	if(!this.enemy || this.enemy.health < 1 || this.enemy.exptime != 0 || STAT(TD_FUEL, this.enemy) >= TD_FUEL_MAX)
-	{
-		if(this.distance)
-			set_movetype(this, MOVETYPE_TOSS);
-		this.distance = 0;
-		if(time >= this.pain_finished)
-		{
-			// a slight delay is added since there will be a lot of fuel
-			// this does delay their homing slightly, but reduces lag greatly!
-			this.pain_finished = time + 0.1;
-			this.enemy = td_fuel_findtarget(this);
-		}
-		return;
-	}
+	vector extrasize = '64 64 64';
+	vector emin = this.absmin - extrasize;
+	vector emax = this.absmax + extrasize;
 
-	td_fuel_home(this, this.enemy);
+	FOREACH_ENTITY_BOX_ORDERED(emin, emax, it != this && IS_PLAYER(it),
+	{
+		if(gettouch(this))
+			gettouch(this)(this, it);
+		if(wasfreed(this))
+			break;
+	});
 }
 
-void td_DropFuelAmount(vector from, int ftype, float amount, entity ignore)
+void td_DropFuelAmount(vector from, int ftype, float amount, vector dir, entity ignore)
 {
 	entity item = new(td_fuel);
 	setorigin(item, from);
 
-	item.velocity_x = -150 + (random() * 300);
-	item.velocity_y = -150 + (random() * 300);
-	item.velocity_z = 150 + (random() * 100);
+	if(dir != '0 0 0')
+		item.velocity = dir * 100;
+
+	item.velocity_x += -150 + (random() * 300);
+	item.velocity_y += -150 + (random() * 300);
+	item.velocity_z += 150 + (random() * 100);
 
 	item.flags = FL_ITEM;
 	item.solid = SOLID_TRIGGER;
+	item.gravity = 1;
 	item.effects = EF_FULLBRIGHT;
 	set_movetype(item, MOVETYPE_TOSS);
 
@@ -1515,16 +1485,6 @@ void td_DropFuelAmount(vector from, int ftype, float amount, entity ignore)
 
 	item.cnt = ftype;
 	item.count = amount;
-
-	switch(ftype)
-	{
-		default:
-		case TD_FUEL_TINY: _setmodel(item, "progs/td_fuel_1.mdl"); break;
-		case TD_FUEL_SMALL: _setmodel(item, "progs/td_fuel_2.mdl"); break;
-		case TD_FUEL_MEDIUM: _setmodel(item, "progs/td_fuel_3.mdl"); break;
-		case TD_FUEL_LARGE: _setmodel(item, "progs/td_fuel_4.mdl"); break;
-		case TD_FUEL_MEGA: _setmodel(item, "progs/td_fuel_5.mdl"); break;
-	}
 
 	setsize(item, '-16 -16 -8', '16 16 24');
 	settouch(item, td_fuel_touch);
@@ -1539,44 +1499,54 @@ void td_DropFuelAmount(vector from, int ftype, float amount, entity ignore)
 	item.nextthink = time;
 
 	IL_PUSH(g_td_fuel, item);
+
+	Net_LinkEntity(item, true, 0, td_fuel_send);
 }
 
-void td_DropFuel(vector from, int fuel, entity ignore, bool ischest)
+void td_DropFuel(entity this, int fuel, entity ignore, bool ischest)
 {
 	fuel = rint(fuel);
+
+	vector from = CENTER_OR_VIEWOFS(this);
+	vector dir = '0 0 0';
+	if(ischest)
+	{
+		makevectors(this.angles);
+		dir = v_forward;
+	}
 
 	// chests only drop a maximum size of 50 so other players have a chance to gather it
 	if(!ischest)
 	{
 		while(fuel >= 2000)
 		{
-			td_DropFuelAmount(from, TD_FUEL_MEGA, 2000, ignore);
+			td_DropFuelAmount(from, TD_FUEL_MEGA, 2000, dir, ignore);
 			fuel -= 2000;
 		}
 		while(fuel >= 500)
 		{
-			td_DropFuelAmount(from, TD_FUEL_LARGE, 500, ignore);
+			td_DropFuelAmount(from, TD_FUEL_LARGE, 500, dir, ignore);
 			fuel -= 500;
 		}
 	}
 	while(fuel >= 50)
 	{
-		td_DropFuelAmount(from, TD_FUEL_LARGE, 50, ignore);
+		td_DropFuelAmount(from, TD_FUEL_LARGE, 50, dir, ignore);
 		fuel -= 50;
 	}
 	while(fuel >= 10)
 	{
-		td_DropFuelAmount(from, TD_FUEL_MEDIUM, 10, ignore);
+		td_DropFuelAmount(from, TD_FUEL_MEDIUM, 10, dir, ignore);
 		fuel -= 10;
 	}
 	while(fuel >= 5)
 	{
-		td_DropFuelAmount(from, TD_FUEL_SMALL, 5, ignore);
+		td_DropFuelAmount(from, TD_FUEL_SMALL, 5, dir, ignore);
 		fuel -= 5;
 	}
 	while(fuel >= 1)
 	{
-		td_DropFuelAmount(from, TD_FUEL_TINY, 1, ignore);
+		td_DropFuelAmount(from, TD_FUEL_TINY, 1, dir, ignore);
 		fuel -= 1;
 	}
 }
@@ -1589,7 +1559,7 @@ void td_PlayerDropFuel(entity this)
 		return;
 
 	_sound(this, CH_TRIGGER_SINGLE, "enviro/physics/glassbit.wav", 1, 0.5);
-	td_DropFuel(CENTER_OR_VIEWOFS(this), fuel, this, false);
+	td_DropFuel(this, fuel, this, false);
 	STAT(TD_FUEL, this) = max(STAT(TD_FUEL, this) - fuel, 0);
 }
 
@@ -1817,7 +1787,7 @@ void td_MonsterDies(entity targ, entity attacker)
 
 	float fuel = (mhealth / 1000) * 100;
 
-	td_DropFuel(targ.origin + '0 0 24', fuel, NULL, false);
+	td_DropFuel(targ, fuel, NULL, false);
 
 	if(random() < 0.15) // TODO: custom chances
 		td_DropItem(targ);
@@ -1883,7 +1853,7 @@ void td_RemovePlayer(entity this)
 	if(td_phase == TD_PHASE_COMBAT)
 		amount *= 0.5; // only half if you leave in combat!
 	if(amount > 0)
-		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this, false);
+		td_DropFuel(this, amount, this, false);
 
 	STAT(TD_FUEL, this) = 0;
 }
@@ -1898,7 +1868,7 @@ void td_PlayerDies(entity this)
 	STAT(TD_BUILDMODE, this) = false;
 	float amount = STAT(TD_FUEL, this) * 0.5;
 	if(amount > 0)
-		td_DropFuel(CENTER_OR_VIEWOFS(this), amount, this, false);
+		td_DropFuel(this, amount, this, false);
 
 	STAT(TD_FUEL, this) = 0;
 }

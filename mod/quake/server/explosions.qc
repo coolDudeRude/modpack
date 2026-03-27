@@ -210,6 +210,12 @@ void spawn_touchblood(entity this, float damage, entity targ)
 //======================================================================
 void SpawnMeatSpray(entity this, vector org, vector vel)
 {
+	if(gametype == GAMETYPE_TD || gametype == GAMETYPE_HORDE)
+	{
+		Send_Effect(EFFECT_MEATSPRAY, org, vel, 1);
+		return;
+	}
+
 	entity missile = spawn();
 	missile.owner = this;
 	set_movetype(missile, MOVETYPE_BOUNCE);

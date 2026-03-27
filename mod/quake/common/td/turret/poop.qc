@@ -20,26 +20,27 @@ METHOD(PoopPotty, tr_precache, void(PoopPotty thistur))
 	precache_sound("turrets/potty_poop5.wav");
 	precache_sound("turrets/potty_poop6.wav");
 }
-METHOD(PoopPotty, tr_think, void(PoopPotty thistur, entity actor))
+METHOD(PoopPotty, tr_think, void(PoopPotty this, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 250; // doesn't get extended by levels
+	float myrange = this.target_range; // doesn't get extended by levels
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector myorg = CENTER_OR_VIEWOFS(actor);
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < 0.3)
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time > actor.attack_finished && dot > 0.3 && isvisible)
+		if(time > actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (0.7 / turret_getpower(actor.tur_level, 0.25)));
 			actor.clientframe = TANIM_SHOOT;
@@ -59,20 +60,20 @@ METHOD(PoopPotty, tr_think, void(PoopPotty thistur, entity actor))
 
 			_sound(actor, CH_WEAPON_SINGLE, thesound, 1, ATTN_NORM);
 
-			vector org = CENTER_OR_VIEWOFS(actor);
-			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
+			vector org = myorg;
+			vector dir = normalize(targ_org - org);
 			entity newmis = Poop_PooSpit(actor);
 			newmis.velocity = dir * 400;
 			newmis.velocity_z += 100;
 			setorigin(newmis, org);
-			newmis.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			newmis.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 		}
 	}
 	
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, 0.3, myrange);
+		actor.enemy = turret_findtarget(actor, 0.3, 0.3, myrange);
 	}
 }
 #endif // SVQC
@@ -83,11 +84,13 @@ METHOD(PoopPotty, tr_precache, void(PoopPotty thistur))
 }
 METHOD(PoopPotty, tr_drawselected, void(PoopPotty this, entity actor))
 {
-	float myrange = 250;
+	float myrange = this.target_range; // doesn't get extended by levels
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + ((actor.mins + actor.maxs) * 0.5);
 
-	Draw_Cone(org, v_forward, myrange, 0.3);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);

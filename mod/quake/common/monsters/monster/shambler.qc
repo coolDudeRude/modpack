@@ -87,8 +87,8 @@ void sham_smash10(entity this)
 	else
 		_sound(this, CH_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
-	SpawnMeatSpray(this, this.origin + v_forward*16, crandom() * 100 * v_right);
-	SpawnMeatSpray(this, this.origin + v_forward*16, crandom() * 100 * v_right);
+	SpawnMeatSpray(this, this.enemy.origin + '0 0 16' + v_forward*-16, crandom() * 100 * v_right);
+	SpawnMeatSpray(this, this.enemy.origin + '0 0 16' + v_forward*-16, crandom() * 100 * v_right);
 }
 void sham_smash9(entity this) { set_animofs(this, anim_sham_smash, 9, sham_smash10); ai_charge(this, 0); }
 void sham_smash8(entity this) { set_animofs(this, anim_sham_smash, 8, sham_smash9); ai_charge(this, 0); }
@@ -123,10 +123,10 @@ void ShamClaw(entity this, float side)
 	else
 		_sound(this, CH_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
-	if(side)
+	if(side != 0)
 	{
 		fixedmakevectors(this.angles);
-		SpawnMeatSpray(this, this.origin + v_forward*16, side * v_right);
+		SpawnMeatSpray(this, this.enemy.origin + '0 0 16' + v_forward*-16, side * v_right);
 	}
 }
 

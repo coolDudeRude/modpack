@@ -16,6 +16,7 @@ CLASS(DukeFlakCannon, Turret)
 #endif
 /* netname    */ ATTRIB(DukeFlakCannon, netname, string, "flakcannon");
 /* fullname   */ ATTRIB(DukeFlakCannon, m_name, string, _("Flak Cannon"));
+/* description*/ ATTRIB(DukeFlakCannon, m_description, string, "Fires a long range missile that explodes");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DukeFlakCannon, impulse, int, 0);
 /* cost       */ ATTRIB(DukeFlakCannon, tur_cost, float, 60);
@@ -23,6 +24,9 @@ CLASS(DukeFlakCannon, Turret)
 /* health     */ ATTRIB(DukeFlakCannon, tur_health, float, 180);
 /* damage     */ ATTRIB(DukeFlakCannon, tur_dmg, float, 21);
 /* dmg scale  */ ATTRIB(DukeFlakCannon, tur_dmgscale, float, 0.2);
+/* range      */ ATTRIB(DukeFlakCannon, target_range, float, 700);
+/* max rotate */ ATTRIB(DukeFlakCannon, aim_maxrot, float, 30);
+/* max pitch  */ ATTRIB(DukeFlakCannon, aim_maxpitch, float, 30);
 /* champion   */ ATTRIB(DukeFlakCannon, m_champion, Champions, CHAMPION_Duke);
 #endif
 
@@ -45,6 +49,7 @@ CLASS(DukeTwinGun, Turret)
 #endif
 /* netname    */ ATTRIB(DukeTwinGun, netname, string, "twingun");
 /* fullname   */ ATTRIB(DukeTwinGun, m_name, string, _("Twin Gun"));
+/* description*/ ATTRIB(DukeTwinGun, m_description, string, "Rapidly shoots nearby enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DukeTwinGun, impulse, int, 1);
 /* cost       */ ATTRIB(DukeTwinGun, tur_cost, float, 60);
@@ -52,6 +57,9 @@ CLASS(DukeTwinGun, Turret)
 /* health     */ ATTRIB(DukeTwinGun, tur_health, float, 200);
 /* damage     */ ATTRIB(DukeTwinGun, tur_dmg, float, 7);
 /* dmg scale  */ ATTRIB(DukeTwinGun, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DukeTwinGun, target_range, float, 600);
+/* max rotate */ ATTRIB(DukeTwinGun, aim_maxrot, float, 55);
+/* max pitch  */ ATTRIB(DukeTwinGun, aim_maxpitch, float, 55);
 /* champion   */ ATTRIB(DukeTwinGun, m_champion, Champions, CHAMPION_Duke);
 #endif
 
@@ -74,6 +82,7 @@ CLASS(DukeRocketLauncher, Turret)
 #endif
 /* netname    */ ATTRIB(DukeRocketLauncher, netname, string, "rocketlauncher");
 /* fullname   */ ATTRIB(DukeRocketLauncher, m_name, string, _("Rocket Launcher"));
+/* description*/ ATTRIB(DukeRocketLauncher, m_description, string, "Launches a powerful rocket");
 #ifdef GAMEQC
 /* number     */ ATTRIB(DukeRocketLauncher, impulse, int, 2);
 /* cost       */ ATTRIB(DukeRocketLauncher, tur_cost, float, 110);
@@ -81,6 +90,9 @@ CLASS(DukeRocketLauncher, Turret)
 /* health     */ ATTRIB(DukeRocketLauncher, tur_health, float, 200);
 /* damage     */ ATTRIB(DukeRocketLauncher, tur_dmg, float, 30);
 /* dmg scale  */ ATTRIB(DukeRocketLauncher, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(DukeRocketLauncher, target_range, float, 420);
+/* max rotate */ ATTRIB(DukeRocketLauncher, aim_maxrot, float, 40);
+/* max pitch  */ ATTRIB(DukeRocketLauncher, aim_maxpitch, float, 40);
 /* champion   */ ATTRIB(DukeRocketLauncher, m_champion, Champions, CHAMPION_Duke);
 #endif
 

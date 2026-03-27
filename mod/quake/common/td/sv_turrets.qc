@@ -2,11 +2,20 @@
 
 #ifdef SVQC
 
-entity turret_findtarget_ignore(entity this, float viscone, float trange, entity ignore)
+bool turret_infront(entity this, entity targ, float maxpitch, float maxrot)
 {
-	if(viscone > 0)
-		makevectors(this.angles);
+	vector org = this.origin + this.view_ofs;
+	vector targ_org = (targ.absmin + targ.absmax) * 0.5;
+	vector tvt_tadv = shortangle_vxy(angleofs3(org, this.angles, targ_org), this.angles);
+	if(maxpitch > 0 && fabs(tvt_tadv.x) > maxpitch)
+		return false;
+	if(maxrot > 0 && fabs(tvt_tadv.y) > maxrot)
+		return false;
+	return true;
+}
 
+entity turret_findtarget_ignore(entity this, float maxpitch, float maxrot, float trange, entity ignore)
+{
 	entity best = NULL;
 	float bestdist = 0;
 	vector org = this.origin + this.view_ofs;
@@ -16,16 +25,11 @@ entity turret_findtarget_ignore(entity this, float viscone, float trange, entity
 			continue;
 		if(time < it.invincible_finished)
 			continue;
-		vector targ_org = (it.absmin + it.absmax) * 0.5;
-		if(viscone > 0)
-		{
-			vector vec = normalize(targ_org - org);
-			float dot = vec * v_forward;
-			if(dot < viscone)
-				continue;
-		}
+		if(!turret_infront(this, it, maxpitch, maxrot))
+			continue;
 		if(!checkpvs(org, it))
 			continue;
+		vector targ_org = (it.absmin + it.absmax) * 0.5;
 		float newdist = vlen2(targ_org - org);
 		if(!best || newdist <= bestdist)
 		{
@@ -36,9 +40,9 @@ entity turret_findtarget_ignore(entity this, float viscone, float trange, entity
 	return best;
 }
 
-entity turret_findtarget(entity this, float viscone, float trange)
+entity turret_findtarget(entity this, float maxpitch, float maxrot, float trange)
 {
-	return turret_findtarget_ignore(this, viscone, trange, NULL);
+	return turret_findtarget_ignore(this, maxpitch, maxrot, trange, NULL);
 }
 
 void turret_levelup(entity this)

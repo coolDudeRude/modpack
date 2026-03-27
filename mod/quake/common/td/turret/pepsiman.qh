@@ -16,6 +16,7 @@ CLASS(PepsimanVendingMachine, Turret)
 #endif
 /* netname    */ ATTRIB(PepsimanVendingMachine, netname, string, "vendingmachine");
 /* fullname   */ ATTRIB(PepsimanVendingMachine, m_name, string, _("Vending Machine"));
+/* description*/ ATTRIB(PepsimanVendingMachine, m_description, string, "Dispenses soda cans that roll through enemies");
 #ifdef GAMEQC
 /* number     */ ATTRIB(PepsimanVendingMachine, impulse, int, 0);
 /* cost       */ ATTRIB(PepsimanVendingMachine, tur_cost, float, 80);
@@ -23,6 +24,9 @@ CLASS(PepsimanVendingMachine, Turret)
 /* health     */ ATTRIB(PepsimanVendingMachine, tur_health, float, 850);
 /* damage     */ ATTRIB(PepsimanVendingMachine, tur_dmg, float, 10);
 /* dmg scale  */ ATTRIB(PepsimanVendingMachine, tur_dmgscale, float, 0.15);
+/* range      */ ATTRIB(PepsimanVendingMachine, target_range, float, 400);
+/* max rotate */ ATTRIB(PepsimanVendingMachine, aim_maxrot, float, 35);
+/* max pitch  */ ATTRIB(PepsimanVendingMachine, aim_maxpitch, float, 35);
 /* champion   */ ATTRIB(PepsimanVendingMachine, m_champion, Champions, CHAMPION_Pepsiman);
 #endif
 

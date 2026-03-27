@@ -96,7 +96,7 @@ METHOD(SquireBouncer, tr_think, void(SquireBouncer thistur, entity actor))
 	if(time < actor.attack_finished)
 		return;
 
-	entity targ = turret_findtarget(actor, 0, 64);
+	entity targ = turret_findtarget(actor, 0, 0, 64);
 
 	if(!targ)
 		return;
@@ -121,6 +121,13 @@ METHOD(SquireBouncer, tr_think, void(SquireBouncer thistur, entity actor))
 }
 #endif // SVQC
 #ifdef CSQC
+METHOD(SquireBouncer, tr_drawselected, void(SquireBowlingBall this, entity actor))
+{
+	float myrange = this.target_range;
+	vector org = actor.origin + '0 0 16';
+
+	Draw_Circle(org, myrange);
+}
 METHOD(SquireBouncer, tr_setup, void(SquireHarpoon this, entity actor))
 {
 	actor.anim_idle = '0 0 0';
@@ -149,27 +156,27 @@ METHOD(SquireHarpoon, tr_precache, void(SquireHarpoon thistur))
 #endif
 }
 void crossbow_bolt_think(entity this); // copy-pasta
-METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
+METHOD(SquireHarpoon, tr_think, void(SquireHarpoon this, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 800 * turret_getpower(actor.tur_level, 0.2);
-	float viscone = 0.5;
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector myorg = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time > actor.attack_finished && dot > viscone && isvisible)
+		if(time > actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (1.5 / turret_getpower(actor.tur_level, 0.5)));
 			actor.clientframe = TANIM_SHOOT;
@@ -179,8 +186,8 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 			else
 				_sound(actor, CH_WEAPON_SINGLE, "turrets/harpoon_fire2.wav", 1, ATTN_NORM);
 
-			vector org = actor.origin + '0 0 32';
-			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
+			vector org = myorg;
+			vector dir = normalize(targ_org - org);
 			entity missile = launch_spike(actor, org, dir);
 			set_movetype(missile, MOVETYPE_FLYMISSILE);
 			missile.solid = SOLID_TRIGGER;
@@ -190,7 +197,7 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 			missile.count = time + 12;
 			missile.cnt = 32;
 			settouch(missile, crossbow_bolt_touch);
-			missile.dmg = thistur.tur_dmg * turret_getpower(actor.tur_level, thistur.tur_dmgscale);
+			missile.dmg = this.tur_dmg * turret_getpower(actor.tur_level, this.tur_dmgscale);
 			missile.classname = "crossbow_bolt"; // identifier for spike touch TODO: clean this mess up
 			missile.projectiledeathtype = DEATH_TRAP.m_id;
 			//_setmodel(missile, "progs/proj_impalespike.mdl");
@@ -206,18 +213,24 @@ METHOD(SquireHarpoon, tr_think, void(SquireHarpoon thistur, entity actor))
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
+}
+METHOD(SquireHarpoon, tr_setup, void(SquireHarpoon this, entity actor))
+{
+	actor.view_ofs = '0 0 32'; // for line of sight checks
 }
 #endif // SVQC
 #ifdef CSQC
 METHOD(SquireHarpoon, tr_drawselected, void(SquireHarpoon this, entity actor))
 {
-	float myrange = 800 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 32';
 
-	Draw_Cone(org, v_forward, myrange, 0.5);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
@@ -253,7 +266,7 @@ METHOD(SquireSliceNDice, tr_think, void(SquireSliceNDice thistur, entity actor))
 {
 	entity head = actor.tur_head;
 
-	entity targ = turret_findtarget(actor, 0, 170);
+	entity targ = turret_findtarget(actor, 0, 0, 170);
 	if(targ)
 	{
 		if(time >= actor.attack2_finished && actor.clientframe < 4)
@@ -352,6 +365,13 @@ METHOD(SquireSliceNDice, tr_think, void(SquireSliceNDice thistur, entity actor))
 	}
 	CSQCModel_InterpolateAnimation_Do(head);
 }
+METHOD(SquireSliceNDice, tr_drawselected, void(SquireSliceNDice this, entity actor))
+{
+	float myrange = this.target_range;
+	vector org = actor.origin + '0 0 38';
+
+	Draw_Circle(org, myrange);
+}
 #endif // CSQC
 
 // ==============
@@ -425,24 +445,24 @@ METHOD(SquireBowlingBall, tr_precache, void(SquireBowlingBall thistur))
 METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor))
 {
 	// make sure it matches drawn values!
-	float myrange = 900 * turret_getpower(actor.tur_level, 0.2);
-	float viscone = 0.9;
+	float myrange = thistur.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = thistur.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = thistur.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	if(actor.enemy)
 	{
-		makevectors(actor.angles);
-		vector vec = normalize(actor.enemy.origin - actor.origin);
-		float dot = vec * v_forward;
-
+		vector myorg = actor.origin + actor.view_ofs;
+		vector targ_org = (actor.enemy.absmin + actor.enemy.absmax) * 0.5;
 		bool isvisible = visible(actor, actor.enemy);
-		if(isvisible || dot < viscone)
+		bool isinfront = turret_infront(actor, actor.enemy, maxpitch, maxrot);
+		if(isvisible || isinfront)
 			actor.search_time = time + 1;
-		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(actor.origin - actor.enemy.origin, >, myrange * 1.5))
+		if(actor.enemy.health < 1 || actor.enemy.exptime != 0 || time > actor.search_time || vdist(myorg - targ_org, >, myrange * 1.5))
 		{
 			actor.enemy = NULL;
 			return; // won't find a new target this frame
 		}
 
-		if(time > actor.attack_finished && dot > viscone && isvisible)
+		if(time > actor.attack_finished && isinfront && isvisible)
 		{
 			actor.attack_finished = time + max(0.03, (2 / turret_getpower(actor.tur_level, 0.5)));
 			actor.clientframe = TANIM_SHOOT;
@@ -454,8 +474,8 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 			else
 				_sound(actor, CH_WEAPON_SINGLE, "turrets/bowlingball_fire2.wav", 1, ATTN_NORM);
 
-			vector org = actor.origin + '0 0 42';
-			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
+			vector org = myorg;
+			vector dir = normalize(targ_org - org);
 			entity missile = launch_spike(actor, org, dir);
 			missile.velocity = dir * 200;
 			set_movetype(missile, MOVETYPE_BOUNCE);
@@ -476,7 +496,7 @@ METHOD(SquireBowlingBall, tr_think, void(SquireBowlingBall thistur, entity actor
 	if(!actor.enemy && time >= actor.idle_finished)
 	{
 		actor.idle_finished = time + 0.5;
-		actor.enemy = turret_findtarget(actor, viscone, myrange);
+		actor.enemy = turret_findtarget(actor, maxpitch, maxrot, myrange);
 	}
 }
 METHOD(SquireBowlingBall, tr_setup, void(SquireBowlingBall this, entity actor))
@@ -487,11 +507,13 @@ METHOD(SquireBowlingBall, tr_setup, void(SquireBowlingBall this, entity actor))
 #ifdef CSQC
 METHOD(SquireBowlingBall, tr_drawselected, void(SquireBowlingBall this, entity actor))
 {
-	float myrange = 900 * turret_getpower(actor.tur_level, 0.2);
+	float myrange = this.target_range * turret_getpower(actor.tur_level, 0.2);
+	float maxpitch = this.aim_maxpitch * turret_getpower(actor.tur_level, 0.05);
+	float maxrot = this.aim_maxrot * turret_getpower(actor.tur_level, 0.05);
 	makevectors(actor.angles);
 	vector org = actor.origin + '0 0 42';
 
-	Draw_Cone(org, v_forward, myrange, 0.9);
+	Draw_Cone(org, v_forward, myrange, maxpitch, maxrot);
 
 	// TODO: cone?
 	//Draw_CylindricLine(org, org + v_forward * myrange, 6, "particles/laserbeam", 0.25, -time * 3, '1 0.25 0', 1, DRAWFLAG_NORMAL, view_origin);
