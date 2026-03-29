@@ -20,7 +20,13 @@ void kiwi_run1(entity this)
 	if(time >= this.idle_finished)
 	{
 		this.idle_finished = time + 3 + (random() * 3);
-		_sound(this, CH_VOICE, "kiwi/kiwi.wav", 1, ATTN_NORM);
+		if(this.spawnsilent)
+		{
+			float r = random() * (random() * 3);
+			sound7(this, CH_VOICE, "kiwi/kiwi.wav", 1, ATTN_NORM, 100 / r, 0);
+		}
+		else
+			_sound(this, CH_VOICE, "kiwi/kiwi.wav", 1, ATTN_NORM);
 	}
 }
 
