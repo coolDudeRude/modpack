@@ -12,8 +12,6 @@ void CrazyDave_Aggro(entity this)
 			//if(it.monsterdef.spawnflags & MONSTER_TYPE_BOSS)
 				//continue;
 			// low chance to aggro monsters each frame
-			if(random() > 0.25)
-				continue;
 			if(!checkpvs(this.origin, it))
 				continue;
 			it.aggro_time = time;
