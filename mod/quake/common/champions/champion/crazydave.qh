@@ -108,7 +108,8 @@ PRECACHE(CrazyDave)
 #ifdef CSQC
 #define CRAZYDAVE_STATS \
 "Is crazy\n" \
-"Gets crazier"
+"Damage taken reduced by 50%\n" \
+"Press %ABILITY% to distract"
 #endif
 CLASS(CrazyDave, Champions)
     ATTRIB(CrazyDave, netname, string, "crazydave");

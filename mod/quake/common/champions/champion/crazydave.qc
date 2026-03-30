@@ -44,6 +44,17 @@ METHOD(CrazyDave, m_playerthink, void(Champions this, entity actor))
 	}
 }
 
+METHOD(CrazyDave, m_takedamage, float(Champions this, entity targ, entity inflictor, entity attacker, float damage, int deathtype))
+{
+	if(targ.m_champion == this)
+	{
+		if(deathmatch)
+			return 0.75;
+		return 0.5;
+	}
+	return 1;
+}
+
 METHOD(CrazyDave, m_activate, void(Champions this, entity actor))
 {
 	int r = bound(1, rint(random() * 7), 7);
