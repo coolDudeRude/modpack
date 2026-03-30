@@ -5,7 +5,7 @@ void CrazyDave_Aggro(entity this)
 {
 	FOREACH_ENTITY_RADIUS(this.origin, autocvar_sv_quake_crazydave_range, true,
 	{
-		if(IS_MONSTER(it) && it.health > 0 && it.enemy && !it.charmed && !(it.effects & EF_NODRAW) && !it.is_frozen && !it.elec && it.enemy.classname != this.classname && !wasfreed(it.enemy))
+		if(IS_MONSTER(it) && it.health > 0 && it.enemy && !it.charmed && !(it.effects & EF_NODRAW) && !it.is_frozen && !it.elec && it.enemy != this && !wasfreed(it.enemy))
 		{
 			//if(gametype == GAMETYPE_TD)
 				//continue;
