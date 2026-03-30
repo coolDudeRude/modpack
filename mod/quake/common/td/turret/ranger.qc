@@ -87,6 +87,7 @@ METHOD(RangerNailer, tr_think, void(RangerNailer this, entity actor))
 				_sound(actor, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 0.5, ATTN_NORM);
 			}
 
+			makevectors(actor.angles);
 			vector org = myorg + v_right * offset;
 			vector dir = normalize(CENTER_OR_VIEWOFS(actor.enemy) - org);
 			entity newmis = launch_spike(actor, org, dir);

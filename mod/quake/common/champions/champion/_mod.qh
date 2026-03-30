@@ -6,6 +6,7 @@
 #include "chief.qh"
 #include "clippy.qh"
 #include "corrupted.qh"
+#include "crazydave.qh"
 #include "demon.qh"
 #include "dingus.qh"
 #include "doom.qh"

@@ -91,6 +91,7 @@ CLASS(Galena, Champions)
 #ifdef CSQC
     ATTRIB(Galena, message, string, GALENA_STATS);
 #endif
+    ATTRIB(Galena, td_turrets, bool, true);
 ENDCLASS(Galena)
 REGISTER_CHAMPION(Galena, NEW(Galena));
 

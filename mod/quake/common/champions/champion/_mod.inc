@@ -6,6 +6,7 @@
 #include "chief.qc"
 #include "clippy.qc"
 #include "corrupted.qc"
+#include "crazydave.qc"
 #include "demon.qc"
 #include "dingus.qc"
 #include "doom.qc"

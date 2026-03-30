@@ -33,11 +33,11 @@ void Mime_ThrowBall(entity this)
 	makevectors(this.v_angle);
 
 	if(this.v_angle_x)
-		missile.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*120 + crandom()*v_up*120;
+		missile.velocity = v_forward*700 + v_up * 200 + crandom()*v_right*120 + crandom()*v_up*120;
 	else
 	{
 		missile.velocity = qc_aim(this, 10000);
-		missile.velocity = missile.velocity * 600 + randomvec() * 300;
+		missile.velocity = missile.velocity * 700 + randomvec() * 300;
 		missile.velocity_z = 500;
 	}
 
@@ -75,7 +75,7 @@ METHOD(Mime, m_playerthink, void(Champions this, entity actor))
 	if(PHYS_INPUT_BUTTON_CROUCH(actor) && QCC_CanCastAbility(actor))
 	{
 		_sound(actor, CH_WEAPON_B, "weapons/sword_swing.wav", 1, ATTN_NORM);
-		STAT(QCC_ABILITYTIME, actor) = time + 1;
+		STAT(QCC_ABILITYTIME, actor) = time + 0.7;
 		Mime_ThrowBall(actor);
 	}
 }

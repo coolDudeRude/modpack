@@ -156,6 +156,7 @@ METHOD(DukeTwinGun, tr_think, void(DukeTwinGun this, entity actor))
 				_sound(actor, CH_WEAPON_SINGLE, "weapons/rocket1i.wav", 0.7, ATTN_NORM);
 			}
 
+			makevectors(actor.angles);
 			vector org = myorg + v_right * offset;
 			vector dir = normalize(targ_org - org);
 			entity newmis = launch_spike(actor, org, dir);
@@ -190,9 +191,9 @@ METHOD(DukeTwinGun, tr_drawselected, void(DukeTwinGun this, entity actor))
 }
 #endif // CSQC
 
-// ========
-//  MORTAR
-// ========
+// =================
+//  ROCKET LAUNCHER
+// =================
 
 #ifdef SVQC
 METHOD(DukeRocketLauncher, tr_precache, void(DukeRocketLauncher thistur))
@@ -226,6 +227,7 @@ METHOD(DukeRocketLauncher, tr_think, void(DukeRocketLauncher this, entity actor)
 
 			_sound(actor, CH_WEAPON_SINGLE, "turrets/rocketlauncher_fire.wav", 1, ATTN_NORM);
 
+			makevectors(actor.angles);
 			vector org = myorg + v_right * offset;
 			vector dir = normalize(targ_org - org);
 			entity newmis = launch_spike(actor, org, dir);

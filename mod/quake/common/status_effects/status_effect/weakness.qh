@@ -1,0 +1,17 @@
+#pragma once
+
+#include "../all.qh"
+
+CLASS(Weakness, Debuffs)
+    ATTRIB(Weakness, netname, string, "weakness");
+#if 0
+    // NOTE: status effect name and icon disabled as they are not displayed
+    // re-enable if status effects are given a visual element
+    ATTRIB(Weakness, m_name, string, _("Weakness"));
+    ATTRIB(Weakness, m_icon, string, "buff_disability");
+#endif
+    ATTRIB(Weakness, m_color, vector, '1 0.7 0.7');
+    ATTRIB(Weakness, m_hidden, bool, true);
+    ATTRIB(Weakness, m_lifetime, float, 10);
+ENDCLASS(Weakness)
+REGISTER_STATUSEFFECT(Weakness, NEW(Weakness));

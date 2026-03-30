@@ -734,6 +734,9 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 	if(targ.tank)
 		damage = Tank_Damage(targ, inflictor, attacker, damage, deathtype);
 
+	if(StatusEffects_active(STATUSEFFECT_Weakness, attacker))
+		damage *= 0.7;
+
 	if(STAT(CANNON, targ))
 		damage *= 0.5;
 

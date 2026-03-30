@@ -275,6 +275,8 @@ STATIC_INIT(Effect_TE_WIZSPIKE)
 }
 #endif
 
+EFFECT(0, ANGEL_HEALING,            "yellow_cap")
+
 EFFECT(0, RUNE_PUFF_RED,            "spawn_point_red")
 EFFECT(0, RUNE_PUFF_BLUE,           "spawn_point_blue")
 EFFECT(0, RUNE_CYCLONE,             "respawn_ghost")
@@ -805,6 +807,8 @@ STATIC_INIT(Effect_ARMAGON_SHOCKWAVE)
 	registercvar("cl_particle_armagon_shockwave_smoke_airfriction", "2");
 }
 #endif
+
+EFFECT(0, TOTEM_GLOW,               "relic_teamboost")
 
 EFFECT(0, POOP_STINK,               "poop_stink")
 #ifdef CSQC

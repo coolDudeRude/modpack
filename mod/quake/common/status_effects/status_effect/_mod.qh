@@ -19,5 +19,6 @@
 #include "shield.qh"
 #include "slowness.qh"
 #include "vampirism.qh"
+#include "weakness.qh"
 #include "wetsuit.qh"
 #include "withering.qh"

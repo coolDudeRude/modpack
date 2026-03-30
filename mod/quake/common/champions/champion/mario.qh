@@ -82,6 +82,7 @@ CLASS(Mario, Champions)
 #ifdef CSQC
     ATTRIB(Mario, message, string, "It's-a Me, Mario!");
 #endif
+    ATTRIB(Mario, td_turrets, bool, true);
 ENDCLASS(Mario)
 REGISTER_CHAMPION(Mario, NEW(Mario));
 

@@ -6,7 +6,7 @@
 CLASS(Scattercrumb, Weapon)
 /* ammotype  */ ATTRIB(Scattercrumb, ammo_type, int, IT_SHELLS);
 /* impulse   */ ATTRIB(Scattercrumb, impulse, int, 3);
-/* spawnflags*/ ATTRIB(Scattercrumb, spawnflags, int, WEP_FLAG_NODUAL);
+/* spawnflags*/ ATTRIB(Scattercrumb, spawnflags, int, WEP_FLAG_NODUAL | WEP_FLAG_TWOHANDED);
 /* ammo */      ATTRIB(Scattercrumb, aflag, int, 10);
 /* modelname */ ATTRIB(Scattercrumb, mdl, string, "scattercrumb");
 /* crosshair */ ATTRIB(Scattercrumb, w_crosshair, string, "gfx/crosshairshotgun");

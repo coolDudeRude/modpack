@@ -20,7 +20,7 @@ CLASS(DryadWorldTree, Turret)
 #ifdef GAMEQC
 /* number     */ ATTRIB(DryadWorldTree, impulse, int, 0);
 /* cost       */ ATTRIB(DryadWorldTree, tur_cost, float, 20);
-/* units      */ ATTRIB(DryadWorldTree, tur_units, int, 2);
+/* units      */ ATTRIB(DryadWorldTree, tur_units, int, 3);
 /* health     */ ATTRIB(DryadWorldTree, tur_health, float, 420);
 /* damage     */ ATTRIB(DryadWorldTree, healamount, float, 2);
 /* range      */ ATTRIB(DryadWorldTree, target_range, float, 256);

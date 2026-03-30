@@ -586,6 +586,9 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(NIMBUS)             this.traileffect = EFFECT_Null.m_id; break;
 			HANDLE(CAN)                this.traileffect = EFFECT_Null.m_id; this.avelocity = '180 0 0'; break;
 			HANDLE(CAN_SMALL)          this.traileffect = EFFECT_Null.m_id; this.scale = 0.25; this.avelocity = '360 0 0'; break;
+			HANDLE(BULLET_BILL)        this.traileffect = EFFECT_TR_ROCKET.m_id; break;
+			HANDLE(BULLSEYE_BILL)      this.traileffect = EFFECT_TR_ROCKET.m_id; break;
+			HANDLE(MIMEJR_BALL)        this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; this.scale = 0.35; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");
@@ -833,6 +836,7 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 				this.gravity = 1;
 				break;
 			case PROJECTILE_MIME_BALL:
+			case PROJECTILE_MIMEJR_BALL:
 				set_movetype(this, MOVETYPE_BOUNCE);
 				settouch(this, func_null);
 				this.bouncefactor = 1;

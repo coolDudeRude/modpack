@@ -66,6 +66,7 @@ CLASS(Mime, Champions)
 #ifdef CSQC
     ATTRIB(Mime, message, string, "Mr. Mime!");
 #endif
+    ATTRIB(Mime, td_turrets, bool, true);
 ENDCLASS(Mime)
 REGISTER_CHAMPION(Mime, NEW(Mime));
 
