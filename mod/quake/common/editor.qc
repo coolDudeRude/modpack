@@ -16,6 +16,7 @@ void editor_write(entity this, int fh)
 	if(this.targetname && this.targetname != "") fputs(fh, strcat("\"targetname\" \"", this.targetname, "\"\n"));
 	if(this.killtarget && this.killtarget != "") fputs(fh, strcat("\"killtarget\" \"", this.killtarget, "\"\n"));
 	if(this.count) fputs(fh, strcat("\"count\" \"", ftos(this.count), "\"\n"));
+	if(this.model && this.model != "" && this.model != "null") fputs(fh, strcat("\"model\" \"", this.model, "\"\n"));
 	fputs(fh, "}\n");
 }
 
@@ -380,6 +381,23 @@ bool sv_editor_command(entity this, string cmd, float argc)
 					sprint(this, strcat(it.classname, " at ", vtos(it.origin)));
 				});
 				sprint(this, "For a complete list of spawn options, search the code for spawnfunc(\n");
+				return true;
+			}
+			case "model":
+			{
+				entity e = editor_validate(argv(2));
+				if(!e)
+				{
+					sprint(this, "Invalid entity\n");
+					return true;
+				}
+				if(argv(3) == "")
+				{
+					sprint(this, "Invalid model\n");
+					return true;
+				}
+				e.model = strzone(argv(3));
+				sprint(this, sprintf("Model updated to %s\n", e.model));
 				return true;
 			}
 		}

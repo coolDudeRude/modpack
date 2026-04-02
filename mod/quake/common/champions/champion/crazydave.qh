@@ -129,6 +129,7 @@ CLASS(CrazyDave, Champions)
 #ifdef CSQC
     ATTRIB(CrazyDave, message, string, CRAZYDAVE_STATS);
 #endif
+    ATTRIB(CrazyDave, td_turrets, bool, true);
 ENDCLASS(CrazyDave)
 REGISTER_CHAMPION(CrazyDave, NEW(CrazyDave));
 
@@ -137,4 +138,6 @@ float autocvar_sv_quake_crazydave_range = 512;
 
 .bool crazydave_cannon;
 .float crazydave_crazy_time;
+
+void CrazyDave_reset(entity this);
 #endif

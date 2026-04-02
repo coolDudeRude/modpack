@@ -589,6 +589,8 @@ NET_HANDLE(ENT_CLIENT_PROJECTILE, bool isnew)
 			HANDLE(BULLET_BILL)        this.traileffect = EFFECT_TR_ROCKET.m_id; break;
 			HANDLE(BULLSEYE_BILL)      this.traileffect = EFFECT_TR_ROCKET.m_id; break;
 			HANDLE(MIMEJR_BALL)        this.traileffect = EFFECT_Null.m_id; this.avelocity = '300 300 300'; this.scale = 0.35; break;
+			HANDLE(PEA)                this.traileffect = EFFECT_Null.m_id; this.avelocity = randomvec() * 200; break;
+			HANDLE(SNOWPEA)            this.traileffect = EFFECT_SNOWBALL_TRAIL.m_id; this.avelocity = randomvec() * 200; break;
 #undef HANDLE
 			default:
 				error("Received invalid CSQC projectile, can't work with this!");

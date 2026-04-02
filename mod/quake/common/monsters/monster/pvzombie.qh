@@ -1,0 +1,36 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_PVZOMBIE,               1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1's brain was devoured by a Zombie"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_PVZOMBIE,          1,  NULL,           INFO_DEATH_SELF_MON_PVZOMBIE,         CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_PVZOMBIE,      DEATH_SELF_MON_PVZOMBIE,      DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_PVZOMBIE, "progs/pvz_worker.mdl");
+#endif
+
+CLASS(PvZombie, Monster)
+    ATTRIB(PvZombie, spawnflags, int, MON_FLAG_HIDDEN);
+    ATTRIB(PvZombie, m_mins, vector, '-16 -16 -24');
+    ATTRIB(PvZombie, m_maxs, vector, '16 16 32');
+#ifdef GAMEQC
+    ATTRIB(PvZombie, m_model, Model, MDL_MON_PVZOMBIE);
+#endif
+    ATTRIB(PvZombie, netname, string, "pvzombie");
+    ATTRIB(PvZombie, m_name, string, _("Zombie"));
+ENDCLASS(PvZombie)
+
+REGISTER_MONSTER(PVZOMBIE, NEW(PvZombie));
+
+#ifdef SVQC
+// variant skins/models
+enum {
+    PVZ_WORKER,
+    PVZ_BALLOON,
+    PVZ_DUCKIE,
+    PVZ_BUCKETHEAD,
+    PVZ_NEWSPAPER,
+    PVZ_CONEHEAD
+};
+#endif

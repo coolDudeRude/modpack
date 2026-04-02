@@ -1,0 +1,24 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_PVZOMBIE_YETI,               1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1 was mooshed by a Zombie Yeti"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_PVZOMBIE_YETI,          1,  NULL,           INFO_DEATH_SELF_MON_PVZOMBIE_YETI,         CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_PVZOMBIE_YETI,      DEATH_SELF_MON_PVZOMBIE_YETI,      DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_PVZOMBIE_YETI, "progs/pvz_yeti.mdl");
+#endif
+
+CLASS(PvZombieYeti, Monster)
+    ATTRIB(PvZombieYeti, spawnflags, int, MON_FLAG_HIDDEN | MON_FLAG_EXPLOSIONRESISTANT);
+    ATTRIB(PvZombieYeti, m_mins, vector, '-32 -32 -24');
+    ATTRIB(PvZombieYeti, m_maxs, vector, '32 32 64');
+#ifdef GAMEQC
+    ATTRIB(PvZombieYeti, m_model, Model, MDL_MON_PVZOMBIE_YETI);
+#endif
+    ATTRIB(PvZombieYeti, netname, string, "pvzombie_yeti");
+    ATTRIB(PvZombieYeti, m_name, string, _("Zombie Yeti"));
+ENDCLASS(PvZombieYeti)
+
+REGISTER_MONSTER(PVZOMBIE_YETI, NEW(PvZombieYeti));

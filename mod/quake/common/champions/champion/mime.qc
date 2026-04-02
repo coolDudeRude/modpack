@@ -32,14 +32,29 @@ void Mime_ThrowBall(entity this)
 
 	makevectors(this.v_angle);
 
-	if(this.v_angle_x)
-		missile.velocity = v_forward*700 + v_up * 200 + crandom()*v_right*120 + crandom()*v_up*120;
+	if(autocvar_sv_allow_customplayermodels_silent != "" && PlayerInList(this, autocvar_sv_allow_customplayermodels_silent))
+	{
+		if(this.v_angle_x)
+			missile.velocity = v_forward*700 + v_up * 200 + crandom()*v_right*120 + crandom()*v_up*120;
+		else
+		{
+			missile.velocity = qc_aim(this, 10000);
+			missile.velocity = missile.velocity * 700 + randomvec() * 300;
+			missile.velocity_z = 500;
+		}
+	}
 	else
 	{
-		missile.velocity = qc_aim(this, 10000);
-		missile.velocity = missile.velocity * 700 + randomvec() * 300;
-		missile.velocity_z = 500;
+		if(this.v_angle_x)
+			missile.velocity = v_forward*700 + v_up * 200;
+		else
+		{
+			missile.velocity = qc_aim(this, 700);
+			missile.velocity = missile.velocity * 700;
+			missile.velocity_z += 200;
+		}
 	}
+		
 
 	missile.avelocity = '300 300 300';
 

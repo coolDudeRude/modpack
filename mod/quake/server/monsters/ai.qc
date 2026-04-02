@@ -161,6 +161,8 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 					float maxheight = 40;
 					if((this.monsterdef.spawnflags & MONSTER_TYPE_BOSS) && vdist(this.origin - targ.origin, >, 300))
 						maxheight = 250;
+					else if(this.enemy && this.monsterdef == MON_PVZOMBIE_BALLOON)
+						maxheight = 400;
 					else if(!this.enemy)
 						maxheight = 1;
 
@@ -168,6 +170,8 @@ bool t_movestep(entity this, vector move, bool relink, bool noenemy)
 						dz = this.origin.z - (targ.origin.z + 64);
 					else if(this.monsterdef == MON_GOLEM_HEAD)
 						dz = this.origin.z - (targ.origin.z + 250);
+					else if(this.monsterdef == MON_PVZOMBIE_BALLOON && this.enemy)
+						dz = this.origin.z - (targ.origin.z + 200);
 					else if(this.monsterdef == MON_ICE_QUEEN)
 					{
 						dz = this.origin.z - (targ.origin.z + 72);
@@ -822,7 +826,7 @@ int range(entity this, entity targ)
 		return RANGE_MELEE;
 
 	vector ranges = RANGES_NORMAL;
-	if((this.spawnflags & SPAWNFLAG_NEARSIGHTED) || this.monsterdef == MON_SQUEAK)
+	if((this.spawnflags & SPAWNFLAG_NEARSIGHTED) || this.monsterdef == MON_SQUEAK || this.monsterdef == MON_PVZOMBIE_BALLOON)
 	{
 		if(this.enemy)
 			ranges = RANGES_NORMAL * 0.8;
@@ -1366,6 +1370,9 @@ bool FindTarget(entity this)
 				continue;
 			if(IS_PLAYER(it) && vdist(it.origin - this.origin, >, 64))
 				continue; // for players, reduce the range further?
+			dist = 256;
+			if(this.monsterdef == MON_PVZOMBIE_BALLOON && it.classname != "td_tower")
+				dist *= 0.5;
 			if(visible(this, it) && this.visible_distance < dist)
 			{
 				selected = it;

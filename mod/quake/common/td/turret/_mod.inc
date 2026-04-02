@@ -1,5 +1,6 @@
 // generated file; do not modify
 #include "clippy.qc"
+#include "crazydave.qc"
 #include "dryad.qc"
 #include "duke.qc"
 #include "galena.qc"

@@ -636,7 +636,7 @@ void td_BuildPhase_Init(entity this)
 	bool bosswave = (this.count > 0 && this.wave == this.count);
 	if(this.wave > this.lip && random() < 0.075)
 		bosswave = true;
-	else if((this.wave < this.count || this.count <= 0) && random() < chicken_chance)
+	else if(!(this.spawnflags & TD_ENT_NOCHEDDAR) && this.wave > this.lip && (this.wave < this.count || this.count <= 0) && random() < chicken_chance)
 	{
 		if(random() > 0.5)
 			chickens = true;
@@ -1486,9 +1486,16 @@ void td_DropFuelAmount(vector from, int ftype, float amount, vector dir, entity 
 	item.cnt = ftype;
 	item.count = amount;
 
-	setsize(item, '-16 -16 -8', '16 16 24');
+	float item_lifetime = 360;
+	if(ignore.turretdef) // spawned by a turret
+		item_lifetime = 10;
+
+	if(ftype == TD_FUEL_SUN)
+		setsize(item, '-16 -16 -16', '16 16 16');
+	else
+		setsize(item, '-16 -16 -8', '16 16 24');
 	settouch(item, td_fuel_touch);
-	item.wait = time + 360;
+	item.wait = time + item_lifetime;
 	item.alpha = 1;
 	item.state = 0;
 	item.distance = 0;
@@ -1783,9 +1790,9 @@ void td_DropItem(entity this)
 
 void td_MonsterDies(entity targ, entity attacker)
 {
-	float mhealth = (targ.max_health > 0) ? targ.max_health : 1;
+	float mhealth = (targ.max_health > 0) ? targ.max_health : 40;
 
-	float fuel = (mhealth / 1000) * 100;
+	float fuel = max(10, mhealth * 0.25);
 
 	td_DropFuel(targ, fuel, NULL, false);
 

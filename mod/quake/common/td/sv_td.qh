@@ -21,6 +21,7 @@ const int CLIPGROUP_TD = 67;
 const int CLIPGROUP_TDTURRET = 68;
 
 const int TD_ENT_NOBOSS = BIT(0);
+const int TD_ENT_NOCHEDDAR = BIT(1);
 
 const int TD_SPAWNPOINT_NORMAL = 0;
 const int TD_SPAWNPOINT_FLYING = 1;

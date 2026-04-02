@@ -84,3 +84,4 @@
 #include "tome.qh"
 #include "northpole.qh"
 #include "megashark.qh"
+#include "taco.qh"

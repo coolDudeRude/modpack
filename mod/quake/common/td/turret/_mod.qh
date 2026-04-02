@@ -1,5 +1,6 @@
 // generated file; do not modify
 #include "clippy.qh"
+#include "crazydave.qh"
 #include "dryad.qh"
 #include "duke.qh"
 #include "galena.qh"

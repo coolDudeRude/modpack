@@ -135,6 +135,8 @@ MODEL(PROJECTILE_CAN_SMALL,                 "progs/can.md3");
 MODEL(PROJECTILE_BULLET_BILL,               "progs/proj_bulletbill.mdl");
 MODEL(PROJECTILE_BULLSEYE_BILL,             "progs/proj_bullseyebill.mdl");
 MODEL(PROJECTILE_MIMEJR_BALL,               "progs/ball.mdl");
+MODEL(PROJECTILE_PEA,                       "progs/proj_tur_peashooter.mdl");
+MODEL(PROJECTILE_SNOWPEA,                   "progs/proj_tur_snowpea.mdl");
 
 PRECACHE(PROJECTILE_LETTERS)
 {

@@ -1,0 +1,19 @@
+#pragma once
+
+CLASS(Taco, Weapon)
+/* ammotype  */ ATTRIB(Taco, ammo_type, int, 0);
+/* impulse   */ ATTRIB(Taco, impulse, int, 1);
+/* spawnflags*/ ATTRIB(Taco, spawnflags, int, WEP_FLAG_CHAMPION | WEP_FLAG_NOAGGRO | WEP_FLAG_HUDFALLBACK | WEP_FLAG_NOSTEAL | WEP_FLAG_NODUAL | WEP_FLAG_MELEE);
+/* ammo */      ATTRIB(Taco, aflag, int, 0);
+/* modelname */ ATTRIB(Taco, mdl, string, "taco");
+/* crosshair */ ATTRIB(Taco, w_crosshair, string, "gfx/crosshairlaser");
+/* crosshair */ ATTRIB(Taco, w_crosshair_size, float, 1);
+/* crosshair */ ATTRIB(Taco, w_crosshair_color, vector, '1 1 0');
+/* wepimg    */ ATTRIB(Taco, model2, string, "taco");
+/* refname   */ ATTRIB(Taco, netname, string, "taco");
+/* wepname   */ ATTRIB(Taco, m_name, string, _("Taco"));
+
+ENDCLASS(Taco)
+REGISTER_WEAPON(TACO, NEW(Taco));
+
+SPAWNFUNC_WEAPON(weapon_taco, WEP_TACO)

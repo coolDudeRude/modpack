@@ -227,6 +227,7 @@ PRECACHE(Fuel)
 	precache_model("progs/td_fuel_3.mdl");
 	precache_model("progs/td_fuel_4.mdl");
 	precache_model("progs/td_fuel_5.mdl");
+	precache_model("progs/s_sun.spr");
 }
 
 void td_fuel_remove(entity this)
@@ -271,8 +272,12 @@ NET_HANDLE(ENT_CLIENT_TD_FUEL, bool isnew)
 			case TD_FUEL_MEDIUM: _setmodel(this, "progs/td_fuel_3.mdl"); break;
 			case TD_FUEL_LARGE: _setmodel(this, "progs/td_fuel_4.mdl"); break;
 			case TD_FUEL_MEGA: _setmodel(this, "progs/td_fuel_5.mdl"); break;
+			case TD_FUEL_SUN: _setmodel(this, "progs/s_sun.spr"); break;
 		}
-		setsize(this, '-16 -16 -8', '16 16 24');
+		if(this.cnt == TD_FUEL_SUN)
+			setsize(this, '-16 -16 -16', '16 16 16');
+		else
+			setsize(this, '-16 -16 -8', '16 16 24');
 	}
 
 	if(sf & SF_TD_FUEL_ORIGIN)

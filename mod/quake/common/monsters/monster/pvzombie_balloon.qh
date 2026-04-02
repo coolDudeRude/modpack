@@ -1,0 +1,24 @@
+#pragma once
+
+#include "../all.qh"
+
+MSG_INFO_NOTIF(DEATH_SELF_MON_PVZOMBIE_BALLOON,               1,  2, 0, "s1 s2", "",        "",                     _("^BG%s%s^K1's was deflated by a Balloon Zombie"), "")
+MSG_MULTI_NOTIF(DEATH_SELF_MON_PVZOMBIE_BALLOON,          1,  NULL,           INFO_DEATH_SELF_MON_PVZOMBIE_BALLOON,         CENTER_DEATH_SELF_MONSTER)
+REGISTER_DEATHTYPE(MONSTER_PVZOMBIE_BALLOON,      DEATH_SELF_MON_PVZOMBIE_BALLOON,      DEATH_MURDER_MONSTER,           "monster")
+
+#ifdef GAMEQC
+MODEL(MON_PVZOMBIE_BALLOON, "progs/pvz_balloon.mdl");
+#endif
+
+CLASS(PvZombieBalloon, Monster)
+    ATTRIB(PvZombieBalloon, spawnflags, int, MON_FLAG_HIDDEN | MONSTER_TYPE_FLY);
+    ATTRIB(PvZombieBalloon, m_mins, vector, '-16 -16 -24');
+    ATTRIB(PvZombieBalloon, m_maxs, vector, '16 16 32');
+#ifdef GAMEQC
+    ATTRIB(PvZombieBalloon, m_model, Model, MDL_MON_PVZOMBIE_BALLOON);
+#endif
+    ATTRIB(PvZombieBalloon, netname, string, "pvzombie_balloon");
+    ATTRIB(PvZombieBalloon, m_name, string, _("Balloon Zombie"));
+ENDCLASS(PvZombieBalloon)
+
+REGISTER_MONSTER(PVZOMBIE_BALLOON, NEW(PvZombieBalloon));
