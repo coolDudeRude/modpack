@@ -3,7 +3,7 @@
 #ifdef SVQC
 void CrazyDave_reset(entity this)
 {
-	this.crazydave_crazy_time = time + 20 + (random() * 20);
+	this.crazydave_crazy_time = time + autocvar_sv_quake_crazydave_crazytime + (random() * autocvar_sv_quake_crazydave_crazytime);
 }
 
 void CrazyDave_Aggro(entity this)

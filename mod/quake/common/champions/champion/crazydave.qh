@@ -134,7 +134,8 @@ ENDCLASS(CrazyDave)
 REGISTER_CHAMPION(CrazyDave, NEW(CrazyDave));
 
 #ifdef SVQC
-float autocvar_sv_quake_crazydave_range = 512;
+float autocvar_sv_quake_crazydave_range = 768;
+float autocvar_sv_quake_crazydave_crazytime = 20;
 
 .bool crazydave_cannon;
 .float crazydave_crazy_time;

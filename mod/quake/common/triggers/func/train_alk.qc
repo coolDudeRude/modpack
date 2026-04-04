@@ -543,7 +543,7 @@ void func_train_alk(entity this)
 	if(!this.dmg)
 		this.dmg = 2;
 
-	if(this.spawnflags & TRAIN_STOPONTRIGGER && this.spawnflags & TRAIN_MOVEONTRIGGER)
+	if((this.spawnflags & TRAIN_STOPONTRIGGER) && (this.spawnflags & TRAIN_MOVEONTRIGGER))
 	{
 		objerror(this, "func_train: Stop and move on trigger set at the same time");
 		return;
@@ -594,7 +594,7 @@ void func_train_alk(entity this)
 	//this.classname = "train";
 
 	_setmodel(this, this.model);
-	setsize(this, this.mins , this.maxs);
+	setsize(this, this.mins, this.maxs);
 	setorigin(this, this.origin);
 
 	// start trains on the second frame, to make sure their targets have had
