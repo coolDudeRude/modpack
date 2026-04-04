@@ -676,7 +676,7 @@ void PM_Main(entity this, float dt)
 #endif
 
 	// TODO clean up this mess of a setup
-	if(this.m_champion == CHAMPION_Duke)
+	if(this.m_champion == CHAMPION_Duke || this.m_champion == CHAMPION_FloydChamp)
 		Duke_PreJump(this);
 	if(this.m_champion == CHAMPION_BanjoKazooie)
 		Banjo_PreJump(this);
@@ -825,7 +825,7 @@ void CSQC_ClientMovement_PlayerMove_Frame(entity this)
 #ifdef SVQC
 	this.pm_frametime = frametime;
 #elif defined(CSQC)
-	if(this.jetpack_status && !this.csqcmodel_isdead && !intermission && !STAT(CANNON, this) && this.m_champion == CHAMPION_Duke)
+	if(this.jetpack_status && !this.csqcmodel_isdead && !intermission && !STAT(CANNON, this) && (this.m_champion == CHAMPION_Duke || this.m_champion == CHAMPION_FloydChamp))
 		this.csqcmodel_modelflags |= MF_ROCKET;
 	else
 		this.csqcmodel_modelflags &= ~MF_ROCKET;

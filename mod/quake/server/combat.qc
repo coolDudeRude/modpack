@@ -760,7 +760,12 @@ void T_Damage(entity targ, entity inflictor, entity attacker, float damage, int 
 		damage *= 4;
 
 	if(targ.classname == "block" && !IS_PLAYER(attacker))
-		damage = 1;
+	{
+		if(gametype == GAMETYPE_TD)
+			damage *= 0.5; // only some mitigation so they're not unbreakable
+		else
+			damage = 1;
+	}
 
 	if(StatusEffects_active(STATUSEFFECT_EmpathyShields, targ) && !StatusEffects_active(STATUSEFFECT_EmpathyShields, attacker) && (targ != attacker))
 	{

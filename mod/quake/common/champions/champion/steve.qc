@@ -136,6 +136,9 @@ void Steve_PlaceBlock(entity this)
 			block.skin = 3;
 	}
 
+	if(gametype == GAMETYPE_TD)
+		block.monster_attack = true; // no cheese dingus
+
 	player_shot1(this);
 
 	CSQCMODEL_AUTOINIT(block);
