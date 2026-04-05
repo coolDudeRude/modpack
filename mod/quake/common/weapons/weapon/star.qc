@@ -141,7 +141,9 @@ void W_Star_Inhale(entity this, .entity weaponentity)
 		}
 
 		// TODO: flag for enemies that can't be inhaled
-		float hplimit = 100;
+		float hplimit = 90;
+		if(gametype == GAMETYPE_TD)
+			hplimit *= 0.5; // prevent easy consumption
 		if(it.monsterdef == MON_EOW_PART)
 			hplimit = 20; // parts have low health, must compensate
 		else if(IS_PLAYER(it))
