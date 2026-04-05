@@ -679,11 +679,11 @@ Alt Target Pattern: 'target' selects path start, 'target2' on each pathcorner ar
 */
 spawnfunc(func_train)
 {
-	if(IsAlkalineMap())
-	{
-		func_train_alk(this);
-		return;
-	}
+	//if(IsAlkalineMap())
+	//{
+		//func_train_alk(this);
+		//return;
+	//}
 
 	func_train_setup(this);
 	
