@@ -312,6 +312,9 @@ spawnfunc(monster_gren)
 {
 	monster_start(this, true, MON_GRENLING);
 }
+
+// qzone
+spawnfunc(monster_plane) { monster_start(this, true, MON_GRENLING); }
 #endif // SVQC
 
 #ifdef SVQC

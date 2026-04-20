@@ -665,9 +665,6 @@ bool LostCheckAttack(entity this)
 QUAKED monster_lostsoul (1 0.2 0) (-16 -16 -24) (16 16 24)
 ======================================================================*/
 spawnfunc(monster_lostsoul) { monster_start(this, true, MON_LOSTSOUL); }
-
-// qzone
-spawnfunc(monster_plane) { monster_start(this, true, MON_LOSTSOUL); }
 #endif // SVQC
 
 #ifdef SVQC
