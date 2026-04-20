@@ -371,6 +371,9 @@ spawnfunc(monster_cyberdemon) { monster_start(this, true, MON_FIEND); }
 
 // qbj
 spawnfunc(monster_fiend) { monster_start(this, true, MON_FIEND); }
+
+// qzone
+spawnfunc(monster_snapper) { monster_start(this, true, MON_FIEND); }
 #endif // SVQC
 
 #ifdef SVQC

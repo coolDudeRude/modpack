@@ -298,6 +298,9 @@ spawnfunc(monster_meatwad) { monster_start(this, true, MON_SPAWN); }
 
 // qbj3
 spawnfunc(monster_spawn) { monster_start(this, true, MON_SPAWN); }
+
+// qzone
+spawnfunc(monster_flyer) { monster_start(this, true, MON_SPAWN); }
 #endif // SVQC
 
 #ifdef SVQC

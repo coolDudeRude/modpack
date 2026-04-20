@@ -462,6 +462,9 @@ spawnfunc(monster_army_pistol)
 	this.variant = GRUNT_PISTOL;
 	monster_start(this, true, MON_GRUNT);
 }
+
+// qzone
+spawnfunc(monster_headless) { monster_start(this, true, MON_GRUNT); }
 #endif // SVQC
 
 #ifdef SVQC

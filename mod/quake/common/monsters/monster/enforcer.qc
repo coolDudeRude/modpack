@@ -405,6 +405,9 @@ spawnfunc(monster_imp) { monster_start(this, true, MON_ENFORCER); }
 // drake
 spawnfunc(monster_archer) { monster_start(this, true, MON_ENFORCER); }
 spawnfunc(monster_archer_lord) { monster_start(this, true, MON_ENFORCER); }
+
+// qzone
+spawnfunc(monster_nuker) { monster_start(this, true, MON_ENFORCER); }
 #endif // SVQC
 
 #ifdef SVQC

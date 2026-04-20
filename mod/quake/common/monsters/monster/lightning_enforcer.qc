@@ -233,6 +233,9 @@ spawnfunc(monster_x)
 	delete(this);
 	return;
 }
+
+// qzone
+spawnfunc(monster_nukermad) { monster_start(this, true, MON_LIGHTNING_ENFORCER); }
 #endif // SVQC
 
 #ifdef SVQC
