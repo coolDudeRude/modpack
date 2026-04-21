@@ -48,9 +48,12 @@ jobs:
       - name: Build Progs
         run: ./build.sh -a
 
-      # Upload the build path
+      - name: Generate Artifact Name
+        run: echo "ARTIFACT_NAME=progs-$(git describe --tags --dirty="~" --always)" >> "$GITHUB_ENV"
+
+      # Upload the files in build folder
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: progs
+          name: ${{ env.ARTIFACT_NAME }}
           path: build
