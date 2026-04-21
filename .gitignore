@@ -1,5 +1,4 @@
 compiled/
-gmqcc/
 *.dat
 *.lno
 .cache/
