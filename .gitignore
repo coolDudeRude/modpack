@@ -1,5 +1,3 @@
-compiled/
-*.dat
-*.lno
+build/
 .cache/
 .DS_Store
