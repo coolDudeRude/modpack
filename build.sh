@@ -1,60 +1,122 @@
 #!/usr/bin/env bash
-if [ -n "${ZIP:-}" ]; then
-	tput bold; tput setaf 3; echo "WARNING: Processing without compression..."; tput sgr0
-fi
 
-if [ -e $(dirname "$0")/compiled/csprogs.dat -o -e $(dirname "$0")/compiled/menu.dat -o -e $(dirname "$0")/compiled/progs.dat -o -e $(dirname "$0")/compiled/csprogs.lno -o -e $(dirname "$0")/compiled/menu.lno -o -e $(dirname "$0")/compiled/progs.lno -o -e $(dirname "$0")/compiled/*.pk3 -o -e $(dirname "$0")/csprogs.dat -o -e $(dirname "$0")/menu.dat -o -e $(dirname "$0")/progs.dat -o -e $(dirname "$0")/csprogs.lno -o -e $(dirname "$0")/menu.lno -o -e $(dirname "$0")/progs.lno ]; then
-    tput bold; tput setaf 3; echo "There are compiled files here. The operation will proceed to delete the current compiled files in and out of the 'compiled' directory, replace and get new compiled ones (*.dat, *.lno, and *.pk3 files will be removed)."
-    # deletes any remaining compiled files that weren't moved to 'compiled' directory
-    tput bold; tput setaf 1
+TARGET_ALL=0
+CLEAN_BUILD=0
+MAKE_TARGETS=("qc")
 
-    rm -vf $(dirname "$0")/*.dat
-    rm -vf $(dirname "$0")/*.lno
-    rm -vf $(dirname "$0")/*.pk3
-
-    rm -vf $(dirname "$0")/compiled/*.dat
-    rm -vf $(dirname "$0")/compiled/*.lno
-    rm -vf $(dirname "$0")/compiled/*.pk3
-
-    tput sgr0
-fi
-
-cd ${0%[\\/]*}
-set -eu
-
-declare base=xonotic
-if [ ! -d "$base" ]; then
-    echo "RTFM (README.md)"
-    exit 1
-fi
-
-: ${PROGS_OUT:=$PWD}
-export PROGS_OUT
-
-: ${QCC:=$PWD/gmqcc/gmqcc}
-export QCC
-
-export QCCFLAGS_WATERMARK=$(git describe --tags --dirty='~' --always)
-
-relpath() {
-    b=; s=$(cd $(readlink -f ${1%%/}); pwd); d=$(cd $2; pwd)
-    while [ "${d#$s/}" == "${d}" ]; do s=$(dirname ${s}); b="../${b}"; done
-    echo ${b}${d#${s}/}
+usage() {
+  echo "build.sh [-c|--clean] [-a|-all]"
+  echo
+  echo " -c | --clean    Remove the build artifacts and rebuild."
+  echo " -a | --all      Build both qc and pk3 targets."
+  echo " -h | --help     Show this message."
+  echo
+  echo "NOTE: Default target is 'qc' only."
 }
 
-export BUILD_MOD="$(relpath $base/qcsrc $PWD)"
-export XONOTIC=0
-make -C ${base}
-
-tput bold; tput setaf 2; echo "Compiled successfully!"; tput sgr0
-mkdir -vp $(dirname "$0")/compiled
-mv -v *.lno $(dirname "$0")/compiled
-mv -v *.dat $(dirname "$0")/compiled
-
-if [ -n "${ZIP:-}" ]; then
-    tput bold; tput setaf 3; echo "Done without compression."; tput sgr0
+# Filter repeating arguments.
+# Who would pass same arguments multiple times tho?!
+if [[ $# -gt 0 ]]; then
+  readarray -t arguments < <(printf '%s\n' "$@" | sort -u)
 else
-    cp -v $base/qcsrc/csprogs-*.pk3 ./compiled
+  # No arguments were provided
+  arguments=()
 fi
 
-tput bold; tput setaf 3; echo "Now you can look at the compiled files inside $(dirname "$0")/compiled directory."
+# Parse CLI arguments
+for i in "${arguments[@]}"; do
+  case $i in
+  -a | --all)
+    TARGET_ALL=1
+    MAKE_TARGETS+=("pk3")
+    ;;
+  -c | --clean)
+    CLEAN_BUILD=1
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown flag: '$i' ... aborting"
+    exit 1
+    ;;
+  esac
+done
+
+if [[ ! -f "gmqcc/.git" ]]; then
+  echo "=> Submodule gmqcc not initialized..."
+  echo "=> Creating partial clone... (with --filter=blob:none)"
+  if ! git submodule update --init --filter=blob:none gmqcc; then
+    echo " -> Failed to initialize gmqcc submodule... aborting"
+    exit 1
+  fi
+else
+  echo "=> Submodule gmqcc already initialized."
+fi
+
+if [[ ! -f "gmqcc/gmqcc" ]]; then
+  echo "=> Building gmqcc..."
+  if ! make -C gmqcc -j"$(nproc)"; then
+    echo " -> Failed to build gmqcc... aborting"
+    exit 1
+  fi
+else
+  echo "=> Using existing gmqcc binary (VERSION: $(gmqcc/gmqcc --version))"
+fi
+
+if [[ ! -d "build" ]]; then
+  echo "=> Creating build directory..."
+  if ! mkdir build; then
+    echo " -> Could not create build directory... aborting"
+    exit 1
+  fi
+fi
+
+if [[ ! -f "xonotic/.git" ]]; then
+  echo "=> Submodule xonotic not initialized..."
+  echo "=> Creating partial clone... (with --filter=blob:none)"
+  if ! git submodule update --init --filter=blob:none xonotic; then
+    echo " -> Failed to initialize xonotic submodule... aborting"
+    exit 1
+  fi
+else
+  echo "=> Submodule xonotic already initialized."
+fi
+
+export XONOTIC=${XONOTIC:-1}
+export QCC=${QCC:-"$(pwd)/gmqcc/gmqcc"}
+
+WATERMARK="$(git describe --tags --dirty='~' --always)"
+if [[ $? -ne 0 ]]; then
+  echo "-> Error: Failed to generate QCCFLAGS_WATERMARK... aborting"
+  exit 1
+fi
+export QCCFLAGS_WATERMARK="${WATERMARK}"
+export PROGS_OUT=${PROGS_OUT:-"$(pwd)/build"}
+
+TMP_MOD="$(realpath --relative-to=xonotic/qcsrc "$(pwd)")"
+if [[ $? -ne 0 ]]; then
+  echo "-> Error: could not calculate BUILD_MOD... aborting"
+  exit 1
+fi
+
+if [[ -z "$TMP_MOD" ]]; then
+  echo "TMP_MOD is empty! ... aborting"
+  exit 1
+fi
+
+export BUILD_MOD="${TMP_MOD}"
+
+echo "=> Starting Compilation..."
+((CLEAN_BUILD == 1)) && make -C xonotic clean && rm -f "${PROGS_OUT}/"csprogs-*.pk3
+
+if ! make -C xonotic "${MAKE_TARGETS[@]}"; then
+  echo " -> Modpack compilation failed... aborting"
+  exit 1
+else
+  if ((TARGET_ALL == 1)); then
+    cp xonotic/qcsrc/csprogs-*.pk3 "${PROGS_OUT}"
+  fi
+  exit 0
+fi
