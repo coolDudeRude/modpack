@@ -91,7 +91,7 @@ else
   echo "=> Submodule xonotic already initialized."
 fi
 
-export XONOTIC=${XONOTIC:-1}
+export XONOTIC=0
 export QCC=${QCC:-"$(pwd)/gmqcc/gmqcc"}
 
 if ! WATERMARK="$(git describe --tags --dirty='~' --always)"; then
