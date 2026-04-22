@@ -44,6 +44,13 @@ for i in "${arguments[@]}"; do
   esac
 done
 
+if ! CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"; then
+  echo "=> Failed to parse git branch name... aborting"
+  exit 1
+else
+  echo "=> Current Branch is ${CURRENT_BRANCH}"
+fi
+
 if [[ ! -f "gmqcc/.git" ]]; then
   echo "=> Submodule gmqcc not initialized..."
   echo "=> Creating partial clone... (with --filter=blob:none)"
@@ -65,9 +72,9 @@ else
   echo "=> Using existing gmqcc binary (VERSION: $(gmqcc/gmqcc --version))"
 fi
 
-if [[ ! -d "build" ]]; then
-  echo "=> Creating build directory..."
-  if ! mkdir build; then
+if [[ ! -d "build/${CURRENT_BRANCH}" ]]; then
+  echo "=> Creating build directory... (build/${CURRENT_BRANCH})"
+  if ! mkdir -p "build/${CURRENT_BRANCH}"; then
     echo " -> Could not create build directory... aborting"
     exit 1
   fi
@@ -87,16 +94,16 @@ fi
 export XONOTIC=${XONOTIC:-1}
 export QCC=${QCC:-"$(pwd)/gmqcc/gmqcc"}
 
-WATERMARK="$(git describe --tags --dirty='~' --always)"
-if [[ $? -ne 0 ]]; then
+if ! WATERMARK="$(git describe --tags --dirty='~' --always)"; then
   echo "-> Error: Failed to generate QCCFLAGS_WATERMARK... aborting"
   exit 1
+else
+  echo "=> Version tag is: ${WATERMARK}"
 fi
 export QCCFLAGS_WATERMARK="${WATERMARK}"
-export PROGS_OUT=${PROGS_OUT:-"$(pwd)/build"}
+export PROGS_OUT=${PROGS_OUT:-"$(pwd)/build/${CURRENT_BRANCH}"}
 
-TMP_MOD="$(realpath --relative-to=xonotic/qcsrc "$(pwd)")"
-if [[ $? -ne 0 ]]; then
+if ! TMP_MOD="$(realpath --relative-to=xonotic/qcsrc "$(pwd)")"; then
   echo "-> Error: could not calculate BUILD_MOD... aborting"
   exit 1
 fi
@@ -108,9 +115,13 @@ fi
 
 export BUILD_MOD="${TMP_MOD}"
 
-echo "=> Starting Compilation..."
-((CLEAN_BUILD == 1)) && make -C xonotic clean && rm -f "${PROGS_OUT}/"csprogs-*.pk3
+if ((CLEAN_BUILD == 1)); then
+  echo "=> Cleaning old build artifacts in build/${CURRENT_BRANCH}"
+  make -C xonotic clean
+  rm -f "${PROGS_OUT}/"csprogs-*.pk3
+fi
 
+echo "=> Starting Compilation..."
 if ! make -C xonotic "${MAKE_TARGETS[@]}"; then
   echo " -> Modpack compilation failed... aborting"
   exit 1
